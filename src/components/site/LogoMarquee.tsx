@@ -92,14 +92,14 @@ export function LogoMarquee() {
           {row.map((logo, i) => (
             <div
               key={i}
-              className="flex h-24 w-52 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/95 px-6 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_40px_rgba(0,0,0,0.35)]"
+              className="flex h-24 w-52 shrink-0 items-center justify-center rounded-xl border border-white/25 bg-white/15 px-6 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/25"
             >
               <img
                 src={logo.src}
                 alt={logo.alt}
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain brightness-0 invert"
               />
             </div>
           ))}
