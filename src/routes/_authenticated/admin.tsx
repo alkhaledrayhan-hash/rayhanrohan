@@ -24,6 +24,7 @@ import {
   Bell,
   Building2,
   Calendar,
+  ChevronDown,
   ChevronRight,
   FileText,
   Home,
@@ -31,11 +32,13 @@ import {
   LogOut,
   Mail,
   MessageSquare,
+  Plus,
   Search,
   Settings,
   ShieldCheck,
   TrendingDown,
   TrendingUp,
+  UserPlus,
   Users,
 } from "lucide-react";
 
@@ -145,8 +148,27 @@ function AdminDashboard() {
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
           {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
-          {isAdmin && <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => setSection("agents")} />}
-          {isAdmin && <NavItem icon={Users} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />}
+          {isAdmin && (
+            <NavGroupExpandable
+              icon={Users}
+              label="Agents"
+              active={section === "agents" || section === "add-agent"}
+              defaultOpen={section === "agents" || section === "add-agent"}
+              action={
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setSection("add-agent"); }}
+                  title="Add Agent"
+                  className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              }
+            >
+              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => setSection("agents")} />
+              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />
+            </NavGroupExpandable>
+          )}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -271,6 +293,69 @@ function NavItem({
           {badge}
         </span>
       )}
+    </button>
+  );
+}
+
+function NavGroupExpandable({
+  icon: Icon,
+  label,
+  active,
+  defaultOpen,
+  action,
+  children,
+}: {
+  icon: typeof Home;
+  label: string;
+  active: boolean;
+  defaultOpen?: boolean;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  useEffect(() => { if (defaultOpen) setOpen(true); }, [defaultOpen]);
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition ${
+          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          <Icon className="h-4 w-4" /> {label}
+        </span>
+        <span className="flex items-center gap-1.5">
+          {action}
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+        </span>
+      </button>
+      {open && <div className="mt-0.5 space-y-0.5 pl-7">{children}</div>}
+    </div>
+  );
+}
+
+function SubNavItem({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon?: typeof Home;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition ${
+        active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {Icon ? <Icon className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current opacity-40" />}
+      {label}
     </button>
   );
 }
