@@ -31,7 +31,7 @@ export function HomeContact() {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-[oklch(0.28_0.13_18)] py-20 text-primary-foreground">
+    <section id="contact" className="relative overflow-hidden bg-gradient-to-b from-primary via-primary to-[oklch(0.28_0.13_18)] py-20 text-primary-foreground">
       <div
         aria-hidden
         className="absolute inset-0 opacity-[0.08]"
