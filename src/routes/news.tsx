@@ -81,7 +81,8 @@ function NewsPage() {
           {/* Featured article */}
           {featured && (
             <Link
-              to="/news"
+              to="/news/$slug"
+              params={{ slug: featured.id }}
               className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] md:grid-cols-2"
             >
               <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
