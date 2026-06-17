@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Building2, ChevronRight, UserCircle2 } from "lucide-react";
+import { Building2, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageHero } from "@/components/site/PageHero";
 import { listPublicAgents } from "@/lib/public-agents.functions";
 
 const agentsQuery = queryOptions({
@@ -37,21 +38,15 @@ function AgentsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 pt-28 pb-20 sm:px-6 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="font-medium text-foreground">Agents</span>
-        </nav>
-        <header className="mb-10 text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-gold">Our Team</p>
-          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-            Meet our agents
-          </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-            Click any agent to view the properties they manage.
-          </p>
-        </header>
+      <main>
+        <PageHero
+          eyebrow="Our Team"
+          title="Meet our agents"
+          description="Click any agent to view the properties they manage across Qatar."
+          crumbs={[{ label: "Home", to: "/" }, { label: "Agents" }]}
+        />
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+
 
         {agents.length === 0 ? (
           <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-white p-16 text-center">
