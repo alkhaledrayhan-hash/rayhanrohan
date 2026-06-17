@@ -138,9 +138,9 @@ export function HeroSearch() {
 
         <form
           onSubmit={submit}
-          className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 sm:p-4"
+          className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 sm:p-4"
         >
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="inline-flex rounded-full bg-white/10 p-1 text-sm backdrop-blur">
               {(["rent", "sale"] as const).map((s) => (
                 <button
@@ -157,75 +157,82 @@ export function HeroSearch() {
                 </button>
               ))}
             </div>
-            {isDirty ? (
+            <div className="flex items-center gap-2">
+              {isDirty ? (
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Reset
+                </button>
+              ) : null}
               <button
-                type="button"
-                onClick={reset}
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+                type="submit"
+                disabled={loading}
+                aria-busy={loading}
+                className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Reset filters
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Searching…
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4" />
+                    Search
+                  </>
+                )}
               </button>
-            ) : null}
+            </div>
           </div>
-          <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_auto]">
-            <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
-              <select
-                value={filters.location}
-                onChange={(e) => set("location", e.target.value)}
-                className="w-full bg-transparent text-sm outline-none"
-              >
-                <option value="all">All Qatar locations</option>
-                {LOCATIONS.map((l) => (
-                  <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Property type">
-              <select
-                value={filters.type}
-                onChange={(e) => set("type", e.target.value)}
-                className="w-full bg-transparent text-sm outline-none"
-              >
-                <option value="all">Any type</option>
-                {TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Price range">
-              <select
-                value={filters.price}
-                onChange={(e) => set("price", e.target.value)}
-                className="w-full bg-transparent text-sm outline-none"
-              >
-                {PRICE_RANGES.map((p) => (
-                  <option key={p.value} value={p.value}>{p.label}</option>
-                ))}
-              </select>
-            </Field>
-            <button
-              type="submit"
-              disabled={loading}
-              aria-busy={loading}
-              className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Searching…
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4" />
-                  Search
-                </>
-              )}
-            </button>
+
+          <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity,margin] duration-500 ease-out group-hover/search:mt-3 group-hover/search:grid-rows-[1fr] group-hover/search:opacity-100 group-focus-within/search:mt-3 group-focus-within/search:grid-rows-[1fr] group-focus-within/search:opacity-100">
+            <div className="min-h-0 overflow-hidden">
+              <div className="grid gap-2 md:grid-cols-3">
+                <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
+                  <select
+                    value={filters.location}
+                    onChange={(e) => set("location", e.target.value)}
+                    className="w-full bg-transparent text-sm outline-none"
+                  >
+                    <option value="all">All Qatar locations</option>
+                    {LOCATIONS.map((l) => (
+                      <option key={l} value={l}>{l}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Property type">
+                  <select
+                    value={filters.type}
+                    onChange={(e) => set("type", e.target.value)}
+                    className="w-full bg-transparent text-sm outline-none"
+                  >
+                    <option value="all">Any type</option>
+                    {TYPES.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Price range">
+                  <select
+                    value={filters.price}
+                    onChange={(e) => set("price", e.target.value)}
+                    className="w-full bg-transparent text-sm outline-none"
+                  >
+                    {PRICE_RANGES.map((p) => (
+                      <option key={p.value} value={p.value}>{p.label}</option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+              <p className="mt-3 px-1 text-[11px] text-white/70">
+                Filters sync to the URL — copy the link to share this exact search.
+              </p>
+            </div>
           </div>
-          <p className="mt-3 px-1 text-[11px] text-white/70">
-            Filters sync to the URL — copy the link to share this exact search.
-          </p>
         </form>
       </div>
     </section>
