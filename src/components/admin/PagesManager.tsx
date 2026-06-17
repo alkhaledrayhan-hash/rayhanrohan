@@ -81,25 +81,7 @@ export function PagesManager({
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[220px_240px_1fr]">
-      {/* Pages */}
-      <div className="rounded-2xl border border-border bg-white p-3">
-        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pages</p>
-        {PAGES.map((p) => {
-          const Icon = p.icon;
-          const active = activePage === p.slug;
-          return (
-            <button
-              key={p.slug}
-              onClick={() => { setActivePage(p.slug); setActiveKey(null); }}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm ${active ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
-            >
-              <span className="flex items-center gap-2"><Icon className="h-4 w-4" /> {p.label}</span>
-              <ChevronRight className="h-3.5 w-3.5" />
-            </button>
-          );
-        })}
-      </div>
+    <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
 
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
