@@ -76,17 +76,18 @@ function PropertyDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 pb-8 pt-24 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <Link to="/properties" search={{ status: property.status }} className="hover:text-foreground">
-            {property.type}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-foreground">{property.title}</span>
-        </nav>
+      <PageHero
+        image={property.image}
+        eyebrow={`${property.type} · ${property.location}`}
+        title={property.title}
+        description={`${property.bedrooms} bed · ${property.bathrooms} bath · ${property.sqft.toLocaleString()} sq ft — ${formatPrice(property)}`}
+        crumbs={[
+          { label: "Home", to: "/" },
+          { label: property.type, to: "/properties", search: { status: property.status } },
+          { label: property.title },
+        ]}
+      />
+      <main className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
 
         {/* Gallery */}
         <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr]">
