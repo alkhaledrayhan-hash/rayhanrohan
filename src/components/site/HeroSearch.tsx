@@ -121,15 +121,22 @@ export function HeroSearch() {
 
   return (
     <section className="relative isolate overflow-hidden">
-      <img
-        src={heroImg}
-        alt="Qatar skyline at golden hour"
-        width={1920}
-        height={1080}
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
+      <div className="absolute inset-0 -z-10">
+        {HERO_IMAGES.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt="Qatar skyline"
+            width={1920}
+            height={1080}
+            fetchPriority={i === 0 ? "high" : "low"}
+            decoding="async"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+              slide === i ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+      </div>
       <div
         className="absolute inset-0 -z-10"
         style={{ background: "var(--gradient-hero-overlay)" }}
