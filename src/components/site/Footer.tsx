@@ -97,9 +97,6 @@ export function Footer() {
             A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
             tailored for the discerning resident.
           </p>
-          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-gold">
-            Licensed real estate brokerage · Qatar
-          </p>
         </div>
 
         {/* Centerpiece overlay card */}
@@ -140,8 +137,17 @@ export function Footer() {
       </div>
 
 
-      <div className="relative border-t border-white/10 py-5 text-center text-xs text-white/60">
-        © {new Date().getFullYear()} MaisonQatar. All rights reserved.
+      <div className="relative border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-5 sm:px-6 lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold shadow-[0_0_24px_oklch(0.85_0.14_85/0.18)] backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
+            Licensed real estate brokerage · Qatar
+            <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
+          </span>
+          <p className="text-xs text-white/60">
+            © {new Date().getFullYear()} MaisonQatar. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );
