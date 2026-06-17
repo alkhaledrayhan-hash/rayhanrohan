@@ -8,8 +8,6 @@ import { cn } from "@/lib/utils";
 import { createEnquiry } from "@/lib/bookings.functions";
 import type { Property } from "@/lib/properties";
 
-// Common country dial codes (extend as needed)
-const COUNTRY_CODES: { code: string; flag: string; name: string }[] = [
 // Common country dial codes with ISO-3166 alpha-2 for flag images
 const COUNTRY_CODES: { iso: string; code: string; name: string }[] = [
   { iso: "qa", code: "+974", name: "Qatar" },
