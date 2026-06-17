@@ -67,6 +67,16 @@ export function HeroSearch() {
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
 
+  const HERO_IMAGES = [heroImg, heroImg2, heroImg3, heroImg4];
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSlide((s) => (s + 1) % HERO_IMAGES.length);
+    }, 2000);
+    return () => clearInterval(id);
+  }, [HERO_IMAGES.length]);
+
   // Hydrate from URL after mount so SSR markup stays stable.
   useEffect(() => {
     setFilters(readFromUrl());
