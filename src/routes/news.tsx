@@ -165,7 +165,7 @@ function NewsPage() {
         <PageHero
           eyebrow="News & Insights"
           title="Stories from Qatar's premium real estate"
-          subtitle="Market reports, neighbourhood guides, design notes and announcements — written by our editorial desk."
+          description="Market reports, neighbourhood guides, design notes and announcements — written by our editorial desk."
         />
 
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
