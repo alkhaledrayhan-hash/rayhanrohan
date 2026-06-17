@@ -58,7 +58,7 @@ export function Header() {
         <Link
           to="/properties"
           search={{ status: "rent" }}
-          className="hidden rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:scale-[1.03] hover:opacity-95 active:scale-100 md:inline-flex"
+          className="hidden rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90 md:inline-flex"
         >
           Browse Listings
         </Link>
@@ -89,7 +89,7 @@ function NavPill({
     <Link
       to={to as never}
       search={search as never}
-      className={`relative rounded-full px-4 py-1.5 transition-all duration-300 ease-out hover:scale-[1.05] active:scale-100 ${hoverClass}`}
+      className={`relative rounded-full px-4 py-1.5 transition-colors duration-300 ease-out ${hoverClass}`}
       activeProps={{ className: activeClass }}
     >
       {children}
