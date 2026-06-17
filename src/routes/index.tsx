@@ -4,7 +4,21 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { HeroSearch } from "@/components/site/HeroSearch";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
+import { HomeContact } from "@/components/site/HomeContact";
 import { PROPERTIES, LOCATIONS } from "@/lib/properties";
+import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
+import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
+import locLusail from "@/assets/prop-3.jpg?w=800&quality=70&format=webp";
+import locWestBay from "@/assets/prop-4.jpg?w=800&quality=70&format=webp";
+import locAlWaab from "@/assets/prop-2.jpg?w=800&quality=70&format=webp";
+
+const LOCATION_IMAGES: Record<string, string> = {
+  Doha: locDoha,
+  "The Pearl": locPearl,
+  Lusail: locLusail,
+  "West Bay": locWestBay,
+  "Al Waab": locAlWaab,
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -82,18 +96,37 @@ function Home() {
                   key={loc}
                   to="/properties"
                   search={{ location: loc }}
-                  className="group rounded-2xl border border-border bg-card p-6 transition hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                  className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
                 >
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Qatar</p>
-                  <p className="mt-2 font-display text-xl font-semibold text-foreground">{loc}</p>
-                  <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition group-hover:opacity-100">
-                    Explore <ArrowRight className="h-3.5 w-3.5" />
-                  </p>
+                  <img
+                    src={LOCATION_IMAGES[loc]}
+                    alt={loc}
+                    loading="lazy"
+                    decoding="async"
+                    className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+                  />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  />
+                  <div className="relative p-6">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors duration-500 group-hover:text-white/70">
+                      Qatar
+                    </p>
+                    <p className="mt-2 font-display text-xl font-semibold text-foreground transition-colors duration-500 group-hover:text-white">
+                      {loc}
+                    </p>
+                    <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-all duration-500 group-hover:text-gold group-hover:opacity-100">
+                      Explore <ArrowRight className="h-3.5 w-3.5" />
+                    </p>
+                  </div>
                 </Link>
               ))}
             </div>
           </div>
         </section>
+
+        <HomeContact />
       </main>
       <Footer />
     </div>
