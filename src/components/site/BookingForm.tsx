@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, CalendarIcon, Clock, Loader2 } from "lucide-react";
 import { format } from "date-fns";
@@ -28,11 +28,8 @@ function buildTimeSlots() {
 
 export function BookingForm({ property }: { property: Property }) {
   const timeSlots = useMemo(buildTimeSlots, []);
-  const [date, setDate] = useState<Date | undefined>(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d;
-  });
+  const [date, setDate] = useState<Date | undefined>(undefined);
+
   const [time, setTime] = useState("10:00");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -41,7 +38,14 @@ export function BookingForm({ property }: { property: Property }) {
   const [timeOpen, setTimeOpen] = useState(false);
   const submit = useServerFn(createBooking);
 
+  useEffect(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    setDate(d);
+  }, []);
+
   const today = useMemo(() => {
+
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;

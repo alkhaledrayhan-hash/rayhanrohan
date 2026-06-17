@@ -105,7 +105,7 @@ function PropertyDetail() {
               alt={property.title}
               width={1280}
               height={896}
-              className="aspect-[16/11] w-full object-cover"
+              className="aspect-[16/8] w-full object-cover"
             />
             <span className="absolute left-4 top-4 rounded-md bg-background/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground shadow">
               For {property.status}
