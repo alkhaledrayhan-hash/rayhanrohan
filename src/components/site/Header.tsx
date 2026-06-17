@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, Home, KeyRound, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
