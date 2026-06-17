@@ -151,7 +151,30 @@ function AdminDashboard() {
           <NavGroup label="Main" />
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
-          {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
+          {isAdmin && (
+            <NavGroupExpandable
+              icon={FileText}
+              label="Pages"
+              active={section === "pages"}
+              defaultOpen={section === "pages"}
+            >
+              {[
+                { slug: "home", label: "Home" },
+                { slug: "properties", label: "Properties" },
+                { slug: "agents", label: "Our Agents" },
+                { slug: "about", label: "About" },
+                { slug: "news", label: "News" },
+                { slug: "contact", label: "Contact" },
+              ].map((p) => (
+                <SubNavItem
+                  key={p.slug}
+                  label={p.label}
+                  active={section === "pages" && pageSlug === p.slug}
+                  onClick={() => { setSection("pages"); setPageSlug(p.slug); }}
+                />
+              ))}
+            </NavGroupExpandable>
+          )}
           {isAdmin && (
             <NavGroupExpandable
               icon={Users}
