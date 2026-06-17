@@ -81,12 +81,12 @@ export function LogoMarquee() {
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32"
-          style={{ background: "linear-gradient(to right, oklch(0.32 0.13 22), transparent)" }}
+          style={{ background: "linear-gradient(to right, #5C0F1A, transparent)" }}
         />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32"
-          style={{ background: "linear-gradient(to left, oklch(0.28 0.11 22), transparent)" }}
+          style={{ background: "linear-gradient(to left, #4A0B14, transparent)" }}
         />
 
         <div className="logo-marquee flex w-max items-center gap-10 px-8">
