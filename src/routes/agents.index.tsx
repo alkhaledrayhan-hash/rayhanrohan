@@ -38,6 +38,11 @@ function AgentsPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-7xl px-4 pt-28 pb-20 sm:px-6 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Link to="/" className="hover:text-foreground">Home</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="font-medium text-foreground">Agents</span>
+        </nav>
         <header className="mb-10 text-center">
           <p className="text-xs font-medium uppercase tracking-[0.3em] text-gold">Our Team</p>
           <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight md:text-5xl">
