@@ -5,6 +5,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const settings = useSiteSettings();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
