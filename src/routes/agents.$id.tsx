@@ -157,6 +157,7 @@ function AgentDetailPage() {
             </div>
           )}
         </section>
+        </section>
       </main>
       <Footer />
     </div>
