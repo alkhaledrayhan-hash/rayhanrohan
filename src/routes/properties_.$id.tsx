@@ -172,7 +172,7 @@ function PropertyDetail() {
                   Property ID: <span className="font-mono text-foreground">{propertyId}</span>
                 </p>
               </div>
-              <div className="mt-4 grid grid-cols-2 divide-y divide-border rounded-2xl border border-border bg-card sm:grid-cols-5 sm:divide-x sm:divide-y-0">
+              <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
                 <OverviewStat icon={<Bed className="h-4 w-4" />} label="Bedrooms" value={property.bedrooms} />
                 <OverviewStat icon={<Bath className="h-4 w-4" />} label="Bathrooms" value={property.bathrooms} />
                 <OverviewStat icon={<DoorOpen className="h-4 w-4" />} label="Rooms" value={property.rooms} />
@@ -248,12 +248,12 @@ function OverviewStat({
   icon, label, value,
 }: { icon: React.ReactNode; label: string; value: number | string }) {
   return (
-    <div className="px-4 py-5 text-center">
-      <p className="flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span className="text-primary">{icon}</span>
-        {label}
+    <div className="min-w-0 rounded-xl border border-border bg-card px-3 py-4 text-center">
+      <p className="flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="shrink-0 text-primary">{icon}</span>
+        <span className="truncate">{label}</span>
       </p>
-      <p className="mt-1 font-display text-xl font-semibold text-foreground">{value}</p>
+      <p className="mt-1 truncate font-display text-lg font-semibold text-foreground sm:text-xl">{value}</p>
     </div>
   );
 }
