@@ -51,13 +51,23 @@ export function Header() {
           <NavPill to="/about" scrolled={scrolled}>About</NavPill>
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
         </nav>
-        <Link
-          to="/properties"
-          search={{ status: "rent" }}
-          className="hidden rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90 md:inline-flex"
-        >
-          Browse Listings
-        </Link>
+        <div className="hidden items-center gap-2 md:flex">
+          <Link
+            to="/auth"
+            className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+              scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+            }`}
+          >
+            Sign In
+          </Link>
+          <Link
+            to="/properties"
+            search={{ status: "rent" }}
+            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+          >
+            Browse Listings
+          </Link>
+        </div>
       </div>
     </header>
   );
