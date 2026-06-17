@@ -167,7 +167,9 @@ function AboutPage() {
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 sm:grid-cols-4 sm:px-6 lg:px-8">
             {STATS.map((s) => (
               <div key={s.label} className="text-center">
-                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">{s.value}</p>
+                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                  <CountUp end={s.value} prefix={s.prefix} suffix={s.suffix} />
+                </p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{s.label}</p>
               </div>
             ))}
