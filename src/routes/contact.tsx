@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageHero } from "@/components/site/PageHero";
 import { createContact } from "@/lib/bookings.functions";
 
 export const Route = createFileRoute("/contact")({
