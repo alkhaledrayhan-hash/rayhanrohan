@@ -23,9 +23,22 @@ const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean
   { slug: "contact", label: "Contact", icon: Mail, editable: false },
 ];
 
-export function PagesManager() {
+export function PagesManager({
+  pageSlug,
+  onPageChange,
+}: {
+  pageSlug?: string;
+  onPageChange?: (slug: string) => void;
+} = {}) {
   const qc = useQueryClient();
-  const [activePage, setActivePage] = useState("home");
+  const [activePage, setActivePageState] = useState(pageSlug || "home");
+  const setActivePage = (slug: string) => {
+    setActivePageState(slug);
+    onPageChange?.(slug);
+  };
+  useEffect(() => {
+    if (pageSlug && pageSlug !== activePage) setActivePageState(pageSlug);
+  }, [pageSlug]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [draft, setDraft] = useState<string>("");
 
