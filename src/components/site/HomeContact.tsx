@@ -1,10 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Mail, Phone, Send, CheckCircle2 } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
-import { createContact } from "@/lib/bookings.functions";
+import { submitLead } from "@/lib/leads";
 
 export function HomeContact() {
-  const submit = useServerFn(createContact);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +19,7 @@ export function HomeContact() {
     setStatus("loading");
     setError(null);
     try {
-      await submit({ data });
+      await submitLead({ ...data, source: "home_contact" });
       setStatus("success");
       (e.target as HTMLFormElement).reset();
     } catch (err) {
