@@ -106,8 +106,8 @@ function Field({ label, children, className = "", hideLabel = false }: { label: 
       {children}
     </label>
   );
-  );
 }
+
 
 export function AvatarUploader({
   value,
