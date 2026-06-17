@@ -209,7 +209,7 @@ function AboutPage() {
                   width={1280}
                   height={896}
                   loading="lazy"
-                  className="aspect-[4/5] w-full object-cover"
+                  className="aspect-[4/3] w-full object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -left-4 hidden rounded-2xl border border-gold/60 bg-card p-5 shadow-[var(--shadow-soft)] sm:block">
