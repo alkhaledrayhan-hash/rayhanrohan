@@ -86,7 +86,7 @@ export function Footer() {
             </span>
             <span className="flex flex-col leading-tight">
               <span className="font-display text-2xl font-semibold text-white">
-                Maison<span className="text-gold">Qatar</span>
+                Ayesha Maison <span className="text-gold">Qatar</span>
               </span>
               <span className="text-[10px] uppercase tracking-[0.25em] text-gold">
                 Premium Living · Doha
@@ -150,7 +150,7 @@ export function Footer() {
             <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
           </span>
           <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} MaisonQatar. All rights reserved.
+            © {new Date().getFullYear()} Ayesha Maison Qatar. All rights reserved.
           </p>
         </div>
       </div>
