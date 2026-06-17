@@ -17,7 +17,7 @@ export function PropertyCard({ property }: { property: Property }) {
           decoding="async"
           width={1280}
           height={896}
-          className="h-full w-full object-cover transform-gpu transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover:scale-[1.08]"
+          className="h-full w-full object-cover transform-gpu transition-transform duration-[2200ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform group-hover:scale-[1.06]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-100" />
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
