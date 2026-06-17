@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { HeroSearch } from "@/components/site/HeroSearch";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
 import { HomeContact } from "@/components/site/HomeContact";
+import { OffersSection } from "@/components/site/OffersSection";
 import { PROPERTIES, LOCATIONS } from "@/lib/properties";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
@@ -42,6 +43,11 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featured = PROPERTIES.slice(0, 6);
+  const offers = [
+    { property: PROPERTIES[0], discount: 12, tag: "Move-in ready", ends: "Jul 31" },
+    { property: PROPERTIES[2], discount: 8, tag: "Sky residence", ends: "Aug 15" },
+    { property: PROPERTIES[1], discount: 10, tag: "Signature villa", ends: "Jul 20" },
+  ];
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -80,6 +86,9 @@ function Home() {
             <PropertyGrid properties={featured} />
           </div>
         </section>
+
+        {/* Exclusive offers */}
+        <OffersSection offers={offers} />
 
         {/* Locations */}
         <section className="bg-secondary/40 py-20">
