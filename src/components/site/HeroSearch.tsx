@@ -159,7 +159,7 @@ export function HeroSearch() {
               <button
                 type="button"
                 onClick={reset}
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Reset filters
