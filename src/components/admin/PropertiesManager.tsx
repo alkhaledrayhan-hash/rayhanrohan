@@ -20,6 +20,7 @@ type PropertyRow = {
   sqft: number;
   year_built: number | null;
   image: string | null;
+  gallery: string[];
   description: string | null;
   features: string[];
   verified: boolean;
@@ -31,7 +32,7 @@ type PropertyRow = {
 const empty: Partial<PropertyRow> = {
   title: "", slug: "", location: "Doha", address: "", type: "Apartment",
   status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
-  image: "", description: "", features: [],
+  image: "", gallery: [], description: "", features: [],
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
