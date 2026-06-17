@@ -1,6 +1,6 @@
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search, MapPin } from "lucide-react";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Loader2, MapPin, RotateCcw, Search } from "lucide-react";
 import heroImg from "@/assets/hero-qatar.jpg";
 import { LOCATIONS } from "@/lib/properties";
 
@@ -12,27 +12,99 @@ const PRICE_RANGES = [
   { label: "QAR 25k+ / 6M+", value: "6000000-99000000" },
 ];
 
+type Status = "rent" | "sale";
+
+interface FilterState {
+  status: Status;
+  type: string;
+  location: string;
+  price: string;
+}
+
+const DEFAULTS: FilterState = {
+  status: "rent",
+  type: "all",
+  location: "all",
+  price: "any",
+};
+
+function priceToRange(value: string): [number | undefined, number | undefined] {
+  if (value === "any") return [undefined, undefined];
+  const [min, max] = value.split("-").map(Number);
+  return [min, max];
+}
+
+function rangeToPrice(min?: number, max?: number): string {
+  if (min == null && max == null) return "any";
+  const match = PRICE_RANGES.find((p) => {
+    const [pMin, pMax] = priceToRange(p.value);
+    return pMin === min && pMax === max;
+  });
+  return match?.value ?? "any";
+}
+
+/** Read filters from current URL so the hero reflects shared/bookmarked links. */
+function readFromUrl(): FilterState {
+  if (typeof window === "undefined") return DEFAULTS;
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("status");
+  const min = params.get("minPrice");
+  const max = params.get("maxPrice");
+  return {
+    status: status === "sale" ? "sale" : "rent",
+    type: params.get("type") ?? "all",
+    location: params.get("location") ?? "all",
+    price: rangeToPrice(min ? Number(min) : undefined, max ? Number(max) : undefined),
+  };
+}
+
 export function HeroSearch() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState<"rent" | "sale">("rent");
-  const [type, setType] = useState("all");
-  const [location, setLocation] = useState("all");
-  const [price, setPrice] = useState("any");
+  const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
+  const [filters, setFilters] = useState<FilterState>(DEFAULTS);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Hydrate from URL after mount so SSR markup stays stable.
+  useEffect(() => {
+    setFilters(readFromUrl());
+  }, []);
+
+  // Clear the submitting flag once router transitions settle.
+  useEffect(() => {
+    if (!isNavigating) setSubmitting(false);
+  }, [isNavigating]);
+
+  const isDirty =
+    filters.status !== DEFAULTS.status ||
+    filters.type !== DEFAULTS.type ||
+    filters.location !== DEFAULTS.location ||
+    filters.price !== DEFAULTS.price;
+
+  function set<K extends keyof FilterState>(key: K, value: FilterState[K]) {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function reset() {
+    setFilters(DEFAULTS);
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const [minPrice, maxPrice] = price === "any" ? [undefined, undefined] : price.split("-").map(Number);
+    const [minPrice, maxPrice] = priceToRange(filters.price);
+    setSubmitting(true);
     navigate({
       to: "/properties",
       search: {
-        status,
-        type: type === "all" ? undefined : type,
-        location: location === "all" ? undefined : location,
+        status: filters.status,
+        type: filters.type === "all" ? undefined : filters.type,
+        location: filters.location === "all" ? undefined : filters.location,
         minPrice,
         maxPrice,
       },
     });
   }
+
+  const loading = submitting || isNavigating;
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -66,27 +138,39 @@ export function HeroSearch() {
           onSubmit={submit}
           className="mt-10 rounded-2xl border border-white/10 bg-card/95 p-3 shadow-[var(--shadow-soft)] backdrop-blur sm:p-4"
         >
-          <div className="mb-3 inline-flex rounded-full bg-secondary p-1 text-sm">
-            {(["rent", "sale"] as const).map((s) => (
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
+              {(["rent", "sale"] as const).map((s) => (
+                <button
+                  type="button"
+                  key={s}
+                  onClick={() => set("status", s)}
+                  className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
+                    filters.status === s
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  For {s}
+                </button>
+              ))}
+            </div>
+            {isDirty ? (
               <button
                 type="button"
-                key={s}
-                onClick={() => setStatus(s)}
-                className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
-                  status === s
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                onClick={reset}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
               >
-                For {s}
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset filters
               </button>
-            ))}
+            ) : null}
           </div>
           <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_auto]">
             <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
               <select
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                value={filters.location}
+                onChange={(e) => set("location", e.target.value)}
                 className="w-full bg-transparent text-sm outline-none"
               >
                 <option value="all">All Qatar locations</option>
@@ -96,7 +180,11 @@ export function HeroSearch() {
               </select>
             </Field>
             <Field label="Property type">
-              <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-transparent text-sm outline-none">
+              <select
+                value={filters.type}
+                onChange={(e) => set("type", e.target.value)}
+                className="w-full bg-transparent text-sm outline-none"
+              >
                 <option value="all">Any type</option>
                 {TYPES.map((t) => (
                   <option key={t} value={t}>{t}</option>
@@ -104,7 +192,11 @@ export function HeroSearch() {
               </select>
             </Field>
             <Field label="Price range">
-              <select value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-transparent text-sm outline-none">
+              <select
+                value={filters.price}
+                onChange={(e) => set("price", e.target.value)}
+                className="w-full bg-transparent text-sm outline-none"
+              >
                 {PRICE_RANGES.map((p) => (
                   <option key={p.value} value={p.value}>{p.label}</option>
                 ))}
@@ -112,12 +204,26 @@ export function HeroSearch() {
             </Field>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95"
+              disabled={loading}
+              aria-busy={loading}
+              className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              <Search className="h-4 w-4" />
-              Search
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Searching…
+                </>
+              ) : (
+                <>
+                  <Search className="h-4 w-4" />
+                  Search
+                </>
+              )}
             </button>
           </div>
+          <p className="mt-3 px-1 text-[11px] text-muted-foreground">
+            Filters sync to the URL — copy the link to share this exact search.
+          </p>
         </form>
       </div>
     </section>
