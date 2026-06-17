@@ -148,10 +148,10 @@ export const Route = createFileRoute("/news")({
 });
 
 function NewsPage() {
-  const [filter, setFilter] = useState<"All" | Category>("All");
+  const [filter, setFilter] = useState<Category>("News");
 
   const filtered = useMemo(
-    () => (filter === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === filter)),
+    () => ARTICLES.filter((a) => a.category === filter),
     [filter],
   );
 
