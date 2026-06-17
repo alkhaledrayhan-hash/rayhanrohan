@@ -72,11 +72,6 @@ function readFromUrl(): FilterState {
   };
 }
 
-export function HeroSearch() {
-  const navigate = useNavigate();
-  const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
-  const [filters, setFilters] = useState<FilterState>(DEFAULTS);
-  const [submitting, setSubmitting] = useState(false);
 
 export function HeroSearch() {
   const navigate = useNavigate();
