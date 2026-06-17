@@ -82,18 +82,27 @@ export function HeroSearch() {
   const { data: sections = {} } = usePageSections("home");
   const hero = (sections.hero || {}) as any;
   const heroStyle = hero.style || {};
-  const customImage: string | undefined = hero.image_url || undefined;
+  const customImages: string[] = Array.isArray(hero.images) && hero.images.length > 0
+    ? hero.images.filter((s: any) => typeof s === "string" && s.length > 0)
+    : hero.image_url
+      ? [hero.image_url]
+      : [];
+  const slideInterval: number = Number(hero.slide_interval) > 0 ? Number(hero.slide_interval) : 2000;
 
-  const HERO_IMAGES = customImage ? [customImage] : [heroImg, heroImg2, heroImg3, heroImg4];
+  const HERO_IMAGES = customImages.length > 0 ? customImages : [heroImg, heroImg2, heroImg3, heroImg4];
   const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    setSlide(0);
+  }, [HERO_IMAGES.length]);
 
   useEffect(() => {
     if (HERO_IMAGES.length <= 1) return;
     const id = setInterval(() => {
       setSlide((s) => (s + 1) % HERO_IMAGES.length);
-    }, 2000);
+    }, slideInterval);
     return () => clearInterval(id);
-  }, [HERO_IMAGES.length]);
+  }, [HERO_IMAGES.length, slideInterval]);
 
   // Hydrate from URL after mount so SSR markup stays stable.
   useEffect(() => {
