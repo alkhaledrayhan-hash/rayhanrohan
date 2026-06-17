@@ -5,11 +5,11 @@ import qatarPlaneAsset from "@/assets/qatar-airways-plane.png.asset.json";
 export function Footer() {
   return (
     <footer
-      id="contact"
-      className="relative mt-24 overflow-hidden border-t border-white/10 text-white/85"
+      id="footer"
+      className="relative overflow-hidden text-white/85"
       style={{
         background:
-          "linear-gradient(180deg, oklch(0.22 0.05 25) 0%, oklch(0.16 0.04 25) 60%, oklch(0.12 0.03 25) 100%)",
+          "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
       }}
     >
       {/* Soft radial glow centerpiece */}
@@ -78,28 +78,8 @@ export function Footer() {
         </svg>
       </div>
 
-      {/* Centerpiece overlay card */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] hidden -translate-x-1/2 -translate-y-1/2 md:block">
-        <div className="rounded-2xl border border-white/15 bg-white/[0.04] px-7 py-5 text-center backdrop-blur-xl">
-          <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gold">
-            <span className="h-px w-6 bg-gold/60" />
-            <Plane className="h-3 w-3" />
-            <span>Doha → World</span>
-            <span className="h-px w-6 bg-gold/60" />
-          </div>
-          <p className="mt-2 font-display text-xl font-medium text-white">
-            From Qatar, with intent.
-          </p>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/50">
-            25.2854° N · 51.5310° E
-          </p>
-        </div>
-      </div>
-
-
-
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div className="md:col-span-2">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+        <div>
           <Link to="/" className="inline-flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
               <Home className="h-5 w-5" />
@@ -122,29 +102,25 @@ export function Footer() {
           </p>
         </div>
 
-        <div>
-          <h4 className="text-sm font-semibold text-white">Explore</h4>
-          <ul className="mt-3 space-y-2 text-sm text-white/70">
-            <li>
-              <Link to="/properties" search={{ status: "rent" }} className="transition hover:text-gold">
-                For Rent
-              </Link>
-            </li>
-            <li>
-              <Link to="/properties" search={{ status: "sale" }} className="transition hover:text-gold">
-                For Sale
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className="transition hover:text-gold">About</Link>
-            </li>
-            <li>
-              <Link to="/contact" className="transition hover:text-gold">Contact</Link>
-            </li>
-          </ul>
+        {/* Centerpiece overlay card */}
+        <div className="flex justify-center">
+          <div className="rounded-2xl border border-white/15 bg-white/[0.04] px-7 py-5 text-center backdrop-blur-xl">
+            <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gold">
+              <span className="h-px w-6 bg-gold/60" />
+              <Plane className="h-3 w-3" />
+              <span>Doha → World</span>
+              <span className="h-px w-6 bg-gold/60" />
+            </div>
+            <p className="mt-2 font-display text-xl font-medium text-white">
+              From Qatar, with intent.
+            </p>
+            <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/50">
+              25.2854° N · 51.5310° E
+            </p>
+          </div>
         </div>
 
-        <div>
+        <div className="md:justify-self-end">
           <h4 className="text-sm font-semibold text-white">Contact</h4>
           <ul className="mt-3 space-y-2 text-sm text-white/70">
             <li className="flex items-start gap-2">
@@ -162,6 +138,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
+
 
       <div className="relative border-t border-white/10 py-5 text-center text-xs text-white/60">
         © {new Date().getFullYear()} MaisonQatar. All rights reserved.
