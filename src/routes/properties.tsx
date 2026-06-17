@@ -44,7 +44,7 @@ function PropertiesPage() {
   const items = filterProperties(PROPERTIES, { ...search, status });
 
   function update(patch: Partial<typeof search>) {
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
   }
 
   return (
