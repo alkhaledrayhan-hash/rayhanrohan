@@ -135,3 +135,34 @@
 img {
   transition: opacity 0.3s ease;
 }
+
+/* Footer flying plane along Qatar flight path */
+@keyframes footer-plane-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes footer-trail-draw {
+  0% { stroke-dashoffset: 1080; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.footer-plane {
+  offset-path: path("M60,250 Q200,140 360,170 T740,80");
+  offset-rotate: auto;
+  animation: footer-plane-fly 9s ease-in-out infinite;
+}
+
+.footer-plane-trail {
+  stroke-dashoffset: 1080;
+  animation: footer-trail-draw 9s ease-in-out infinite;
+}
+
