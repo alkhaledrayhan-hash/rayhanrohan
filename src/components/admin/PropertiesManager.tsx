@@ -185,7 +185,14 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Image URL" className="col-span-2"><input value={editing.image || ""} onChange={(e) => setEditing({ ...editing, image: e.target.value })} className={inputCls} /></Field>
+              <div className="col-span-2 space-y-2">
+                <span className="text-xs font-medium text-muted-foreground">Cover image</span>
+                <CoverUploader value={editing.image || ""} onChange={(v) => setEditing({ ...editing, image: v })} />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <span className="text-xs font-medium text-muted-foreground">Gallery images</span>
+                <GalleryUploader value={editing.gallery || []} onChange={(v) => setEditing({ ...editing, gallery: v })} />
+              </div>
               <Field label="Description" className="col-span-2"><textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className={inputCls} /></Field>
               <Field label="Features (comma separated)" className="col-span-2">
                 <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
