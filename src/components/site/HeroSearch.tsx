@@ -139,7 +139,7 @@ export function HeroSearch() {
           className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 sm:p-4"
         >
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
+            <div className="inline-flex rounded-full bg-white/10 p-1 text-sm backdrop-blur">
               {(["rent", "sale"] as const).map((s) => (
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export function HeroSearch() {
                   className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
                     filters.status === s
                       ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-white/80 hover:text-white"
                   }`}
                 >
                   For {s}
