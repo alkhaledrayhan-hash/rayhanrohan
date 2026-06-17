@@ -240,11 +240,11 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1 rounded-xl border border-border bg-background px-4 py-2.5 text-left">
-      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+    <label className="flex flex-col gap-1 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-left backdrop-blur-xl">
+      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
         {label}
       </span>
-      <span className="flex items-center gap-2 text-foreground">
+      <span className="flex items-center gap-2 text-white [&_select]:text-white [&_select_option]:text-foreground">
         {icon}
         {children}
       </span>
