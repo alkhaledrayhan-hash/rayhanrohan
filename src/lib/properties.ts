@@ -151,22 +151,33 @@ export const PROPERTIES: Property[] = [
   },
 ];
 
+export type SortKey = "newest" | "price-asc" | "price-desc" | "area-desc";
+
 export interface PropertyFilters {
   status?: Status;
   location?: string;
   type?: string;
+  beds?: number;
+  baths?: number;
   minPrice?: number;
   maxPrice?: number;
+  minArea?: number;
+  maxArea?: number;
   q?: string;
+  sort?: SortKey;
 }
 
 export function filterProperties(items: Property[], f: PropertyFilters): Property[] {
-  return items.filter((p) => {
+  const out = items.filter((p) => {
     if (f.status && p.status !== f.status) return false;
     if (f.location && f.location !== "all" && p.location !== f.location) return false;
     if (f.type && f.type !== "all" && p.type !== f.type) return false;
+    if (f.beds != null && p.bedrooms < f.beds) return false;
+    if (f.baths != null && p.bathrooms < f.baths) return false;
     if (f.minPrice != null && p.price < f.minPrice) return false;
     if (f.maxPrice != null && p.price > f.maxPrice) return false;
+    if (f.minArea != null && p.sqft < f.minArea) return false;
+    if (f.maxArea != null && p.sqft > f.maxArea) return false;
     if (f.q) {
       const q = f.q.toLowerCase();
       if (
@@ -178,6 +189,16 @@ export function filterProperties(items: Property[], f: PropertyFilters): Propert
     }
     return true;
   });
+  switch (f.sort) {
+    case "price-asc":
+      return [...out].sort((a, b) => a.price - b.price);
+    case "price-desc":
+      return [...out].sort((a, b) => b.price - a.price);
+    case "area-desc":
+      return [...out].sort((a, b) => b.sqft - a.sqft);
+    default:
+      return out;
+  }
 }
 
 export function formatPrice(p: Property): string {
