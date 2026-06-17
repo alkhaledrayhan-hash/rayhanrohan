@@ -328,8 +328,10 @@ function AboutPage() {
         </section>
 
         {/* Team */}
-        <section className="relative overflow-hidden bg-[#5a1a2b] py-20 text-white">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.12),transparent_50%),radial-gradient(circle_at_85%_90%,rgba(212,175,55,0.18),transparent_55%)]" />
+        <section className="relative overflow-hidden bg-[#3d0f1d] py-20 text-white">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
+          <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
+          <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
