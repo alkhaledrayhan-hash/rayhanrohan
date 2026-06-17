@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      page_sections: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          label: string
+          page_slug: string
+          section_key: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          id?: string
+          label: string
+          page_slug: string
+          section_key: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          label?: string
+          page_slug?: string
+          section_key?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -44,6 +77,81 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          address: string
+          bathrooms: number
+          bedrooms: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          features: Json
+          gallery: Json
+          id: string
+          image: string | null
+          listing_status: Database["public"]["Enums"]["listing_status"]
+          location: string
+          price: number
+          rooms: number
+          slug: string
+          sqft: number
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          verified: boolean
+          year_built: number | null
+        }
+        Insert: {
+          address: string
+          bathrooms?: number
+          bedrooms?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          features?: Json
+          gallery?: Json
+          id?: string
+          image?: string | null
+          listing_status?: Database["public"]["Enums"]["listing_status"]
+          location: string
+          price: number
+          rooms?: number
+          slug: string
+          sqft?: number
+          status: string
+          title: string
+          type: string
+          updated_at?: string
+          verified?: boolean
+          year_built?: number | null
+        }
+        Update: {
+          address?: string
+          bathrooms?: number
+          bedrooms?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          features?: Json
+          gallery?: Json
+          id?: string
+          image?: string | null
+          listing_status?: Database["public"]["Enums"]["listing_status"]
+          location?: string
+          price?: number
+          rooms?: number
+          slug?: string
+          sqft?: number
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          verified?: boolean
+          year_built?: number | null
         }
         Relationships: []
       }
@@ -84,6 +192,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user" | "agent"
+      listing_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -212,6 +321,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user", "agent"],
+      listing_status: ["pending", "approved", "rejected"],
     },
   },
 } as const

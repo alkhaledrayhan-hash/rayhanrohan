@@ -17,6 +17,8 @@ import {
 } from "recharts";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { PropertiesManager } from "@/components/admin/PropertiesManager";
+import { PagesManager } from "@/components/admin/PagesManager";
 import {
   Bell,
   Building2,
@@ -28,7 +30,6 @@ import {
   LogOut,
   Mail,
   MessageSquare,
-  Plus,
   Search,
   Settings,
   ShieldCheck,
@@ -83,7 +84,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "agents" | "leads" | "bookings" | "messages" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "leads" | "bookings" | "messages" | "calendar" | "settings"
   >("overview");
 
   const isAdmin = roleData?.roles.includes("admin");
@@ -142,7 +143,8 @@ function AdminDashboard() {
           <NavGroup label="Main" />
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
-          <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => setSection("agents")} />
+          {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
+          {isAdmin && <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => setSection("agents")} />}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -203,16 +205,12 @@ function AdminDashboard() {
                 {sectionTitle(section)}
               </p>
             </div>
-            {section === "properties" && (
-              <button className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90">
-                <Plus className="h-4 w-4" /> Add Property
-              </button>
-            )}
           </div>
 
           {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
-          {section === "properties" && <PropertiesTable />}
-          {section === "agents" && <AgentsPanel />}
+          {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
+          {section === "pages" && isAdmin && <PagesManager />}
+          {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "leads" && <LeadsPanel />}
           {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
           {section === "messages" && <PlaceholderCard icon={MessageSquare} title="Messages" desc="Direct conversations with clients." />}
