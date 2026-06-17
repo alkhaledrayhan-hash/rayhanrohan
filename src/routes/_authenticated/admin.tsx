@@ -93,6 +93,7 @@ function AdminDashboard() {
   const [section, setSection] = useState<
     "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "calendar" | "settings"
   >("overview");
+  const [pageSlug, setPageSlug] = useState<string>("home");
 
   const isAdmin = roleData?.roles.includes("admin");
   const isAgent = roleData?.roles.includes("agent");
@@ -150,7 +151,30 @@ function AdminDashboard() {
           <NavGroup label="Main" />
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
-          {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
+          {isAdmin && (
+            <NavGroupExpandable
+              icon={FileText}
+              label="Pages"
+              active={section === "pages"}
+              defaultOpen={section === "pages"}
+            >
+              {[
+                { slug: "home", label: "Home" },
+                { slug: "properties", label: "Properties" },
+                { slug: "agents", label: "Our Agents" },
+                { slug: "about", label: "About" },
+                { slug: "news", label: "News" },
+                { slug: "contact", label: "Contact" },
+              ].map((p) => (
+                <SubNavItem
+                  key={p.slug}
+                  label={p.label}
+                  active={section === "pages" && pageSlug === p.slug}
+                  onClick={() => { setSection("pages"); setPageSlug(p.slug); }}
+                />
+              ))}
+            </NavGroupExpandable>
+          )}
           {isAdmin && (
             <NavGroupExpandable
               icon={Users}
@@ -236,7 +260,7 @@ function AdminDashboard() {
 
           {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
-          {section === "pages" && isAdmin && <PagesManager />}
+          {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
