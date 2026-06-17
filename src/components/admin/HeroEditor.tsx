@@ -226,14 +226,17 @@ export function HeroEditor({
           </div>
         </Panel>
 
-        {/* Media */}
-        <Panel icon={ImageIcon} title="Background image">
+        {/* Media slider */}
+        <Panel icon={ImageIcon} title="Background slider">
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
             hidden
-            onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])}
+            onChange={(e) => {
+              if (e.target.files?.[0]) onPickImage(e.target.files[0]);
+              e.target.value = "";
+            }}
           />
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -241,22 +244,54 @@ export function HeroEditor({
               onClick={() => fileRef.current?.click()}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
             >
-              <Upload className="h-4 w-4" /> Upload image
+              <Plus className="h-4 w-4" /> Add image
             </button>
-            {content.image_url && (
-              <button
-                type="button"
-                onClick={() => update("image_url", "")}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-3.5 w-3.5" /> Remove
-              </button>
-            )}
+            <span className="text-xs text-muted-foreground">
+              {slides.length} {slides.length === 1 ? "slide" : "slides"} in slider
+            </span>
           </div>
-          <Field label="…or paste an image URL">
-            <input className={inputCls} value={content.image_url || ""} onChange={(e) => update("image_url", e.target.value)} placeholder="https://…" />
+
+          {slides.length > 0 && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {(content.images || (content.image_url ? [content.image_url] : [])).map((src, i) => (
+                <div key={i} className="group relative overflow-hidden rounded-lg border border-border">
+                  <img src={src} alt="" className="h-24 w-full object-cover" />
+                  <div className="absolute inset-0 flex items-end justify-between gap-1 bg-gradient-to-t from-black/70 to-transparent p-1.5 opacity-0 transition group-hover:opacity-100">
+                    <div className="flex gap-1">
+                      <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40">←</button>
+                      <button type="button" onClick={() => moveImage(i, 1)} disabled={i === (content.images?.length || 1) - 1} className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40">→</button>
+                    </div>
+                    <button type="button" onClick={() => {
+                      if (content.images) removeImage(i);
+                      else update("image_url", "");
+                    }} className="rounded bg-red-500/90 p-1 text-white">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                  <span className="absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                    {i + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <UrlAdder onAdd={addUrl} />
+
+          <Field label={`Slide interval (${((content.slide_interval || 2500) / 1000).toFixed(1)}s)`}>
+            <input
+              type="range"
+              min={1000}
+              max={8000}
+              step={250}
+              value={content.slide_interval || 2500}
+              onChange={(e) => update("slide_interval", Number(e.target.value))}
+              className="w-full"
+            />
           </Field>
-          <p className="text-xs text-muted-foreground">Recommended: 1600×900 or larger. Uploaded images are compressed automatically.</p>
+          <p className="text-xs text-muted-foreground">
+            Add 1+ images to build the background slider. Recommended size: 1600×900 or larger.
+          </p>
         </Panel>
 
         {/* Style */}
