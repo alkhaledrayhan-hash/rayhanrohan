@@ -155,23 +155,63 @@ export function HeroSearch() {
           />
         ))}
       </div>
-      <div
-        className="absolute inset-0 -z-10"
-        style={{ background: "var(--gradient-hero-overlay)" }}
-      />
+      {hero.image_url ? (
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background: `linear-gradient(135deg, ${withAlpha(heroStyle.overlay_from || "#000000", heroStyle.overlay_opacity ?? 55)} 0%, ${withAlpha(heroStyle.overlay_to || "#000000", heroStyle.overlay_opacity ?? 55)} 100%)`,
+          }}
+        />
+      ) : (
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ background: "var(--gradient-hero-overlay)" }}
+        />
+      )}
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24 lg:pt-40">
-        <div className="max-w-3xl text-white">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-gold backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-            Qatar's premium address book
-          </span>
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
-            Find a home worthy of <em className="text-gold not-italic">Qatar.</em>
+        <div className={`max-w-3xl text-white ${heroStyle.align === "center" ? "mx-auto text-center" : ""}`}>
+          {(hero.eyebrow ?? "Qatar's premium address book") && (
+            <span
+              className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] backdrop-blur"
+              style={heroStyle.eyebrow_color ? { color: heroStyle.eyebrow_color, borderColor: withAlpha(heroStyle.eyebrow_color, 60) } : undefined}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: heroStyle.eyebrow_color || undefined }} />
+              {hero.eyebrow ?? "Qatar's premium address book"}
+            </span>
+          )}
+          <h1
+            className={`mt-5 font-display font-semibold leading-[1.05] ${heroStyle.title_size === "md" ? "text-3xl sm:text-4xl" : heroStyle.title_size === "lg" ? "text-4xl sm:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl"}`}
+            style={heroStyle.title_color ? { color: heroStyle.title_color } : undefined}
+          >
+            {hero.title ?? <>Find a home worthy of <em className="text-gold not-italic">Qatar.</em></>}
           </h1>
-          <p className="mt-4 max-w-xl text-base text-white/80 sm:text-lg">
-            Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a
-            white-glove experience from first viewing to keys in hand.
+          <p
+            className="mt-4 max-w-xl text-base sm:text-lg"
+            style={{ color: heroStyle.subtitle_color || "rgba(255,255,255,0.8)" }}
+          >
+            {hero.subtitle ?? "Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a white-glove experience from first viewing to keys in hand."}
           </p>
+          {(hero.cta_label || hero.cta2_label) && (
+            <div className={`mt-6 flex flex-wrap gap-3 ${heroStyle.align === "center" ? "justify-center" : ""}`}>
+              {hero.cta_label && (
+                <Link
+                  to={hero.cta_link || "/properties"}
+                  className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-soft)] transition hover:opacity-90"
+                  style={{ background: heroStyle.cta_bg || "hsl(var(--primary))", color: heroStyle.cta_text || "#ffffff" }}
+                >
+                  {hero.cta_label}
+                </Link>
+              )}
+              {hero.cta2_label && (
+                <Link
+                  to={hero.cta2_link || "/"}
+                  className="inline-flex items-center justify-center rounded-xl border border-white/40 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10"
+                >
+                  {hero.cta2_label}
+                </Link>
+              )}
+            </div>
+          )}
         </div>
 
         <form
