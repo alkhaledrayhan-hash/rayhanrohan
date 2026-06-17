@@ -73,21 +73,12 @@ function ContactPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      {/* Hero */}
-      <section className="border-b border-border bg-secondary/40 pt-16">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-gold">
-            <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Contact
-          </span>
-          <h1 className="mt-4 font-display text-3xl font-semibold leading-tight sm:text-5xl">
-            Talk to a Doha property advisor.
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Viewings, valuations, off-market opportunities or listing your property —
-            our team replies within one business hour, seven days a week.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Contact"
+        title="Talk to a Doha property advisor."
+        description="Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week."
+        crumbs={[{ label: "Home", to: "/" }, { label: "Contact" }]}
+      />
 
       {/* Quick contact tiles */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
