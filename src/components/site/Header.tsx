@@ -138,6 +138,12 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
             label="For Sale"
             hint="Buy your next home"
           />
+          <DropdownItem
+            to="/agents"
+            icon={<Users className="h-4 w-4" />}
+            label="Our Agents"
+            hint="Browse properties by agent"
+          />
         </div>
       </div>
     </div>
