@@ -118,21 +118,26 @@ export function Footer() {
         </div>
 
         <div className="md:justify-self-end">
-          <h4 className="text-sm font-semibold text-white">Contact</h4>
-          <ul className="mt-3 space-y-2 text-sm text-white/70">
-            <li className="flex items-start gap-2">
-              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
-              West Bay, Doha — Qatar
-            </li>
-            <li className="flex items-start gap-2">
-              <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
-              +974 4000 0000
-            </li>
-            <li className="flex items-start gap-2">
-              <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
-              hello@maisonqatar.qa
-            </li>
-          </ul>
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+            <h4 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold">
+              <span className="h-px w-5 bg-gold/60" />
+              Contact
+            </h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/80">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                West Bay, Doha — Qatar
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                +974 4000 0000
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                hello@maisonqatar.qa
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
