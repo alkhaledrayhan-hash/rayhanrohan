@@ -119,13 +119,32 @@ export function HeroEditor({
   const overlayBg = `linear-gradient(135deg, ${withAlpha(st.overlay_from!, st.overlay_opacity!)} 0%, ${withAlpha(st.overlay_to!, st.overlay_opacity!)} 100%)`;
   const titleSize =
     st.title_size === "md" ? "text-3xl" : st.title_size === "lg" ? "text-4xl" : "text-5xl";
+  const slides = (content.images && content.images.length > 0)
+    ? content.images
+    : (content.image_url ? [content.image_url] : []);
+  const [previewSlide, setPreviewSlide] = useState(0);
+  useEffect(() => { setPreviewSlide(0); }, [slides.length]);
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const id = setInterval(() => setPreviewSlide((s) => (s + 1) % slides.length), content.slide_interval || 2500);
+    return () => clearInterval(id);
+  }, [slides.length, content.slide_interval]);
 
   return (
     <div className="space-y-5">
       {/* Live preview */}
       <div className="relative overflow-hidden rounded-2xl border border-border">
-        {content.image_url ? (
-          <img src={content.image_url} alt="" className="h-64 w-full object-cover" />
+        {slides.length > 0 ? (
+          <div className="relative h-64 w-full">
+            {slides.map((src, i) => (
+              <img
+                key={src + i}
+                src={src}
+                alt=""
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${previewSlide === i ? "opacity-100" : "opacity-0"}`}
+              />
+            ))}
+          </div>
         ) : (
           <div className="grid h-64 w-full place-items-center bg-muted text-xs text-muted-foreground">
             No image — using default hero
