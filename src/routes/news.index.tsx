@@ -8,7 +8,7 @@ import { ARTICLES, type Category } from "@/lib/articles";
 
 const FILTERS: Category[] = ["News", "Blog"];
 
-export const Route = createFileRoute("/news")({
+export const Route = createFileRoute("/news/")({
   head: () => ({
     meta: [
       { title: "News & Insights — MaisonQatar" },
