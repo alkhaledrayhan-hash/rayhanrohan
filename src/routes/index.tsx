@@ -43,6 +43,11 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featured = PROPERTIES.slice(0, 6);
+  const offers = [
+    { property: PROPERTIES[0], discount: 12, tag: "Move-in ready", ends: "Jul 31" },
+    { property: PROPERTIES[2], discount: 8, tag: "Sky residence", ends: "Aug 15" },
+    { property: PROPERTIES[1], discount: 10, tag: "Signature villa", ends: "Jul 20" },
+  ];
   return (
     <div className="min-h-screen bg-background">
       <Header />
