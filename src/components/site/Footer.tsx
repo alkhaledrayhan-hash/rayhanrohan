@@ -5,11 +5,11 @@ import qatarPlaneAsset from "@/assets/qatar-airways-plane.png.asset.json";
 export function Footer() {
   return (
     <footer
-      id="contact"
-      className="relative mt-24 overflow-hidden border-t border-white/10 text-white/85"
+      id="footer"
+      className="relative overflow-hidden text-white/85"
       style={{
         background:
-          "linear-gradient(180deg, oklch(0.22 0.05 25) 0%, oklch(0.16 0.04 25) 60%, oklch(0.12 0.03 25) 100%)",
+          "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
       }}
     >
       {/* Soft radial glow centerpiece */}
