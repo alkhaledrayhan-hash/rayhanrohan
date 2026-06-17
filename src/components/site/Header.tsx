@@ -49,6 +49,7 @@ export function Header() {
         >
           <NavPill to="/" scrolled={scrolled}>Home</NavPill>
           <PropertiesDropdown scrolled={scrolled} />
+          <NavPill to="/agents" scrolled={scrolled}>Agents</NavPill>
           <NavPill to="/news" scrolled={scrolled}>News</NavPill>
           <NavPill to="/about" scrolled={scrolled}>About</NavPill>
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
