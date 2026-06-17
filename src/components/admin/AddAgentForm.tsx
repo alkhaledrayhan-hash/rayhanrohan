@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ImageIcon, Save } from "lucide-react";
+import { ImageIcon, Save, Upload, X } from "lucide-react";
 import { createAgent } from "@/lib/agents.functions";
+import { fileToDataUrl } from "@/lib/image-upload";
+
 
 const empty = {
   full_name: "",
