@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Mail } from "lucide-react";
+import { ChevronDown, Loader2, Mail, Search } from "lucide-react";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { createEnquiry } from "@/lib/bookings.functions";
 import type { Property } from "@/lib/properties";
 
