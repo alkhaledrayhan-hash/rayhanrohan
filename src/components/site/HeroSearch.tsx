@@ -2,6 +2,9 @@ import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2, MapPin, RotateCcw, Search } from "lucide-react";
 import heroImg from "@/assets/hero-qatar.jpg?w=1600&quality=72&format=webp";
+import heroImg2 from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
+import heroImg3 from "@/assets/qatar-corniche.jpg?w=1600&quality=72&format=webp";
+import heroImg4 from "@/assets/qatar-westbay.jpg?w=1600&quality=72&format=webp";
 import { LOCATIONS } from "@/lib/properties";
 
 const TYPES = ["Apartment", "Villa", "Studio", "Penthouse", "Townhouse"] as const;
@@ -64,6 +67,16 @@ export function HeroSearch() {
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
 
+  const HERO_IMAGES = [heroImg, heroImg2, heroImg3, heroImg4];
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSlide((s) => (s + 1) % HERO_IMAGES.length);
+    }, 2000);
+    return () => clearInterval(id);
+  }, [HERO_IMAGES.length]);
+
   // Hydrate from URL after mount so SSR markup stays stable.
   useEffect(() => {
     setFilters(readFromUrl());
@@ -108,15 +121,22 @@ export function HeroSearch() {
 
   return (
     <section className="relative isolate overflow-hidden">
-      <img
-        src={heroImg}
-        alt="Qatar skyline at golden hour"
-        width={1920}
-        height={1080}
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
+      <div className="absolute inset-0 -z-10">
+        {HERO_IMAGES.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt="Qatar skyline"
+            width={1920}
+            height={1080}
+            fetchPriority={i === 0 ? "high" : "low"}
+            decoding="async"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+              slide === i ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+      </div>
       <div
         className="absolute inset-0 -z-10"
         style={{ background: "var(--gradient-hero-overlay)" }}
