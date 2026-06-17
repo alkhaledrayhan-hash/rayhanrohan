@@ -34,11 +34,13 @@ const signUpSchema = z.object({
     .regex(/^[a-zA-Z0-9_]+$/, "Letters, numbers and underscore only"),
   email: z.string().trim().email("Invalid email").max(255),
   password: z.string().min(6, "Password must be at least 6 characters").max(72),
+  role: z.enum(["user", "agent"]),
 });
 
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<"user" | "agent">("user");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -87,6 +89,7 @@ function AuthPage() {
       username: form.get("username"),
       email: form.get("email"),
       password: form.get("password"),
+      role,
     });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
@@ -101,13 +104,18 @@ function AuthPage() {
         data: {
           full_name: parsed.data.fullName,
           username: parsed.data.username,
+          role: parsed.data.role,
         },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created! You're signed in.");
-    navigate({ to: "/dashboard" });
+    toast.success(
+      parsed.data.role === "agent"
+        ? "Agent account created! You're signed in."
+        : "Account created! You're signed in.",
+    );
+    navigate({ to: parsed.data.role === "agent" ? "/admin" : "/dashboard" });
   }
 
   return (
@@ -156,6 +164,29 @@ function AuthPage() {
 
               <TabsContent value="signup" className="mt-6">
                 <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label>I want to sign up as</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {([
+                        { v: "user", label: "Customer", desc: "Browse & book properties" },
+                        { v: "agent", label: "Agent", desc: "List properties (approval required)" },
+                      ] as const).map((opt) => (
+                        <button
+                          key={opt.v}
+                          type="button"
+                          onClick={() => setRole(opt.v)}
+                          className={`rounded-lg border p-3 text-left text-xs transition ${
+                            role === opt.v
+                              ? "border-primary bg-primary/5 ring-2 ring-primary/30"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <div className="text-sm font-semibold">{opt.label}</div>
+                          <div className="mt-0.5 text-[11px] text-muted-foreground">{opt.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <Field label="Full Name" name="fullName" placeholder="Jane Doe" />
                   <Field label="Username" name="username" placeholder="janedoe" />
                   <Field label="Email" name="email" type="email" placeholder="you@example.com" />
@@ -167,7 +198,7 @@ function AuthPage() {
                   />
                   <Button type="submit" disabled={loading} className="w-full">
                     {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Create Account
+                    Create {role === "agent" ? "Agent" : "Customer"} Account
                   </Button>
                 </form>
               </TabsContent>
