@@ -89,16 +89,20 @@ export function LogoMarquee() {
           style={{ background: "linear-gradient(to left, oklch(0.28 0.11 22), transparent)" }}
         />
 
-        <div className="logo-marquee flex w-max items-center gap-20 px-8">
+        <div className="logo-marquee flex w-max items-center gap-10 px-8">
           {row.map((logo, i) => (
-            <img
+            <div
               key={i}
-              src={logo.src}
-              alt={logo.alt}
-              loading="lazy"
-              decoding="async"
-              className="h-16 w-auto shrink-0 object-contain opacity-70 brightness-0 invert transition duration-300 hover:opacity-100 md:h-20"
-            />
+              className="flex h-24 w-52 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/95 px-6 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_40px_rgba(0,0,0,0.35)]"
+            >
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-contain"
+              />
+            </div>
           ))}
         </div>
       </div>
