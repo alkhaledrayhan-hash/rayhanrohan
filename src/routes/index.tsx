@@ -7,6 +7,7 @@ import { PropertyGrid } from "@/components/site/PropertyGrid";
 import { HomeContact } from "@/components/site/HomeContact";
 import { OffersSection } from "@/components/site/OffersSection";
 import { LogoMarquee } from "@/components/site/LogoMarquee";
+import { NewsTicker } from "@/components/site/NewsTicker";
 import { PROPERTIES, LOCATIONS } from "@/lib/properties";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
