@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Building2, UserCircle2 } from "lucide-react";
+import { Building2, ChevronRight, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { listPublicAgents } from "@/lib/public-agents.functions";
