@@ -1,4 +1,4 @@
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2, MapPin, RotateCcw, Search } from "lucide-react";
 import heroImg from "@/assets/hero-qatar.jpg?w=1600&quality=72&format=webp";
@@ -6,6 +6,17 @@ import heroImg2 from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
 import heroImg3 from "@/assets/qatar-corniche.jpg?w=1600&quality=72&format=webp";
 import heroImg4 from "@/assets/qatar-westbay.jpg?w=1600&quality=72&format=webp";
 import { LOCATIONS } from "@/lib/properties";
+import { usePageSections } from "@/lib/page-sections";
+
+function withAlpha(hex: string, opacityPct: number) {
+  const a = Math.max(0, Math.min(100, opacityPct)) / 100;
+  const h = (hex || "#000000").replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const r = parseInt(full.slice(0, 2), 16) || 0;
+  const g = parseInt(full.slice(2, 4), 16) || 0;
+  const b = parseInt(full.slice(4, 6), 16) || 0;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 
 const TYPES = ["Apartment", "Villa", "Studio", "Penthouse", "Townhouse"] as const;
 const PRICE_RANGES = [
@@ -61,16 +72,23 @@ function readFromUrl(): FilterState {
   };
 }
 
+
 export function HeroSearch() {
   const navigate = useNavigate();
   const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
 
-  const HERO_IMAGES = [heroImg, heroImg2, heroImg3, heroImg4];
+  const { data: sections = {} } = usePageSections("home");
+  const hero = (sections.hero || {}) as any;
+  const heroStyle = hero.style || {};
+  const customImage: string | undefined = hero.image_url || undefined;
+
+  const HERO_IMAGES = customImage ? [customImage] : [heroImg, heroImg2, heroImg3, heroImg4];
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
+    if (HERO_IMAGES.length <= 1) return;
     const id = setInterval(() => {
       setSlide((s) => (s + 1) % HERO_IMAGES.length);
     }, 2000);
@@ -137,23 +155,63 @@ export function HeroSearch() {
           />
         ))}
       </div>
-      <div
-        className="absolute inset-0 -z-10"
-        style={{ background: "var(--gradient-hero-overlay)" }}
-      />
+      {hero.image_url ? (
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background: `linear-gradient(135deg, ${withAlpha(heroStyle.overlay_from || "#000000", heroStyle.overlay_opacity ?? 55)} 0%, ${withAlpha(heroStyle.overlay_to || "#000000", heroStyle.overlay_opacity ?? 55)} 100%)`,
+          }}
+        />
+      ) : (
+        <div
+          className="absolute inset-0 -z-10"
+          style={{ background: "var(--gradient-hero-overlay)" }}
+        />
+      )}
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24 lg:pt-40">
-        <div className="max-w-3xl text-white">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-gold backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-            Qatar's premium address book
-          </span>
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
-            Find a home worthy of <em className="text-gold not-italic">Qatar.</em>
+        <div className={`max-w-3xl text-white ${heroStyle.align === "center" ? "mx-auto text-center" : ""}`}>
+          {(hero.eyebrow ?? "Qatar's premium address book") && (
+            <span
+              className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] backdrop-blur"
+              style={heroStyle.eyebrow_color ? { color: heroStyle.eyebrow_color, borderColor: withAlpha(heroStyle.eyebrow_color, 60) } : undefined}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: heroStyle.eyebrow_color || undefined }} />
+              {hero.eyebrow ?? "Qatar's premium address book"}
+            </span>
+          )}
+          <h1
+            className={`mt-5 font-display font-semibold leading-[1.05] ${heroStyle.title_size === "md" ? "text-3xl sm:text-4xl" : heroStyle.title_size === "lg" ? "text-4xl sm:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl"}`}
+            style={heroStyle.title_color ? { color: heroStyle.title_color } : undefined}
+          >
+            {hero.title ?? <>Find a home worthy of <em className="text-gold not-italic">Qatar.</em></>}
           </h1>
-          <p className="mt-4 max-w-xl text-base text-white/80 sm:text-lg">
-            Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a
-            white-glove experience from first viewing to keys in hand.
+          <p
+            className="mt-4 max-w-xl text-base sm:text-lg"
+            style={{ color: heroStyle.subtitle_color || "rgba(255,255,255,0.8)" }}
+          >
+            {hero.subtitle ?? "Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a white-glove experience from first viewing to keys in hand."}
           </p>
+          {(hero.cta_label || hero.cta2_label) && (
+            <div className={`mt-6 flex flex-wrap gap-3 ${heroStyle.align === "center" ? "justify-center" : ""}`}>
+              {hero.cta_label && (
+                <Link
+                  to={hero.cta_link || "/properties"}
+                  className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium shadow-[var(--shadow-soft)] transition hover:opacity-90"
+                  style={{ background: heroStyle.cta_bg || "hsl(var(--primary))", color: heroStyle.cta_text || "#ffffff" }}
+                >
+                  {hero.cta_label}
+                </Link>
+              )}
+              {hero.cta2_label && (
+                <Link
+                  to={hero.cta2_link || "/"}
+                  className="inline-flex items-center justify-center rounded-xl border border-white/40 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10"
+                >
+                  {hero.cta2_label}
+                </Link>
+              )}
+            </div>
+          )}
         </div>
 
         <form
