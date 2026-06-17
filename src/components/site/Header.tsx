@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, Tag } from "lucide-react";
+import { ChevronDown, Home, KeyRound, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -49,7 +49,7 @@ export function Header() {
         >
           <NavPill to="/" scrolled={scrolled}>Home</NavPill>
           <PropertiesDropdown scrolled={scrolled} />
-          <NavPill to="/agents" scrolled={scrolled}>Agents</NavPill>
+          
           <NavPill to="/news" scrolled={scrolled}>News</NavPill>
           <NavPill to="/about" scrolled={scrolled}>About</NavPill>
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
@@ -137,6 +137,12 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
             icon={<Tag className="h-4 w-4" />}
             label="For Sale"
             hint="Buy your next home"
+          />
+          <DropdownItem
+            to="/agents"
+            icon={<Users className="h-4 w-4" />}
+            label="Our Agents"
+            hint="Browse properties by agent"
           />
         </div>
       </div>
