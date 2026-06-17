@@ -221,7 +221,7 @@ export function HeroSearch() {
               )}
             </button>
           </div>
-          <p className="mt-3 px-1 text-[11px] text-muted-foreground">
+          <p className="mt-3 px-1 text-[11px] text-white/70">
             Filters sync to the URL — copy the link to share this exact search.
           </p>
         </form>
