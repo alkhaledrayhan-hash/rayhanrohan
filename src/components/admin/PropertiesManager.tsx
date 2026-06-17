@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, XCircle, Trash2, Pencil } from "lucide-react";
+import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus } from "lucide-react";
+import { fileToDataUrl } from "@/lib/image-upload";
 
 type PropertyRow = {
   id: string;
@@ -19,6 +20,7 @@ type PropertyRow = {
   sqft: number;
   year_built: number | null;
   image: string | null;
+  gallery: string[];
   description: string | null;
   features: string[];
   verified: boolean;
@@ -30,7 +32,7 @@ type PropertyRow = {
 const empty: Partial<PropertyRow> = {
   title: "", slug: "", location: "Doha", address: "", type: "Apartment",
   status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
-  image: "", description: "", features: [],
+  image: "", gallery: [], description: "", features: [],
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
@@ -45,7 +47,11 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as PropertyRow[];
+      return (data || []).map((r: any) => ({
+        ...r,
+        gallery: Array.isArray(r.gallery) ? r.gallery : [],
+        features: Array.isArray(r.features) ? r.features : [],
+      })) as PropertyRow[];
     },
   });
 
@@ -60,6 +66,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         rooms: Number(p.rooms) || 0, sqft: Number(p.sqft) || 0,
         image: p.image || null, description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
+        gallery: Array.isArray(p.gallery) ? p.gallery : [],
       };
       if (p.id) {
         const { error } = await supabase.from("properties").update(payload).eq("id", p.id);
@@ -178,7 +185,14 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Image URL" className="col-span-2"><input value={editing.image || ""} onChange={(e) => setEditing({ ...editing, image: e.target.value })} className={inputCls} /></Field>
+              <div className="col-span-2 space-y-2">
+                <span className="text-xs font-medium text-muted-foreground">Cover image</span>
+                <CoverUploader value={editing.image || ""} onChange={(v) => setEditing({ ...editing, image: v })} />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <span className="text-xs font-medium text-muted-foreground">Gallery images</span>
+                <GalleryUploader value={editing.gallery || []} onChange={(v) => setEditing({ ...editing, gallery: v })} />
+              </div>
               <Field label="Description" className="col-span-2"><textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className={inputCls} /></Field>
               <Field label="Features (comma separated)" className="col-span-2">
                 <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
@@ -205,5 +219,98 @@ function Field({ label, children, className = "" }: { label: string; children: R
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       {children}
     </label>
+  );
+}
+
+function CoverUploader({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const onFile = async (f: File | undefined) => {
+    if (!f) return;
+    setBusy(true);
+    try {
+      const url = await fileToDataUrl(f, { maxSize: 1280, quality: 0.8 });
+      onChange(url);
+    } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
+  };
+  return (
+    <div className="space-y-2">
+      <div
+        onClick={() => ref.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => { e.preventDefault(); onFile(e.dataTransfer.files?.[0]); }}
+        className="relative grid h-40 cursor-pointer place-items-center rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 overflow-hidden"
+      >
+        {value ? (
+          <>
+            <img src={value} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onChange(""); }}
+              className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+            ><X className="h-4 w-4" /></button>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-1 text-muted-foreground">
+            <Upload className="h-6 w-6" />
+            <span className="text-xs">{busy ? "Uploading…" : "Click or drop cover image"}</span>
+          </div>
+        )}
+        <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+      </div>
+      <input
+        type="url"
+        placeholder="…or paste image URL"
+        value={value.startsWith("data:") ? "" : value}
+        onChange={(e) => onChange(e.target.value)}
+        className={inputCls}
+      />
+    </div>
+  );
+}
+
+function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const onFiles = async (files: FileList | null) => {
+    if (!files || !files.length) return;
+    setBusy(true);
+    try {
+      const urls: string[] = [];
+      for (const f of Array.from(files)) {
+        urls.push(await fileToDataUrl(f, { maxSize: 1280, quality: 0.8 }));
+      }
+      onChange([...(value || []), ...urls]);
+    } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
+  };
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-4 gap-2">
+        {(value || []).map((src, i) => (
+          <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-border">
+            <img src={src} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange(value.filter((_, idx) => idx !== i))}
+              className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white opacity-0 group-hover:opacity-100"
+            ><X className="h-3 w-3" /></button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => ref.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => { e.preventDefault(); onFiles(e.dataTransfer.files); }}
+          className="grid aspect-square place-items-center rounded-lg border-2 border-dashed border-border bg-muted/30 text-muted-foreground hover:bg-muted/50"
+        >
+          <div className="flex flex-col items-center gap-1">
+            <ImagePlus className="h-5 w-5" />
+            <span className="text-[10px]">{busy ? "…" : "Add"}</span>
+          </div>
+        </button>
+      </div>
+      <input ref={ref} type="file" accept="image/*" multiple className="hidden" onChange={(e) => onFiles(e.target.files)} />
+      <p className="text-[11px] text-muted-foreground">You can select multiple images. Stored inline (downscaled).</p>
+    </div>
   );
 }
