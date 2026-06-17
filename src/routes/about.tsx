@@ -227,8 +227,11 @@ function AboutPage() {
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Our values</h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {VALUES.map((v) => (
-                <div key={v.title} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                <div
+                  key={v.title}
+                  className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                >
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                     {v.icon}
                   </span>
                   <p className="mt-4 font-display text-xl font-semibold text-foreground">{v.title}</p>
