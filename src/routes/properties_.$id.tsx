@@ -6,7 +6,6 @@ import {
   Bed,
   BadgeCheck,
   Calendar,
-  ChevronRight,
   DoorOpen,
   MapPin,
   Maximize2,
