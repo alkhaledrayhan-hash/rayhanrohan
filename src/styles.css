@@ -138,16 +138,8 @@ img {
 
 /* Footer flying plane along Qatar flight path */
 @keyframes footer-plane-fly {
-  0% {
-    offset-distance: 0%;
-    opacity: 0;
-  }
-  8% { opacity: 1; }
-  92% { opacity: 1; }
-  100% {
-    offset-distance: 100%;
-    opacity: 0;
-  }
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
 }
 
 @keyframes footer-trail-draw {
@@ -156,13 +148,16 @@ img {
 }
 
 .footer-plane {
-  offset-path: path("M60,250 Q200,140 360,170 T740,80");
+  /* Path extends beyond the viewBox so the plane fully exits the screen
+     at the top-right and re-enters from below on the next loop. */
+  offset-path: path("M-120,380 Q200,140 360,170 T940,-60");
   offset-rotate: auto;
-  animation: footer-plane-fly 9s ease-in-out infinite;
+  animation: footer-plane-fly 9s linear infinite;
 }
 
 .footer-plane-trail {
   stroke-dashoffset: 1080;
   animation: footer-trail-draw 9s ease-in-out infinite;
 }
+
 
