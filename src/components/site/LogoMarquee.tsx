@@ -24,7 +24,7 @@ export function LogoMarquee() {
         className="absolute inset-0 -z-10"
         style={{
           background:
-            "linear-gradient(135deg, oklch(0.32 0.13 22) 0%, oklch(0.40 0.16 22) 50%, oklch(0.28 0.11 22) 100%)",
+            "linear-gradient(135deg, #5C0F1A 0%, #7A1424 50%, #4A0B14 100%)",
         }}
       />
       {/* Gold radial glow */}
