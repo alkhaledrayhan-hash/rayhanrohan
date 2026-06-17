@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PropertiesManager } from "@/components/admin/PropertiesManager";
 import { PagesManager } from "@/components/admin/PagesManager";
+import { AddAgentForm } from "@/components/admin/AddAgentForm";
 import {
   Bell,
   Building2,
@@ -84,7 +85,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "leads" | "bookings" | "messages" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "calendar" | "settings"
   >("overview");
 
   const isAdmin = roleData?.roles.includes("admin");
@@ -145,6 +146,7 @@ function AdminDashboard() {
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
           {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
           {isAdmin && <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => setSection("agents")} />}
+          {isAdmin && <NavItem icon={Users} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -211,6 +213,7 @@ function AdminDashboard() {
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
           {section === "pages" && isAdmin && <PagesManager />}
           {section === "agents" && isAdmin && <AgentsPanel />}
+          {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "leads" && <LeadsPanel />}
           {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
           {section === "messages" && <PlaceholderCard icon={MessageSquare} title="Messages" desc="Direct conversations with clients." />}
