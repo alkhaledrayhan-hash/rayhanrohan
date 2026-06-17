@@ -98,7 +98,7 @@ function PropertyDetail() {
       <main className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
 
         {/* Gallery */}
-        <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr]">
+        <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
           <div className="relative overflow-hidden rounded-2xl border border-border">
             <img
               src={activeImg}
@@ -117,27 +117,30 @@ function PropertyDetail() {
               <Share2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-3 md:grid-cols-1">
-            {property.gallery.slice(1, 4).map((g: string, i: number) => (
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:flex md:h-full md:flex-col md:gap-2">
+            {property.gallery.map((g: string, i: number) => (
               <button
                 key={`${g}-${i}`}
                 onClick={() => setActiveImg(g)}
-                className={`relative overflow-hidden rounded-2xl border transition ${
-                  activeImg === g ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40"
+                className={`relative overflow-hidden rounded-lg border transition md:min-h-0 md:flex-1 ${
+                  activeImg === g
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-border hover:border-primary/40"
                 }`}
               >
                 <img
                   src={g}
-                  alt={`${property.title} ${i + 2}`}
+                  alt={`${property.title} ${i + 1}`}
                   loading="lazy"
                   width={640}
                   height={480}
-                  className="aspect-[4/3] w-full object-cover md:aspect-[4/3]"
+                  className="aspect-square w-full object-cover md:aspect-auto md:h-full"
                 />
               </button>
             ))}
           </div>
         </div>
+
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
           <div>
