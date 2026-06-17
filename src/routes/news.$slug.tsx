@@ -4,7 +4,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ARTICLES, getArticle, type Article, type Category } from "@/lib/articles";
 
-export const Route = createFileRoute("/news_/$slug")({
+export const Route = createFileRoute("/news/$slug")({
   loader: ({ params }) => {
     const article = getArticle(params.slug);
     if (!article) throw notFound();
