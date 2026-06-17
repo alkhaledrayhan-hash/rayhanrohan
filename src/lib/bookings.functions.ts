@@ -41,3 +41,19 @@ export const createEnquiry = createServerFn({ method: "POST" })
     console.log("[enquiry]", id, JSON.stringify(data));
     return { ok: true, id };
   });
+
+const ContactSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  email: z.string().trim().email().max(200),
+  phone: z.string().trim().min(6).max(30).optional().or(z.literal("")),
+  subject: z.string().trim().min(2).max(120),
+  message: z.string().trim().min(5).max(2000),
+});
+
+export const createContact = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => ContactSchema.parse(data))
+  .handler(async ({ data }) => {
+    const id = `ct_${Date.now().toString(36)}`;
+    console.log("[contact]", id, JSON.stringify(data));
+    return { ok: true, id };
+  });
