@@ -21,6 +21,8 @@ import { PropertiesManager } from "@/components/admin/PropertiesManager";
 import { PagesManager } from "@/components/admin/PagesManager";
 import { AddAgentForm } from "@/components/admin/AddAgentForm";
 import { AgentsPanel } from "@/components/admin/AgentsPanel";
+import { LeadsPanel } from "@/components/admin/LeadsPanel";
+import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import {
   Bell,
   Building2,
@@ -237,11 +239,11 @@ function AdminDashboard() {
           {section === "pages" && isAdmin && <PagesManager />}
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
-          {section === "leads" && <LeadsPanel />}
+          {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
           {section === "messages" && <PlaceholderCard icon={MessageSquare} title="Messages" desc="Direct conversations with clients." />}
           {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
-          {section === "settings" && <PlaceholderCard icon={Settings} title="Settings" desc="Workspace, team, and notification preferences." />}
+          {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
         </main>
       </div>
     </div>
