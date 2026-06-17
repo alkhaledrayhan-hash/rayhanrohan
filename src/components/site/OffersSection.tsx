@@ -20,7 +20,7 @@ interface Offer {
 
 export function OffersSection({ offers }: { offers: Offer[] }) {
   const autoplay = useRef(
-    Autoplay({ delay: 4500, stopOnInteraction: false, stopOnMouseEnter: true }),
+    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
 
   return (
@@ -70,7 +70,7 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
         </div>
 
         <Carousel
-          opts={{ align: "start", loop: true }}
+          opts={{ align: "start", loop: true, duration: 40 }}
           plugins={[autoplay.current]}
           className="mt-12"
         >
