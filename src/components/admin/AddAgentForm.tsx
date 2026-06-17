@@ -44,24 +44,11 @@ export function AddAgentForm() {
       className="grid gap-5 lg:grid-cols-[340px_1fr]"
     >
       {/* Avatar card */}
-      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
-        <h3 className="font-display text-base font-semibold">Upload Agent Photo</h3>
-        <div className="mt-4 grid h-56 place-items-center rounded-xl border-2 border-dashed border-border bg-muted/40">
-          {form.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.avatar_url} alt="" className="h-full w-full rounded-xl object-cover" />
-          ) : (
-            <ImageIcon className="h-14 w-14 text-muted-foreground/40" />
-          )}
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">Paste an image URL below. PNG, JPG recommended.</p>
-        <input
-          value={form.avatar_url}
-          onChange={set("avatar_url")}
-          placeholder="https://…"
-          className={inputCls + " mt-3"}
-        />
-      </div>
+      <AvatarUploader
+        value={form.avatar_url}
+        onChange={(v) => setForm((f) => ({ ...f, avatar_url: v }))}
+      />
+
 
       {/* Fields card */}
       <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
