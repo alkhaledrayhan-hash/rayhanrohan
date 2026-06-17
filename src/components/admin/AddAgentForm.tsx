@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ImageIcon, Save } from "lucide-react";
+import { ImageIcon, Save, Upload, X } from "lucide-react";
 import { createAgent } from "@/lib/agents.functions";
+import { fileToDataUrl } from "@/lib/image-upload";
+
 
 const empty = {
   full_name: "",
@@ -42,24 +44,11 @@ export function AddAgentForm() {
       className="grid gap-5 lg:grid-cols-[340px_1fr]"
     >
       {/* Avatar card */}
-      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
-        <h3 className="font-display text-base font-semibold">Upload Agent Photo</h3>
-        <div className="mt-4 grid h-56 place-items-center rounded-xl border-2 border-dashed border-border bg-muted/40">
-          {form.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.avatar_url} alt="" className="h-full w-full rounded-xl object-cover" />
-          ) : (
-            <ImageIcon className="h-14 w-14 text-muted-foreground/40" />
-          )}
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">Paste an image URL below. PNG, JPG recommended.</p>
-        <input
-          value={form.avatar_url}
-          onChange={set("avatar_url")}
-          placeholder="https://…"
-          className={inputCls + " mt-3"}
-        />
-      </div>
+      <AvatarUploader
+        value={form.avatar_url}
+        onChange={(v) => setForm((f) => ({ ...f, avatar_url: v }))}
+      />
+
 
       {/* Fields card */}
       <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
@@ -118,3 +107,93 @@ function Field({ label, children, className = "", hideLabel = false }: { label: 
     </label>
   );
 }
+
+
+export function AvatarUploader({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [urlMode, setUrlMode] = useState(false);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      setBusy(true);
+      const url = await fileToDataUrl(file, { maxSize: 512, quality: 0.82 });
+      onChange(url);
+    } catch (err: any) {
+      toast.error(err?.message || "Could not read image");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+      <h3 className="font-display text-base font-semibold">Agent Photo</h3>
+
+      <div className="relative mt-4 grid h-56 place-items-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/40">
+        {value ? (
+          <>
+            <img src={value} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white hover:bg-black"
+              aria-label="Remove photo"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="flex flex-col items-center gap-2 px-4 py-6 text-center text-muted-foreground hover:text-foreground"
+          >
+            <ImageIcon className="h-12 w-12 opacity-40" />
+            <span className="text-sm">Click to upload from your device</span>
+            <span className="text-[11px]">PNG, JPG up to 8 MB</span>
+          </button>
+        )}
+      </div>
+
+      <input ref={inputRef} type="file" accept="image/*" hidden onChange={onPick} />
+
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={busy}
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+        >
+          <Upload className="h-4 w-4" /> {busy ? "Processing…" : value ? "Replace" : "Upload"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setUrlMode((v) => !v)}
+          className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+        >
+          URL
+        </button>
+      </div>
+
+      {urlMode && (
+        <input
+          value={value.startsWith("data:") ? "" : value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://…"
+          className="mt-3 w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+      )}
+    </div>
+  );
+}
+
