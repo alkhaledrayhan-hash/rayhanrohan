@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Mail, MapPin, Phone } from "lucide-react";
+import { Home, Mail, MapPin, Phone, Plane } from "lucide-react";
+import qatarPlaneAsset from "@/assets/qatar-airways-plane.png.asset.json";
 
 export function Footer() {
   return (
@@ -11,40 +12,38 @@ export function Footer() {
           "linear-gradient(180deg, oklch(0.22 0.05 25) 0%, oklch(0.16 0.04 25) 60%, oklch(0.12 0.03 25) 100%)",
       }}
     >
-      {/* Qatar map silhouette + flying plane backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.45]">
+      {/* Soft radial glow centerpiece */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(60% 80% at 50% 40%, oklch(0.55 0.16 22 / 0.35) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Flight path + Qatar Airways plane backdrop */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
         <svg
           viewBox="0 0 800 300"
           preserveAspectRatio="xMidYMid slice"
           className="h-full w-full"
         >
           <defs>
-            <linearGradient id="qatar-grad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="oklch(0.62 0.18 22)" />
-              <stop offset="100%" stopColor="oklch(0.38 0.13 18)" />
-            </linearGradient>
             <linearGradient id="trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
               <stop offset="100%" stopColor="oklch(0.85 0.14 85)" stopOpacity="1" />
             </linearGradient>
           </defs>
 
-          {/* Stylised Qatar peninsula */}
-          <path
-            d="M420,40 C460,42 488,60 502,92 C516,124 520,158 516,184 C512,212 498,236 478,250 C458,264 432,272 408,268 C384,264 366,252 358,232 C350,212 348,190 354,168 C360,146 372,124 384,104 C394,86 400,68 404,52 C406,44 412,40 420,40 Z"
-            fill="url(#qatar-grad)"
-            opacity="0.85"
-          />
-
           {/* Dotted flight path */}
           <path
-            id="flight-path"
             d="M60,250 Q200,140 360,170 T740,80"
             fill="none"
             stroke="oklch(0.85 0.14 85)"
             strokeWidth="1.5"
             strokeDasharray="3 6"
-            opacity="0.8"
+            opacity="0.7"
           />
 
           {/* Plane trail */}
@@ -58,15 +57,46 @@ export function Footer() {
             className="footer-plane-trail"
           />
 
-          {/* Plane icon following the same path */}
-          <g className="footer-plane">
-            <path
-              d="M-12,-2 L8,-2 L14,-7 L18,-7 L13,-1 L18,4 L14,4 L8,2 L-12,2 Z"
-              fill="oklch(0.95 0.04 85)"
-            />
+          {/* Origin & destination dots */}
+          <g>
+            <circle cx="60" cy="250" r="4" fill="oklch(0.85 0.14 85)" />
+            <circle cx="60" cy="250" r="9" fill="none" stroke="oklch(0.85 0.14 85)" strokeWidth="1" opacity="0.5" />
+            <circle cx="740" cy="80" r="4" fill="oklch(0.85 0.14 85)" />
+            <circle cx="740" cy="80" r="9" fill="none" stroke="oklch(0.85 0.14 85)" strokeWidth="1" opacity="0.5" />
           </g>
+
+          {/* Qatar Airways plane image following the path */}
+          <image
+            href={qatarPlaneAsset.url}
+            width="120"
+            height="60"
+            x="-60"
+            y="-30"
+            className="footer-plane"
+            style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.45))" }}
+          />
         </svg>
       </div>
+
+      {/* Centerpiece overlay card */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] hidden -translate-x-1/2 -translate-y-1/2 md:block">
+        <div className="rounded-2xl border border-white/15 bg-white/[0.04] px-7 py-5 text-center backdrop-blur-xl">
+          <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gold">
+            <span className="h-px w-6 bg-gold/60" />
+            <Plane className="h-3 w-3" />
+            <span>Doha → World</span>
+            <span className="h-px w-6 bg-gold/60" />
+          </div>
+          <p className="mt-2 font-display text-xl font-medium text-white">
+            From Qatar, with intent.
+          </p>
+          <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/50">
+            25.2854° N · 51.5310° E
+          </p>
+        </div>
+      </div>
+
+
 
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="md:col-span-2">
