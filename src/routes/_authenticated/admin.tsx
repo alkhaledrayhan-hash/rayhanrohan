@@ -735,13 +735,6 @@ function PropertiesTable() {
 
 /* ---------- Leads ---------- */
 
-function LeadsPanel() {
-  return (
-    <div className="rounded-2xl border border-border bg-white shadow-sm">
-      <RecentLeads />
-    </div>
-  );
-}
 
 function PlaceholderCard({
   icon: Icon,
