@@ -17,7 +17,7 @@ const LOGOS = [
 export function LogoMarquee() {
   const row = [...LOGOS, ...LOGOS];
   return (
-    <section className="relative overflow-hidden py-20">
+    <section className="relative isolate overflow-hidden py-20">
       {/* Layered gradient backdrop */}
       <div
         aria-hidden
