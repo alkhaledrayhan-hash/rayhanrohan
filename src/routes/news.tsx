@@ -125,7 +125,7 @@ const ARTICLES: Article[] = [
   },
 ];
 
-const FILTERS: Array<"All" | Category> = ["All", "News", "Blog"];
+const FILTERS: Category[] = ["News", "Blog"];
 
 export const Route = createFileRoute("/news")({
   head: () => ({
