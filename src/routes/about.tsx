@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Award,
   Building2,
@@ -38,12 +39,52 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
-const STATS = [
-  { label: "Years in Qatar", value: "12+" },
-  { label: "Properties closed", value: "1,400+" },
-  { label: "Client retention", value: "94%" },
-  { label: "Premier areas covered", value: "5" },
+const STATS: Array<{ label: string; value: number; suffix?: string; prefix?: string }> = [
+  { label: "Years in Qatar", value: 12, suffix: "+" },
+  { label: "Properties closed", value: 1400, suffix: "+" },
+  { label: "Client retention", value: 94, suffix: "%" },
+  { label: "Premier areas covered", value: 5 },
 ];
+
+function CountUp({ end, duration = 2000, prefix = "", suffix = "" }: { end: number; duration?: number; prefix?: string; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !started.current) {
+            started.current = true;
+            const startTime = performance.now();
+            const tick = (now: number) => {
+              const progress = Math.min((now - startTime) / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              setCount(Math.floor(eased * end));
+              if (progress < 1) requestAnimationFrame(tick);
+              else setCount(end);
+            };
+            requestAnimationFrame(tick);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [end, duration]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
 
 const VALUES = [
   {
@@ -126,7 +167,9 @@ function AboutPage() {
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 sm:grid-cols-4 sm:px-6 lg:px-8">
             {STATS.map((s) => (
               <div key={s.label} className="text-center">
-                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">{s.value}</p>
+                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                  <CountUp end={s.value} prefix={s.prefix} suffix={s.suffix} />
+                </p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{s.label}</p>
               </div>
             ))}
