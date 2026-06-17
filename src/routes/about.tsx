@@ -227,8 +227,11 @@ function AboutPage() {
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Our values</h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {VALUES.map((v) => (
-                <div key={v.title} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                <div
+                  key={v.title}
+                  className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                >
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                     {v.icon}
                   </span>
                   <p className="mt-4 font-display text-xl font-semibold text-foreground">{v.title}</p>
@@ -240,27 +243,33 @@ function AboutPage() {
         </section>
 
         {/* Team */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">The people</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Meet the team</h2>
-            </div>
-            <p className="max-w-md text-sm text-muted-foreground">
-              A small, senior team of bilingual advisors — each a specialist in their corner of Qatar.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {TEAM.map((m) => (
-              <div key={m.name} className="rounded-2xl border border-border bg-card p-6 text-center shadow-[var(--shadow-card)]">
-                <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10">
-                  <Users2 className="h-7 w-7 text-primary" />
-                </div>
-                <p className="mt-4 font-display text-lg font-semibold text-foreground">{m.name}</p>
-                <p className="text-xs uppercase tracking-[0.18em] text-gold">{m.role}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{m.bio}</p>
+        <section className="relative overflow-hidden bg-[#5a1a2b] py-20 text-white">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.12),transparent_50%),radial-gradient(circle_at_85%_90%,rgba(212,175,55,0.18),transparent_55%)]" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">The people</p>
+                <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Meet the team</h2>
               </div>
-            ))}
+              <p className="max-w-md text-sm text-white/70">
+                A small, senior team of bilingual advisors — each a specialist in their corner of Qatar.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {TEAM.map((m) => (
+                <div
+                  key={m.name}
+                  className="group rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:bg-white/15 hover:shadow-2xl"
+                >
+                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/25 transition-all duration-300 group-hover:scale-110 group-hover:bg-gold/30 group-hover:ring-gold/60">
+                    <Users2 className="h-7 w-7 text-white" />
+                  </div>
+                  <p className="mt-4 font-display text-lg font-semibold text-white">{m.name}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-gold">{m.role}</p>
+                  <p className="mt-3 text-sm text-white/75">{m.bio}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
