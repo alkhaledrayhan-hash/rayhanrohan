@@ -1,9 +1,10 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { ChevronRight, RotateCcw, Search as SearchIcon } from "lucide-react";
+import { RotateCcw, Search as SearchIcon } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageHero } from "@/components/site/PageHero";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
 import { filterProperties, LOCATIONS, PROPERTIES, type SortKey } from "@/lib/properties";
 
@@ -67,20 +68,16 @@ function PropertiesPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-foreground">Property Listing</span>
-        </nav>
-
-        <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+      <PageHero
+        eyebrow={status === "rent" ? "Rentals across Qatar" : "Homes for sale"}
+        title={`Properties for ${status === "rent" ? "Rent" : "Sale"}`}
+        description="Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab."
+        crumbs={[{ label: "Home", to: "/" }, { label: `For ${status === "rent" ? "Rent" : "Sale"}` }]}
+      />
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-semibold sm:text-4xl">
-              Properties for {status === "rent" ? "Rent" : "Sale"}
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Showing <span className="text-foreground font-medium">{items.length}</span> result{items.length === 1 ? "" : "s"} in Qatar.
             </p>
           </div>

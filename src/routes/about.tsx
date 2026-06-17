@@ -95,7 +95,7 @@ function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-16">
+      <main>
         {/* Hero */}
         <section className="relative isolate overflow-hidden">
           <img
@@ -106,7 +106,7 @@ function AboutPage() {
             className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
           <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero-overlay)" }} />
-          <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 pb-24 pt-40 sm:px-6 sm:pb-32 sm:pt-48 lg:px-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-gold backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
               About MaisonQatar
