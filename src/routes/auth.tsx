@@ -84,6 +84,7 @@ function AuthPage() {
     const form = new FormData(e.currentTarget);
     const parsed = signUpSchema.safeParse({
       fullName: form.get("fullName"),
+      username: form.get("username"),
       email: form.get("email"),
       password: form.get("password"),
     });
@@ -97,7 +98,10 @@ function AuthPage() {
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { full_name: parsed.data.fullName },
+        data: {
+          full_name: parsed.data.fullName,
+          username: parsed.data.username,
+        },
       },
     });
     setLoading(false);
