@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import heroImg from "@/assets/hero-qatar.jpg";
-import portraitImg from "@/assets/prop-7.jpg";
+import heroImg from "@/assets/hero-qatar.jpg?w=1600&quality=72&format=webp";
+import portraitImg from "@/assets/prop-7.jpg?w=900&quality=72&format=webp";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
