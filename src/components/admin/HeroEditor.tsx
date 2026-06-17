@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fileToDataUrl } from "@/lib/image-upload";
 import { toast } from "sonner";
-import { Image as ImageIcon, Palette, Type, Upload, X } from "lucide-react";
+import { Image as ImageIcon, Palette, Plus, Type, Upload, X } from "lucide-react";
 
 export type HeroContent = {
   eyebrow?: string;
@@ -13,7 +13,9 @@ export type HeroContent = {
   cta_link?: string;
   cta2_label?: string;
   cta2_link?: string;
-  image_url?: string;
+  image_url?: string; // legacy single image (still respected)
+  images?: string[]; // slider images
+  slide_interval?: number; // ms between slides
   style?: {
     eyebrow_color?: string;
     title_color?: string;
