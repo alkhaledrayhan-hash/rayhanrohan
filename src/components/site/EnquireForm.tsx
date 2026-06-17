@@ -59,7 +59,21 @@ export function EnquireForm({ property }: { property: Property }) {
     `I'd like more information about ${property.title} in ${property.location}.`,
   );
   const [submitting, setSubmitting] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [countryQuery, setCountryQuery] = useState("");
   const submit = useServerFn(createEnquiry);
+
+  const selectedCountry = COUNTRY_CODES.find((c) => c.code === dialCode) ?? COUNTRY_CODES[0];
+  const filteredCountries = useMemo(() => {
+    const q = countryQuery.trim().toLowerCase();
+    if (!q) return COUNTRY_CODES;
+    return COUNTRY_CODES.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.code.includes(q) ||
+        c.iso.includes(q),
+    );
+  }, [countryQuery]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
