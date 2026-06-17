@@ -1,0 +1,317 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { ArrowRight, Calendar, Clock, Newspaper, PenLine, Tag } from "lucide-react";
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
+import { PageHero } from "@/components/site/PageHero";
+import img1 from "@/assets/prop-1.jpg?w=1200&quality=70&format=webp";
+import img2 from "@/assets/prop-2.jpg?w=1200&quality=70&format=webp";
+import img3 from "@/assets/prop-3.jpg?w=1200&quality=70&format=webp";
+import img4 from "@/assets/prop-4.jpg?w=1200&quality=70&format=webp";
+import img5 from "@/assets/prop-5.jpg?w=1200&quality=70&format=webp";
+import img6 from "@/assets/prop-6.jpg?w=1200&quality=70&format=webp";
+import img7 from "@/assets/prop-7.jpg?w=1200&quality=70&format=webp";
+
+type Category = "News" | "Blog";
+
+interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: Category;
+  tag: string;
+  image: string;
+  date: string;
+  readTime: string;
+  author: string;
+}
+
+const ARTICLES: Article[] = [
+  {
+    id: "lusail-skyline-2026",
+    title: "Lusail skyline reaches new heights as four towers near completion",
+    excerpt:
+      "Qatar's flagship master-planned city welcomes four new mixed-use towers, expanding premium inventory in West Lusail.",
+    category: "News",
+    tag: "Market",
+    image: img3,
+    date: "Jun 14, 2026",
+    readTime: "4 min read",
+    author: "MaisonQatar Newsroom",
+  },
+  {
+    id: "buying-guide-pearl",
+    title: "A buyer's guide to The Pearl: districts, freehold rules & value",
+    excerpt:
+      "From Porto Arabia to Qanat Quartier, here's how each district compares on lifestyle, yields and resale potential.",
+    category: "Blog",
+    tag: "Guide",
+    image: img1,
+    date: "Jun 10, 2026",
+    readTime: "7 min read",
+    author: "Yara Al-Mansoori",
+  },
+  {
+    id: "rental-yields-q2",
+    title: "Q2 2026 rental yields: West Bay edges past Lusail",
+    excerpt:
+      "Our quarterly index shows West Bay apartments delivering 6.4% gross yields, outpacing Lusail for the first time since 2024.",
+    category: "News",
+    tag: "Data",
+    image: img4,
+    date: "Jun 6, 2026",
+    readTime: "5 min read",
+    author: "Research Desk",
+  },
+  {
+    id: "interior-trends-2026",
+    title: "Five interior trends defining Doha's premium residences this year",
+    excerpt:
+      "Warm minimalism, travertine accents, and biophilic layouts are reshaping how Doha lives indoors.",
+    category: "Blog",
+    tag: "Design",
+    image: img5,
+    date: "May 30, 2026",
+    readTime: "6 min read",
+    author: "Studio MQ",
+  },
+  {
+    id: "freehold-expansion",
+    title: "Government expands freehold zones for foreign investors",
+    excerpt:
+      "Two new districts have been added to the list of areas where non-Qataris can purchase freehold residential property.",
+    category: "News",
+    tag: "Policy",
+    image: img2,
+    date: "May 22, 2026",
+    readTime: "3 min read",
+    author: "MaisonQatar Newsroom",
+  },
+  {
+    id: "first-time-buyer",
+    title: "First-time buyer in Doha? Here's what to budget beyond the price",
+    excerpt:
+      "Transfer fees, agency commissions, service charges and snagging — the real cost of ownership, unpacked.",
+    category: "Blog",
+    tag: "Advice",
+    image: img6,
+    date: "May 18, 2026",
+    readTime: "5 min read",
+    author: "Yara Al-Mansoori",
+  },
+  {
+    id: "katara-hills-launch",
+    title: "Katara Hills launches its second residential phase",
+    excerpt:
+      "Twelve hillside villas and a clubhouse arrive in Q4, with prices starting from QAR 9.5M.",
+    category: "News",
+    tag: "Launch",
+    image: img7,
+    date: "May 12, 2026",
+    readTime: "4 min read",
+    author: "MaisonQatar Newsroom",
+  },
+  {
+    id: "staging-for-sale",
+    title: "Staging your villa for sale: the small moves that lift offers 8%",
+    excerpt:
+      "Lighting, scent, and curated negative space — practical staging notes from our top-performing listings.",
+    category: "Blog",
+    tag: "Selling",
+    image: img2,
+    date: "May 4, 2026",
+    readTime: "6 min read",
+    author: "Studio MQ",
+  },
+];
+
+const FILTERS: Array<"All" | Category> = ["All", "News", "Blog"];
+
+export const Route = createFileRoute("/news")({
+  head: () => ({
+    meta: [
+      { title: "News & Insights — MaisonQatar" },
+      {
+        name: "description",
+        content:
+          "Qatar real estate market news, buyer guides, design trends and MaisonQatar updates — curated by our editorial desk.",
+      },
+      { property: "og:title", content: "News & Insights — MaisonQatar" },
+      {
+        property: "og:description",
+        content:
+          "Market updates, neighbourhood guides and design stories from Qatar's premium real estate scene.",
+      },
+    ],
+  }),
+  component: NewsPage,
+});
+
+function NewsPage() {
+  const [filter, setFilter] = useState<"All" | Category>("All");
+
+  const filtered = useMemo(
+    () => (filter === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === filter)),
+    [filter],
+  );
+
+  const featured = filtered[0];
+  const rest = filtered.slice(1);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        <PageHero
+          eyebrow="News & Insights"
+          title="Stories from Qatar's premium real estate"
+          description="Market reports, neighbourhood guides, design notes and announcements — written by our editorial desk."
+        />
+
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          {/* Filter tabs */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-[var(--shadow-soft)]">
+              {FILTERS.map((f) => {
+                const active = filter === f;
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFilter(f)}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {f === "News" && <Newspaper className="h-3.5 w-3.5" />}
+                    {f === "Blog" && <PenLine className="h-3.5 w-3.5" />}
+                    {f}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+              {filtered.length} {filtered.length === 1 ? "article" : "articles"}
+            </p>
+          </div>
+
+          {/* Featured article */}
+          {featured && (
+            <Link
+              to="/news"
+              className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] md:grid-cols-2"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
+                <img
+                  src={featured.image}
+                  alt={featured.title}
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
+                <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
+                  Featured
+                </span>
+              </div>
+              <div className="flex flex-col justify-center gap-5 p-8 md:p-10">
+                <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-gold">
+                  <CategoryBadge category={featured.category} />
+                  <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                    <Tag className="h-3 w-3" /> {featured.tag}
+                  </span>
+                </div>
+                <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
+                  {featured.title}
+                </h2>
+                <p className="text-sm text-muted-foreground sm:text-base">{featured.excerpt}</p>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-primary" /> {featured.date}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-primary" /> {featured.readTime}
+                  </span>
+                  <span>by {featured.author}</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition group-hover:translate-x-0.5">
+                  Read story <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
+          )}
+
+          {/* Grid */}
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {rest.map((a) => (
+              <Link
+                key={a.id}
+                to="/news"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={a.image}
+                    alt={a.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute left-3 top-3">
+                    <CategoryBadge category={a.category} />
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-5">
+                  <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5 text-gold">
+                      <Tag className="h-3 w-3" /> {a.tag}
+                    </span>
+                    <span>·</span>
+                    <span>{a.date}</span>
+                  </div>
+                  <h3 className="font-display text-lg font-semibold text-foreground transition group-hover:text-primary">
+                    {a.title}
+                  </h3>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">{a.excerpt}</p>
+                  <div className="mt-auto flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-primary" /> {a.readTime}
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-medium text-primary transition group-hover:translate-x-0.5">
+                      Read <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="mt-12 rounded-2xl border border-dashed border-border bg-secondary/40 p-12 text-center">
+              <p className="font-display text-xl text-foreground">No articles yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try switching the filter — more stories are on the way.
+              </p>
+            </div>
+          )}
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function CategoryBadge({ category }: { category: Category }) {
+  const isNews = category === "News";
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${
+        isNews
+          ? "bg-primary/90 text-primary-foreground"
+          : "bg-gold/90 text-[oklch(0.25_0.08_60)]"
+      }`}
+    >
+      {isNews ? <Newspaper className="h-3 w-3" /> : <PenLine className="h-3 w-3" />}
+      {category}
+    </span>
+  );
+}

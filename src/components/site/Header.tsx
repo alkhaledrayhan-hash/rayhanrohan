@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home } from "lucide-react";
+import { ChevronDown, Home } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Header() {
@@ -46,12 +46,8 @@ export function Header() {
           }`}
         >
           <NavPill to="/" scrolled={scrolled}>Home</NavPill>
-          <NavPill to="/properties" search={{ status: "rent" }} scrolled={scrolled}>
-            For Rent
-          </NavPill>
-          <NavPill to="/properties" search={{ status: "sale" }} scrolled={scrolled}>
-            For Sale
-          </NavPill>
+          <PropertiesDropdown scrolled={scrolled} />
+          <NavPill to="/news" scrolled={scrolled}>News</NavPill>
           <NavPill to="/about" scrolled={scrolled}>About</NavPill>
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
         </nav>
@@ -93,6 +89,55 @@ function NavPill({
       activeProps={{ className: activeClass }}
     >
       {children}
+    </Link>
+  );
+}
+
+function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
+  const triggerHover = scrolled
+    ? "hover:text-foreground hover:bg-background/60"
+    : "hover:text-white hover:bg-white/15";
+
+  return (
+    <div className="group relative">
+      <button
+        type="button"
+        className={`inline-flex items-center gap-1 rounded-full px-4 py-1.5 transition-colors duration-300 ease-out ${triggerHover}`}
+      >
+        Properties
+        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
+      </button>
+
+      {/* bridge to prevent hover gap */}
+      <div className="invisible absolute left-1/2 top-full z-50 w-56 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-background/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+          <DropdownItem to="/properties" search={{ status: "rent" }} label="For Rent" hint="Apartments, villas & more" />
+          <DropdownItem to="/properties" search={{ status: "sale" }} label="For Sale" hint="Buy your next home" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DropdownItem({
+  to,
+  search,
+  label,
+  hint,
+}: {
+  to: string;
+  search?: Record<string, unknown>;
+  label: string;
+  hint: string;
+}) {
+  return (
+    <Link
+      to={to as never}
+      search={search as never}
+      className="block rounded-xl px-3 py-2.5 transition hover:bg-secondary"
+    >
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground">{hint}</p>
     </Link>
   );
 }
