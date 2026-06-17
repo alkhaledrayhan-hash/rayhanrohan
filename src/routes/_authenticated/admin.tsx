@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PropertiesManager } from "@/components/admin/PropertiesManager";
 import { PagesManager } from "@/components/admin/PagesManager";
 import { AddAgentForm } from "@/components/admin/AddAgentForm";
+import { AgentsPanel } from "@/components/admin/AgentsPanel";
 import {
   Bell,
   Building2,
