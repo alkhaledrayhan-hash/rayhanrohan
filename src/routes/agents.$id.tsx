@@ -56,17 +56,22 @@ function AgentDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 pt-28 pb-20 sm:px-6 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <Link to="/agents" className="hover:text-foreground">Agents</Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="font-medium text-foreground">{agent.full_name || "Agent"}</span>
-        </nav>
+      <main>
+        <PageHero
+          eyebrow="Agent"
+          title={agent.full_name || "Agent"}
+          description={agent.username ? `@${agent.username}` : undefined}
+          crumbs={[
+            { label: "Home", to: "/" },
+            { label: "Agents", to: "/agents" },
+            { label: agent.full_name || "Agent" },
+          ]}
+        />
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <Link to="/agents" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> All agents
         </Link>
+
 
         <section className="mt-6 rounded-3xl border border-border bg-white p-8 shadow-sm">
           <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
