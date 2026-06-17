@@ -1,4 +1,4 @@
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2, MapPin, RotateCcw, Search } from "lucide-react";
 import heroImg from "@/assets/hero-qatar.jpg?w=1600&quality=72&format=webp";
@@ -6,6 +6,17 @@ import heroImg2 from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
 import heroImg3 from "@/assets/qatar-corniche.jpg?w=1600&quality=72&format=webp";
 import heroImg4 from "@/assets/qatar-westbay.jpg?w=1600&quality=72&format=webp";
 import { LOCATIONS } from "@/lib/properties";
+import { usePageSections } from "@/lib/page-sections";
+
+function withAlpha(hex: string, opacityPct: number) {
+  const a = Math.max(0, Math.min(100, opacityPct)) / 100;
+  const h = (hex || "#000000").replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const r = parseInt(full.slice(0, 2), 16) || 0;
+  const g = parseInt(full.slice(2, 4), 16) || 0;
+  const b = parseInt(full.slice(4, 6), 16) || 0;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 
 const TYPES = ["Apartment", "Villa", "Studio", "Penthouse", "Townhouse"] as const;
 const PRICE_RANGES = [
