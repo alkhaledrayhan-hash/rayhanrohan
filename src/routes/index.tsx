@@ -88,6 +88,8 @@ function Home() {
           </div>
         </section>
 
+        <LogoMarquee />
+
         {/* Exclusive offers */}
         <OffersSection offers={offers} />
 
