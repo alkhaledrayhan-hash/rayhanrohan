@@ -728,40 +728,8 @@ function PropertiesTable() {
 
 /* ---------- Agents ---------- */
 
-function AgentsPanel() {
-  const agents = [
-    { name: "Layla Ahmed", region: "The Pearl", sales: 42, rating: 4.9 },
-    { name: "Yusuf Hassan", region: "Lusail", sales: 36, rating: 4.8 },
-    { name: "Noura Said", region: "West Bay", sales: 28, rating: 4.7 },
-    { name: "Khalid Al-Jaber", region: "Al Waab", sales: 22, rating: 4.6 },
-  ];
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {agents.map((a) => (
-        <div key={a.name} className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary/10 font-semibold text-primary">
-            {a.name
-              .split(" ")
-              .map((s) => s[0])
-              .join("")}
-          </div>
-          <p className="mt-3 font-display text-base font-semibold">{a.name}</p>
-          <p className="text-xs text-muted-foreground">{a.region}</p>
-          <div className="mt-4 flex justify-around border-t border-border pt-3 text-xs">
-            <div>
-              <p className="font-display text-base font-semibold">{a.sales}</p>
-              <p className="text-muted-foreground">Deals</p>
-            </div>
-            <div>
-              <p className="font-display text-base font-semibold">{a.rating}</p>
-              <p className="text-muted-foreground">Rating</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+
+
 
 /* ---------- Leads ---------- */
 
