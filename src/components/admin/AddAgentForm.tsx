@@ -106,4 +106,94 @@ function Field({ label, children, className = "", hideLabel = false }: { label: 
       {children}
     </label>
   );
+  );
 }
+
+export function AvatarUploader({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [urlMode, setUrlMode] = useState(false);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      setBusy(true);
+      const url = await fileToDataUrl(file, { maxSize: 512, quality: 0.82 });
+      onChange(url);
+    } catch (err: any) {
+      toast.error(err?.message || "Could not read image");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+      <h3 className="font-display text-base font-semibold">Agent Photo</h3>
+
+      <div className="relative mt-4 grid h-56 place-items-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/40">
+        {value ? (
+          <>
+            <img src={value} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white hover:bg-black"
+              aria-label="Remove photo"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="flex flex-col items-center gap-2 px-4 py-6 text-center text-muted-foreground hover:text-foreground"
+          >
+            <ImageIcon className="h-12 w-12 opacity-40" />
+            <span className="text-sm">Click to upload from your device</span>
+            <span className="text-[11px]">PNG, JPG up to 8 MB</span>
+          </button>
+        )}
+      </div>
+
+      <input ref={inputRef} type="file" accept="image/*" hidden onChange={onPick} />
+
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={busy}
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+        >
+          <Upload className="h-4 w-4" /> {busy ? "Processing…" : value ? "Replace" : "Upload"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setUrlMode((v) => !v)}
+          className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+        >
+          URL
+        </button>
+      </div>
+
+      {urlMode && (
+        <input
+          value={value.startsWith("data:") ? "" : value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://…"
+          className="mt-3 w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+      )}
+    </div>
+  );
+}
+
