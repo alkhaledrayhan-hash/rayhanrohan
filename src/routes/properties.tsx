@@ -70,6 +70,7 @@ function PropertiesPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <PageHero
+        image={propertiesHero}
         eyebrow={status === "rent" ? "Rentals across Qatar" : "Homes for sale"}
         title={`Properties for ${status === "rent" ? "Rent" : "Sale"}`}
         description="Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab."

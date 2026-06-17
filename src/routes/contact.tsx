@@ -16,6 +16,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { createContact } from "@/lib/bookings.functions";
+import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -75,6 +76,7 @@ function ContactPage() {
       <Header />
 
       <PageHero
+        image={contactHero}
         eyebrow="Contact"
         title="Talk to a Doha property advisor."
         description="Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week."
