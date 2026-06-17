@@ -23,7 +23,6 @@ import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth_.forgot-password'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as ApiPublicSeedDemoAgentsRouteImport } from './routes/api/public/seed-demo-agents'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -94,11 +93,6 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicSeedDemoAgentsRoute = ApiPublicSeedDemoAgentsRouteImport.update({
-  id: '/api/public/seed-demo-agents',
-  path: '/api/public/seed-demo-agents',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,7 +108,6 @@ export interface FileRoutesByFullPath {
   '/news/$slug': typeof NewsSlugRoute
   '/properties/$id': typeof PropertiesIdRoute
   '/news/': typeof NewsIndexRoute
-  '/api/public/seed-demo-agents': typeof ApiPublicSeedDemoAgentsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -129,7 +122,6 @@ export interface FileRoutesByTo {
   '/news/$slug': typeof NewsSlugRoute
   '/properties/$id': typeof PropertiesIdRoute
   '/news': typeof NewsIndexRoute
-  '/api/public/seed-demo-agents': typeof ApiPublicSeedDemoAgentsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -147,7 +139,6 @@ export interface FileRoutesById {
   '/news/$slug': typeof NewsSlugRoute
   '/properties_/$id': typeof PropertiesIdRoute
   '/news/': typeof NewsIndexRoute
-  '/api/public/seed-demo-agents': typeof ApiPublicSeedDemoAgentsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -165,7 +156,6 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/properties/$id'
     | '/news/'
-    | '/api/public/seed-demo-agents'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,7 +170,6 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/properties/$id'
     | '/news'
-    | '/api/public/seed-demo-agents'
   id:
     | '__root__'
     | '/'
@@ -197,7 +186,6 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/properties_/$id'
     | '/news/'
-    | '/api/public/seed-demo-agents'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -211,7 +199,6 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
-  ApiPublicSeedDemoAgentsRoute: typeof ApiPublicSeedDemoAgentsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -314,13 +301,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/seed-demo-agents': {
-      id: '/api/public/seed-demo-agents'
-      path: '/api/public/seed-demo-agents'
-      fullPath: '/api/public/seed-demo-agents'
-      preLoaderRoute: typeof ApiPublicSeedDemoAgentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -360,7 +340,6 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   PropertiesIdRoute: PropertiesIdRoute,
-  ApiPublicSeedDemoAgentsRoute: ApiPublicSeedDemoAgentsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
