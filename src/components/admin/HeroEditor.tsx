@@ -74,11 +74,29 @@ export function HeroEditor({
   async function onPickImage(file: File) {
     try {
       const dataUrl = await fileToDataUrl(file, { maxSize: 1600, quality: 0.75 });
-      update("image_url", dataUrl);
-      toast.success("Image attached. Click Save to publish.");
+      setContent((c) => ({ ...c, images: [...(c.images || []), dataUrl] }));
+      toast.success("Image added. Click Save to publish.");
     } catch (e: any) {
       toast.error(e.message);
     }
+  }
+
+  function removeImage(idx: number) {
+    setContent((c) => ({ ...c, images: (c.images || []).filter((_, i) => i !== idx) }));
+  }
+  function moveImage(idx: number, dir: -1 | 1) {
+    setContent((c) => {
+      const arr = [...(c.images || [])];
+      const j = idx + dir;
+      if (j < 0 || j >= arr.length) return c;
+      [arr[idx], arr[j]] = [arr[j], arr[idx]];
+      return { ...c, images: arr };
+    });
+  }
+  function addUrl(url: string) {
+    const v = url.trim();
+    if (!v) return;
+    setContent((c) => ({ ...c, images: [...(c.images || []), v] }));
   }
 
   const save = useMutation({
