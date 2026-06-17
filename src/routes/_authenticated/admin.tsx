@@ -93,6 +93,7 @@ function AdminDashboard() {
   const [section, setSection] = useState<
     "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "calendar" | "settings"
   >("overview");
+  const [pageSlug, setPageSlug] = useState<string>("home");
 
   const isAdmin = roleData?.roles.includes("admin");
   const isAgent = roleData?.roles.includes("agent");
