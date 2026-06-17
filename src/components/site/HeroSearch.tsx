@@ -136,7 +136,7 @@ export function HeroSearch() {
 
         <form
           onSubmit={submit}
-          className="mt-10 rounded-2xl border border-white/10 bg-card/95 p-3 shadow-[var(--shadow-soft)] backdrop-blur sm:p-4"
+          className="mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 sm:p-4"
         >
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
