@@ -161,3 +161,16 @@ img {
 }
 
 
+
+@keyframes logo-marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.logo-marquee {
+  animation: logo-marquee-scroll 35s linear infinite;
+}
+
+.logo-marquee:hover {
+  animation-play-state: paused;
+}
