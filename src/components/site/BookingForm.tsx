@@ -28,11 +28,8 @@ function buildTimeSlots() {
 
 export function BookingForm({ property }: { property: Property }) {
   const timeSlots = useMemo(buildTimeSlots, []);
-  const [date, setDate] = useState<Date | undefined>(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d;
-  });
+  const [date, setDate] = useState<Date | undefined>(undefined);
+
   const [time, setTime] = useState("10:00");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
