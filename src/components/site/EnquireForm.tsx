@@ -108,18 +108,76 @@ export function EnquireForm({ property }: { property: Property }) {
             Phone
           </span>
           <div className="flex items-stretch gap-2">
-            <select
-              value={dialCode}
-              onChange={(e) => setDialCode(e.target.value)}
-              aria-label="Country code"
-              className="min-w-[110px] shrink-0 rounded-lg border border-border bg-background px-2 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
-            >
-              {COUNTRY_CODES.map((c) => (
-                <option key={c.code + c.name} value={c.code}>
-                  {c.flag} {c.code} {c.name}
-                </option>
-              ))}
-            </select>
+            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Country code"
+                  className="flex shrink-0 items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
+                >
+                  <img
+                    src={flagUrl(selectedCountry.iso)}
+                    srcSet={flagSrcSet(selectedCountry.iso)}
+                    width={20}
+                    height={14}
+                    alt={`${selectedCountry.name} flag`}
+                    className="h-3.5 w-5 rounded-[2px] object-cover"
+                    loading="lazy"
+                  />
+                  <span className="font-medium">{selectedCountry.code}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[280px] p-0" align="start">
+                <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+                  <Search className="h-3.5 w-3.5 text-muted-foreground" />
+                  <input
+                    autoFocus
+                    value={countryQuery}
+                    onChange={(e) => setCountryQuery(e.target.value)}
+                    placeholder="Search country or code"
+                    className="w-full bg-transparent text-sm outline-none"
+                  />
+                </div>
+                <ScrollArea className="h-64 pointer-events-auto">
+                  <ul className="py-1">
+                    {filteredCountries.length === 0 && (
+                      <li className="px-3 py-4 text-center text-xs text-muted-foreground">
+                        No matches
+                      </li>
+                    )}
+                    {filteredCountries.map((c) => (
+                      <li key={c.iso + c.code}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDialCode(c.code);
+                            setCountryOpen(false);
+                            setCountryQuery("");
+                          }}
+                          className={cn(
+                            "flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition hover:bg-muted",
+                            c.code === dialCode && "bg-muted/60",
+                          )}
+                        >
+                          <img
+                            src={flagUrl(c.iso)}
+                            srcSet={flagSrcSet(c.iso)}
+                            width={20}
+                            height={14}
+                            alt=""
+                            className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover"
+                            loading="lazy"
+                          />
+                          <span className="flex-1 truncate">{c.name}</span>
+                          <span className="text-xs text-muted-foreground">{c.code}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9\s-]/g, ""))}
