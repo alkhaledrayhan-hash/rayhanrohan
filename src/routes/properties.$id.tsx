@@ -108,7 +108,7 @@ function PropertyDetail() {
             </button>
           </div>
           <div className="grid grid-cols-3 gap-3 md:grid-cols-1">
-            {property.gallery.slice(1, 4).map((g, i) => (
+            {property.gallery.slice(1, 4).map((g: string, i: number) => (
               <button
                 key={`${g}-${i}`}
                 onClick={() => setActiveImg(g)}
