@@ -20,19 +20,26 @@ export const Route = createFileRoute("/auth")({
 });
 
 const signInSchema = z.object({
-  email: z.string().trim().email("Invalid email").max(255),
+  identifier: z.string().trim().min(2, "Enter your email or username").max(255),
   password: z.string().min(6, "Password must be at least 6 characters").max(72),
 });
 
-const signUpSchema = signInSchema.extend({
+const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Name is required").max(100),
+  username: z
+    .string()
+    .trim()
+    .min(3, "Username must be at least 3 characters")
+    .max(30)
+    .regex(/^[a-zA-Z0-9_]+$/, "Letters, numbers and underscore only"),
+  email: z.string().trim().email("Invalid email").max(255),
+  password: z.string().min(6, "Password must be at least 6 characters").max(72),
 });
 
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // If already signed in, send to dashboard
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/dashboard" });
@@ -43,7 +50,7 @@ function AuthPage() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const parsed = signInSchema.safeParse({
-      email: form.get("email"),
+      identifier: form.get("identifier"),
       password: form.get("password"),
     });
     if (!parsed.success) {
@@ -51,7 +58,21 @@ function AuthPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    let email = parsed.data.identifier;
+    if (!email.includes("@")) {
+      const { data, error } = await supabase.rpc("get_email_by_username", {
+        _username: email,
+      });
+      if (error || !data) {
+        setLoading(false);
+        return toast.error("Username not found");
+      }
+      email = data as string;
+    }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: parsed.data.password,
+    });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back!");
@@ -63,6 +84,7 @@ function AuthPage() {
     const form = new FormData(e.currentTarget);
     const parsed = signUpSchema.safeParse({
       fullName: form.get("fullName"),
+      username: form.get("username"),
       email: form.get("email"),
       password: form.get("password"),
     });
@@ -76,7 +98,10 @@ function AuthPage() {
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { full_name: parsed.data.fullName },
+        data: {
+          full_name: parsed.data.fullName,
+          username: parsed.data.username,
+        },
       },
     });
     setLoading(false);
@@ -108,7 +133,11 @@ function AuthPage() {
 
               <TabsContent value="signin" className="mt-6">
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <Field label="Email" name="email" type="email" placeholder="you@example.com" />
+                  <Field
+                    label="Email or Username"
+                    name="identifier"
+                    placeholder="you@example.com or username"
+                  />
                   <Field label="Password" name="password" type="password" placeholder="••••••••" />
                   <div className="text-right">
                     <Link
@@ -128,6 +157,7 @@ function AuthPage() {
               <TabsContent value="signup" className="mt-6">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <Field label="Full Name" name="fullName" placeholder="Jane Doe" />
+                  <Field label="Username" name="username" placeholder="janedoe" />
                   <Field label="Email" name="email" type="email" placeholder="you@example.com" />
                   <Field
                     label="Password"
