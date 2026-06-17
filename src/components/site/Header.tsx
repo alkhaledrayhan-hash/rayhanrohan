@@ -14,10 +14,10 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-500 ease-out ${
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ease-out ${
         scrolled
           ? "border-b border-white/15 bg-background/55 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)]"
-          : "border-b border-white/10 bg-white/5 backdrop-blur-xl backdrop-saturate-150"
+          : "border-b border-white/10 bg-transparent backdrop-blur-md"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

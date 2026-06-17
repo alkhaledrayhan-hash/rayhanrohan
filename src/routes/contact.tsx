@@ -74,7 +74,7 @@ function ContactPage() {
       <Header />
 
       {/* Hero */}
-      <section className="border-b border-border bg-secondary/40">
+      <section className="border-b border-border bg-secondary/40 pt-16">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-gold">
             <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Contact
