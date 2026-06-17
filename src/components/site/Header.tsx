@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Home } from "lucide-react";
+import { ChevronDown, Home, KeyRound, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Header() {
@@ -111,8 +111,20 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
       {/* bridge to prevent hover gap */}
       <div className="invisible absolute left-1/2 top-full z-50 w-56 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-background/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-          <DropdownItem to="/properties" search={{ status: "rent" }} label="For Rent" hint="Apartments, villas & more" />
-          <DropdownItem to="/properties" search={{ status: "sale" }} label="For Sale" hint="Buy your next home" />
+          <DropdownItem
+            to="/properties"
+            search={{ status: "rent" }}
+            icon={<KeyRound className="h-4 w-4" />}
+            label="For Rent"
+            hint="Apartments, villas & more"
+          />
+          <DropdownItem
+            to="/properties"
+            search={{ status: "sale" }}
+            icon={<Tag className="h-4 w-4" />}
+            label="For Sale"
+            hint="Buy your next home"
+          />
         </div>
       </div>
     </div>
@@ -122,11 +134,13 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
 function DropdownItem({
   to,
   search,
+  icon,
   label,
   hint,
 }: {
   to: string;
   search?: Record<string, unknown>;
+  icon: React.ReactNode;
   label: string;
   hint: string;
 }) {
@@ -134,10 +148,15 @@ function DropdownItem({
     <Link
       to={to as never}
       search={search as never}
-      className="block rounded-xl px-3 py-2.5 transition hover:bg-secondary"
+      className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-secondary"
     >
-      <p className="text-sm font-medium text-foreground">{label}</p>
-      <p className="text-xs text-muted-foreground">{hint}</p>
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary transition group-hover/item:bg-primary group-hover/item:text-primary-foreground">
+        {icon}
+      </span>
+      <span className="flex flex-col leading-tight">
+        <span className="text-sm font-medium text-foreground">{label}</span>
+        <span className="text-xs text-muted-foreground">{hint}</span>
+      </span>
     </Link>
   );
 }
