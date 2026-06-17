@@ -172,7 +172,7 @@ function PropertyDetail() {
                   Property ID: <span className="font-mono text-foreground">{propertyId}</span>
                 </p>
               </div>
-              <div className="mt-4 grid grid-cols-2 divide-y divide-border rounded-2xl border border-border bg-card sm:grid-cols-5 sm:divide-x sm:divide-y-0">
+              <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
                 <OverviewStat icon={<Bed className="h-4 w-4" />} label="Bedrooms" value={property.bedrooms} />
                 <OverviewStat icon={<Bath className="h-4 w-4" />} label="Bathrooms" value={property.bathrooms} />
                 <OverviewStat icon={<DoorOpen className="h-4 w-4" />} label="Rooms" value={property.rooms} />
