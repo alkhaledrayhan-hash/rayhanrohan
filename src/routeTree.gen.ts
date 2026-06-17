@@ -15,6 +15,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesIdRouteImport } from './routes/properties_.$id'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -46,21 +47,28 @@ const PropertiesIdRoute = PropertiesIdRouteImport.update({
   path: '/properties/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/properties/$id': typeof PropertiesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/properties/$id': typeof PropertiesIdRoute
 }
 export interface FileRoutesById {
@@ -68,8 +76,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/properties': typeof PropertiesRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/properties_/$id': typeof PropertiesIdRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/contact'
     | '/news'
     | '/properties'
+    | '/news/$slug'
     | '/properties/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contact' | '/news' | '/properties' | '/properties/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/news'
+    | '/properties'
+    | '/news/$slug'
+    | '/properties/$id'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/news'
     | '/properties'
+    | '/news/$slug'
     | '/properties_/$id'
   fileRoutesById: FileRoutesById
 }
@@ -97,7 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  NewsRoute: typeof NewsRoute
+  NewsRoute: typeof NewsRouteWithChildren
   PropertiesRoute: typeof PropertiesRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
 }
@@ -146,14 +164,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
   }
 }
+
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  NewsRoute: NewsRoute,
+  NewsRoute: NewsRouteWithChildren,
   PropertiesRoute: PropertiesRoute,
   PropertiesIdRoute: PropertiesIdRoute,
 }

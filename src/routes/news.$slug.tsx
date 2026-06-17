@@ -95,7 +95,7 @@ function ArticleDetail() {
             {article.excerpt}
           </p>
           <div className="mt-8 space-y-6 text-[15px] leading-[1.8] text-muted-foreground sm:text-base">
-            {article.body.map((para, i) => (
+            {article.body.map((para: string, i: number) => (
               <p key={i}>{para}</p>
             ))}
           </div>
