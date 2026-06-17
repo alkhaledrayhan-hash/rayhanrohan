@@ -11,6 +11,8 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Target,
+  Telescope,
   Users2,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
@@ -219,6 +221,89 @@ function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* Mission & Vision */}
+        <section className="relative overflow-hidden bg-[#3d0f1d] py-24 text-white">
+          {/* Decorative background */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
+          <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
+          <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
+
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Purpose</p>
+              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+                Our mission &amp; vision
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white/70">
+                The principles that shape every introduction, every viewing, and every handover —
+                from The Pearl to Lusail Marina.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              {[
+                {
+                  tag: "Mission",
+                  icon: <Target className="h-5 w-5" />,
+                  title: "Make premium living in Qatar effortless.",
+                  body:
+                    "We pair discerning residents and investors with the right address — handling every viewing, contract and key handover with the discretion the brief deserves.",
+                  points: [
+                    "Hand-verified listings only",
+                    "Bilingual, end-to-end concierge",
+                    "Transparent figures, no surprises",
+                  ],
+                },
+                {
+                  tag: "Vision",
+                  icon: <Telescope className="h-5 w-5" />,
+                  title: "Define what luxury real estate looks like in the Gulf.",
+                  body:
+                    "To be the brokerage residents recommend by name — known across Doha, the GCC and beyond for taste, integrity, and an obsessive eye for the right home.",
+                  points: [
+                    "Qatar's most curated portfolio",
+                    "International standard, local soul",
+                    "A name passed between neighbours",
+                  ],
+                },
+              ].map((item) => (
+                <article
+                  key={item.tag}
+                  className="group relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:bg-white/[0.09] sm:p-10"
+                >
+                  {/* Corner ornament */}
+                  <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+
+                  <div className="relative flex items-center gap-3">
+                    <span className="grid h-11 w-11 place-items-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                      {item.icon}
+                    </span>
+                    <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  <h3 className="relative mt-6 font-display text-2xl font-semibold leading-tight sm:text-[28px]">
+                    {item.title}
+                  </h3>
+                  <p className="relative mt-4 text-sm leading-relaxed text-white/75">{item.body}</p>
+
+                  <ul className="relative mt-6 space-y-2.5 border-t border-white/10 pt-6">
+                    {item.points.map((p) => (
+                      <li key={p} className="flex items-start gap-3 text-sm text-white/85">
+                        <span className="mt-1.5 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
 
         {/* Values */}
         <section className="bg-secondary/40 py-20">
