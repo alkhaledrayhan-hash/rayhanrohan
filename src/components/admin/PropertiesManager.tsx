@@ -47,7 +47,11 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as PropertyRow[];
+      return (data || []).map((r: any) => ({
+        ...r,
+        gallery: Array.isArray(r.gallery) ? r.gallery : [],
+        features: Array.isArray(r.features) ? r.features : [],
+      })) as PropertyRow[];
     },
   });
 
@@ -62,6 +66,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         rooms: Number(p.rooms) || 0, sqft: Number(p.sqft) || 0,
         image: p.image || null, description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
+        gallery: Array.isArray(p.gallery) ? p.gallery : [],
       };
       if (p.id) {
         const { error } = await supabase.from("properties").update(payload).eq("id", p.id);
