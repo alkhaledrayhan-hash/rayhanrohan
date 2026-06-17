@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Mail, MapPin, Phone, Plane } from "lucide-react";
 import qatarPlaneAsset from "@/assets/qatar-airways-plane.png.asset.json";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Footer() {
+  const settings = useSiteSettings();
   return (
     <footer
       id="footer"
@@ -86,10 +88,10 @@ export function Footer() {
             </span>
             <span className="flex flex-col leading-tight">
               <span className="font-display text-2xl font-semibold text-white">
-                Ayesha Maison <span className="text-gold">Qatar</span>
+                {settings.site_title}
               </span>
               <span className="text-[10px] uppercase tracking-[0.25em] text-gold">
-                Premium Living · Doha
+                {settings.site_tagline}
               </span>
             </span>
           </Link>
@@ -150,7 +152,7 @@ export function Footer() {
             <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
           </span>
           <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} Ayesha Maison Qatar. All rights reserved.
+            © {new Date().getFullYear()} {settings.site_title}. All rights reserved.
           </p>
         </div>
       </div>
