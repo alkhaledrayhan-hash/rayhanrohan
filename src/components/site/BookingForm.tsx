@@ -38,7 +38,14 @@ export function BookingForm({ property }: { property: Property }) {
   const [timeOpen, setTimeOpen] = useState(false);
   const submit = useServerFn(createBooking);
 
+  useEffect(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    setDate(d);
+  }, []);
+
   const today = useMemo(() => {
+
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
