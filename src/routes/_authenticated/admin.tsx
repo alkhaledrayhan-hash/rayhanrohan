@@ -260,7 +260,7 @@ function AdminDashboard() {
 
           {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
-          {section === "pages" && isAdmin && <PagesManager />}
+          {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
