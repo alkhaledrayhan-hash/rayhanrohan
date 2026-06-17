@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Mail, MapPin, Phone, Plane } from "lucide-react";
 import qatarPlaneAsset from "@/assets/qatar-airways-plane.png.asset.json";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Footer() {
+  const settings = useSiteSettings();
   return (
     <footer
       id="footer"
