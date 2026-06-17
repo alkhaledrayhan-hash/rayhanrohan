@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { ChevronRight, RotateCcw, Search as SearchIcon } from "lucide-react";
+import { RotateCcw, Search as SearchIcon } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
