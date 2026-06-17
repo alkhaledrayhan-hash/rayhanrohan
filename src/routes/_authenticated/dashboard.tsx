@@ -114,12 +114,12 @@ function Dashboard() {
           <SideItem icon={Heart} label="Saved Properties" active={active === "saved"} onClick={() => setActive("saved")} />
           <SideItem icon={Mail} label="Messages" active={active === "messages"} onClick={() => setActive("messages")} />
           {isAdmin && (
-            <SideItem
-              icon={ShieldCheck}
-              label="Admin Panel"
-              active={active === "admin"}
-              onClick={() => setActive("admin")}
-            />
+            <Link
+              to="/admin"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            >
+              <ShieldCheck className="h-4 w-4" /> Admin Panel
+            </Link>
           )}
         </nav>
 
