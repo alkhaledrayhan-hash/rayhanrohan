@@ -20,10 +20,14 @@ export interface Property {
   price: number; // QAR
   bedrooms: number;
   bathrooms: number;
+  rooms: number;
   sqft: number;
+  yearBuilt: number;
   image: string;
+  gallery: string[];
   description: string;
   features: string[];
+  verified?: boolean;
 }
 
 export const PROPERTIES: Property[] = [
