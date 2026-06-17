@@ -148,8 +148,27 @@ function AdminDashboard() {
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
           {isAdmin && <NavItem icon={FileText} label="Pages" active={section === "pages"} onClick={() => setSection("pages")} />}
-          {isAdmin && <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => setSection("agents")} />}
-          {isAdmin && <NavItem icon={Users} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />}
+          {isAdmin && (
+            <NavGroupExpandable
+              icon={Users}
+              label="Agents"
+              active={section === "agents" || section === "add-agent"}
+              defaultOpen={section === "agents" || section === "add-agent"}
+              action={
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setSection("add-agent"); }}
+                  title="Add Agent"
+                  className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              }
+            >
+              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => setSection("agents")} />
+              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />
+            </NavGroupExpandable>
+          )}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
