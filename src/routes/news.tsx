@@ -4,126 +4,7 @@ import { ArrowRight, Calendar, Clock, Newspaper, PenLine, Tag } from "lucide-rea
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
-import img1 from "@/assets/prop-1.jpg?w=1200&quality=70&format=webp";
-import img2 from "@/assets/prop-2.jpg?w=1200&quality=70&format=webp";
-import img3 from "@/assets/prop-3.jpg?w=1200&quality=70&format=webp";
-import img4 from "@/assets/prop-4.jpg?w=1200&quality=70&format=webp";
-import img5 from "@/assets/prop-5.jpg?w=1200&quality=70&format=webp";
-import img6 from "@/assets/prop-6.jpg?w=1200&quality=70&format=webp";
-import img7 from "@/assets/prop-7.jpg?w=1200&quality=70&format=webp";
-
-type Category = "News" | "Blog";
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  category: Category;
-  tag: string;
-  image: string;
-  date: string;
-  readTime: string;
-  author: string;
-}
-
-const ARTICLES: Article[] = [
-  {
-    id: "lusail-skyline-2026",
-    title: "Lusail skyline reaches new heights as four towers near completion",
-    excerpt:
-      "Qatar's flagship master-planned city welcomes four new mixed-use towers, expanding premium inventory in West Lusail.",
-    category: "News",
-    tag: "Market",
-    image: img3,
-    date: "Jun 14, 2026",
-    readTime: "4 min read",
-    author: "MaisonQatar Newsroom",
-  },
-  {
-    id: "buying-guide-pearl",
-    title: "A buyer's guide to The Pearl: districts, freehold rules & value",
-    excerpt:
-      "From Porto Arabia to Qanat Quartier, here's how each district compares on lifestyle, yields and resale potential.",
-    category: "Blog",
-    tag: "Guide",
-    image: img1,
-    date: "Jun 10, 2026",
-    readTime: "7 min read",
-    author: "Yara Al-Mansoori",
-  },
-  {
-    id: "rental-yields-q2",
-    title: "Q2 2026 rental yields: West Bay edges past Lusail",
-    excerpt:
-      "Our quarterly index shows West Bay apartments delivering 6.4% gross yields, outpacing Lusail for the first time since 2024.",
-    category: "News",
-    tag: "Data",
-    image: img4,
-    date: "Jun 6, 2026",
-    readTime: "5 min read",
-    author: "Research Desk",
-  },
-  {
-    id: "interior-trends-2026",
-    title: "Five interior trends defining Doha's premium residences this year",
-    excerpt:
-      "Warm minimalism, travertine accents, and biophilic layouts are reshaping how Doha lives indoors.",
-    category: "Blog",
-    tag: "Design",
-    image: img5,
-    date: "May 30, 2026",
-    readTime: "6 min read",
-    author: "Studio MQ",
-  },
-  {
-    id: "freehold-expansion",
-    title: "Government expands freehold zones for foreign investors",
-    excerpt:
-      "Two new districts have been added to the list of areas where non-Qataris can purchase freehold residential property.",
-    category: "News",
-    tag: "Policy",
-    image: img2,
-    date: "May 22, 2026",
-    readTime: "3 min read",
-    author: "MaisonQatar Newsroom",
-  },
-  {
-    id: "first-time-buyer",
-    title: "First-time buyer in Doha? Here's what to budget beyond the price",
-    excerpt:
-      "Transfer fees, agency commissions, service charges and snagging — the real cost of ownership, unpacked.",
-    category: "Blog",
-    tag: "Advice",
-    image: img6,
-    date: "May 18, 2026",
-    readTime: "5 min read",
-    author: "Yara Al-Mansoori",
-  },
-  {
-    id: "katara-hills-launch",
-    title: "Katara Hills launches its second residential phase",
-    excerpt:
-      "Twelve hillside villas and a clubhouse arrive in Q4, with prices starting from QAR 9.5M.",
-    category: "News",
-    tag: "Launch",
-    image: img7,
-    date: "May 12, 2026",
-    readTime: "4 min read",
-    author: "MaisonQatar Newsroom",
-  },
-  {
-    id: "staging-for-sale",
-    title: "Staging your villa for sale: the small moves that lift offers 8%",
-    excerpt:
-      "Lighting, scent, and curated negative space — practical staging notes from our top-performing listings.",
-    category: "Blog",
-    tag: "Selling",
-    image: img2,
-    date: "May 4, 2026",
-    readTime: "6 min read",
-    author: "Studio MQ",
-  },
-];
+import { ARTICLES, type Category } from "@/lib/articles";
 
 const FILTERS: Category[] = ["News", "Blog"];
 
@@ -200,7 +81,8 @@ function NewsPage() {
           {/* Featured article */}
           {featured && (
             <Link
-              to="/news"
+              to="/news/$slug"
+              params={{ slug: featured.id }}
               className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)] md:grid-cols-2"
             >
               <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
@@ -245,7 +127,8 @@ function NewsPage() {
             {rest.map((a) => (
               <Link
                 key={a.id}
-                to="/news"
+                to="/news/$slug"
+                params={{ slug: a.id }}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
