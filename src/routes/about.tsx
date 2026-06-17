@@ -11,6 +11,8 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Target,
+  Telescope,
   Users2,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
