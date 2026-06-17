@@ -24,6 +24,7 @@ import {
   Bell,
   Building2,
   Calendar,
+  ChevronDown,
   ChevronRight,
   FileText,
   Home,
@@ -31,11 +32,13 @@ import {
   LogOut,
   Mail,
   MessageSquare,
+  Plus,
   Search,
   Settings,
   ShieldCheck,
   TrendingDown,
   TrendingUp,
+  UserPlus,
   Users,
 } from "lucide-react";
 
