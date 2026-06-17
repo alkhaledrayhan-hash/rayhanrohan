@@ -87,6 +87,9 @@ function Home() {
           </div>
         </section>
 
+        {/* Exclusive offers */}
+        <OffersSection offers={offers} />
+
         {/* Locations */}
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
