@@ -424,3 +424,27 @@ function withAlpha(hex: string, opacityPct: number) {
   const b = parseInt(full.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
+
+function UrlAdder({ onAdd }: { onAdd: (url: string) => void }) {
+  const [v, setV] = useState("");
+  return (
+    <div className="flex gap-2">
+      <input
+        className={inputCls}
+        placeholder="…or paste an image URL"
+        value={v}
+        onChange={(e) => setV(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") { e.preventDefault(); onAdd(v); setV(""); }
+        }}
+      />
+      <button
+        type="button"
+        onClick={() => { onAdd(v); setV(""); }}
+        className="rounded-lg border border-border px-3 py-2 text-xs font-medium hover:bg-muted"
+      >
+        Add
+      </button>
+    </div>
+  );
+}
