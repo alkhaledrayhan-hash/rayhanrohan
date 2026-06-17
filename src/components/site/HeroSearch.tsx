@@ -1,7 +1,7 @@
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2, MapPin, RotateCcw, Search } from "lucide-react";
-import heroImg from "@/assets/hero-qatar.jpg";
+import heroImg from "@/assets/hero-qatar.jpg?w=1600&quality=72&format=webp";
 import { LOCATIONS } from "@/lib/properties";
 
 const TYPES = ["Apartment", "Villa", "Studio", "Penthouse", "Townhouse"] as const;
@@ -113,6 +113,8 @@ export function HeroSearch() {
         alt="Qatar skyline at golden hour"
         width={1920}
         height={1080}
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
       />
       <div

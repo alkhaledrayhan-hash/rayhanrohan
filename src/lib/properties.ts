@@ -1,9 +1,9 @@
-import prop1 from "@/assets/prop-1.jpg";
-import prop2 from "@/assets/prop-2.jpg";
-import prop3 from "@/assets/prop-3.jpg";
-import prop4 from "@/assets/prop-4.jpg";
-import prop5 from "@/assets/prop-5.jpg";
-import prop6 from "@/assets/prop-6.jpg";
+import prop1 from "@/assets/prop-1.jpg?w=900&quality=72&format=webp";
+import prop2 from "@/assets/prop-2.jpg?w=900&quality=72&format=webp";
+import prop3 from "@/assets/prop-3.jpg?w=900&quality=72&format=webp";
+import prop4 from "@/assets/prop-4.jpg?w=900&quality=72&format=webp";
+import prop5 from "@/assets/prop-5.jpg?w=900&quality=72&format=webp";
+import prop6 from "@/assets/prop-6.jpg?w=900&quality=72&format=webp";
 
 export type Status = "rent" | "sale";
 export type PropertyType = "Apartment" | "Villa" | "Studio" | "Penthouse" | "Townhouse";

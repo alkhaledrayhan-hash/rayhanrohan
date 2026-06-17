@@ -7,24 +7,26 @@ export function PropertyCard({ property }: { property: Property }) {
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={property.image}
           alt={property.title}
           loading="lazy"
+          decoding="async"
           width={1280}
           height={896}
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-110"
         />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
         <span className="absolute right-3 top-3 rounded-full border border-gold/70 bg-black/40 px-3 py-1 text-[11px] font-medium text-gold backdrop-blur">
           {property.type}
         </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow">
+        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow transition-transform duration-500 group-hover:-translate-y-0.5">
           {formatPrice(property)}
         </span>
       </div>
