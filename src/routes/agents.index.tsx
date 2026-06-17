@@ -95,6 +95,7 @@ function AgentsPage() {
             })}
           </div>
         )}
+        </section>
       </main>
       <Footer />
     </div>
