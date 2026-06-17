@@ -297,6 +297,69 @@ function NavItem({
   );
 }
 
+function NavGroupExpandable({
+  icon: Icon,
+  label,
+  active,
+  defaultOpen,
+  action,
+  children,
+}: {
+  icon: typeof Home;
+  label: string;
+  active: boolean;
+  defaultOpen?: boolean;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  useEffect(() => { if (defaultOpen) setOpen(true); }, [defaultOpen]);
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition ${
+          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          <Icon className="h-4 w-4" /> {label}
+        </span>
+        <span className="flex items-center gap-1.5">
+          {action}
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+        </span>
+      </button>
+      {open && <div className="mt-0.5 space-y-0.5 pl-7">{children}</div>}
+    </div>
+  );
+}
+
+function SubNavItem({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon?: typeof Home;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition ${
+        active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {Icon ? <Icon className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current opacity-40" />}
+      {label}
+    </button>
+  );
+}
+
 /* ---------- Overview ---------- */
 
 const salesData = [
