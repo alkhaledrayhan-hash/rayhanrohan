@@ -133,7 +133,11 @@ function AuthPage() {
 
               <TabsContent value="signin" className="mt-6">
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <Field label="Email" name="email" type="email" placeholder="you@example.com" />
+                  <Field
+                    label="Email or Username"
+                    name="identifier"
+                    placeholder="you@example.com or username"
+                  />
                   <Field label="Password" name="password" type="password" placeholder="••••••••" />
                   <div className="text-right">
                     <Link
@@ -153,6 +157,7 @@ function AuthPage() {
               <TabsContent value="signup" className="mt-6">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <Field label="Full Name" name="fullName" placeholder="Jane Doe" />
+                  <Field label="Username" name="username" placeholder="janedoe" />
                   <Field label="Email" name="email" type="email" placeholder="you@example.com" />
                   <Field
                     label="Password"
