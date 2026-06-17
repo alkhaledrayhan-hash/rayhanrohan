@@ -20,7 +20,7 @@ import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
 import { formatPrice, getProperty } from "@/lib/properties";
 
-export const Route = createFileRoute("/properties/$id")({
+export const Route = createFileRoute("/properties_/$id")({
   loader: ({ params }) => {
     const property = getProperty(params.id);
     if (!property) throw notFound();
