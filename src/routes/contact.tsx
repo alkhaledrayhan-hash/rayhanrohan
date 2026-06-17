@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { submitLead } from "@/lib/leads";
 import {
   Building2,
   Clock,
@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
-import { createContact } from "@/lib/bookings.functions";
+
 import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
 
 export const Route = createFileRoute("/contact")({
@@ -44,7 +44,7 @@ const WHATSAPP_E164 = "97433330123";
 const EMAIL = "hello@maisonqatar.qa";
 
 function ContactPage() {
-  const submit = useServerFn(createContact);
+  
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -58,7 +58,7 @@ function ContactPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await submit({ data: form });
+      const res = await submitLead({ ...form, source: "contact_page" });
       toast.success("Message sent", {
         description: `Reference ${res.id}. We'll reply within one business hour.`,
       });
