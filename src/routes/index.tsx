@@ -9,6 +9,7 @@ import { OffersSection } from "@/components/site/OffersSection";
 import { LogoMarquee } from "@/components/site/LogoMarquee";
 import { NewsTicker } from "@/components/site/NewsTicker";
 import { PROPERTIES, LOCATIONS } from "@/lib/properties";
+import { usePageSections } from "@/lib/page-sections";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
 import locLusail from "@/assets/prop-3.jpg?w=800&quality=70&format=webp";
@@ -44,12 +45,22 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data: sections = {} } = usePageSections("home");
   const featured = PROPERTIES.slice(0, 6);
   const offers = [
     { property: PROPERTIES[0], discount: 12, tag: "Move-in ready", ends: "Jul 31" },
     { property: PROPERTIES[2], discount: 8, tag: "Sky residence", ends: "Aug 15" },
     { property: PROPERTIES[1], discount: 10, tag: "Signature villa", ends: "Jul 20" },
   ];
+  const trust = sections.trust?.items ?? [
+    { title: "Licensed brokerage", body: "Qatar-registered with verified listings only." },
+    { title: "Hand-curated portfolio", body: "Every residence is personally inspected." },
+    { title: "Frictionless viewings", body: "Book on WhatsApp or schedule in one tap." },
+  ];
+  const featuredHeading = sections.featured ?? { eyebrow: "Featured residences", title: "A portfolio worthy of the address", link_label: "View all listings", link_href: "/properties" };
+  const locationsHeading = sections.locations ?? { eyebrow: "Premium Qatar locations", title: "Live in Qatar's most coveted neighbourhoods" };
+  const trustIcons = [<ShieldCheck className="h-5 w-5" />, <Sparkles className="h-5 w-5" />, <KeyRound className="h-5 w-5" />];
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -62,9 +73,9 @@ function Home() {
         {/* Trust strip */}
         <section className="border-y border-border bg-secondary/40">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
-            <Trust icon={<ShieldCheck className="h-5 w-5" />} title="Licensed brokerage" body="Qatar-registered with verified listings only." />
-            <Trust icon={<Sparkles className="h-5 w-5" />} title="Hand-curated portfolio" body="Every residence is personally inspected." />
-            <Trust icon={<KeyRound className="h-5 w-5" />} title="Frictionless viewings" body="Book on WhatsApp or schedule in one tap." />
+            {trust.slice(0, 3).map((t: any, i: number) => (
+              <Trust key={i} icon={trustIcons[i] ?? <ShieldCheck className="h-5 w-5" />} title={t.title} body={t.body} />
+            ))}
           </div>
         </section>
 
@@ -73,10 +84,10 @@ function Home() {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-                Featured residences
+                {featuredHeading.eyebrow}
               </p>
               <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                A portfolio worthy of the address
+                {featuredHeading.title}
               </h2>
             </div>
             <Link
@@ -84,7 +95,7 @@ function Home() {
               search={{ status: "rent" }}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
-              View all listings <ArrowRight className="h-4 w-4" />
+              {featuredHeading.link_label} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-10">
@@ -101,10 +112,10 @@ function Home() {
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-              Premium Qatar locations
+              {locationsHeading.eyebrow}
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              Live in Qatar's most coveted neighbourhoods
+              {locationsHeading.title}
             </h2>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {LOCATIONS.map((loc) => (
