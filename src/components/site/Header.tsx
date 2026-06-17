@@ -33,10 +33,10 @@ export function Header() {
                 scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
               }`}
             >
-              Ayesha Maison <span className={scrolled ? "text-primary" : "text-gold"}>Qatar</span>
+              {settings.site_title}
             </span>
             <span className="text-[10px] uppercase tracking-[0.2em] text-gold">
-              Premium Living
+              {settings.site_tagline}
             </span>
           </span>
         </Link>
