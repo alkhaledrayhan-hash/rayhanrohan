@@ -127,7 +127,8 @@ function NewsPage() {
             {rest.map((a) => (
               <Link
                 key={a.id}
-                to="/news"
+                to="/news/$slug"
+                params={{ slug: a.id }}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
