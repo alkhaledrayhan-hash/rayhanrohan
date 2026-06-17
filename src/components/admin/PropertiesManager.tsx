@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, XCircle, Trash2, Pencil } from "lucide-react";
+import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus } from "lucide-react";
+import { fileToDataUrl } from "@/lib/image-upload";
 
 type PropertyRow = {
   id: string;
