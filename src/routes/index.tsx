@@ -56,6 +56,9 @@ function Home() {
       <main>
         <HeroSearch />
 
+        <NewsTicker />
+
+
         {/* Trust strip */}
         <section className="border-y border-border bg-secondary/40">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
