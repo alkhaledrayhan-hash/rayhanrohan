@@ -10,7 +10,7 @@ const agentsQuery = queryOptions({
   queryFn: () => listPublicAgents(),
 });
 
-export const Route = createFileRoute("/agents")({
+export const Route = createFileRoute("/agents/")({
   head: () => ({
     meta: [
       { title: "Our Agents — Meet the Team" },
