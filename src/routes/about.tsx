@@ -95,7 +95,7 @@ function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main>
+      <main className="pt-16">
         {/* Hero */}
         <section className="relative isolate overflow-hidden">
           <img
