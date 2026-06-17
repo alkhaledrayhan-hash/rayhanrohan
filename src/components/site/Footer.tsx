@@ -152,7 +152,7 @@ export function Footer() {
             <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
           </span>
           <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} Ayesha Maison Qatar. All rights reserved.
+            © {new Date().getFullYear()} {settings.site_title}. All rights reserved.
           </p>
         </div>
       </div>
