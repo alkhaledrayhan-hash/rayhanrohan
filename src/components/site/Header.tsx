@@ -39,9 +39,9 @@ export function Header() {
           <Link to="/about" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>
             About
           </Link>
-          <a href="#contact" className="hover:text-foreground transition-colors">
+          <Link to="/contact" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>
             Contact
-          </a>
+          </Link>
         </nav>
         <Link
           to="/properties"
