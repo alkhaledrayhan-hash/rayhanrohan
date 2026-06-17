@@ -78,10 +78,22 @@ export function HeroSearch() {
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
 
-  const HERO_IMAGES = [heroImg, heroImg2, heroImg3, heroImg4];
+export function HeroSearch() {
+  const navigate = useNavigate();
+  const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
+  const [filters, setFilters] = useState<FilterState>(DEFAULTS);
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: sections = {} } = usePageSections("home");
+  const hero = (sections.hero || {}) as any;
+  const heroStyle = hero.style || {};
+  const customImage: string | undefined = hero.image_url || undefined;
+
+  const HERO_IMAGES = customImage ? [customImage] : [heroImg, heroImg2, heroImg3, heroImg4];
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
+    if (HERO_IMAGES.length <= 1) return;
     const id = setInterval(() => {
       setSlide((s) => (s + 1) % HERO_IMAGES.length);
     }, 2000);
