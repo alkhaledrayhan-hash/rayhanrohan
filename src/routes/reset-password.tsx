@@ -65,14 +65,8 @@ function ResetPassword() {
               Choose a strong password for your account.
             </p>
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="password">New password</Label>
-                <Input id="password" name="password" type="password" required />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="confirm">Confirm password</Label>
-                <Input id="confirm" name="confirm" type="password" required />
-              </div>
+              <PasswordField id="password" name="password" label="New password" />
+              <PasswordField id="confirm" name="confirm" label="Confirm password" />
               <Button type="submit" disabled={loading} className="w-full">
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update password
