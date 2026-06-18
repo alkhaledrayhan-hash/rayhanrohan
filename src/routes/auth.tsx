@@ -133,9 +133,10 @@ function AuthPage() {
               <TabsContent value="signin" className="mt-6">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <Field
-                    label="Email or Username"
+                    label="Email"
                     name="identifier"
-                    placeholder="you@example.com or username"
+                    type="email"
+                    placeholder="you@example.com"
                   />
                   <Field label="Password" name="password" type="password" placeholder="••••••••" />
                   <div className="text-right">
