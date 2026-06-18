@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -217,10 +217,35 @@ function Field({
   type?: string;
   placeholder?: string;
 }) {
+  const isPassword = type === "password";
+  const [show, setShow] = useState(false);
   return (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} placeholder={placeholder} required />
+      {isPassword ? (
+        <div className="relative">
+          <Input
+            id={name}
+            name={name}
+            type={show ? "text" : "password"}
+            placeholder={placeholder}
+            required
+            className="pr-10"
+            autoComplete={name === "password" ? "current-password" : undefined}
+          />
+          <button
+            type="button"
+            onClick={() => setShow((s) => !s)}
+            aria-label={show ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+            tabIndex={-1}
+          >
+            {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+      ) : (
+        <Input id={name} name={name} type={type} placeholder={placeholder} required />
+      )}
     </div>
   );
 }

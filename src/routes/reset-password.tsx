@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Home, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Reset password · Ayesha Maison Qatar" }] }),
@@ -65,14 +65,8 @@ function ResetPassword() {
               Choose a strong password for your account.
             </p>
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="password">New password</Label>
-                <Input id="password" name="password" type="password" required />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="confirm">Confirm password</Label>
-                <Input id="confirm" name="confirm" type="password" required />
-              </div>
+              <PasswordField id="password" name="password" label="New password" />
+              <PasswordField id="confirm" name="confirm" label="Confirm password" />
               <Button type="submit" disabled={loading} className="w-full">
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update password
@@ -80,6 +74,34 @@ function ResetPassword() {
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PasswordField({ id, name, label }: { id: string; name: string; label: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
+        <Input
+          id={id}
+          name={name}
+          type={show ? "text" : "password"}
+          required
+          className="pr-10"
+          autoComplete="new-password"
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          aria-label={show ? "Hide password" : "Show password"}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+          tabIndex={-1}
+        >
+          {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
       </div>
     </div>
   );
