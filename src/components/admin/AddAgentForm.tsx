@@ -75,7 +75,7 @@ export function AddAgentForm() {
               <option>Male</option><option>Female</option><option>Other</option>
             </select>
           </Field>
-          <Field label="Temporary Password *"><input required type="text" value={form.password} onChange={set("password")} placeholder="min 8 characters" className={inputCls} minLength={8} maxLength={72} /></Field>
+          <Field label="Temporary Password *"><input required type="password" autoComplete="new-password" value={form.password} onChange={set("password")} placeholder="min 8 characters" className={inputCls} minLength={8} maxLength={72} /></Field>
 
           <Field label="Country"><input value={form.country} onChange={set("country")} placeholder="Qatar" className={inputCls} maxLength={80} /></Field>
           <Field label="City"><input value={form.city} onChange={set("city")} placeholder="Doha" className={inputCls} maxLength={80} /></Field>
