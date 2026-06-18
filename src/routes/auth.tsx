@@ -104,7 +104,9 @@ function AuthPage() {
         data: {
           full_name: parsed.data.fullName,
           username: parsed.data.username,
-          role: parsed.data.role,
+          // Note: role is intentionally NOT sent. All signups become 'user'.
+          // Agent role must be granted by an admin via the admin panel.
+          requested_role: parsed.data.role,
         },
       },
     });
@@ -112,10 +114,10 @@ function AuthPage() {
     if (error) return toast.error(error.message);
     toast.success(
       parsed.data.role === "agent"
-        ? "Agent account created! You're signed in."
+        ? "Account created! An admin must approve your agent access."
         : "Account created! You're signed in.",
     );
-    navigate({ to: parsed.data.role === "agent" ? "/admin" : "/dashboard" });
+    navigate({ to: "/dashboard" });
   }
 
   return (
