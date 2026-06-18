@@ -60,8 +60,19 @@ function AuthPage() {
       return;
     }
     setLoading(true);
+    let email = parsed.data.identifier;
+    if (!email.includes("@")) {
+      const { data, error: rpcError } = await supabase.rpc("get_email_by_username", {
+        _username: email,
+      });
+      if (rpcError || !data) {
+        setLoading(false);
+        return toast.error("Invalid username or password");
+      }
+      email = data as string;
+    }
     const { error } = await supabase.auth.signInWithPassword({
-      email: parsed.data.identifier,
+      email,
       password: parsed.data.password,
     });
     setLoading(false);
