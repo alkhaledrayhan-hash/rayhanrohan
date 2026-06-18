@@ -60,19 +60,8 @@ function AuthPage() {
       return;
     }
     setLoading(true);
-    let email = parsed.data.identifier;
-    if (!email.includes("@")) {
-      const { data, error } = await supabase.rpc("get_email_by_username", {
-        _username: email,
-      });
-      if (error || !data) {
-        setLoading(false);
-        return toast.error("Username not found");
-      }
-      email = data as string;
-    }
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: parsed.data.identifier,
       password: parsed.data.password,
     });
     setLoading(false);
