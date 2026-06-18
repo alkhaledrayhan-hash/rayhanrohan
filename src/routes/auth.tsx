@@ -20,7 +20,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const signInSchema = z.object({
-  identifier: z.string().trim().email("Enter a valid email").max(255),
+  identifier: z.string().trim().min(3, "Enter your email or username").max(255),
   password: z.string().min(6, "Password must be at least 6 characters").max(72),
 });
 
@@ -60,8 +60,19 @@ function AuthPage() {
       return;
     }
     setLoading(true);
+    let email = parsed.data.identifier;
+    if (!email.includes("@")) {
+      const { data, error: rpcError } = await supabase.rpc("get_email_by_username", {
+        _username: email,
+      });
+      if (rpcError || !data) {
+        setLoading(false);
+        return toast.error("Invalid username or password");
+      }
+      email = data as string;
+    }
     const { error } = await supabase.auth.signInWithPassword({
-      email: parsed.data.identifier,
+      email,
       password: parsed.data.password,
     });
     setLoading(false);
@@ -133,10 +144,10 @@ function AuthPage() {
               <TabsContent value="signin" className="mt-6">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <Field
-                    label="Email"
+                    label="Email or Username"
                     name="identifier"
-                    type="email"
-                    placeholder="you@example.com"
+                    type="text"
+                    placeholder="you@example.com or username"
                   />
                   <Field label="Password" name="password" type="password" placeholder="••••••••" />
                   <div className="text-right">
