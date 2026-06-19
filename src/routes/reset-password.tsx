@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
+import { AuthBackground } from "@/components/site/AuthBackground";
+
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "Reset password · Ayesha Maison Qatar" }] }),
