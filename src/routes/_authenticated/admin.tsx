@@ -25,6 +25,7 @@ import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { MediaPanel } from "@/components/admin/MediaPanel";
+import { PostsManager } from "@/components/admin/PostsManager";
 import {
   Bell,
   Building2,
