@@ -23,6 +23,7 @@ import { AddAgentForm } from "@/components/admin/AddAgentForm";
 import { AgentsPanel } from "@/components/admin/AgentsPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
+import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import {
   Bell,
   Building2,
@@ -277,7 +278,7 @@ function AdminDashboard() {
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
-          {section === "messages" && <PlaceholderCard icon={MessageSquare} title="Messages" desc="Direct conversations with clients." />}
+          {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
         </main>

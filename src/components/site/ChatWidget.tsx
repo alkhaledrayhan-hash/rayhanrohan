@@ -1,0 +1,283 @@
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  createConversation,
+  fetchGuestThread,
+  replyAsGuest,
+} from "@/lib/messages.functions";
+
+const STORAGE_KEY = "maison_chat_thread";
+
+type Stored = { id: string; token: string };
+type Message = {
+  id: string;
+  sender_role: "customer" | "agent" | "admin";
+  sender_name: string | null;
+  body: string;
+  created_at: string;
+};
+type Conversation = {
+  id: string;
+  customer_name: string;
+  subject: string | null;
+  status: string;
+  property_title: string | null;
+};
+
+function loadStored(): Stored | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Stored) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [stored, setStored] = useState<Stored | null>(null);
+  const [conv, setConv] = useState<Conversation | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [reply, setReply] = useState("");
+
+  // start form
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [body, setBody] = useState("");
+
+  const createFn = useServerFn(createConversation);
+  const fetchFn = useServerFn(fetchGuestThread);
+  const replyFn = useServerFn(replyAsGuest);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setStored(loadStored());
+  }, []);
+
+  // load thread when opened
+  useEffect(() => {
+    if (!open || !stored) return;
+    let cancel = false;
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetchFn({ data: stored! });
+        if (cancel) return;
+        setConv(res.conversation as Conversation);
+        setMessages(res.messages as Message[]);
+      } catch (e) {
+        if (!cancel) {
+          // stale token / deleted thread → reset
+          localStorage.removeItem(STORAGE_KEY);
+          setStored(null);
+          setConv(null);
+          setMessages([]);
+        }
+      } finally {
+        if (!cancel) setLoading(false);
+      }
+    }
+    load();
+    const t = setInterval(load, 4000);
+    return () => {
+      cancel = true;
+      clearInterval(t);
+    };
+  }, [open, stored, fetchFn]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages.length, open]);
+
+  async function handleStart(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !body.trim()) return;
+    setSending(true);
+    try {
+      const res = await createFn({
+        data: { name: name.trim(), email: email.trim(), body: body.trim() },
+      });
+      const next = { id: res.id, token: res.token };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      setStored(next);
+      setBody("");
+      toast.success("Message sent — we'll reply shortly");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to send");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleReply(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reply.trim() || !stored) return;
+    setSending(true);
+    try {
+      await replyFn({ data: { ...stored, body: reply.trim() } });
+      setReply("");
+      // optimistic: refetch immediately
+      const res = await fetchFn({ data: stored });
+      setMessages(res.messages as Message[]);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to send");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function handleNewConversation() {
+    localStorage.removeItem(STORAGE_KEY);
+    setStored(null);
+    setConv(null);
+    setMessages([]);
+  }
+
+  return (
+    <>
+      {/* Launcher */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-label={open ? "Close chat" : "Open chat"}
+        className="fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-xl ring-4 ring-primary/20 transition hover:scale-105"
+      >
+        {open ? <X className="h-5 w-5" /> : <MessageCircle className="h-6 w-6" />}
+      </button>
+
+      {open && (
+        <div className="fixed bottom-24 right-5 z-50 flex h-[560px] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
+            <div className="flex flex-col leading-tight">
+              <span className="font-display text-sm font-semibold">Chat with our team</span>
+              <span className="text-[11px] opacity-80">
+                {stored ? "We'll reply here" : "Send us a message"}
+              </span>
+            </div>
+            {stored && (
+              <button
+                onClick={handleNewConversation}
+                className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-medium hover:bg-white/25"
+              >
+                New
+              </button>
+            )}
+          </div>
+
+          {/* Body */}
+          {!stored ? (
+            <form onSubmit={handleStart} className="flex flex-1 flex-col gap-3 p-4">
+              <p className="text-xs text-muted-foreground">
+                Leave your details and an agent will get back to you.
+              </p>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                required
+                maxLength={100}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Email"
+                required
+                maxLength={255}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                placeholder="How can we help?"
+                required
+                rows={5}
+                maxLength={4000}
+                className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                Send message
+              </button>
+            </form>
+          ) : (
+            <>
+              <div
+                ref={scrollRef}
+                className="flex-1 space-y-2 overflow-y-auto bg-muted/30 p-3"
+              >
+                {loading && messages.length === 0 ? (
+                  <div className="grid h-full place-items-center text-xs text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+                ) : (
+                  messages.map((m) => (
+                    <MessageBubble key={m.id} m={m} />
+                  ))
+                )}
+              </div>
+              <form onSubmit={handleReply} className="flex items-end gap-2 border-t border-border bg-background p-3">
+                <textarea
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                  placeholder="Type a reply…"
+                  rows={2}
+                  maxLength={4000}
+                  className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleReply(e as unknown as React.FormEvent);
+                    }
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={sending || !reply.trim()}
+                  className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                >
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
+function MessageBubble({ m }: { m: Message }) {
+  const isCustomer = m.sender_role === "customer";
+  return (
+    <div className={`flex ${isCustomer ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+          isCustomer
+            ? "bg-primary text-primary-foreground"
+            : "bg-background border border-border text-foreground"
+        }`}
+      >
+        {!isCustomer && (
+          <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide opacity-70">
+            {m.sender_role === "admin" ? "Support" : "Agent"}
+          </p>
+        )}
+        <p className="whitespace-pre-wrap break-words">{m.body}</p>
+        <p className={`mt-1 text-[10px] ${isCustomer ? "opacity-70" : "text-muted-foreground"}`}>
+          {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </p>
+      </div>
+    </div>
+  );
+}
