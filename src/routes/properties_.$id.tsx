@@ -135,7 +135,7 @@ function PropertyDetail() {
         <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
           <div className="relative overflow-hidden rounded-2xl border border-border">
             <img
-              src={activeImg}
+              src={currentImg}
               alt={property.title}
               width={1280}
               height={896}
@@ -157,7 +157,7 @@ function PropertyDetail() {
                 key={`${g}-${i}`}
                 onClick={() => setActiveImg(g)}
                 className={`relative overflow-hidden rounded-lg border transition md:min-h-0 md:flex-1 ${
-                  activeImg === g
+                  currentImg === g
                     ? "border-primary ring-2 ring-primary/30"
                     : "border-border hover:border-primary/40"
                 }`}
