@@ -26,6 +26,8 @@ import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { MediaPanel } from "@/components/admin/MediaPanel";
 import { PostsManager } from "@/components/admin/PostsManager";
+import { BookingsPanel } from "@/components/admin/BookingsPanel";
+import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import {
   Bell,
   Building2,
