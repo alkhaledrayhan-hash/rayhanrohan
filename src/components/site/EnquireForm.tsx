@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { createEnquiry } from "@/lib/bookings.functions";
+import { createConversation } from "@/lib/messages.functions";
 import type { Property } from "@/lib/properties";
 
 // Common country dial codes with ISO-3166 alpha-2 for flag images
