@@ -51,7 +51,15 @@ export function SettingsPanel() {
   const [uploading, setUploading] = useState(false);
   const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => {
+    if (!data) return;
+    const next = { ...data };
+    if (!next.site_url && typeof window !== "undefined") next.site_url = window.location.origin;
+    if (!next.site_timezone && typeof Intl !== "undefined") {
+      try { next.site_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
+    }
+    setForm(next);
+  }, [data]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -119,14 +127,23 @@ export function SettingsPanel() {
             />
           </Field>
 
-          <Field icon={LinkIcon} label="Website address (URL)">
-            <input
-              type="url"
-              value={form.site_url || ""}
-              onChange={(e) => setForm({ ...form, site_url: e.target.value })}
-              placeholder="https://example.com"
-              className={inputCls}
-            />
+          <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={form.site_url || ""}
+                onChange={(e) => setForm({ ...form, site_url: e.target.value })}
+                placeholder="https://example.com"
+                className={inputCls}
+              />
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, site_url: window.location.origin })}
+                className="shrink-0 rounded-md border border-input bg-background px-3 text-xs hover:bg-secondary"
+              >
+                Use current
+              </button>
+            </div>
           </Field>
 
           <Field icon={Mail} label="Admin email" hint="Leads exports can be emailed to this address.">
@@ -139,13 +156,13 @@ export function SettingsPanel() {
             />
           </Field>
 
-          <Field icon={Globe} label="Website time zone">
+          <Field icon={Globe} label="Website time zone" hint="Used to display dates and times across the dashboard.">
             <select
               value={form.site_timezone || "Asia/Qatar"}
               onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
               className={inputCls}
             >
-              {TIMEZONES.map((tz) => (
+              {Array.from(new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES])).map((tz) => (
                 <option key={tz} value={tz}>{tz}</option>
               ))}
             </select>
