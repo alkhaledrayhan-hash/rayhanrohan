@@ -234,6 +234,30 @@ export function SettingsPanel() {
               <option value="saturday">Saturday</option>
             </select>
           </Field>
+
+          <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
+            <select
+              value={form.site_currency || "QAR"}
+              onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
+              className={inputCls}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c.code} value={c.code}>{c.label}</option>
+              ))}
+            </select>
+          </Field>
+
+          <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
+            <select
+              value={form.site_language || "en"}
+              onChange={(e) => setForm({ ...form, site_language: e.target.value })}
+              className={inputCls}
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>{l.label}</option>
+              ))}
+            </select>
+          </Field>
         </div>
       )}
 
