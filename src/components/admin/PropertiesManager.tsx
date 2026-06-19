@@ -185,23 +185,30 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
                   <td className="px-5 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
-                      : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
-                      : "bg-rose-50 text-rose-700"
-                    }`}>{r.listing_status}</span>
+                    {isAdmin ? (
+                      <select
+                        value={r.listing_status}
+                        onChange={(e) => setStatus.mutate({ id: r.id, status: e.target.value as any })}
+                        className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                          r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
+                          : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
+                          : "bg-rose-50 text-rose-700"
+                        }`}
+                      >
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending (delay)</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    ) : (
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
+                        : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
+                        : "bg-rose-50 text-rose-700"
+                      }`}>{r.listing_status}</span>
+                    )}
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
-                      {isAdmin && r.listing_status !== "approved" && (
-                        <button onClick={() => setStatus.mutate({ id: r.id, status: "approved" })} title="Approve" className="rounded p-1.5 text-emerald-600 hover:bg-emerald-50"><CheckCircle2 className="h-4 w-4" /></button>
-                      )}
-                      {isAdmin && r.listing_status !== "pending" && (
-                        <button onClick={() => setStatus.mutate({ id: r.id, status: "pending" })} title="Delay (mark as pending)" className="rounded p-1.5 text-amber-600 hover:bg-amber-50"><Clock className="h-4 w-4" /></button>
-                      )}
-                      {isAdmin && r.listing_status !== "rejected" && (
-                        <button onClick={() => setStatus.mutate({ id: r.id, status: "rejected" })} title="Reject" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><XCircle className="h-4 w-4" /></button>
-                      )}
                       <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
                       {isAdmin && (
                         <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
