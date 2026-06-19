@@ -196,6 +196,9 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                       {isAdmin && r.listing_status !== "approved" && (
                         <button onClick={() => setStatus.mutate({ id: r.id, status: "approved" })} title="Approve" className="rounded p-1.5 text-emerald-600 hover:bg-emerald-50"><CheckCircle2 className="h-4 w-4" /></button>
                       )}
+                      {isAdmin && r.listing_status !== "pending" && (
+                        <button onClick={() => setStatus.mutate({ id: r.id, status: "pending" })} title="Delay (mark as pending)" className="rounded p-1.5 text-amber-600 hover:bg-amber-50"><Clock className="h-4 w-4" /></button>
+                      )}
                       {isAdmin && r.listing_status !== "rejected" && (
                         <button onClick={() => setStatus.mutate({ id: r.id, status: "rejected" })} title="Reject" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><XCircle className="h-4 w-4" /></button>
                       )}
