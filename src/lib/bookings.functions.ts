@@ -145,7 +145,13 @@ export const updateBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => UpdateBookingSchema.parse(d))
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      status?: string;
+      scheduled_date?: string;
+      scheduled_time?: string;
+      notes?: string | null;
+      agent_id?: string | null;
+    } = {};
     if (data.status) patch.status = data.status;
     if (data.scheduledDate) patch.scheduled_date = data.scheduledDate;
     if (data.scheduledTime) patch.scheduled_time = data.scheduledTime;
