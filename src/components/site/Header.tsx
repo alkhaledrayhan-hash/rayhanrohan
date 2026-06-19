@@ -11,6 +11,26 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ["auth", "user"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    },
+  });
+  const isAuthed = !!user;
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    setOpen(false);
+    navigate({ to: "/", replace: true });
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
