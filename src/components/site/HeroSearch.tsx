@@ -227,14 +227,14 @@ export function HeroSearch() {
           onSubmit={submit}
           className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 sm:p-4"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="inline-flex rounded-full bg-white/10 p-1 text-sm backdrop-blur">
+          <div className="flex flex-nowrap items-center justify-between gap-2">
+            <div className="inline-flex shrink-0 rounded-full bg-white/10 p-1 text-xs backdrop-blur sm:text-sm">
               {(["rent", "sale"] as const).map((s) => (
                 <button
                   type="button"
                   key={s}
                   onClick={() => set("status", s)}
-                  className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
+                  className={`rounded-full px-3 py-1.5 font-medium capitalize transition sm:px-5 ${
                     filters.status === s
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-white/80 hover:text-white"
@@ -244,37 +244,38 @@ export function HeroSearch() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               {isDirty ? (
                 <button
                   type="button"
                   onClick={reset}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+                  className="inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white sm:px-3"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
-                  Reset
+                  <span className="hidden sm:inline">Reset</span>
                 </button>
               ) : null}
               <button
                 type="submit"
                 disabled={loading}
                 aria-busy={loading}
-                className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[140px] sm:px-6"
               >
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Searching…
+                    <span className="hidden sm:inline">Searching…</span>
                   </>
                 ) : (
                   <>
                     <Search className="h-4 w-4" />
-                    Search
+                    <span className="hidden sm:inline">Search</span>
                   </>
                 )}
               </button>
             </div>
           </div>
+
 
           <div className="mt-3 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,margin] duration-500 ease-out md:mt-0 md:grid-rows-[0fr] md:opacity-0 md:group-hover/search:mt-3 md:group-hover/search:grid-rows-[1fr] md:group-hover/search:opacity-100 md:group-focus-within/search:mt-3 md:group-focus-within/search:grid-rows-[1fr] md:group-focus-within/search:opacity-100">
             <div className="min-h-0 overflow-hidden">
