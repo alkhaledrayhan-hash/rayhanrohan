@@ -37,12 +37,12 @@ export function PostsManager() {
   const saveTagFn = useServerFn(upsertTag);
   const delTagFn = useServerFn(deleteTag);
 
-  const [tab, setTab] = useState<"posts" | "categories" | "tags">("posts");
+  const [tab, setTab] = useState<"news" | "blogs" | "categories" | "tags">("news");
   const [editing, setEditing] = useState<Partial<Post> | null>(null);
   const [search, setSearch] = useState("");
-  const [fType, setFType] = useState<"all" | "blog" | "news">("all");
   const [fStatus, setFStatus] = useState<"all" | "draft" | "published">("all");
   const [fCategory, setFCategory] = useState<string>("all");
+  const currentType: "news" | "blog" = tab === "blogs" ? "blog" : "news";
 
   const postsQ = useQuery({
     queryKey: ["admin-posts"],
