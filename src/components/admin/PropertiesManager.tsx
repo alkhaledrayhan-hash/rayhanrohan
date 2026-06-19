@@ -142,7 +142,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <option value="sale">For sale</option>
         </select>
         <select value={fApproval} onChange={(e) => setFApproval(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
-          <option value="all">All approvals</option>
+          <option value="all">All approval</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
           <option value="rejected">Rejected</option>
