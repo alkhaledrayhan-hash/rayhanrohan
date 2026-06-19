@@ -2,17 +2,37 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Save, Globe, Mail, Type, Palette, Image as ImageIcon, Upload, X } from "lucide-react";
+import {
+  Save,
+  Globe,
+  Mail,
+  Type,
+  Palette,
+  Image as ImageIcon,
+  Upload,
+  X,
+  Link as LinkIcon,
+  Clock,
+  Calendar,
+  CalendarDays,
+} from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 
 type SettingsMap = Record<string, string>;
 const KEYS = [
   "site_title",
   "site_tagline",
+  "site_url",
   "admin_email",
+  "site_timezone",
+  "date_format",
+  "time_format",
+  "week_starts_on",
   "auth_bg_color",
   "auth_bg_image_url",
 ] as const;
+
+type TabId = "general" | "auth";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -29,6 +49,7 @@ export function SettingsPanel() {
 
   const [form, setForm] = useState<SettingsMap>({});
   const [uploading, setUploading] = useState(false);
+  const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => { if (data) setForm(data); }, [data]);
 
@@ -68,126 +89,196 @@ export function SettingsPanel() {
       onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
       className="max-w-2xl space-y-5 rounded-2xl border border-border bg-white p-6 shadow-sm"
     >
-      <div>
-        <h3 className="font-display text-lg font-semibold">Website settings</h3>
-        <p className="text-sm text-muted-foreground">Update the site title, tagline, and admin email used for lead notifications.</p>
+      <div className="flex items-center gap-2 border-b border-border">
+        <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
+        <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
       </div>
 
-      <Field icon={Type} label="Site title">
-        <input
-          value={form.site_title || ""}
-          onChange={(e) => setForm({ ...form, site_title: e.target.value })}
-          placeholder="Your site name"
-          className={inputCls}
-        />
-      </Field>
-
-      <Field icon={Globe} label="Tagline">
-        <input
-          value={form.site_tagline || ""}
-          onChange={(e) => setForm({ ...form, site_tagline: e.target.value })}
-          placeholder="A short tagline shown across the site"
-          className={inputCls}
-        />
-      </Field>
-
-      <Field icon={Mail} label="Admin email" hint="Leads exports can be emailed to this address.">
-        <input
-          type="email"
-          value={form.admin_email || ""}
-          onChange={(e) => setForm({ ...form, admin_email: e.target.value })}
-          placeholder="admin@example.com"
-          className={inputCls}
-        />
-      </Field>
-
-      <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
-        <div>
-          <h4 className="font-display text-base font-semibold">Auth pages appearance</h4>
-          <p className="text-xs text-muted-foreground">Background color and optional image shown on Sign in, Sign up, Forgot password, and Reset password screens.</p>
-        </div>
-
-        <Field icon={Palette} label="Background color">
-          <div className="flex items-center gap-3">
-            <input
-              type="color"
-              value={bgColor}
-              onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
-              className="h-10 w-14 cursor-pointer rounded-md border border-input bg-background"
-            />
-            <input
-              value={bgColor}
-              onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
-              placeholder="#1a0a0f"
-              className={inputCls}
-            />
+      {tab === "general" && (
+        <div className="space-y-5">
+          <div>
+            <h3 className="font-display text-lg font-semibold">General settings</h3>
+            <p className="text-sm text-muted-foreground">Core website information and formatting preferences.</p>
           </div>
-        </Field>
 
-        <Field icon={ImageIcon} label="Background image" hint="Upload an image or paste a URL. Leave empty to use the gradient.">
-          <div className="space-y-3">
+          <Field icon={Type} label="Site title">
             <input
-              value={bgImage.startsWith("data:") ? "" : bgImage}
-              onChange={(e) => setForm({ ...form, auth_bg_image_url: e.target.value })}
-              placeholder="https://example.com/background.jpg"
+              value={form.site_title || ""}
+              onChange={(e) => setForm({ ...form, site_title: e.target.value })}
+              placeholder="Your site name"
               className={inputCls}
-              disabled={bgImage.startsWith("data:")}
             />
-            <div className="flex flex-wrap items-center gap-2">
+          </Field>
+
+          <Field icon={Globe} label="Tagline">
+            <input
+              value={form.site_tagline || ""}
+              onChange={(e) => setForm({ ...form, site_tagline: e.target.value })}
+              placeholder="A short tagline shown across the site"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={LinkIcon} label="Website address (URL)">
+            <input
+              type="url"
+              value={form.site_url || ""}
+              onChange={(e) => setForm({ ...form, site_url: e.target.value })}
+              placeholder="https://example.com"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Mail} label="Admin email" hint="Leads exports can be emailed to this address.">
+            <input
+              type="email"
+              value={form.admin_email || ""}
+              onChange={(e) => setForm({ ...form, admin_email: e.target.value })}
+              placeholder="admin@example.com"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Globe} label="Website time zone">
+            <select
+              value={form.site_timezone || "Asia/Qatar"}
+              onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
+              className={inputCls}
+            >
+              {TIMEZONES.map((tz) => (
+                <option key={tz} value={tz}>{tz}</option>
+              ))}
+            </select>
+          </Field>
+
+          <Field icon={Calendar} label="Date format">
+            <select
+              value={form.date_format || "MMMM d, yyyy"}
+              onChange={(e) => setForm({ ...form, date_format: e.target.value })}
+              className={inputCls}
+            >
+              <option value="MMMM d, yyyy">November 6, 2025</option>
+              <option value="yyyy-MM-dd">2025-11-06</option>
+              <option value="dd/MM/yyyy">06/11/2025</option>
+              <option value="MM/dd/yyyy">11/06/2025</option>
+              <option value="d MMM yyyy">6 Nov 2025</option>
+            </select>
+          </Field>
+
+          <Field icon={Clock} label="Time format">
+            <select
+              value={form.time_format || "h:mm a"}
+              onChange={(e) => setForm({ ...form, time_format: e.target.value })}
+              className={inputCls}
+            >
+              <option value="h:mm a">12-hour (3:45 PM)</option>
+              <option value="HH:mm">24-hour (15:45)</option>
+            </select>
+          </Field>
+
+          <Field icon={CalendarDays} label="Week starts on">
+            <select
+              value={form.week_starts_on || "monday"}
+              onChange={(e) => setForm({ ...form, week_starts_on: e.target.value })}
+              className={inputCls}
+            >
+              <option value="sunday">Sunday</option>
+              <option value="monday">Monday</option>
+              <option value="saturday">Saturday</option>
+            </select>
+          </Field>
+        </div>
+      )}
+
+      {tab === "auth" && (
+        <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
+          <div>
+            <h4 className="font-display text-base font-semibold">Auth pages appearance</h4>
+            <p className="text-xs text-muted-foreground">Background color and optional image shown on Sign in, Sign up, Forgot password, and Reset password screens.</p>
+          </div>
+
+          <Field icon={Palette} label="Background color">
+            <div className="flex items-center gap-3">
               <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleFile(f);
-                  e.target.value = "";
-                }}
+                type="color"
+                value={bgColor}
+                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
+                className="h-10 w-14 cursor-pointer rounded-md border border-input bg-background"
               />
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
-              >
-                <Upload className="h-4 w-4" />
-                {uploading ? "Processing…" : "Upload image"}
-              </button>
-              {bgImage && (
+              <input
+                value={bgColor}
+                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
+                placeholder="#1a0a0f"
+                className={inputCls}
+              />
+            </div>
+          </Field>
+
+          <Field icon={ImageIcon} label="Background image" hint="Upload an image or paste a URL. Leave empty to use the gradient.">
+            <div className="space-y-3">
+              <input
+                value={bgImage.startsWith("data:") ? "" : bgImage}
+                onChange={(e) => setForm({ ...form, auth_bg_image_url: e.target.value })}
+                placeholder="https://example.com/background.jpg"
+                className={inputCls}
+                disabled={bgImage.startsWith("data:")}
+              />
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleFile(f);
+                    e.target.value = "";
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={() => setForm({ ...form, auth_bg_image_url: "" })}
-                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
                 >
-                  <X className="h-4 w-4" /> Remove image
+                  <Upload className="h-4 w-4" />
+                  {uploading ? "Processing…" : "Upload image"}
                 </button>
-              )}
-            </div>
-            <div
-              className="relative h-40 w-full overflow-hidden rounded-lg border border-input"
-              style={{ backgroundColor: bgColor }}
-            >
-              {bgImage ? (
-                <>
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${bgImage})` }}
-                  />
-                  <div className="absolute inset-0 bg-black/40" />
-                </>
-              ) : (
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,38,53,0.4),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(212,175,55,0.15),transparent_50%)]" />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="rounded-xl bg-white/95 px-4 py-2 text-xs font-medium text-foreground shadow">
-                  Preview
+                {bgImage && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, auth_bg_image_url: "" })}
+                    className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    <X className="h-4 w-4" /> Remove image
+                  </button>
+                )}
+              </div>
+              <div
+                className="relative h-40 w-full overflow-hidden rounded-lg border border-input"
+                style={{ backgroundColor: bgColor }}
+              >
+                {bgImage ? (
+                  <>
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${bgImage})` }}
+                    />
+                    <div className="absolute inset-0 bg-black/40" />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,38,53,0.4),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(212,175,55,0.15),transparent_50%)]" />
+                )}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="rounded-xl bg-white/95 px-4 py-2 text-xs font-medium text-foreground shadow">
+                    Preview
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Field>
-      </div>
+          </Field>
+        </div>
+      )}
 
       <div className="flex justify-end">
         <button
@@ -203,6 +294,43 @@ export function SettingsPanel() {
 }
 
 const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60";
+
+const TIMEZONES = [
+  "UTC",
+  "Asia/Qatar",
+  "Asia/Dubai",
+  "Asia/Riyadh",
+  "Asia/Kolkata",
+  "Asia/Dhaka",
+  "Asia/Karachi",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Europe/London",
+  "Europe/Paris",
+  "Europe/Berlin",
+  "Europe/Istanbul",
+  "America/New_York",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+  "Australia/Sydney",
+];
+
+function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+        active
+          ? "border-primary text-foreground"
+          : "border-transparent text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 function Field({ icon: Icon, label, hint, children }: { icon: any; label: string; hint?: string; children: React.ReactNode }) {
   return (
