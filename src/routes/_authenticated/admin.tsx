@@ -38,6 +38,7 @@ import {
   Image,
   Mail,
   MessageSquare,
+  Newspaper,
   Plus,
   Search,
   Settings,
