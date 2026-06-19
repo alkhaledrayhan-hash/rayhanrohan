@@ -29,6 +29,7 @@ import { PostsManager } from "@/components/admin/PostsManager";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
+import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import {
   Bell,
   Building2,
@@ -99,7 +100,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
@@ -207,6 +208,9 @@ function AdminDashboard() {
           {isAdmin && (
             <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => setSection("users")} />
           )}
+          {isAdmin && (
+            <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => setSection("email-requests")} />
+          )}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -294,6 +298,7 @@ function AdminDashboard() {
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
+          {section === "email-requests" && (isAdmin ? <EmailChangeRequestsPanel /> : <PlaceholderCard icon={Mail} title="Email Requests" desc="Only admins can review email change requests." />)}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <BookingsPanel isAdmin={!!isAdmin} />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
