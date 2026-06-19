@@ -94,7 +94,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
