@@ -117,7 +117,39 @@ function Home() {
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
               {locationsHeading.title}
             </h2>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {/* Mobile: auto-scrolling marquee */}
+            <div className="mt-10 -mx-4 overflow-hidden sm:hidden">
+              <div className="flex w-max gap-4 px-4 animate-[locations-marquee_28s_linear_infinite]">
+                {[...LOCATIONS, ...LOCATIONS].map((loc, i) => (
+                  <Link
+                    key={`${loc}-${i}`}
+                    to="/properties"
+                    search={{ location: loc }}
+                    className="group relative isolate w-[68vw] max-w-[280px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card"
+                  >
+                    <img
+                      src={LOCATION_IMAGES[loc]}
+                      alt={loc}
+                      loading="lazy"
+                      decoding="async"
+                      className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+                    />
+                    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
+                    <div className="relative p-6">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
+                      <p className="mt-2 font-display text-xl font-semibold text-white">{loc}</p>
+                      <p className="mt-3 inline-flex items-center gap-1 text-sm text-gold">
+                        Explore <ArrowRight className="h-3.5 w-3.5" />
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <style>{`@keyframes locations-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+            </div>
+
+            {/* Tablet/desktop: grid */}
+            <div className="mt-10 hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-5">
               {LOCATIONS.map((loc) => (
                 <Link
                   key={loc}
@@ -150,6 +182,7 @@ function Home() {
                 </Link>
               ))}
             </div>
+
           </div>
         </section>
 
