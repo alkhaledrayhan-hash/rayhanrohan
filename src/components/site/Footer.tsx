@@ -25,10 +25,10 @@ export function Footer() {
       />
 
       {/* Flight path + Qatar Airways plane backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[260px] md:inset-0 md:h-auto">
         <svg
           viewBox="0 0 800 300"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMin slice"
           className="h-full w-full"
         >
           <defs>
