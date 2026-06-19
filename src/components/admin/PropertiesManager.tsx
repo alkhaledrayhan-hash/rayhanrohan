@@ -38,6 +38,10 @@ const empty: Partial<PropertyRow> = {
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<PropertyRow> | null>(null);
+  const [search, setSearch] = useState("");
+  const [fStatus, setFStatus] = useState<"all" | "rent" | "sale">("all");
+  const [fApproval, setFApproval] = useState<"all" | "approved" | "pending" | "rejected">("all");
+  const [fType, setFType] = useState<string>("all");
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-properties"],
@@ -104,6 +108,18 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const types = Array.from(new Set(rows.map((r) => r.type).filter(Boolean))).sort();
+  const filtered = rows.filter((r) => {
+    if (fStatus !== "all" && r.status !== fStatus) return false;
+    if (fApproval !== "all" && r.listing_status !== fApproval) return false;
+    if (fType !== "all" && r.type !== fType) return false;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      if (![r.title, r.location, r.address, r.type].some((v) => (v || "").toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -111,6 +127,39 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         <button onClick={() => setEditing({ ...empty })} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
           <Plus className="h-4 w-4" /> Add property
         </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search title, location, address…"
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm lg:col-span-2"
+        />
+        <select value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+          <option value="all">All listings</option>
+          <option value="rent">For rent</option>
+          <option value="sale">For sale</option>
+        </select>
+        <select value={fApproval} onChange={(e) => setFApproval(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+          <option value="all">All approvals</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select value={fType} onChange={(e) => setFType(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+          <option value="all">All types</option>
+          {types.map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+        {(search || fStatus !== "all" || fApproval !== "all" || fType !== "all") && (
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setFStatus("all"); setFApproval("all"); setFType("all"); }}
+            className="rounded-md border border-input bg-background px-3 py-2 text-xs hover:bg-secondary lg:col-span-5"
+          >
+            Clear filters · Showing {filtered.length} of {rows.length}
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
@@ -128,8 +177,8 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
             </thead>
             <tbody className="divide-y divide-border">
               {isLoading && <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && rows.length === 0 && <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">No properties yet.</td></tr>}
-              {rows.map((r) => (
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-5 py-3 font-medium">{r.title}</td>
                   <td className="px-5 py-3 text-muted-foreground">{r.location}</td>

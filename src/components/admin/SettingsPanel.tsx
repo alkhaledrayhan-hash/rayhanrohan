@@ -28,9 +28,39 @@ const KEYS = [
   "date_format",
   "time_format",
   "week_starts_on",
+  "site_currency",
+  "site_language",
   "auth_bg_color",
   "auth_bg_image_url",
 ] as const;
+
+const CURRENCIES = [
+  { code: "QAR", label: "Qatari Riyal (QAR ر.ق)" },
+  { code: "USD", label: "US Dollar (USD $)" },
+  { code: "EUR", label: "Euro (EUR €)" },
+  { code: "GBP", label: "British Pound (GBP £)" },
+  { code: "AED", label: "UAE Dirham (AED د.إ)" },
+  { code: "SAR", label: "Saudi Riyal (SAR ﷼)" },
+  { code: "INR", label: "Indian Rupee (INR ₹)" },
+  { code: "BDT", label: "Bangladeshi Taka (BDT ৳)" },
+  { code: "PKR", label: "Pakistani Rupee (PKR ₨)" },
+  { code: "TRY", label: "Turkish Lira (TRY ₺)" },
+  { code: "JPY", label: "Japanese Yen (JPY ¥)" },
+  { code: "CNY", label: "Chinese Yuan (CNY ¥)" },
+];
+
+const LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "ar", label: "العربية (Arabic)" },
+  { code: "bn", label: "বাংলা (Bengali)" },
+  { code: "hi", label: "हिन्दी (Hindi)" },
+  { code: "ur", label: "اردو (Urdu)" },
+  { code: "tr", label: "Türkçe (Turkish)" },
+  { code: "fr", label: "Français (French)" },
+  { code: "es", label: "Español (Spanish)" },
+  { code: "de", label: "Deutsch (German)" },
+  { code: "zh", label: "中文 (Chinese)" },
+];
 
 type TabId = "general" | "auth";
 
@@ -202,6 +232,30 @@ export function SettingsPanel() {
               <option value="sunday">Sunday</option>
               <option value="monday">Monday</option>
               <option value="saturday">Saturday</option>
+            </select>
+          </Field>
+
+          <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
+            <select
+              value={form.site_currency || "QAR"}
+              onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
+              className={inputCls}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c.code} value={c.code}>{c.label}</option>
+              ))}
+            </select>
+          </Field>
+
+          <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
+            <select
+              value={form.site_language || "en"}
+              onChange={(e) => setForm({ ...form, site_language: e.target.value })}
+              className={inputCls}
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>{l.label}</option>
+              ))}
             </select>
           </Field>
         </div>
