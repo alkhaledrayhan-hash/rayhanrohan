@@ -24,6 +24,7 @@ import { AgentsPanel } from "@/components/admin/AgentsPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
+import { MediaPanel } from "@/components/admin/MediaPanel";
 import {
   Bell,
   Building2,
@@ -34,6 +35,7 @@ import {
   Home,
   LayoutDashboard,
   LogOut,
+  Image,
   Mail,
   MessageSquare,
   Plus,
@@ -92,7 +94,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
@@ -204,6 +206,10 @@ function AdminDashboard() {
           <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => setSection("messages")} />
           <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => setSection("calendar")} />
 
+          <NavGroup label="Content" />
+          <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => setSection("media")} />
+
+
           <NavGroup label="System" />
           <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => setSection("settings")} />
         </nav>
@@ -280,6 +286,7 @@ function AdminDashboard() {
           {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
+          {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
         </main>
       </div>
