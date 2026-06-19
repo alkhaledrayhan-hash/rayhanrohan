@@ -125,8 +125,11 @@ export function PostsManager() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-border">
-        <TabBtn active={tab === "posts"} onClick={() => setTab("posts")} icon={FileText}>
-          Posts
+        <TabBtn active={tab === "news"} onClick={() => setTab("news")} icon={Newspaper}>
+          News
+        </TabBtn>
+        <TabBtn active={tab === "blogs"} onClick={() => setTab("blogs")} icon={PenLine}>
+          Blogs
         </TabBtn>
         <TabBtn active={tab === "categories"} onClick={() => setTab("categories")} icon={FolderTree}>
           Categories
@@ -136,7 +139,7 @@ export function PostsManager() {
         </TabBtn>
       </div>
 
-      {tab === "posts" && (
+      {(tab === "news" || tab === "blogs") && (
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-muted-foreground">
