@@ -229,6 +229,18 @@ function AdminDashboard() {
             />
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+            >
+              <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
+            </Link>
+            <Link
+              to="/dashboard"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+            >
+              <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">Dashboard</span>
+            </Link>
             <button className="grid h-9 w-9 place-items-center rounded-full border border-border bg-white text-muted-foreground transition hover:text-foreground">
               <Bell className="h-4 w-4" />
             </button>
