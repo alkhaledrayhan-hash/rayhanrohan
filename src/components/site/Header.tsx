@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, Tag, Users } from "lucide-react";
+import { ChevronDown, Home, KeyRound, Menu, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
 
   useEffect(() => {
@@ -22,26 +24,26 @@ export function Header() {
           : "border-b border-white/10 bg-transparent backdrop-blur-md"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="group flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <Link to="/" className="group flex min-w-0 items-center gap-2">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
             <Home className="h-4 w-4" />
           </span>
-          <span className="flex flex-col leading-tight">
+          <span className="flex min-w-0 flex-col leading-tight">
             <span
-              className={`font-display text-lg font-semibold transition-colors ${
+              className={`truncate font-display text-lg font-semibold transition-colors ${
                 scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
               }`}
             >
               {settings.site_title}
             </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-gold">
+            <span className="truncate text-[10px] uppercase tracking-[0.2em] text-gold">
               {settings.site_tagline}
             </span>
           </span>
         </Link>
         <nav
-          className={`hidden items-center gap-1 rounded-full border p-1 text-sm font-medium backdrop-blur-xl transition-colors md:flex ${
+          className={`hidden items-center gap-1 rounded-full border p-1 text-sm font-medium backdrop-blur-xl transition-colors lg:flex ${
             scrolled
               ? "border-border/60 bg-background/40 text-muted-foreground"
               : "border-white/15 bg-white/10 text-white/85"
@@ -54,7 +56,7 @@ export function Header() {
           <NavPill to="/about" scrolled={scrolled}>About</NavPill>
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
         </nav>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <Link
             to="/auth"
             className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
@@ -71,8 +73,91 @@ export function Header() {
             Browse Listings
           </Link>
         </div>
+
+        {/* Mobile + tablet menu */}
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button
+              type="button"
+              aria-label="Open menu"
+              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors lg:hidden ${
+                scrolled
+                  ? "border-border/60 bg-background/60 text-foreground hover:bg-secondary"
+                  : "border-white/20 bg-white/10 text-white hover:bg-white/20"
+              }`}
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[88vw] max-w-sm p-0">
+            <div className="flex h-full flex-col">
+              <div className="border-b border-border px-6 py-5">
+                <p className="font-display text-lg font-semibold text-foreground">
+                  {settings.site_title}
+                </p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
+                  {settings.site_tagline}
+                </p>
+              </div>
+              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
+                <SheetLink to="/" onSelect={() => setOpen(false)}>Home</SheetLink>
+                <SheetLink to="/properties" search={{ status: "rent" }} onSelect={() => setOpen(false)}>
+                  Properties for Rent
+                </SheetLink>
+                <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
+                  Properties for Sale
+                </SheetLink>
+                <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
+                <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
+                <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
+                <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
+              </nav>
+              <div className="space-y-2 border-t border-border px-4 py-4">
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/properties"
+                  search={{ status: "rent" }}
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+                >
+                  Browse Listings
+                </Link>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
+  );
+}
+
+function SheetLink({
+  to,
+  search,
+  onSelect,
+  children,
+}: {
+  to: string;
+  search?: Record<string, unknown>;
+  onSelect: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      to={to as never}
+      search={search as never}
+      onClick={onSelect}
+      className="rounded-xl px-4 py-3 text-foreground transition-colors hover:bg-secondary"
+      activeProps={{ className: "bg-secondary text-foreground" }}
+    >
+      {children}
+    </Link>
   );
 }
 
