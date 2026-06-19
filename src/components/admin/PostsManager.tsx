@@ -37,12 +37,12 @@ export function PostsManager() {
   const saveTagFn = useServerFn(upsertTag);
   const delTagFn = useServerFn(deleteTag);
 
-  const [tab, setTab] = useState<"posts" | "categories" | "tags">("posts");
+  const [tab, setTab] = useState<"news" | "blogs" | "categories" | "tags">("news");
   const [editing, setEditing] = useState<Partial<Post> | null>(null);
   const [search, setSearch] = useState("");
-  const [fType, setFType] = useState<"all" | "blog" | "news">("all");
   const [fStatus, setFStatus] = useState<"all" | "draft" | "published">("all");
   const [fCategory, setFCategory] = useState<string>("all");
+  const currentType: "news" | "blog" = tab === "blogs" ? "blog" : "news";
 
   const postsQ = useQuery({
     queryKey: ["admin-posts"],
@@ -113,20 +113,23 @@ export function PostsManager() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return posts.filter((p) => {
-      if (fType !== "all" && p.type !== fType) return false;
+      if (p.type !== currentType) return false;
       if (fStatus !== "all" && p.status !== fStatus) return false;
       if (fCategory !== "all" && p.category_id !== fCategory) return false;
       if (q && ![p.title, p.slug, p.excerpt || ""].some((v) => v.toLowerCase().includes(q)))
         return false;
       return true;
     });
-  }, [posts, search, fType, fStatus, fCategory]);
+  }, [posts, search, currentType, fStatus, fCategory]);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-border">
-        <TabBtn active={tab === "posts"} onClick={() => setTab("posts")} icon={FileText}>
-          Posts
+        <TabBtn active={tab === "news"} onClick={() => setTab("news")} icon={Newspaper}>
+          News
+        </TabBtn>
+        <TabBtn active={tab === "blogs"} onClick={() => setTab("blogs")} icon={PenLine}>
+          Blogs
         </TabBtn>
         <TabBtn active={tab === "categories"} onClick={() => setTab("categories")} icon={FolderTree}>
           Categories
@@ -136,17 +139,19 @@ export function PostsManager() {
         </TabBtn>
       </div>
 
-      {tab === "posts" && (
+      {(tab === "news" || tab === "blogs") && (
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-muted-foreground">
-              Manage news articles & blog posts. Add categories & tags from the tabs above.
+              {currentType === "news"
+                ? "Write & manage news articles. They appear under the News tab on the website."
+                : "Write & manage blog posts. They appear under the Blog tab on the website."}
             </p>
             <button
-              onClick={() => setEditing({ ...empty })}
+              onClick={() => setEditing({ ...empty, type: currentType })}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              <Plus className="h-4 w-4" /> Add post
+              <Plus className="h-4 w-4" /> Add {currentType === "news" ? "news" : "blog"}
             </button>
           </div>
 
@@ -160,12 +165,7 @@ export function PostsManager() {
                 className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm"
               />
             </div>
-            <select value={fType} onChange={(e) => setFType(e.target.value as any)} className={inputCls}>
-              <option value="all">All types</option>
-              <option value="news">News</option>
-              <option value="blog">Blog</option>
-            </select>
-            <select value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className={inputCls}>
+            <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "all" | "draft" | "published")} className={inputCls}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
