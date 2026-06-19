@@ -208,6 +208,9 @@ function AdminDashboard() {
           {isAdmin && (
             <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => setSection("users")} />
           )}
+          {isAdmin && (
+            <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => setSection("email-requests")} />
+          )}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -295,6 +298,7 @@ function AdminDashboard() {
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
+          {section === "email-requests" && (isAdmin ? <EmailChangeRequestsPanel /> : <PlaceholderCard icon={Mail} title="Email Requests" desc="Only admins can review email change requests." />)}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <BookingsPanel isAdmin={!!isAdmin} />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
