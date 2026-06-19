@@ -25,6 +25,7 @@ import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { MediaPanel } from "@/components/admin/MediaPanel";
+import { PostsManager } from "@/components/admin/PostsManager";
 import {
   Bell,
   Building2,
@@ -38,6 +39,7 @@ import {
   Image,
   Mail,
   MessageSquare,
+  Newspaper,
   Plus,
   Search,
   Settings,
@@ -94,7 +96,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
@@ -208,6 +210,9 @@ function AdminDashboard() {
 
           <NavGroup label="Content" />
           <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => setSection("media")} />
+          <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => setSection("posts")} />
+
+
 
 
           <NavGroup label="System" />
@@ -287,6 +292,7 @@ function AdminDashboard() {
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
+          {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
         </main>
       </div>
