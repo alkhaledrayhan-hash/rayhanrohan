@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Download, Mail, Trash2, Search } from "lucide-react";
+import { useFormatters } from "@/lib/format";
 
 type Lead = {
   id: string;
@@ -18,6 +19,7 @@ type Lead = {
 
 export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
+  const { formatDateTime } = useFormatters();
   const [q, setQ] = useState("");
   const [src, setSrc] = useState<string>("all");
 
@@ -92,7 +94,7 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     exportCsv();
     const body = filtered
       .slice(0, 20)
-      .map((r) => `• ${r.name} <${r.email}> — ${r.subject || r.source} (${new Date(r.created_at).toLocaleString()})`)
+      .map((r) => `• ${r.name} <${r.email}> — ${r.subject || r.source} (${formatDateTime(r.created_at)})`)
       .join("\n");
     const subject = `Leads export — ${filtered.length} records`;
     const mailto = `mailto:${encodeURIComponent(adminEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
@@ -143,7 +145,7 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               {!isLoading && filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="align-top hover:bg-muted/30">
-                  <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{formatDateTime(r.created_at)}</td>
                   <td className="px-4 py-3 font-medium">{r.name}</td>
                   <td className="px-4 py-3 text-xs">
                     <a href={`mailto:${r.email}`} className="block text-primary hover:underline">{r.email}</a>
