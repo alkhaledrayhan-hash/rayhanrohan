@@ -143,6 +143,20 @@ function Dashboard() {
             <p className="text-xs text-muted-foreground">Your Ayesha Maison Qatar account</p>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+            >
+              <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
+            </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                <ShieldCheck className="h-4 w-4" /> <span className="hidden sm:inline">Admin</span>
+              </Link>
+            )}
             {isAdmin && (
               <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
                 Admin
