@@ -292,6 +292,7 @@ function AdminDashboard() {
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
+          {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
         </main>
       </div>
