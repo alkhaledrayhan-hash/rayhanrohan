@@ -89,7 +89,7 @@ export function Footer() {
 
 
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 md:grid-cols-3 md:text-left lg:px-8">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 lg:grid-cols-3 lg:text-left lg:px-8">
         <div>
           <Link to="/" className="inline-flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
@@ -104,7 +104,7 @@ export function Footer() {
               </span>
             </span>
           </Link>
-          <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 md:mx-0">
+          <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 lg:mx-0">
             A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
             tailored for the discerning resident.
           </p>
@@ -128,9 +128,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex justify-center md:block md:justify-self-end">
+        <div className="flex justify-center lg:block lg:justify-self-end">
           <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/[0.06] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-            <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold md:justify-start">
+            <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold lg:justify-start">
+
               <span className="h-px w-5 bg-gold/60" />
               Contact
             </h4>
