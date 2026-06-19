@@ -60,24 +60,33 @@ export function MediaPanel() {
   const { data: items, isLoading } = useQuery({
     queryKey: ["media", "list"],
     queryFn: async () => {
-      const { data, error } = await supabase.storage.from(BUCKET).list("", {
-        limit: 200,
-        sortBy: { column: "created_at", order: "desc" },
-      });
-      if (error) throw error;
-      const files = (data ?? []).filter((f) => f.id !== null) as MediaItem[];
-      if (files.length === 0) return [] as WithUrl[];
+      // Recursively list root + known folders so site-assets/ & properties/ show up
+      const prefixes = ["", "site-assets", "properties"];
+      const all: MediaItem[] = [];
+      for (const prefix of prefixes) {
+        const { data, error } = await supabase.storage.from(BUCKET).list(prefix, {
+          limit: 200,
+          sortBy: { column: "created_at", order: "desc" },
+        });
+        if (error) continue;
+        (data ?? [])
+          .filter((f) => f.id !== null) // skip folder entries
+          .forEach((f) => {
+            all.push({ ...(f as MediaItem), name: prefix ? `${prefix}/${f.name}` : f.name });
+          });
+      }
+      if (all.length === 0) return [] as WithUrl[];
       const { data: signed } = await supabase.storage
         .from(BUCKET)
         .createSignedUrls(
-          files.map((f) => f.name),
+          all.map((f) => f.name),
           60 * 60, // 1h
         );
       const urlByPath = new Map<string, string>();
       (signed ?? []).forEach((s) => {
         if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
       });
-      return files.map((f) => ({ ...f, url: urlByPath.get(f.name) ?? "" }));
+      return all.map((f) => ({ ...f, url: urlByPath.get(f.name) ?? "" }));
     },
   });
 
