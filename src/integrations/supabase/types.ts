@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          access_token: string
+          assigned_agent_id: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_user_id: string | null
+          id: string
+          last_message_at: string
+          property_id: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string
+          assigned_agent_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_user_id?: string | null
+          id?: string
+          last_message_at?: string
+          property_id?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          assigned_agent_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_user_id?: string | null
+          id?: string
+          last_message_at?: string
+          property_id?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -52,6 +105,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_name: string | null
+          sender_role: string
+          sender_user_id: string | null
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_name?: string | null
+          sender_role: string
+          sender_user_id?: string | null
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_name?: string | null
+          sender_role?: string
+          sender_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_sections: {
         Row: {

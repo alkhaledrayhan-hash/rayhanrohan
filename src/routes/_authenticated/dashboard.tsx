@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import {
   Building2,
   Heart,
@@ -172,7 +173,7 @@ function Dashboard() {
           {active === "overview" && <Overview user={user} profile={profile} isAdmin={!!isAdmin} />}
           {active === "profile" && <ProfileSection userId={user?.id} profile={profile} />}
           {active === "saved" && <PlaceholderPanel icon={Heart} title="Saved Properties" desc="Properties you save will appear here." />}
-          {active === "messages" && <PlaceholderPanel icon={Mail} title="Messages" desc="Your enquiries and replies will appear here." />}
+          {active === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {active === "admin" && isAdmin && <AdminPanel />}
         </div>
       </main>

@@ -13,6 +13,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { RouteProgress } from "../components/site/RouteProgress";
+import { ChatWidget } from "../components/site/ChatWidget";
 
 function NotFoundComponent() {
   return (
@@ -156,6 +157,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <RouteProgress />
       <Outlet />
+      <ChatWidget />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
