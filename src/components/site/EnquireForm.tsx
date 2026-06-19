@@ -63,6 +63,7 @@ export function EnquireForm({ property }: { property: Property }) {
   const [countryOpen, setCountryOpen] = useState(false);
   const [countryQuery, setCountryQuery] = useState("");
   const submit = useServerFn(createEnquiry);
+  const startThread = useServerFn(createConversation);
 
   const selectedCountry = COUNTRY_CODES.find((c) => c.code === dialCode) ?? COUNTRY_CODES[0];
   const filteredCountries = useMemo(() => {
