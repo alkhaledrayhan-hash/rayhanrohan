@@ -6,7 +6,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
-import { filterProperties, LOCATIONS, PROPERTIES, type SortKey } from "@/lib/properties";
+import { filterProperties, LOCATIONS, useProperties, type SortKey } from "@/lib/properties";
 import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=webp";
 
 const searchSchema = z.object({
@@ -57,7 +57,8 @@ function PropertiesPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const status = search.status ?? "rent";
-  const items = filterProperties(PROPERTIES, { ...search, status });
+  const { data: allProperties = [] } = useProperties();
+  const items = filterProperties(allProperties, { ...search, status });
 
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
