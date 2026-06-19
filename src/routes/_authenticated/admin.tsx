@@ -28,6 +28,7 @@ import { MediaPanel } from "@/components/admin/MediaPanel";
 import { PostsManager } from "@/components/admin/PostsManager";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
+import { UsersManager } from "@/components/admin/UsersManager";
 import {
   Bell,
   Building2,
@@ -98,7 +99,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
@@ -203,6 +204,9 @@ function AdminDashboard() {
               <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />
             </NavGroupExpandable>
           )}
+          {isAdmin && (
+            <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => setSection("users")} />
+          )}
 
           <NavGroup label="Operations" />
           <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
@@ -289,6 +293,7 @@ function AdminDashboard() {
           {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
+          {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <BookingsPanel isAdmin={!!isAdmin} />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
