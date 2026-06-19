@@ -158,13 +158,32 @@ export function Header() {
                 <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
-                >
-                  Sign In
-                </Link>
+                {isAuthed ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setOpen(false)}
+                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LayoutDashboard className="h-4 w-4" /> Dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LogOut className="h-4 w-4" /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Sign In
+                  </Link>
+                )}
                 <Link
                   to="/properties"
                   search={{ status: "rent" }}
