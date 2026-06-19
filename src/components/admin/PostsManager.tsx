@@ -143,13 +143,15 @@ export function PostsManager() {
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-muted-foreground">
-              Manage news articles & blog posts. Add categories & tags from the tabs above.
+              {currentType === "news"
+                ? "Write & manage news articles. They appear under the News tab on the website."
+                : "Write & manage blog posts. They appear under the Blog tab on the website."}
             </p>
             <button
-              onClick={() => setEditing({ ...empty })}
+              onClick={() => setEditing({ ...empty, type: currentType })}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              <Plus className="h-4 w-4" /> Add post
+              <Plus className="h-4 w-4" /> Add {currentType === "news" ? "news" : "blog"}
             </button>
           </div>
 
@@ -163,12 +165,7 @@ export function PostsManager() {
                 className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm"
               />
             </div>
-            <select value={fType} onChange={(e) => setFType(e.target.value as any)} className={inputCls}>
-              <option value="all">All types</option>
-              <option value="news">News</option>
-              <option value="blog">Blog</option>
-            </select>
-            <select value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className={inputCls}>
+            <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "all" | "draft" | "published")} className={inputCls}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
