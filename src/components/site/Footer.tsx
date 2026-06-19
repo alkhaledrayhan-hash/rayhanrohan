@@ -25,7 +25,7 @@ export function Footer() {
       />
 
       {/* Flight path + Qatar Airways plane backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[260px] md:inset-0 md:h-auto">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 h-[280px] md:inset-0 md:top-0 md:h-auto">
         <svg
           viewBox="0 0 800 300"
           preserveAspectRatio="xMidYMin slice"
@@ -34,26 +34,27 @@ export function Footer() {
           <defs>
             <linearGradient id="trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
-              <stop offset="100%" stopColor="oklch(0.85 0.14 85)" stopOpacity="1" />
+              <stop offset="100%" stopColor="oklch(0.92 0.16 85)" stopOpacity="1" />
             </linearGradient>
+            <path id="flight-path" d="M60,250 Q200,140 360,170 T740,80" />
           </defs>
 
           {/* Dotted flight path */}
-          <path
-            d="M60,250 Q200,140 360,170 T740,80"
+          <use
+            href="#flight-path"
             fill="none"
-            stroke="oklch(0.85 0.14 85)"
-            strokeWidth="1.5"
+            stroke="oklch(0.9 0.15 85)"
+            strokeWidth="1.8"
             strokeDasharray="3 6"
-            opacity="0.7"
+            opacity="0.9"
           />
 
           {/* Plane trail */}
-          <path
-            d="M60,250 Q200,140 360,170 T740,80"
+          <use
+            href="#flight-path"
             fill="none"
             stroke="url(#trail-grad)"
-            strokeWidth="2.5"
+            strokeWidth="3"
             strokeLinecap="round"
             strokeDasharray="80 1000"
             className="footer-plane-trail"
@@ -61,24 +62,32 @@ export function Footer() {
 
           {/* Origin & destination dots */}
           <g>
-            <circle cx="60" cy="250" r="4" fill="oklch(0.85 0.14 85)" />
-            <circle cx="60" cy="250" r="9" fill="none" stroke="oklch(0.85 0.14 85)" strokeWidth="1" opacity="0.5" />
-            <circle cx="740" cy="80" r="4" fill="oklch(0.85 0.14 85)" />
-            <circle cx="740" cy="80" r="9" fill="none" stroke="oklch(0.85 0.14 85)" strokeWidth="1" opacity="0.5" />
+            <circle cx="60" cy="250" r="4" fill="oklch(0.9 0.15 85)" />
+            <circle cx="60" cy="250" r="10" fill="none" stroke="oklch(0.9 0.15 85)" strokeWidth="1.2" opacity="0.7" />
+            <circle cx="740" cy="80" r="4" fill="oklch(0.9 0.15 85)" />
+            <circle cx="740" cy="80" r="10" fill="none" stroke="oklch(0.9 0.15 85)" strokeWidth="1.2" opacity="0.7" />
           </g>
 
-          {/* Qatar Airways plane image following the path */}
+          {/* Qatar Airways plane image animated along the SVG path */}
           <image
             href={qatarPlaneAsset.url}
-            width="120"
-            height="60"
-            x="-60"
-            y="-30"
-            className="footer-plane"
-            style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.45))" }}
-          />
+            width="140"
+            height="70"
+            x="-70"
+            y="-35"
+            style={{ filter: "drop-shadow(0 0 10px oklch(0.9 0.15 85 / 0.55)) drop-shadow(0 6px 14px rgba(0,0,0,0.55))" }}
+          >
+            <animateMotion
+              dur="9s"
+              repeatCount="indefinite"
+              rotate="auto"
+              path="M60,250 Q200,140 360,170 T740,80"
+            />
+          </image>
         </svg>
       </div>
+
+
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 md:grid-cols-3 md:text-left lg:px-8">
         <div>
