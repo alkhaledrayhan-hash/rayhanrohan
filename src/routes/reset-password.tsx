@@ -46,8 +46,9 @@ function ResetPassword() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#1a0a0f]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,38,53,0.4),transparent_50%)]" />
+    <div className="relative min-h-screen overflow-hidden">
+      <AuthBackground />
+
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 flex items-center justify-center gap-2 text-white">

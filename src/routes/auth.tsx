@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
+import { AuthBackground } from "@/components/site/AuthBackground";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -121,8 +123,9 @@ function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#1a0a0f]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,38,53,0.4),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(212,175,55,0.15),transparent_50%)]" />
+    <div className="relative min-h-screen overflow-hidden">
+      <AuthBackground />
+
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-white">
