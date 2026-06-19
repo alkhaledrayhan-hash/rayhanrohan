@@ -82,9 +82,30 @@ export function EnquireForm({ property }: { property: Property }) {
     const fullPhone = `${dialCode} ${phone.trim()}`.trim();
     setSubmitting(true);
     try {
+      // 1) Record in CRM (leads)
       await submit({
         data: { propertyId: property.id, name, phone: fullPhone, email, message },
       });
+      // 2) Open a conversation thread routed to this property's agent (admin sees all)
+      try {
+        const res = await startThread({
+          data: {
+            name: name.trim(),
+            email: email.trim(),
+            property_id: property.id,
+            subject: `Enquiry · ${property.title}`,
+            body: `${message}\n\nPhone: ${fullPhone}`,
+          },
+        });
+        try {
+          localStorage.setItem(
+            "maison_chat_thread",
+            JSON.stringify({ id: res.id, token: res.token }),
+          );
+        } catch {}
+      } catch (threadErr) {
+        console.warn("Thread creation failed (lead still saved)", threadErr);
+      }
       toast.success("Enquiry sent — our agent will reply shortly.");
       setName(""); setPhone(""); setEmail("");
     } catch (err) {
