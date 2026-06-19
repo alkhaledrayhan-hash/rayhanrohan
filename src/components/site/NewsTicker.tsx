@@ -23,14 +23,15 @@ export function NewsTicker() {
 
       <div className="relative flex items-stretch">
         {/* Label */}
-        <div className="flex flex-shrink-0 items-center gap-2 border-r border-white/15 bg-white/[0.06] px-5 py-3 backdrop-blur-sm sm:px-6">
+        <div className="flex flex-shrink-0 items-center gap-2 border-r border-white/15 bg-white/[0.06] px-3 py-3 backdrop-blur-sm sm:px-6">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-gold/20 text-gold ring-1 ring-gold/40">
             <Newspaper className="h-3.5 w-3.5" />
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
+          <span className="hidden text-[11px] font-semibold uppercase tracking-[0.25em] text-gold sm:inline">
             Latest news
           </span>
         </div>
+
 
         {/* Marquee */}
         <div className="group relative flex-1 overflow-hidden">
