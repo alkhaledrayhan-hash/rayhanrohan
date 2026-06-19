@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, Menu, Tag, Users } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -8,6 +11,26 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ["auth", "user"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    },
+  });
+  const isAuthed = !!user;
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    setOpen(false);
+    navigate({ to: "/", replace: true });
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -57,14 +80,36 @@ export function Header() {
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
-          <Link
-            to="/auth"
-            className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
-              scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
-            }`}
-          >
-            Sign In
-          </Link>
+          {isAuthed ? (
+            <>
+              <Link
+                to="/dashboard"
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                  scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+                }`}
+              >
+                <LayoutDashboard className="h-4 w-4" /> Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                  scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+                }`}
+              >
+                <LogOut className="h-4 w-4" /> Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+              }`}
+            >
+              Sign In
+            </Link>
+          )}
           <Link
             to="/properties"
             search={{ status: "rent" }}
@@ -113,13 +158,32 @@ export function Header() {
                 <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
-                  className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
-                >
-                  Sign In
-                </Link>
+                {isAuthed ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setOpen(false)}
+                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LayoutDashboard className="h-4 w-4" /> Dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LogOut className="h-4 w-4" /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Sign In
+                  </Link>
+                )}
                 <Link
                   to="/properties"
                   search={{ status: "rent" }}
