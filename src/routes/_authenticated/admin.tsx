@@ -208,6 +208,9 @@ function AdminDashboard() {
 
           <NavGroup label="Content" />
           <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => setSection("media")} />
+          <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => setSection("posts")} />
+
+
 
 
           <NavGroup label="System" />
