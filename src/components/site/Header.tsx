@@ -80,14 +80,36 @@ export function Header() {
           <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
-          <Link
-            to="/auth"
-            className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
-              scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
-            }`}
-          >
-            Sign In
-          </Link>
+          {isAuthed ? (
+            <>
+              <Link
+                to="/dashboard"
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                  scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+                }`}
+              >
+                <LayoutDashboard className="h-4 w-4" /> Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                  scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+                }`}
+              >
+                <LogOut className="h-4 w-4" /> Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                scrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/15"
+              }`}
+            >
+              Sign In
+            </Link>
+          )}
           <Link
             to="/properties"
             search={{ status: "rent" }}
