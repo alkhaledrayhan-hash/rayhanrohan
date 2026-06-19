@@ -128,9 +128,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex justify-center md:block md:justify-self-end">
+        <div className="flex justify-center lg:block lg:justify-self-end">
           <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/[0.06] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-            <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold md:justify-start">
+            <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold lg:justify-start">
+
               <span className="h-px w-5 bg-gold/60" />
               Contact
             </h4>
