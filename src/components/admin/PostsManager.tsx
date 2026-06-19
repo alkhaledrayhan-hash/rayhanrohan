@@ -67,7 +67,7 @@ export function PostsManager() {
         .select("id, name, slug")
         .order("name");
       if (error) throw error;
-      return (data ?? []) as Tag[];
+      return ((data ?? []) as unknown) as Tag[];
     },
   });
 
