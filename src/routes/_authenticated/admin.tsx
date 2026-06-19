@@ -26,6 +26,8 @@ import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { MediaPanel } from "@/components/admin/MediaPanel";
 import { PostsManager } from "@/components/admin/PostsManager";
+import { BookingsPanel } from "@/components/admin/BookingsPanel";
+import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import {
   Bell,
   Building2,
@@ -288,9 +290,9 @@ function AdminDashboard() {
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
-          {section === "bookings" && <PlaceholderCard icon={FileText} title="Bookings" desc="Confirmed viewings and booked rentals appear here." />}
+          {section === "bookings" && <BookingsPanel isAdmin={!!isAdmin} />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
-          {section === "calendar" && <PlaceholderCard icon={Calendar} title="Calendar" desc="Viewings & follow-ups scheduled across the team." />}
+          {section === "calendar" && <CalendarPanel />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
           {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
