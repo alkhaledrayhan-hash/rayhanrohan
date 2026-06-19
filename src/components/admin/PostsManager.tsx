@@ -56,7 +56,7 @@ export function PostsManager() {
         .select("id, name, slug, description")
         .order("name");
       if (error) throw error;
-      return (data ?? []) as Category[];
+      return ((data ?? []) as unknown) as Category[];
     },
   });
   const tagsQ = useQuery({
