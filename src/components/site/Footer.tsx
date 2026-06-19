@@ -89,7 +89,7 @@ export function Footer() {
 
 
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 md:grid-cols-3 md:text-left lg:px-8">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 lg:grid-cols-3 lg:text-left lg:px-8">
         <div>
           <Link to="/" className="inline-flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
