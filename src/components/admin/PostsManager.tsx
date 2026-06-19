@@ -113,14 +113,14 @@ export function PostsManager() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return posts.filter((p) => {
-      if (fType !== "all" && p.type !== fType) return false;
+      if (p.type !== currentType) return false;
       if (fStatus !== "all" && p.status !== fStatus) return false;
       if (fCategory !== "all" && p.category_id !== fCategory) return false;
       if (q && ![p.title, p.slug, p.excerpt || ""].some((v) => v.toLowerCase().includes(q)))
         return false;
       return true;
     });
-  }, [posts, search, fType, fStatus, fCategory]);
+  }, [posts, search, currentType, fStatus, fCategory]);
 
   return (
     <div className="space-y-4">
