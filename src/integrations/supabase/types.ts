@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          customer_user_id: string | null
+          id: string
+          notes: string | null
+          property_id: string | null
+          property_title: string
+          scheduled_date: string
+          scheduled_time: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          customer_user_id?: string | null
+          id?: string
+          notes?: string | null
+          property_id?: string | null
+          property_title: string
+          scheduled_date: string
+          scheduled_time: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          customer_user_id?: string | null
+          id?: string
+          notes?: string | null
+          property_id?: string | null
+          property_title?: string
+          scheduled_date?: string
+          scheduled_time?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           access_token: string
