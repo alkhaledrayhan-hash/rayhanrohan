@@ -57,7 +57,8 @@ function PropertiesPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const status = search.status ?? "rent";
-  const items = filterProperties(PROPERTIES, { ...search, status });
+  const { data: allProperties = [] } = useProperties();
+  const items = filterProperties(allProperties, { ...search, status });
 
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
