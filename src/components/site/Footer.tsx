@@ -25,10 +25,10 @@ export function Footer() {
       />
 
       {/* Flight path + Qatar Airways plane backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[260px] md:inset-0 md:h-auto">
         <svg
           viewBox="0 0 800 300"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMin slice"
           className="h-full w-full"
         >
           <defs>
@@ -80,13 +80,13 @@ export function Footer() {
         </svg>
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 md:grid-cols-3 md:text-left lg:px-8">
         <div>
           <Link to="/" className="inline-flex items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
               <Home className="h-5 w-5" />
             </span>
-            <span className="flex flex-col leading-tight">
+            <span className="flex flex-col leading-tight text-left">
               <span className="font-display text-2xl font-semibold text-white">
                 {settings.site_title}
               </span>
@@ -95,7 +95,7 @@ export function Footer() {
               </span>
             </span>
           </Link>
-          <p className="mt-4 max-w-sm text-sm text-white/70">
+          <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 md:mx-0">
             A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
             tailored for the discerning resident.
           </p>
@@ -119,9 +119,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="md:justify-self-end">
-          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-            <h4 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold">
+        <div className="flex justify-center md:block md:justify-self-end">
+          <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/[0.06] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+            <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold md:justify-start">
               <span className="h-px w-5 bg-gold/60" />
               Contact
             </h4>
@@ -142,6 +142,7 @@ export function Footer() {
           </div>
         </div>
       </div>
+
 
 
       <div className="relative border-t border-white/10">
