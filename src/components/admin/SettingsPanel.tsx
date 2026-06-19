@@ -28,9 +28,39 @@ const KEYS = [
   "date_format",
   "time_format",
   "week_starts_on",
+  "site_currency",
+  "site_language",
   "auth_bg_color",
   "auth_bg_image_url",
 ] as const;
+
+const CURRENCIES = [
+  { code: "QAR", label: "Qatari Riyal (QAR ر.ق)" },
+  { code: "USD", label: "US Dollar (USD $)" },
+  { code: "EUR", label: "Euro (EUR €)" },
+  { code: "GBP", label: "British Pound (GBP £)" },
+  { code: "AED", label: "UAE Dirham (AED د.إ)" },
+  { code: "SAR", label: "Saudi Riyal (SAR ﷼)" },
+  { code: "INR", label: "Indian Rupee (INR ₹)" },
+  { code: "BDT", label: "Bangladeshi Taka (BDT ৳)" },
+  { code: "PKR", label: "Pakistani Rupee (PKR ₨)" },
+  { code: "TRY", label: "Turkish Lira (TRY ₺)" },
+  { code: "JPY", label: "Japanese Yen (JPY ¥)" },
+  { code: "CNY", label: "Chinese Yuan (CNY ¥)" },
+];
+
+const LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "ar", label: "العربية (Arabic)" },
+  { code: "bn", label: "বাংলা (Bengali)" },
+  { code: "hi", label: "हिन्दी (Hindi)" },
+  { code: "ur", label: "اردو (Urdu)" },
+  { code: "tr", label: "Türkçe (Turkish)" },
+  { code: "fr", label: "Français (French)" },
+  { code: "es", label: "Español (Spanish)" },
+  { code: "de", label: "Deutsch (German)" },
+  { code: "zh", label: "中文 (Chinese)" },
+];
 
 type TabId = "general" | "auth";
 
