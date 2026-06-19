@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, Menu, Tag, Users } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
