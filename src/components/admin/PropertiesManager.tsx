@@ -137,7 +137,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           className="rounded-md border border-input bg-background px-3 py-2 text-sm lg:col-span-2"
         />
         <select value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
-          <option value="all">All listings</option>
+          <option value="all">All status</option>
           <option value="rent">For rent</option>
           <option value="sale">For sale</option>
         </select>
