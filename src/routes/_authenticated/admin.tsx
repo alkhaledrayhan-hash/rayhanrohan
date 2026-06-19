@@ -100,7 +100,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
 
