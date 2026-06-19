@@ -51,7 +51,15 @@ export function SettingsPanel() {
   const [uploading, setUploading] = useState(false);
   const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
-  useEffect(() => { if (data) setForm(data); }, [data]);
+  useEffect(() => {
+    if (!data) return;
+    const next = { ...data };
+    if (!next.site_url && typeof window !== "undefined") next.site_url = window.location.origin;
+    if (!next.site_timezone && typeof Intl !== "undefined") {
+      try { next.site_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
+    }
+    setForm(next);
+  }, [data]);
 
   const save = useMutation({
     mutationFn: async () => {
