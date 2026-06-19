@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -18,27 +18,20 @@ import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
-import { formatPrice, getProperty } from "@/lib/properties";
+import { formatPrice, usePropertyBySlug } from "@/lib/properties";
 
 export const Route = createFileRoute("/properties_/$id")({
-  loader: ({ params }) => {
-    const property = getProperty(params.id);
-    if (!property) throw notFound();
-    return { property };
-  },
-  head: ({ loaderData }) => {
-    const p = loaderData?.property;
-    const title = p ? `${p.title}, ${p.location} — MaisonQatar` : "Property — MaisonQatar";
-    const desc = p
-      ? `${p.bedrooms}-bed ${p.type.toLowerCase()} in ${p.location} · ${formatPrice(p)}. ${p.description}`
-      : "Premium real estate in Qatar.";
+  head: ({ params }) => {
+    const title = params?.id
+      ? `${params.id.replace(/-/g, " ")} — MaisonQatar`
+      : "Property — MaisonQatar";
+    const desc = "Premium real estate in Qatar.";
     return {
       meta: [
         { title },
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
-        ...(p ? [{ property: "og:image", content: p.image }] : []),
       ],
     };
   },
@@ -72,8 +65,49 @@ export const Route = createFileRoute("/properties_/$id")({
 });
 
 function PropertyDetail() {
-  const { property } = Route.useLoaderData();
-  const [activeImg, setActiveImg] = useState(property.gallery[0] ?? property.image);
+  const { id } = Route.useParams();
+  const { data: property, isLoading } = usePropertyBySlug(id);
+  const [activeImg, setActiveImg] = useState<string | null>(null);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">Loading property…</main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!property) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <PageHero
+          eyebrow="Listing unavailable"
+          title="Property not found"
+          description="It may have been let or sold. Browse our latest curated listings across Qatar."
+          crumbs={[
+            { label: "Home", to: "/" },
+            { label: "Properties", to: "/properties", search: { status: "rent" } },
+            { label: "Not found" },
+          ]}
+        />
+        <main className="mx-auto max-w-3xl px-4 pb-24 pt-10 text-center">
+          <Link
+            to="/properties"
+            search={{ status: "rent" }}
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to listings
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const currentImg = activeImg ?? property.gallery[0] ?? property.image;
 
   const waMsg = encodeURIComponent(
     `Hello, I am interested in viewing the property ${property.title} located in ${property.location}. Please let me know your availability.`,
