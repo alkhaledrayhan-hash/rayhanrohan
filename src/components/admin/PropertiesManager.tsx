@@ -208,6 +208,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <th className="px-5 py-3">Location</th>
                 <th className="px-5 py-3">Type</th>
                 <th className="px-5 py-3">Price</th>
+                <th className="px-5 py-3">Agent</th>
                 <th className="px-5 py-3">Approval</th>
                 <th className="px-5 py-3 text-right">Actions</th>
               </tr>
