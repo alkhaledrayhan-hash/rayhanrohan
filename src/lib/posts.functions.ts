@@ -123,7 +123,7 @@ export const listAllPostsAdmin = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("posts")
       .select(
-        "id, slug, title, excerpt, cover_image, type, status, published_at, category_id, created_at, updated_at",
+        "id, slug, title, excerpt, cover_image, type, status, published_at, category_id, created_at, updated_at, is_featured",
       )
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
