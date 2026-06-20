@@ -26,13 +26,14 @@ type PropertyRow = {
   verified: boolean;
   listing_status: "pending" | "approved" | "rejected";
   created_by: string | null;
+  assigned_agent_id: string | null;
   created_at: string;
 };
 
 const empty: Partial<PropertyRow> = {
   title: "", slug: "", location: "Doha", address: "", type: "Apartment",
   status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
-  image: "", gallery: [], description: "", features: [],
+  image: "", gallery: [], description: "", features: [], assigned_agent_id: null,
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
@@ -59,6 +60,28 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     },
   });
 
+  // Agent list (admin assigns any agent to a property)
+  const { data: agents = [] } = useQuery({
+    queryKey: ["agents-for-assignment"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data: roles, error: rErr } = await supabase
+        .from("user_roles").select("user_id").eq("role", "agent");
+      if (rErr) throw rErr;
+      const ids = (roles ?? []).map((r: any) => r.user_id);
+      if (!ids.length) return [] as { id: string; full_name: string | null; email: string | null }[];
+      const { data, error } = await supabase
+        .from("profiles").select("id, full_name, email").in("id", ids);
+      if (error) throw error;
+      return (data ?? []) as { id: string; full_name: string | null; email: string | null }[];
+    },
+  });
+  const agentName = (id: string | null) => {
+    if (!id) return "—";
+    const a = agents.find((x) => x.id === id);
+    return a?.full_name || a?.email || "Agent";
+  };
+
   const save = useMutation({
     mutationFn: async (p: Partial<PropertyRow>) => {
       const { data: u } = await supabase.auth.getUser();
@@ -72,6 +95,8 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
       };
+      // Only admins can (re)assign agents
+      if (isAdmin) payload.assigned_agent_id = p.assigned_agent_id || null;
       if (p.id) {
         const { error } = await supabase.from("properties").update(payload).eq("id", p.id);
         if (error) throw error;
@@ -96,6 +121,18 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Updated"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const assignAgent = useMutation({
+    mutationFn: async ({ id, agentId }: { id: string; agentId: string | null }) => {
+      const { error } = await supabase
+        .from("properties")
+        .update({ assigned_agent_id: agentId })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Agent assigned"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -171,19 +208,36 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <th className="px-5 py-3">Location</th>
                 <th className="px-5 py-3">Type</th>
                 <th className="px-5 py-3">Price</th>
+                <th className="px-5 py-3">Agent</th>
                 <th className="px-5 py-3">Approval</th>
                 <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-5 py-3 font-medium">{r.title}</td>
                   <td className="px-5 py-3 text-muted-foreground">{r.location}</td>
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
+                  <td className="px-5 py-3">
+                    {isAdmin ? (
+                      <select
+                        value={r.assigned_agent_id || ""}
+                        onChange={(e) => assignAgent.mutate({ id: r.id, agentId: e.target.value || null })}
+                        className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
+                      >
+                        <option value="">— Unassigned —</option>
+                        {agents.map((a) => (
+                          <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">{agentName(r.assigned_agent_id)}</span>
+                    )}
+                  </td>
                   <td className="px-5 py-3">
                     {isAdmin ? (
                       <select
@@ -244,6 +298,20 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
+              {isAdmin && (
+                <Field label="Assigned agent" className="col-span-2">
+                  <select
+                    value={editing.assigned_agent_id || ""}
+                    onChange={(e) => setEditing({ ...editing, assigned_agent_id: e.target.value || null })}
+                    className={inputCls}
+                  >
+                    <option value="">— Unassigned —</option>
+                    {agents.map((a) => (
+                      <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                    ))}
+                  </select>
+                </Field>
+              )}
               <div className="col-span-2 space-y-2">
                 <span className="text-xs font-medium text-muted-foreground">Cover image</span>
                 <CoverUploader value={editing.image || ""} onChange={(v) => setEditing({ ...editing, image: v })} />
