@@ -176,42 +176,59 @@ export type Database = {
       }
       leads: {
         Row: {
+          agent_id: string | null
           created_at: string
           email: string
           id: string
           message: string
           name: string
           phone: string | null
+          property_id: string | null
+          property_title: string | null
           source: string
           status: string
           subject: string | null
           updated_at: string
         }
         Insert: {
+          agent_id?: string | null
           created_at?: string
           email: string
           id?: string
           message: string
           name: string
           phone?: string | null
+          property_id?: string | null
+          property_title?: string | null
           source?: string
           status?: string
           subject?: string | null
           updated_at?: string
         }
         Update: {
+          agent_id?: string | null
           created_at?: string
           email?: string
           id?: string
           message?: string
           name?: string
           phone?: string | null
+          property_id?: string | null
+          property_title?: string | null
           source?: string
           status?: string
           subject?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {

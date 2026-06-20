@@ -29,21 +29,36 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => BookingSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Look up property to attach agent (created_by)
+    // Resolve property by UUID or by slug (frontend uses slug as Property.id)
+    let propertyUuid: string | null = null;
     let agentId: string | null = null;
+    let resolvedTitle: string | null = null;
     if (data.propertyId) {
-      const { data: prop } = await supabaseAdmin
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        data.propertyId,
+      );
+      const q = supabaseAdmin
         .from("properties")
-        .select("created_by")
-        .eq("id", data.propertyId)
-        .maybeSingle();
-      agentId = (prop as { created_by?: string | null } | null)?.created_by ?? null;
+        .select("id, title, assigned_agent_id, created_by");
+      const { data: prop } = isUuid
+        ? await q.eq("id", data.propertyId).maybeSingle()
+        : await q.eq("slug", data.propertyId).maybeSingle();
+      if (prop) {
+        propertyUuid = (prop as { id: string }).id;
+        resolvedTitle = (prop as { title: string }).title;
+        agentId =
+          (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
+          (prop as { created_by?: string | null }).created_by ??
+          null;
+      }
     }
+    if (!propertyUuid) throw new Error("Property not found");
+
     const { data: inserted, error } = await supabaseAdmin
       .from("bookings")
       .insert({
-        property_id: data.propertyId,
-        property_title: data.propertyTitle,
+        property_id: propertyUuid,
+        property_title: resolvedTitle ?? data.propertyTitle,
         agent_id: agentId,
         customer_name: data.name,
         customer_phone: data.phone,
@@ -183,9 +198,41 @@ const EnquirySchema = z.object({
 export const createEnquiry = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => EnquirySchema.parse(data))
   .handler(async ({ data }) => {
-    const id = `enq_${Date.now().toString(36)}`;
-    console.log("[enquiry]", id, JSON.stringify(data));
-    return { ok: true, id };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Resolve the property (id is slug from frontend)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      data.propertyId,
+    );
+    const q = supabaseAdmin
+      .from("properties")
+      .select("id, title, assigned_agent_id, created_by");
+    const { data: prop } = isUuid
+      ? await q.eq("id", data.propertyId).maybeSingle()
+      : await q.eq("slug", data.propertyId).maybeSingle();
+    const propertyUuid = (prop as { id?: string } | null)?.id ?? null;
+    const propertyTitle = (prop as { title?: string } | null)?.title ?? null;
+    const agentId =
+      (prop as { assigned_agent_id?: string | null } | null)?.assigned_agent_id ??
+      (prop as { created_by?: string | null } | null)?.created_by ??
+      null;
+
+    const { data: inserted, error } = await supabaseAdmin
+      .from("leads")
+      .insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        subject: propertyTitle ? `Enquiry · ${propertyTitle}` : "Property enquiry",
+        message: data.message,
+        source: "property",
+        property_id: propertyUuid,
+        property_title: propertyTitle,
+        agent_id: agentId,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { ok: true, id: inserted.id };
   });
 
 const ContactSchema = z.object({

@@ -15,13 +15,19 @@ type Lead = {
   source: string;
   status: string;
   created_at: string;
+  property_id: string | null;
+  property_title: string | null;
+  agent_id: string | null;
 };
+
+type AgentProfile = { id: string; full_name: string | null; email: string | null };
 
 export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
   const { formatDateTime } = useFormatters();
   const [q, setQ] = useState("");
   const [src, setSrc] = useState<string>("all");
+  const [agentFilter, setAgentFilter] = useState<string>("all");
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
@@ -47,16 +53,41 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     },
   });
 
+  const { data: agents = [] } = useQuery({
+    queryKey: ["leads-agents"],
+    queryFn: async () => {
+      const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "agent");
+      const ids = (roles ?? []).map((r) => r.user_id as string);
+      if (!ids.length) return [] as AgentProfile[];
+      const { data } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
+      return (data ?? []) as AgentProfile[];
+    },
+  });
+
+  const agentMap = useMemo(() => {
+    const m = new Map<string, AgentProfile>();
+    for (const a of agents) m.set(a.id, a);
+    return m;
+  }, [agents]);
+  const agentName = (id: string | null) => {
+    if (!id) return "—";
+    const a = agentMap.get(id);
+    return a?.full_name || a?.email || "Agent";
+  };
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (src !== "all" && r.source !== src) return false;
+      if (agentFilter !== "all") {
+        if (agentFilter === "unassigned" ? r.agent_id : r.agent_id !== agentFilter) return false;
+      }
       if (!needle) return true;
-      return [r.name, r.email, r.phone, r.subject, r.message]
+      return [r.name, r.email, r.phone, r.subject, r.message, r.property_title]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(needle));
     });
-  }, [rows, q, src]);
+  }, [rows, q, src, agentFilter]);
 
   const sources = useMemo(() => Array.from(new Set(rows.map((r) => r.source))).sort(), [rows]);
 
@@ -119,6 +150,15 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
           <option value="all">All sources</option>
           {sources.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
+        {isAdmin && (
+          <select value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+            <option value="all">All agents</option>
+            <option value="unassigned">Unassigned</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+            ))}
+          </select>
+        )}
         <button onClick={exportCsv} className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm hover:bg-muted">
           <Download className="h-4 w-4" /> Export CSV
         </button>
@@ -136,13 +176,15 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Contact</th>
                 <th className="px-4 py-3">Source</th>
+                <th className="px-4 py-3">Property</th>
+                <th className="px-4 py-3">Agent</th>
                 <th className="px-4 py-3">Message</th>
                 {isAdmin && <th className="px-4 py-3 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="align-top hover:bg-muted/30">
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{formatDateTime(r.created_at)}</td>
@@ -152,6 +194,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                     {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
                   </td>
                   <td className="px-4 py-3"><span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">{r.property_title || "—"}</td>
+                  <td className="px-4 py-3 text-xs">{agentName(r.agent_id)}</td>
                   <td className="px-4 py-3 max-w-md">
                     {r.subject && <div className="text-xs font-semibold text-foreground/70">{r.subject}</div>}
                     <p className="line-clamp-3 text-xs text-muted-foreground">{r.message}</p>

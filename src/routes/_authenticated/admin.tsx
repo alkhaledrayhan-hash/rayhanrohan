@@ -30,8 +30,8 @@ import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
+import { NotificationsBell } from "@/components/admin/NotificationsBell";
 import {
-  Bell,
   Building2,
   Calendar,
   ChevronDown,
@@ -298,9 +298,7 @@ function AdminDashboard() {
             >
               <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">Dashboard</span>
             </Link>
-            <button className="grid h-9 w-9 place-items-center rounded-full border border-border bg-white text-muted-foreground transition hover:text-foreground">
-              <Bell className="h-4 w-4" />
-            </button>
+            <NotificationsBell onNavigate={(s) => goSection(s)} />
             <div className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-3">
               <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                 {initials}
