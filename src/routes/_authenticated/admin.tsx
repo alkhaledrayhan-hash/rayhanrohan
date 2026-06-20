@@ -105,6 +105,10 @@ function AdminDashboard() {
     "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const closeMobileNav = () => setMobileNavOpen(false);
+  // Wrap setSection so picking an item on mobile also closes the drawer
+  const goSection = (s: typeof section) => { setSection(s); closeMobileNav(); };
 
   const isAdmin = roleData?.roles.includes("admin");
   const isAgent = roleData?.roles.includes("agent");
