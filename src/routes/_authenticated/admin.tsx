@@ -44,6 +44,7 @@ import {
   Mail,
   MessageSquare,
   Newspaper,
+  Menu,
   Plus,
   Search,
   Settings,
@@ -52,6 +53,7 @@ import {
   TrendingUp,
   UserPlus,
   Users,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
