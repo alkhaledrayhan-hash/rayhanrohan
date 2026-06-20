@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { createContact } from "@/lib/bookings.functions";
 
 export type LeadInput = {
   name: string;
@@ -10,18 +10,16 @@ export type LeadInput = {
 };
 
 export async function submitLead(input: LeadInput) {
-  const payload = {
-    name: input.name.trim(),
-    email: input.email.trim(),
-    phone: (input.phone || "").trim() || null,
-    subject: (input.subject || "").trim() || null,
-    message: input.message.trim(),
-    source: input.source || "contact",
-  };
-  if (!payload.name || !payload.email || !payload.message) {
+  const name = input.name.trim();
+  const email = input.email.trim();
+  const message = input.message.trim();
+  const subject = (input.subject || "General enquiry").trim();
+  const phone = (input.phone || "").trim();
+  if (!name || !email || !message) {
     throw new Error("Please fill in your name, email and message.");
   }
-  const { data, error } = await supabase.from("leads").insert(payload).select("id").single();
-  if (error) throw error;
-  return data;
+  // Route through server function so admin (with service role) writes the lead
+  // — anonymous clients cannot read back the inserted row under RLS.
+  const res = await createContact({ data: { name, email, phone, subject, message } });
+  return { id: res.id };
 }
