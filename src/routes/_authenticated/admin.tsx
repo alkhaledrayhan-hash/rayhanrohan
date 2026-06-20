@@ -250,9 +250,9 @@ function AdminDashboard() {
           )}
 
           <NavGroup label="Operations" />
-          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge="12" />
-          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} />
-          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} />
+          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge={unread.leads ? String(unread.leads) : undefined} />
+          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} badge={unread.bookings ? String(unread.bookings) : undefined} />
+          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} badge={unread.messages ? String(unread.messages) : undefined} />
           <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => goSection("calendar")} />
 
           <NavGroup label="Content" />
