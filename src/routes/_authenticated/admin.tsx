@@ -108,8 +108,14 @@ function AdminDashboard() {
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const closeMobileNav = () => setMobileNavOpen(false);
-  // Wrap setSection so picking an item on mobile also closes the drawer
-  const goSection = (s: typeof section) => { setSection(s); closeMobileNav(); };
+  const { counts: unread, markRead } = useUnreadCounts();
+  // Wrap setSection so picking an item on mobile also closes the drawer, and
+  // mark the corresponding section read so its badge clears.
+  const goSection = (s: typeof section) => {
+    setSection(s);
+    closeMobileNav();
+    if (s === "leads" || s === "bookings" || s === "messages") markRead(s as UnreadSection);
+  };
 
   const isAdmin = roleData?.roles.includes("admin");
   const isAgent = roleData?.roles.includes("agent");
