@@ -26,13 +26,14 @@ type PropertyRow = {
   verified: boolean;
   listing_status: "pending" | "approved" | "rejected";
   created_by: string | null;
+  assigned_agent_id: string | null;
   created_at: string;
 };
 
 const empty: Partial<PropertyRow> = {
   title: "", slug: "", location: "Doha", address: "", type: "Apartment",
   status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
-  image: "", gallery: [], description: "", features: [],
+  image: "", gallery: [], description: "", features: [], assigned_agent_id: null,
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
