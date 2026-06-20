@@ -100,8 +100,8 @@ export const getPublicAgent = createServerFn({ method: "GET" })
 
     const { data: props, error: pErr } = await supabaseAdmin
       .from("properties")
-      .select("id, slug, title, location, address, type, status, price, bedrooms, bathrooms, sqft, image")
-      .eq("created_by", data.id)
+      .select("id, slug, title, location, address, type, status, price, bedrooms, bathrooms, sqft, image, assigned_agent_id, created_by")
+      .or(`assigned_agent_id.eq.${data.id},and(assigned_agent_id.is.null,created_by.eq.${data.id})`)
       .eq("listing_status", "approved")
       .order("created_at", { ascending: false });
     if (pErr) throw new Error(pErr.message);
