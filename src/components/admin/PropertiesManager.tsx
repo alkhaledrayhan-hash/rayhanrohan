@@ -298,6 +298,20 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
+              {isAdmin && (
+                <Field label="Assigned agent" className="col-span-2">
+                  <select
+                    value={editing.assigned_agent_id || ""}
+                    onChange={(e) => setEditing({ ...editing, assigned_agent_id: e.target.value || null })}
+                    className={inputCls}
+                  >
+                    <option value="">— Unassigned —</option>
+                    {agents.map((a) => (
+                      <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                    ))}
+                  </select>
+                </Field>
+              )}
               <div className="col-span-2 space-y-2">
                 <span className="text-xs font-medium text-muted-foreground">Cover image</span>
                 <CoverUploader value={editing.image || ""} onChange={(v) => setEditing({ ...editing, image: v })} />
