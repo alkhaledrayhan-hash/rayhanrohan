@@ -316,7 +316,7 @@ function AdminDashboard() {
         </header>
 
         {/* Page */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6">
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
               <h1 className="font-display text-2xl font-semibold">{sectionTitle(section)}</h1>
