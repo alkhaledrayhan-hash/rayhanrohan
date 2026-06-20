@@ -25,12 +25,11 @@ export function Footer() {
       />
 
       {/* Flight path + Qatar Airways plane backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 h-[280px] md:inset-0 md:top-0 md:h-auto">
-        <svg
-          viewBox="0 0 800 300"
-          preserveAspectRatio="xMidYMin slice"
-          className="h-full w-full"
-        >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-6 h-[280px] md:inset-0 md:top-0 md:h-auto"
+      >
+        <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMin slice" className="h-full w-full">
           <defs>
             <linearGradient id="trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
@@ -63,9 +62,25 @@ export function Footer() {
           {/* Origin & destination dots */}
           <g>
             <circle cx="60" cy="250" r="4" fill="oklch(0.9 0.15 85)" />
-            <circle cx="60" cy="250" r="10" fill="none" stroke="oklch(0.9 0.15 85)" strokeWidth="1.2" opacity="0.7" />
+            <circle
+              cx="60"
+              cy="250"
+              r="10"
+              fill="none"
+              stroke="oklch(0.9 0.15 85)"
+              strokeWidth="1.2"
+              opacity="0.7"
+            />
             <circle cx="740" cy="80" r="4" fill="oklch(0.9 0.15 85)" />
-            <circle cx="740" cy="80" r="10" fill="none" stroke="oklch(0.9 0.15 85)" strokeWidth="1.2" opacity="0.7" />
+            <circle
+              cx="740"
+              cy="80"
+              r="10"
+              fill="none"
+              stroke="oklch(0.9 0.15 85)"
+              strokeWidth="1.2"
+              opacity="0.7"
+            />
           </g>
 
           {/* Qatar Airways plane image animated along the SVG path */}
@@ -75,7 +90,10 @@ export function Footer() {
             height="70"
             x="-70"
             y="-35"
-            style={{ filter: "drop-shadow(0 0 10px oklch(0.9 0.15 85 / 0.55)) drop-shadow(0 6px 14px rgba(0,0,0,0.55))" }}
+            style={{
+              filter:
+                "drop-shadow(0 0 10px oklch(0.9 0.15 85 / 0.55)) drop-shadow(0 6px 14px rgba(0,0,0,0.55))",
+            }}
           >
             <animateMotion
               dur="9s"
@@ -86,8 +104,6 @@ export function Footer() {
           </image>
         </svg>
       </div>
-
-
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 lg:grid-cols-3 lg:text-left lg:px-8">
         <div>
@@ -105,8 +121,8 @@ export function Footer() {
             </span>
           </Link>
           <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 lg:mx-0">
-            A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
-            tailored for the discerning resident.
+            A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and
+            Al Waab — tailored for the discerning resident.
           </p>
         </div>
 
@@ -131,7 +147,6 @@ export function Footer() {
         <div className="flex justify-center lg:block lg:justify-self-end">
           <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-white/[0.06] p-6 text-left shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl">
             <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold lg:justify-start">
-
               <span className="h-px w-5 bg-gold/60" />
               Contact
             </h4>
@@ -153,8 +168,6 @@ export function Footer() {
         </div>
       </div>
 
-
-
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-5 sm:px-6 lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold shadow-[0_0_24px_oklch(0.85_0.14_85/0.18)] backdrop-blur-sm">
@@ -170,4 +183,3 @@ export function Footer() {
     </footer>
   );
 }
-

@@ -2,7 +2,17 @@ import { useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock } from "lucide-react";
+import {
+  Plus,
+  CheckCircle2,
+  XCircle,
+  Trash2,
+  Pencil,
+  Upload,
+  X,
+  ImagePlus,
+  Clock,
+} from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 
 type PropertyRow = {
@@ -31,9 +41,22 @@ type PropertyRow = {
 };
 
 const empty: Partial<PropertyRow> = {
-  title: "", slug: "", location: "Doha", address: "", type: "Apartment",
-  status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
-  image: "", gallery: [], description: "", features: [], assigned_agent_id: null,
+  title: "",
+  slug: "",
+  location: "Doha",
+  address: "",
+  type: "Apartment",
+  status: "rent",
+  price: 0,
+  bedrooms: 1,
+  bathrooms: 1,
+  rooms: 1,
+  sqft: 0,
+  image: "",
+  gallery: [],
+  description: "",
+  features: [],
+  assigned_agent_id: null,
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
@@ -66,12 +89,17 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     enabled: isAdmin,
     queryFn: async () => {
       const { data: roles, error: rErr } = await supabase
-        .from("user_roles").select("user_id").eq("role", "agent");
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "agent");
       if (rErr) throw rErr;
       const ids = (roles ?? []).map((r: any) => r.user_id);
-      if (!ids.length) return [] as { id: string; full_name: string | null; email: string | null }[];
+      if (!ids.length)
+        return [] as { id: string; full_name: string | null; email: string | null }[];
       const { data, error } = await supabase
-        .from("profiles").select("id, full_name, email").in("id", ids);
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", ids);
       if (error) throw error;
       return (data ?? []) as { id: string; full_name: string | null; email: string | null }[];
     },
@@ -85,13 +113,25 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const save = useMutation({
     mutationFn: async (p: Partial<PropertyRow>) => {
       const { data: u } = await supabase.auth.getUser();
-      const slug = (p.slug || p.title || "").toString().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const slug = (p.slug || p.title || "")
+        .toString()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
       const payload: any = {
-        title: p.title, slug, location: p.location, address: p.address, type: p.type,
-        status: p.status, price: Number(p.price) || 0,
-        bedrooms: Number(p.bedrooms) || 0, bathrooms: Number(p.bathrooms) || 0,
-        rooms: Number(p.rooms) || 0, sqft: Number(p.sqft) || 0,
-        image: p.image || null, description: p.description || null,
+        title: p.title,
+        slug,
+        location: p.location,
+        address: p.address,
+        type: p.type,
+        status: p.status,
+        price: Number(p.price) || 0,
+        bedrooms: Number(p.bedrooms) || 0,
+        bathrooms: Number(p.bathrooms) || 0,
+        rooms: Number(p.rooms) || 0,
+        sqft: Number(p.sqft) || 0,
+        image: p.image || null,
+        description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
       };
@@ -116,11 +156,23 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   });
 
   const setStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: "approved" | "rejected" | "pending" }) => {
-      const { error } = await supabase.from("properties").update({ listing_status: status }).eq("id", id);
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "approved" | "rejected" | "pending";
+    }) => {
+      const { error } = await supabase
+        .from("properties")
+        .update({ listing_status: status })
+        .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Updated"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onSuccess: () => {
+      toast.success("Updated");
+      qc.invalidateQueries({ queryKey: ["admin-properties"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -132,7 +184,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Agent assigned"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onSuccess: () => {
+      toast.success("Agent assigned");
+      qc.invalidateQueries({ queryKey: ["admin-properties"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -141,7 +196,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       const { error } = await supabase.from("properties").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Deleted"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onSuccess: () => {
+      toast.success("Deleted");
+      qc.invalidateQueries({ queryKey: ["admin-properties"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -152,7 +210,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     if (fType !== "all" && r.type !== fType) return false;
     if (search.trim()) {
       const q = search.toLowerCase();
-      if (![r.title, r.location, r.address, r.type].some((v) => (v || "").toLowerCase().includes(q))) return false;
+      if (
+        ![r.title, r.location, r.address, r.type].some((v) => (v || "").toLowerCase().includes(q))
+      )
+        return false;
     }
     return true;
   });
@@ -160,8 +221,15 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{isAdmin ? "Manage all listings & approve agent submissions." : "Your listings (new entries need admin approval)."}</p>
-        <button onClick={() => setEditing({ ...empty })} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+        <p className="text-sm text-muted-foreground">
+          {isAdmin
+            ? "Manage all listings & approve agent submissions."
+            : "Your listings (new entries need admin approval)."}
+        </p>
+        <button
+          onClick={() => setEditing({ ...empty })}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+        >
           <Plus className="h-4 w-4" /> Add property
         </button>
       </div>
@@ -173,25 +241,46 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           placeholder="Search title, location, address…"
           className="rounded-md border border-input bg-background px-3 py-2 text-sm lg:col-span-2"
         />
-        <select value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <select
+          value={fStatus}
+          onChange={(e) => setFStatus(e.target.value as any)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
           <option value="all">All status</option>
           <option value="rent">For rent</option>
           <option value="sale">For sale</option>
         </select>
-        <select value={fApproval} onChange={(e) => setFApproval(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <select
+          value={fApproval}
+          onChange={(e) => setFApproval(e.target.value as any)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
           <option value="all">All approval</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
           <option value="rejected">Rejected</option>
         </select>
-        <select value={fType} onChange={(e) => setFType(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <select
+          value={fType}
+          onChange={(e) => setFType(e.target.value)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
           <option value="all">All types</option>
-          {types.map((t) => <option key={t} value={t}>{t}</option>)}
+          {types.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
         </select>
         {(search || fStatus !== "all" || fApproval !== "all" || fType !== "all") && (
           <button
             type="button"
-            onClick={() => { setSearch(""); setFStatus("all"); setFApproval("all"); setFType("all"); }}
+            onClick={() => {
+              setSearch("");
+              setFStatus("all");
+              setFApproval("all");
+              setFType("all");
+            }}
             className="rounded-md border border-input bg-background px-3 py-2 text-xs hover:bg-secondary lg:col-span-5"
           >
             Clear filters · Showing {filtered.length} of {rows.length}
@@ -214,39 +303,67 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">
+                    Loading…
+                  </td>
+                </tr>
+              )}
+              {!isLoading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">
+                    {rows.length === 0
+                      ? "No properties yet."
+                      : "No properties match these filters."}
+                  </td>
+                </tr>
+              )}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-5 py-3 font-medium">{r.title}</td>
                   <td className="px-5 py-3 text-muted-foreground">{r.location}</td>
-                  <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
+                  <td className="px-5 py-3">
+                    <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">
+                      {r.status}
+                    </span>
+                  </td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
                   <td className="px-5 py-3">
                     {isAdmin ? (
                       <select
                         value={r.assigned_agent_id || ""}
-                        onChange={(e) => assignAgent.mutate({ id: r.id, agentId: e.target.value || null })}
+                        onChange={(e) =>
+                          assignAgent.mutate({ id: r.id, agentId: e.target.value || null })
+                        }
                         className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
                       >
                         <option value="">— Unassigned —</option>
                         {agents.map((a) => (
-                          <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                          <option key={a.id} value={a.id}>
+                            {a.full_name || a.email}
+                          </option>
                         ))}
                       </select>
                     ) : (
-                      <span className="text-xs text-muted-foreground">{agentName(r.assigned_agent_id)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {agentName(r.assigned_agent_id)}
+                      </span>
                     )}
                   </td>
                   <td className="px-5 py-3">
                     {isAdmin ? (
                       <select
                         value={r.listing_status}
-                        onChange={(e) => setStatus.mutate({ id: r.id, status: e.target.value as any })}
+                        onChange={(e) =>
+                          setStatus.mutate({ id: r.id, status: e.target.value as any })
+                        }
                         className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
-                          r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
-                          : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
-                          : "bg-rose-50 text-rose-700"
+                          r.listing_status === "approved"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : r.listing_status === "pending"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-rose-50 text-rose-700"
                         }`}
                       >
                         <option value="approved">Approved</option>
@@ -254,18 +371,38 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                         <option value="rejected">Rejected</option>
                       </select>
                     ) : (
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                        r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
-                        : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
-                        : "bg-rose-50 text-rose-700"
-                      }`}>{r.listing_status}</span>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                          r.listing_status === "approved"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : r.listing_status === "pending"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-rose-50 text-rose-700"
+                        }`}
+                      >
+                        {r.listing_status}
+                      </span>
                     )}
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
-                      <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                      <button
+                        onClick={() => setEditing(r)}
+                        title="Edit"
+                        className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
                       {isAdmin && (
-                        <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
+                        <button
+                          onClick={() => {
+                            if (confirm("Delete this property?")) del.mutate(r.id);
+                          }}
+                          title="Delete"
+                          className="rounded p-1.5 text-rose-600 hover:bg-rose-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       )}
                     </div>
                   </td>
@@ -277,58 +414,183 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={() => setEditing(null)}>
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-display text-lg font-semibold">{editing.id ? "Edit property" : "New property"}</h3>
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
+          onClick={() => setEditing(null)}
+        >
+          <div
+            className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display text-lg font-semibold">
+              {editing.id ? "Edit property" : "New property"}
+            </h3>
             <form
-              onSubmit={(e) => { e.preventDefault(); save.mutate(editing); }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                save.mutate(editing);
+              }}
               className="mt-4 grid max-h-[70vh] grid-cols-2 gap-3 overflow-y-auto text-sm"
             >
-              <Field label="Title" className="col-span-2"><input required value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className={inputCls} /></Field>
-              <Field label="Location"><input required value={editing.location || ""} onChange={(e) => setEditing({ ...editing, location: e.target.value })} className={inputCls} /></Field>
-              <Field label="Address"><input required value={editing.address || ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} className={inputCls} /></Field>
-              <Field label="Type"><input required value={editing.type || ""} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className={inputCls} /></Field>
+              <Field label="Title" className="col-span-2">
+                <input
+                  required
+                  value={editing.title || ""}
+                  onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Location">
+                <input
+                  required
+                  value={editing.location || ""}
+                  onChange={(e) => setEditing({ ...editing, location: e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Address">
+                <input
+                  required
+                  value={editing.address || ""}
+                  onChange={(e) => setEditing({ ...editing, address: e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Type">
+                <input
+                  required
+                  value={editing.type || ""}
+                  onChange={(e) => setEditing({ ...editing, type: e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
               <Field label="Rent / Sale">
-                <select value={editing.status || "rent"} onChange={(e) => setEditing({ ...editing, status: e.target.value as any })} className={inputCls}>
-                  <option value="rent">Rent</option><option value="sale">Sale</option>
+                <select
+                  value={editing.status || "rent"}
+                  onChange={(e) => setEditing({ ...editing, status: e.target.value as any })}
+                  className={inputCls}
+                >
+                  <option value="rent">Rent</option>
+                  <option value="sale">Sale</option>
                 </select>
               </Field>
-              <Field label="Price (QAR)"><input type="number" required value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Bedrooms"><input type="number" value={editing.bedrooms ?? 0} onChange={(e) => setEditing({ ...editing, bedrooms: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
-              <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Price (QAR)">
+                <input
+                  type="number"
+                  required
+                  value={editing.price ?? 0}
+                  onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Bedrooms">
+                <input
+                  type="number"
+                  value={editing.bedrooms ?? 0}
+                  onChange={(e) => setEditing({ ...editing, bedrooms: Number(e.target.value) })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Bathrooms">
+                <input
+                  type="number"
+                  value={editing.bathrooms ?? 0}
+                  onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Rooms">
+                <input
+                  type="number"
+                  value={editing.rooms ?? 0}
+                  onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })}
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Area (sqft)">
+                <input
+                  type="number"
+                  value={editing.sqft ?? 0}
+                  onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })}
+                  className={inputCls}
+                />
+              </Field>
               {isAdmin && (
                 <Field label="Assigned agent" className="col-span-2">
                   <select
                     value={editing.assigned_agent_id || ""}
-                    onChange={(e) => setEditing({ ...editing, assigned_agent_id: e.target.value || null })}
+                    onChange={(e) =>
+                      setEditing({ ...editing, assigned_agent_id: e.target.value || null })
+                    }
                     className={inputCls}
                   >
                     <option value="">— Unassigned —</option>
                     {agents.map((a) => (
-                      <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                      <option key={a.id} value={a.id}>
+                        {a.full_name || a.email}
+                      </option>
                     ))}
                   </select>
                 </Field>
               )}
               <div className="col-span-2 space-y-2">
                 <span className="text-xs font-medium text-muted-foreground">Cover image</span>
-                <CoverUploader value={editing.image || ""} onChange={(v) => setEditing({ ...editing, image: v })} />
+                <CoverUploader
+                  value={editing.image || ""}
+                  onChange={(v) => setEditing({ ...editing, image: v })}
+                />
               </div>
               <div className="col-span-2 space-y-2">
                 <span className="text-xs font-medium text-muted-foreground">Gallery images</span>
-                <GalleryUploader value={editing.gallery || []} onChange={(v) => setEditing({ ...editing, gallery: v })} />
+                <GalleryUploader
+                  value={editing.gallery || []}
+                  onChange={(v) => setEditing({ ...editing, gallery: v })}
+                />
               </div>
-              <Field label="Description" className="col-span-2"><textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className={inputCls} /></Field>
+              <Field label="Description" className="col-span-2">
+                <textarea
+                  rows={3}
+                  value={editing.description || ""}
+                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
               <Field label="Features (comma separated)" className="col-span-2">
-                <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
+                <input
+                  value={(editing.features || []).join(", ")}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      features: e.target.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                  className={inputCls}
+                />
               </Field>
 
               <div className="col-span-2 mt-2 flex justify-end gap-2">
-                <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</button>
-                <button type="submit" disabled={save.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
-                  {save.isPending ? "Saving…" : editing.id ? "Save changes" : isAdmin ? "Publish" : "Submit for approval"}
+                <button
+                  type="button"
+                  onClick={() => setEditing(null)}
+                  className="rounded-lg border border-border px-4 py-2 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={save.isPending}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
+                  {save.isPending
+                    ? "Saving…"
+                    : editing.id
+                      ? "Save changes"
+                      : isAdmin
+                        ? "Publish"
+                        : "Submit for approval"}
                 </button>
               </div>
             </form>
@@ -339,8 +601,17 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   );
 }
 
-const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
-function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
+const inputCls =
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+function Field({
+  label,
+  children,
+  className = "",
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <label className={`space-y-1 ${className}`}>
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
@@ -358,14 +629,21 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
     try {
       const url = await fileToDataUrl(f, { maxSize: 1280, quality: 0.8 });
       onChange(url);
-    } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
   };
   return (
     <div className="space-y-2">
       <div
         onClick={() => ref.current?.click()}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => { e.preventDefault(); onFile(e.dataTransfer.files?.[0]); }}
+        onDrop={(e) => {
+          e.preventDefault();
+          onFile(e.dataTransfer.files?.[0]);
+        }}
         className="relative grid h-40 cursor-pointer place-items-center rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 overflow-hidden"
       >
         {value ? (
@@ -373,9 +651,14 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
             <img src={value} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); onChange(""); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange("");
+              }}
               className="absolute right-2 top-2 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
-            ><X className="h-4 w-4" /></button>
+            >
+              <X className="h-4 w-4" />
+            </button>
           </>
         ) : (
           <div className="flex flex-col items-center gap-1 text-muted-foreground">
@@ -383,7 +666,13 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
             <span className="text-xs">{busy ? "Uploading…" : "Click or drop cover image"}</span>
           </div>
         )}
-        <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+        <input
+          ref={ref}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => onFile(e.target.files?.[0])}
+        />
       </div>
       <input
         type="url"
@@ -396,7 +685,13 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
   );
 }
 
-function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+function GalleryUploader({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const onFiles = async (files: FileList | null) => {
@@ -408,26 +703,38 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
         urls.push(await fileToDataUrl(f, { maxSize: 1280, quality: 0.8 }));
       }
       onChange([...(value || []), ...urls]);
-    } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
+    }
   };
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-4 gap-2">
         {(value || []).map((src, i) => (
-          <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-border">
+          <div
+            key={i}
+            className="group relative aspect-square overflow-hidden rounded-lg border border-border"
+          >
             <img src={src} alt="" className="h-full w-full object-cover" />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, idx) => idx !== i))}
               className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 text-white opacity-0 group-hover:opacity-100"
-            ><X className="h-3 w-3" /></button>
+            >
+              <X className="h-3 w-3" />
+            </button>
           </div>
         ))}
         <button
           type="button"
           onClick={() => ref.current?.click()}
           onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => { e.preventDefault(); onFiles(e.dataTransfer.files); }}
+          onDrop={(e) => {
+            e.preventDefault();
+            onFiles(e.dataTransfer.files);
+          }}
           className="grid aspect-square place-items-center rounded-lg border-2 border-dashed border-border bg-muted/30 text-muted-foreground hover:bg-muted/50"
         >
           <div className="flex flex-col items-center gap-1">
@@ -436,8 +743,17 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
           </div>
         </button>
       </div>
-      <input ref={ref} type="file" accept="image/*" multiple className="hidden" onChange={(e) => onFiles(e.target.files)} />
-      <p className="text-[11px] text-muted-foreground">You can select multiple images. Stored inline (downscaled).</p>
+      <input
+        ref={ref}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={(e) => onFiles(e.target.files)}
+      />
+      <p className="text-[11px] text-muted-foreground">
+        You can select multiple images. Stored inline (downscaled).
+      </p>
     </div>
   );
 }

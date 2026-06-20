@@ -14,7 +14,12 @@ const createSchema = z.object({
   full_name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9_]{3,30}$/)
+    .optional()
+    .or(z.literal("")),
   password: z.string().min(8).max(72),
   gender: z.string().max(20).optional().default(""),
   city: z.string().max(80).optional().default(""),
@@ -27,7 +32,12 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   full_name: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9_]{3,30}$/)
+    .optional()
+    .or(z.literal("")),
   avatar_url: avatarSchema,
 });
 
@@ -59,12 +69,15 @@ export const createAgent = createServerFn({ method: "POST" })
 
     const newId = created.user.id;
 
-    await supabaseAdmin.from("profiles").update({
-      full_name: data.full_name,
-      phone: data.phone || null,
-      avatar_url: data.avatar_url || null,
-      username: data.username || null,
-    }).eq("id", newId);
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        full_name: data.full_name,
+        phone: data.phone || null,
+        avatar_url: data.avatar_url || null,
+        username: data.username || null,
+      })
+      .eq("id", newId);
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", newId);
     const { error: roleErr } = await supabaseAdmin.from("user_roles").insert({
@@ -82,7 +95,9 @@ export const listAgents = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: roles, error: rolesErr } = await supabaseAdmin
-      .from("user_roles").select("user_id").eq("role", "agent");
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", "agent");
     if (rolesErr) throw new Error(rolesErr.message);
     const ids = (roles ?? []).map((r) => r.user_id);
     if (!ids.length) return { agents: [] };
@@ -101,12 +116,15 @@ export const updateAgent = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("profiles").update({
-      full_name: data.full_name,
-      phone: data.phone || null,
-      username: data.username || null,
-      avatar_url: data.avatar_url || null,
-    }).eq("id", data.id);
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        full_name: data.full_name,
+        phone: data.phone || null,
+        username: data.username || null,
+        avatar_url: data.avatar_url || null,
+      })
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

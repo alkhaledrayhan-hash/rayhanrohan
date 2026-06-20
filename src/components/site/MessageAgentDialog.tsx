@@ -4,13 +4,7 @@ import { Loader2, MessageSquare, Send, X } from "lucide-react";
 import { toast } from "sonner";
 import { createConversation } from "@/lib/messages.functions";
 
-export function MessageAgentDialog({
-  agentId,
-  agentName,
-}: {
-  agentId: string;
-  agentName: string;
-}) {
+export function MessageAgentDialog({ agentId, agentName }: { agentId: string; agentName: string }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -71,9 +65,7 @@ export function MessageAgentDialog({
             className="w-full max-w-md rounded-2xl bg-card p-6 shadow-2xl"
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-lg font-semibold">
-                Message {agentName}
-              </h3>
+              <h3 className="font-display text-lg font-semibold">Message {agentName}</h3>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -89,7 +81,13 @@ export function MessageAgentDialog({
 
             <div className="mt-4 grid gap-3">
               <Field label="Your name" value={name} onChange={setName} placeholder="Full name" />
-              <Field label="Email" value={email} onChange={setEmail} placeholder="you@email.com" type="email" />
+              <Field
+                label="Email"
+                value={email}
+                onChange={setEmail}
+                placeholder="you@email.com"
+                type="email"
+              />
               <label className="flex flex-col gap-1">
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                   Message

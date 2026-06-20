@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
 import { AuthBackground } from "@/components/site/AuthBackground";
 
-
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -173,10 +172,16 @@ function AuthPage() {
                   <div className="space-y-1.5">
                     <Label>I want to sign up as</Label>
                     <div className="grid grid-cols-2 gap-2">
-                      {([
-                        { v: "user", label: "Customer", desc: "Browse & book properties" },
-                        { v: "agent", label: "Agent", desc: "List properties (approval required)" },
-                      ] as const).map((opt) => (
+                      {(
+                        [
+                          { v: "user", label: "Customer", desc: "Browse & book properties" },
+                          {
+                            v: "agent",
+                            label: "Agent",
+                            desc: "List properties (approval required)",
+                          },
+                        ] as const
+                      ).map((opt) => (
                         <button
                           key={opt.v}
                           type="button"

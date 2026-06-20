@@ -36,12 +36,16 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
       <div
         aria-hidden
         className="pointer-events-none absolute -right-32 top-10 -z-10 h-96 w-96 rounded-full opacity-40 blur-3xl"
-        style={{ background: "radial-gradient(circle, oklch(0.85 0.14 85 / 0.55), transparent 70%)" }}
+        style={{
+          background: "radial-gradient(circle, oklch(0.85 0.14 85 / 0.55), transparent 70%)",
+        }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute -left-32 bottom-0 -z-10 h-96 w-96 rounded-full opacity-30 blur-3xl"
-        style={{ background: "radial-gradient(circle, oklch(0.55 0.16 22 / 0.4), transparent 70%)" }}
+        style={{
+          background: "radial-gradient(circle, oklch(0.55 0.16 22 / 0.4), transparent 70%)",
+        }}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -52,8 +56,7 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
               Limited-time offers
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">
-              Exclusive residences,{" "}
-              <span className="italic text-primary">exceptional value</span>
+              Exclusive residences, <span className="italic text-primary">exceptional value</span>
             </h2>
             <p className="mt-3 max-w-xl text-sm text-muted-foreground">
               A short list of premium residences available at preferential pricing this season —
@@ -79,10 +82,7 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
               const discounted = Math.round(property.price * (1 - discount / 100));
               const offerProperty = { ...property, price: discounted } as Property;
               return (
-                <CarouselItem
-                  key={property.id}
-                  className="pl-6 md:basis-1/2 lg:basis-1/3"
-                >
+                <CarouselItem key={property.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
                   <Link
                     to="/properties/$id"
                     params={{ id: property.id }}
@@ -119,8 +119,14 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
 
                     <div className="flex flex-1 flex-col gap-4 p-5">
                       <div className="flex items-center gap-5 text-sm text-muted-foreground">
-                        <Spec icon={<Bed className="h-4 w-4" />} label={`${property.bedrooms} bd`} />
-                        <Spec icon={<Bath className="h-4 w-4" />} label={`${property.bathrooms} ba`} />
+                        <Spec
+                          icon={<Bed className="h-4 w-4" />}
+                          label={`${property.bedrooms} bd`}
+                        />
+                        <Spec
+                          icon={<Bath className="h-4 w-4" />}
+                          label={`${property.bathrooms} ba`}
+                        />
                         <Spec
                           icon={<Maximize2 className="h-4 w-4" />}
                           label={`${property.sqft.toLocaleString()} ft²`}

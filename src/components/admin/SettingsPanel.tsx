@@ -72,7 +72,9 @@ export function SettingsPanel() {
       const { data, error } = await supabase.from("site_settings").select("key, value");
       if (error) throw error;
       const map: SettingsMap = {};
-      (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
+      (data || []).forEach((r: any) => {
+        map[r.key] = r.value || "";
+      });
       return map;
     },
   });
@@ -86,7 +88,9 @@ export function SettingsPanel() {
     const next = { ...data };
     if (!next.site_url && typeof window !== "undefined") next.site_url = window.location.origin;
     if (!next.site_timezone && typeof Intl !== "undefined") {
-      try { next.site_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
+      try {
+        next.site_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      } catch {}
     }
     setForm(next);
   }, [data]);
@@ -107,7 +111,11 @@ export function SettingsPanel() {
   async function handleFile(file: File) {
     try {
       setUploading(true);
-      const dataUrl = await fileToDataUrl(file, { maxSize: 1600, quality: 0.8, mime: "image/jpeg" });
+      const dataUrl = await fileToDataUrl(file, {
+        maxSize: 1600,
+        quality: 0.8,
+        mime: "image/jpeg",
+      });
       setForm((f) => ({ ...f, auth_bg_image_url: dataUrl }));
       toast.success("Image ready — click Save to apply.");
     } catch (e: any) {
@@ -124,19 +132,28 @@ export function SettingsPanel() {
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        save.mutate();
+      }}
       className="max-w-2xl space-y-5 rounded-2xl border border-border bg-white p-6 shadow-sm"
     >
       <div className="flex items-center gap-2 border-b border-border">
-        <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
-        <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
+        <TabButton active={tab === "general"} onClick={() => setTab("general")}>
+          General settings
+        </TabButton>
+        <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>
+          Auth page settings
+        </TabButton>
       </div>
 
       {tab === "general" && (
         <div className="space-y-5">
           <div>
             <h3 className="font-display text-lg font-semibold">General settings</h3>
-            <p className="text-sm text-muted-foreground">Core website information and formatting preferences.</p>
+            <p className="text-sm text-muted-foreground">
+              Core website information and formatting preferences.
+            </p>
           </div>
 
           <Field icon={Type} label="Site title">
@@ -157,7 +174,11 @@ export function SettingsPanel() {
             />
           </Field>
 
-          <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
+          <Field
+            icon={LinkIcon}
+            label="Website address (URL)"
+            hint="Public address of this site. Auto-detected from the current browser if empty."
+          >
             <div className="flex gap-2">
               <input
                 type="url"
@@ -176,7 +197,11 @@ export function SettingsPanel() {
             </div>
           </Field>
 
-          <Field icon={Mail} label="Admin email" hint="Leads exports can be emailed to this address.">
+          <Field
+            icon={Mail}
+            label="Admin email"
+            hint="Leads exports can be emailed to this address."
+          >
             <input
               type="email"
               value={form.admin_email || ""}
@@ -186,14 +211,22 @@ export function SettingsPanel() {
             />
           </Field>
 
-          <Field icon={Globe} label="Website time zone" hint="Used to display dates and times across the dashboard.">
+          <Field
+            icon={Globe}
+            label="Website time zone"
+            hint="Used to display dates and times across the dashboard."
+          >
             <select
               value={form.site_timezone || "Asia/Qatar"}
               onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
               className={inputCls}
             >
-              {Array.from(new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES])).map((tz) => (
-                <option key={tz} value={tz}>{tz}</option>
+              {Array.from(
+                new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES]),
+              ).map((tz) => (
+                <option key={tz} value={tz}>
+                  {tz}
+                </option>
               ))}
             </select>
           </Field>
@@ -235,26 +268,38 @@ export function SettingsPanel() {
             </select>
           </Field>
 
-          <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
+          <Field
+            icon={Globe}
+            label="Default currency"
+            hint="Used across the website for prices. Default: QAR."
+          >
             <select
               value={form.site_currency || "QAR"}
               onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
               className={inputCls}
             >
               {CURRENCIES.map((c) => (
-                <option key={c.code} value={c.code}>{c.label}</option>
+                <option key={c.code} value={c.code}>
+                  {c.label}
+                </option>
               ))}
             </select>
           </Field>
 
-          <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
+          <Field
+            icon={Globe}
+            label="Default language"
+            hint="Default interface language for the website. Default: English."
+          >
             <select
               value={form.site_language || "en"}
               onChange={(e) => setForm({ ...form, site_language: e.target.value })}
               className={inputCls}
             >
               {LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code}>{l.label}</option>
+                <option key={l.code} value={l.code}>
+                  {l.label}
+                </option>
               ))}
             </select>
           </Field>
@@ -265,7 +310,10 @@ export function SettingsPanel() {
         <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
           <div>
             <h4 className="font-display text-base font-semibold">Auth pages appearance</h4>
-            <p className="text-xs text-muted-foreground">Background color and optional image shown on Sign in, Sign up, Forgot password, and Reset password screens.</p>
+            <p className="text-xs text-muted-foreground">
+              Background color and optional image shown on Sign in, Sign up, Forgot password, and
+              Reset password screens.
+            </p>
           </div>
 
           <Field icon={Palette} label="Background color">
@@ -285,7 +333,11 @@ export function SettingsPanel() {
             </div>
           </Field>
 
-          <Field icon={ImageIcon} label="Background image" hint="Upload an image or paste a URL. Leave empty to use the gradient.">
+          <Field
+            icon={ImageIcon}
+            label="Background image"
+            hint="Upload an image or paste a URL. Leave empty to use the gradient."
+          >
             <div className="space-y-3">
               <input
                 value={bgImage.startsWith("data:") ? "" : bgImage}
@@ -364,7 +416,8 @@ export function SettingsPanel() {
   );
 }
 
-const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60";
+const inputCls =
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60";
 
 const TIMEZONES = [
   "UTC",
@@ -387,7 +440,15 @@ const TIMEZONES = [
   "Australia/Sydney",
 ];
 
-function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
@@ -403,7 +464,17 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   );
 }
 
-function Field({ icon: Icon, label, hint, children }: { icon: any; label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  icon: Icon,
+  label,
+  hint,
+  children,
+}: {
+  icon: any;
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block space-y-1.5">
       <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

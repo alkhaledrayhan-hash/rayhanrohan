@@ -32,9 +32,7 @@ export const createConversation = createServerFn({ method: "POST" })
         .eq("id", data.property_id)
         .maybeSingle();
       assignedAgentId =
-        (prop?.assigned_agent_id as string | null) ??
-        (prop?.created_by as string | null) ??
-        null;
+        (prop?.assigned_agent_id as string | null) ?? (prop?.created_by as string | null) ?? null;
     }
 
     const { data: conv, error: convErr } = await supabaseAdmin
@@ -67,7 +65,9 @@ export const fetchGuestThread = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: conv, error } = await supabaseAdmin
       .from("conversations")
-      .select("id, customer_name, customer_email, subject, status, property_id, access_token, last_message_at, created_at")
+      .select(
+        "id, customer_name, customer_email, subject, status, property_id, access_token, last_message_at, created_at",
+      )
       .eq("id", data.id)
       .maybeSingle();
     if (error || !conv) throw new Error("Conversation not found");

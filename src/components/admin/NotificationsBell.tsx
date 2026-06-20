@@ -83,9 +83,7 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
           created_at: (c.last_message_at || c.created_at) as string,
         });
       }
-      return out
-        .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
-        .slice(0, 20);
+      return out.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)).slice(0, 20);
     },
   });
 
@@ -97,7 +95,9 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
   const markRead = () => {
     const now = new Date().toISOString();
     setSeenAt(now);
-    try { localStorage.setItem(LS_KEY, now); } catch {}
+    try {
+      localStorage.setItem(LS_KEY, now);
+    } catch {}
   };
 
   return (
@@ -133,11 +133,15 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
               </div>
             )}
             {notifs.map((n) => {
-              const Icon = n.kind === "leads" ? Mail : n.kind === "bookings" ? Calendar : MessageSquare;
+              const Icon =
+                n.kind === "leads" ? Mail : n.kind === "bookings" ? Calendar : MessageSquare;
               return (
                 <button
                   key={n.id}
-                  onClick={() => { onNavigate(n.kind); setOpen(false); }}
+                  onClick={() => {
+                    onNavigate(n.kind);
+                    setOpen(false);
+                  }}
                   className="flex w-full items-start gap-3 border-b border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
                 >
                   <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
@@ -145,8 +149,12 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">{n.title}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{n.subtitle}</span>
-                    <span className="mt-0.5 block text-[10px] text-muted-foreground/80">{formatDateTime(n.created_at)}</span>
+                    <span className="block truncate text-xs text-muted-foreground">
+                      {n.subtitle}
+                    </span>
+                    <span className="mt-0.5 block text-[10px] text-muted-foreground/80">
+                      {formatDateTime(n.created_at)}
+                    </span>
                   </span>
                 </button>
               );

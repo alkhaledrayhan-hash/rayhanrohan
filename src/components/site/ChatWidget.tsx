@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageCircle, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  createConversation,
-  fetchGuestThread,
-  replyAsGuest,
-} from "@/lib/messages.functions";
+import { createConversation, fetchGuestThread, replyAsGuest } from "@/lib/messages.functions";
 
 const STORAGE_KEY = "maison_chat_thread";
 
@@ -206,27 +202,29 @@ export function ChatWidget() {
                 disabled={sending}
                 className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
               >
-                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {sending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
                 Send message
               </button>
             </form>
           ) : (
             <>
-              <div
-                ref={scrollRef}
-                className="flex-1 space-y-2 overflow-y-auto bg-muted/30 p-3"
-              >
+              <div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto bg-muted/30 p-3">
                 {loading && messages.length === 0 ? (
                   <div className="grid h-full place-items-center text-xs text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
-                  messages.map((m) => (
-                    <MessageBubble key={m.id} m={m} />
-                  ))
+                  messages.map((m) => <MessageBubble key={m.id} m={m} />)
                 )}
               </div>
-              <form onSubmit={handleReply} className="flex items-end gap-2 border-t border-border bg-background p-3">
+              <form
+                onSubmit={handleReply}
+                className="flex items-end gap-2 border-t border-border bg-background p-3"
+              >
                 <textarea
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
@@ -246,7 +244,11 @@ export function ChatWidget() {
                   disabled={sending || !reply.trim()}
                   className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
                 >
-                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  {sending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                 </button>
               </form>
             </>

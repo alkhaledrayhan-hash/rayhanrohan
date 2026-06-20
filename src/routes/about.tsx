@@ -29,7 +29,10 @@ export const Route = createFileRoute("/about")({
         content:
           "MaisonQatar is a licensed Doha-based brokerage curating premium residences across The Pearl, Lusail, West Bay and Al Waab. Meet the team, our story and the values behind the service.",
       },
-      { property: "og:title", content: "About MaisonQatar — Qatar's Premium Real Estate Brokerage" },
+      {
+        property: "og:title",
+        content: "About MaisonQatar — Qatar's Premium Real Estate Brokerage",
+      },
       {
         property: "og:description",
         content:
@@ -48,7 +51,17 @@ const STATS: Array<{ label: string; value: number; suffix?: string; prefix?: str
   { label: "Premier areas covered", value: 5 },
 ];
 
-function CountUp({ end, duration = 2000, prefix = "", suffix = "" }: { end: number; duration?: number; prefix?: string; suffix?: string }) {
+function CountUp({
+  end,
+  duration = 2000,
+  prefix = "",
+  suffix = "",
+}: {
+  end: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+}) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
@@ -73,7 +86,7 @@ function CountUp({ end, duration = 2000, prefix = "", suffix = "" }: { end: numb
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -148,7 +161,10 @@ function AboutPage() {
             height={1080}
             className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero-overlay)" }} />
+          <div
+            className="absolute inset-0 -z-10"
+            style={{ background: "var(--gradient-hero-overlay)" }}
+          />
           <div className="mx-auto max-w-7xl px-4 pb-24 pt-40 sm:px-6 sm:pb-32 sm:pt-48 lg:px-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-gold backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
@@ -158,8 +174,9 @@ function AboutPage() {
               The quiet standard for premium living in Qatar.
             </h1>
             <p className="mt-4 max-w-2xl text-base text-white/80 sm:text-lg">
-              A Doha-based, licensed brokerage trusted by residents, executives and diplomats for over a decade.
-              Hand-picked homes, principled advice, and a frictionless experience from first viewing to handover.
+              A Doha-based, licensed brokerage trusted by residents, executives and diplomats for
+              over a decade. Hand-picked homes, principled advice, and a frictionless experience
+              from first viewing to handover.
             </p>
           </div>
         </section>
@@ -172,7 +189,9 @@ function AboutPage() {
                 <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
                   <CountUp end={s.value} prefix={s.prefix} suffix={s.suffix} />
                 </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{s.label}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
@@ -182,24 +201,29 @@ function AboutPage() {
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Our story</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+                Our story
+              </p>
               <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                 Founded in Doha. Built for residents who expect more.
               </h2>
               <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-muted-foreground">
                 <p>
-                  MaisonQatar was founded in 2013 with a simple thesis: Qatar's premium real estate market
-                  deserved a brokerage that behaved like a private office, not a listings catalogue. We started
-                  with a single advisor in West Bay and a notebook of personally inspected addresses.
+                  MaisonQatar was founded in 2013 with a simple thesis: Qatar's premium real estate
+                  market deserved a brokerage that behaved like a private office, not a listings
+                  catalogue. We started with a single advisor in West Bay and a notebook of
+                  personally inspected addresses.
                 </p>
                 <p>
-                  A decade on, that discipline still defines us. We don't chase volume. We work with a curated
-                  portfolio across The Pearl, Lusail, West Bay, Al Waab and inner Doha, and we stay with each
-                  client from the first viewing through handover, utilities, and — if it's a lease — renewal.
+                  A decade on, that discipline still defines us. We don't chase volume. We work with
+                  a curated portfolio across The Pearl, Lusail, West Bay, Al Waab and inner Doha,
+                  and we stay with each client from the first viewing through handover, utilities,
+                  and — if it's a lease — renewal.
                 </p>
                 <p>
-                  We're proudly licensed in the State of Qatar, fluent in Arabic and English, and trusted by
-                  some of the country's most discerning residents to find them a home worthy of the address.
+                  We're proudly licensed in the State of Qatar, fluent in Arabic and English, and
+                  trusted by some of the country's most discerning residents to find them a home
+                  worthy of the address.
                 </p>
               </div>
             </div>
@@ -216,7 +240,9 @@ function AboutPage() {
               </div>
               <div className="absolute -bottom-6 -left-4 hidden rounded-2xl border border-gold/60 bg-card p-5 shadow-[var(--shadow-soft)] sm:block">
                 <p className="font-display text-2xl font-semibold text-primary">Est. 2013</p>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">West Bay · Doha</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  West Bay · Doha
+                </p>
               </div>
             </div>
           </div>
@@ -231,7 +257,9 @@ function AboutPage() {
 
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Purpose</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+                Purpose
+              </p>
               <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                 Our mission &amp; vision
               </h2>
@@ -247,8 +275,7 @@ function AboutPage() {
                   tag: "Mission",
                   icon: <Target className="h-5 w-5" />,
                   title: "Make premium living in Qatar effortless.",
-                  body:
-                    "We pair discerning residents and investors with the right address — handling every viewing, contract and key handover with the discretion the brief deserves.",
+                  body: "We pair discerning residents and investors with the right address — handling every viewing, contract and key handover with the discretion the brief deserves.",
                   points: [
                     "Hand-verified listings only",
                     "Bilingual, end-to-end concierge",
@@ -259,8 +286,7 @@ function AboutPage() {
                   tag: "Vision",
                   icon: <Telescope className="h-5 w-5" />,
                   title: "Define what luxury real estate looks like in the Gulf.",
-                  body:
-                    "To be the brokerage residents recommend by name — known across Doha, the GCC and beyond for taste, integrity, and an obsessive eye for the right home.",
+                  body: "To be the brokerage residents recommend by name — known across Doha, the GCC and beyond for taste, integrity, and an obsessive eye for the right home.",
                   points: [
                     "Qatar's most curated portfolio",
                     "International standard, local soul",
@@ -304,11 +330,12 @@ function AboutPage() {
           </div>
         </section>
 
-
         {/* Values */}
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">What we stand for</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+              What we stand for
+            </p>
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Our values</h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {VALUES.map((v) => (
@@ -319,7 +346,9 @@ function AboutPage() {
                   <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                     {v.icon}
                   </span>
-                  <p className="mt-4 font-display text-xl font-semibold text-foreground">{v.title}</p>
+                  <p className="mt-4 font-display text-xl font-semibold text-foreground">
+                    {v.title}
+                  </p>
                   <p className="mt-2 text-sm text-muted-foreground">{v.body}</p>
                 </div>
               ))}
@@ -335,11 +364,16 @@ function AboutPage() {
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">The people</p>
-                <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Meet the team</h2>
+                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+                  The people
+                </p>
+                <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+                  Meet the team
+                </h2>
               </div>
               <p className="max-w-md text-sm text-white/70">
-                A small, senior team of bilingual advisors — each a specialist in their corner of Qatar.
+                A small, senior team of bilingual advisors — each a specialist in their corner of
+                Qatar.
               </p>
             </div>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -365,7 +399,9 @@ function AboutPage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Company details</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+                  Company details
+                </p>
                 <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   Licensed. Local. Accountable.
                 </h2>
@@ -376,14 +412,46 @@ function AboutPage() {
               </div>
               <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
                 <dl className="grid gap-4 text-sm sm:grid-cols-2">
-                  <Detail icon={<Building2 className="h-4 w-4" />} label="Legal name" value="MaisonQatar Real Estate Brokerage W.L.L." />
-                  <Detail icon={<Award className="h-4 w-4" />} label="License number" value="QA-RE-2013-08842" />
-                  <Detail icon={<Compass className="h-4 w-4" />} label="Founded" value="2013, Doha" />
-                  <Detail icon={<Users2 className="h-4 w-4" />} label="Team size" value="24 specialists" />
-                  <Detail icon={<MapPin className="h-4 w-4" />} label="Head office" value="Tornado Tower, West Bay, Doha" />
-                  <Detail icon={<Globe2 className="h-4 w-4" />} label="Languages" value="Arabic · English · Hindi · French" />
-                  <Detail icon={<Phone className="h-4 w-4" />} label="Phone" value="+974 4000 0000" />
-                  <Detail icon={<Mail className="h-4 w-4" />} label="Email" value="hello@maisonqatar.qa" />
+                  <Detail
+                    icon={<Building2 className="h-4 w-4" />}
+                    label="Legal name"
+                    value="MaisonQatar Real Estate Brokerage W.L.L."
+                  />
+                  <Detail
+                    icon={<Award className="h-4 w-4" />}
+                    label="License number"
+                    value="QA-RE-2013-08842"
+                  />
+                  <Detail
+                    icon={<Compass className="h-4 w-4" />}
+                    label="Founded"
+                    value="2013, Doha"
+                  />
+                  <Detail
+                    icon={<Users2 className="h-4 w-4" />}
+                    label="Team size"
+                    value="24 specialists"
+                  />
+                  <Detail
+                    icon={<MapPin className="h-4 w-4" />}
+                    label="Head office"
+                    value="Tornado Tower, West Bay, Doha"
+                  />
+                  <Detail
+                    icon={<Globe2 className="h-4 w-4" />}
+                    label="Languages"
+                    value="Arabic · English · Hindi · French"
+                  />
+                  <Detail
+                    icon={<Phone className="h-4 w-4" />}
+                    label="Phone"
+                    value="+974 4000 0000"
+                  />
+                  <Detail
+                    icon={<Mail className="h-4 w-4" />}
+                    label="Email"
+                    value="hello@maisonqatar.qa"
+                  />
                 </dl>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
@@ -410,9 +478,7 @@ function AboutPage() {
   );
 }
 
-function Detail({
-  icon, label, value,
-}: { icon: React.ReactNode; label: string; value: string }) {
+function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
       <dt className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">

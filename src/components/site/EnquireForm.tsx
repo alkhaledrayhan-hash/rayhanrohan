@@ -50,7 +50,6 @@ function flagSrcSet(iso: string) {
   return `https://flagcdn.com/w40/${iso}.png 1x, https://flagcdn.com/w80/${iso}.png 2x`;
 }
 
-
 export function EnquireForm({ property }: { property: Property }) {
   const [name, setName] = useState("");
   const [dialCode, setDialCode] = useState("+974");
@@ -70,10 +69,7 @@ export function EnquireForm({ property }: { property: Property }) {
     const q = countryQuery.trim().toLowerCase();
     if (!q) return COUNTRY_CODES;
     return COUNTRY_CODES.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.code.includes(q) ||
-        c.iso.includes(q),
+      (c) => c.name.toLowerCase().includes(q) || c.code.includes(q) || c.iso.includes(q),
     );
   }, [countryQuery]);
 
@@ -107,7 +103,9 @@ export function EnquireForm({ property }: { property: Property }) {
         console.warn("Thread creation failed (lead still saved)", threadErr);
       }
       toast.success("Enquiry sent — our agent will reply shortly.");
-      setName(""); setPhone(""); setEmail("");
+      setName("");
+      setPhone("");
+      setEmail("");
     } catch (err) {
       console.error(err);
       toast.error("Please check your details and try again.");
@@ -117,7 +115,10 @@ export function EnquireForm({ property }: { property: Property }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+    <form
+      onSubmit={onSubmit}
+      className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]"
+    >
       <div className="flex items-center gap-2">
         <Mail className="h-5 w-5 text-primary" />
         <h3 className="font-display text-xl font-semibold">Enquire now</h3>
@@ -216,7 +217,9 @@ export function EnquireForm({ property }: { property: Property }) {
 
         <Field label="Email" value={email} onChange={setEmail} type="email" required />
         <label className="flex flex-col gap-1">
-          <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">Message</span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            Message
+          </span>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -237,11 +240,23 @@ export function EnquireForm({ property }: { property: Property }) {
 }
 
 function Field({
-  label, value, onChange, type = "text", required,
-}: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean }) {
+  label,
+  value,
+  onChange,
+  type = "text",
+  required,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  required?: boolean;
+}) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}

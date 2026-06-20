@@ -38,13 +38,19 @@ export function EmailChangeRequestsPanel() {
     queryFn: () => listFn(),
   });
   const [filter, setFilter] = useState<"all" | Row["status"]>("pending");
-  const [noteFor, setNoteFor] = useState<{ id: string; action: "approve" | "reject" } | null>(
-    null,
-  );
+  const [noteFor, setNoteFor] = useState<{ id: string; action: "approve" | "reject" } | null>(null);
   const [note, setNote] = useState("");
 
   const mut = useMutation({
-    mutationFn: ({ id, action, admin_note }: { id: string; action: "approve" | "reject"; admin_note: string }) =>
+    mutationFn: ({
+      id,
+      action,
+      admin_note,
+    }: {
+      id: string;
+      action: "approve" | "reject";
+      admin_note: string;
+    }) =>
       action === "approve"
         ? approveFn({ data: { id, admin_note } })
         : rejectFn({ data: { id, admin_note } }),
@@ -123,9 +129,7 @@ export function EmailChangeRequestsPanel() {
                 </td>
                 <td className="px-4 py-3 text-xs text-muted-foreground max-w-xs">
                   {r.reason || "—"}
-                  {r.admin_note && (
-                    <p className="mt-1 italic">Admin note: {r.admin_note}</p>
-                  )}
+                  {r.admin_note && <p className="mt-1 italic">Admin note: {r.admin_note}</p>}
                 </td>
                 <td className="px-4 py-3">
                   <span

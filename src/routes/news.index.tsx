@@ -6,7 +6,13 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { listPublishedPosts } from "@/lib/posts.functions";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type PostListItem = {
   id: string;
@@ -24,20 +30,29 @@ type PostListItem = {
 
 const postsQuery = queryOptions({
   queryKey: ["public-posts"],
-  queryFn: async () => (await listPublishedPosts()) as {
-    posts: PostListItem[];
-    categories: { id: string; name: string; slug: string }[];
-    tags: { id: string; name: string; slug: string }[];
-  },
+  queryFn: async () =>
+    (await listPublishedPosts()) as {
+      posts: PostListItem[];
+      categories: { id: string; name: string; slug: string }[];
+      tags: { id: string; name: string; slug: string }[];
+    },
 });
 
 export const Route = createFileRoute("/news/")({
   head: () => ({
     meta: [
       { title: "News & Insights — MaisonQatar" },
-      { name: "description", content: "Qatar real estate market news, buyer guides, design trends and MaisonQatar updates." },
+      {
+        name: "description",
+        content:
+          "Qatar real estate market news, buyer guides, design trends and MaisonQatar updates.",
+      },
       { property: "og:title", content: "News & Insights — MaisonQatar" },
-      { property: "og:description", content: "Market updates, neighbourhood guides and design stories from Qatar's premium real estate scene." },
+      {
+        property: "og:description",
+        content:
+          "Market updates, neighbourhood guides and design stories from Qatar's premium real estate scene.",
+      },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
@@ -47,7 +62,9 @@ export const Route = createFileRoute("/news/")({
       <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
     </div>
   ),
-  notFoundComponent: () => <div className="mx-auto max-w-2xl px-6 py-32 text-center">Not found.</div>,
+  notFoundComponent: () => (
+    <div className="mx-auto max-w-2xl px-6 py-32 text-center">Not found.</div>
+  ),
   component: NewsPage,
 });
 
@@ -84,11 +101,13 @@ function NewsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-[var(--shadow-soft)]">
-                {([
-                  { id: "all", label: "All", icon: null },
-                  { id: "news", label: "News", icon: Newspaper },
-                  { id: "blog", label: "Blog", icon: PenLine },
-                ] as const).map(({ id, label, icon: Icon }) => {
+                {(
+                  [
+                    { id: "all", label: "All", icon: null },
+                    { id: "news", label: "News", icon: Newspaper },
+                    { id: "blog", label: "Blog", icon: PenLine },
+                  ] as const
+                ).map(({ id, label, icon: Icon }) => {
                   const active = tab === id;
                   return (
                     <button
@@ -96,7 +115,9 @@ function NewsPage() {
                       type="button"
                       onClick={() => setTab(id)}
                       className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+                        active
+                          ? "bg-primary text-primary-foreground shadow"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {Icon && <Icon className="h-3.5 w-3.5" />}
@@ -114,7 +135,9 @@ function NewsPage() {
                   <SelectContent>
                     <SelectItem value="all">All categories</SelectItem>
                     {data.categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -128,7 +151,9 @@ function NewsPage() {
                   <SelectContent>
                     <SelectItem value="all">All tags</SelectItem>
                     {data.tags.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>#{t.name}</SelectItem>
+                      <SelectItem key={t.id} value={t.id}>
+                        #{t.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -137,7 +162,10 @@ function NewsPage() {
               {(activeCat !== "all" || activeTag !== "all") && (
                 <button
                   type="button"
-                  onClick={() => { setActiveCat("all"); setActiveTag("all"); }}
+                  onClick={() => {
+                    setActiveCat("all");
+                    setActiveTag("all");
+                  }}
                   className="text-xs font-medium text-primary hover:underline"
                 >
                   Clear
@@ -149,7 +177,6 @@ function NewsPage() {
               {filtered.length} {filtered.length === 1 ? "article" : "articles"}
             </p>
           </div>
-
 
           {/* Featured */}
           {featured && (
@@ -176,7 +203,10 @@ function NewsPage() {
                 <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-gold">
                   <TypeBadge type={featured.type} />
                   {featured.tags.slice(0, 2).map((t) => (
-                    <span key={t.id} className="inline-flex items-center gap-1.5 text-muted-foreground">
+                    <span
+                      key={t.id}
+                      className="inline-flex items-center gap-1.5 text-muted-foreground"
+                    >
                       <TagIcon className="h-3 w-3" /> {t.name}
                     </span>
                   ))}
@@ -282,8 +312,14 @@ function TypeBadge({ type }: { type: "blog" | "news" }) {
 }
 
 function Chip({
-  active, onClick, children,
-}: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
@@ -303,7 +339,9 @@ function formatDate(iso: string | null) {
   if (!iso) return "";
   try {
     return new Date(iso).toLocaleDateString(undefined, {
-      year: "numeric", month: "short", day: "numeric",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch {
     return "";

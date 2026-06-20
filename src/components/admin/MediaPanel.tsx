@@ -76,12 +76,10 @@ export function MediaPanel() {
           });
       }
       if (all.length === 0) return [] as WithUrl[];
-      const { data: signed } = await supabase.storage
-        .from(BUCKET)
-        .createSignedUrls(
-          all.map((f) => f.name),
-          60 * 60, // 1h
-        );
+      const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrls(
+        all.map((f) => f.name),
+        60 * 60, // 1h
+      );
       const urlByPath = new Map<string, string>();
       (signed ?? []).forEach((s) => {
         if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
@@ -152,7 +150,11 @@ export function MediaPanel() {
           disabled={uploading}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
         >
-          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {uploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
           Upload files
         </button>
         <input
@@ -321,10 +323,7 @@ function PreviewModal({
   }, [onClose]);
 
   return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" onClick={onClose}>
       <div
         className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-background shadow-2xl"
         onClick={(e) => e.stopPropagation()}

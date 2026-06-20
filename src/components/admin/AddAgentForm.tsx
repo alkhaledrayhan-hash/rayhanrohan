@@ -6,7 +6,6 @@ import { ImageIcon, Save, Upload, X } from "lucide-react";
 import { createAgent } from "@/lib/agents.functions";
 import { fileToDataUrl } from "@/lib/image-upload";
 
-
 const empty = {
   full_name: "",
   email: "",
@@ -35,12 +34,17 @@ export function AddAgentForm() {
     onError: (e: any) => toast.error(e.message || "Failed to create agent"),
   });
 
-  const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof empty) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); mut.mutate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        mut.mutate();
+      }}
       className="grid gap-5 lg:grid-cols-[340px_1fr]"
     >
       {/* Avatar card */}
@@ -48,7 +52,6 @@ export function AddAgentForm() {
         value={form.avatar_url}
         onChange={(v) => setForm((f) => ({ ...f, avatar_url: v }))}
       />
-
 
       {/* Fields card */}
       <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
@@ -64,31 +67,115 @@ export function AddAgentForm() {
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Agent Name *"><input required value={form.full_name} onChange={set("full_name")} placeholder="Enter Full Name" className={inputCls} maxLength={100} /></Field>
-          <Field label="Agent Email *"><input required type="email" value={form.email} onChange={set("email")} placeholder="Enter email" className={inputCls} maxLength={255} /></Field>
-          <Field label="Agent Number"><input value={form.phone} onChange={set("phone")} placeholder="+974 0000 0000" className={inputCls} maxLength={40} /></Field>
+          <Field label="Agent Name *">
+            <input
+              required
+              value={form.full_name}
+              onChange={set("full_name")}
+              placeholder="Enter Full Name"
+              className={inputCls}
+              maxLength={100}
+            />
+          </Field>
+          <Field label="Agent Email *">
+            <input
+              required
+              type="email"
+              value={form.email}
+              onChange={set("email")}
+              placeholder="Enter email"
+              className={inputCls}
+              maxLength={255}
+            />
+          </Field>
+          <Field label="Agent Number">
+            <input
+              value={form.phone}
+              onChange={set("phone")}
+              placeholder="+974 0000 0000"
+              className={inputCls}
+              maxLength={40}
+            />
+          </Field>
 
-          <Field label="Username"><input value={form.username} onChange={set("username")} placeholder="agent_handle" className={inputCls} maxLength={30} /></Field>
+          <Field label="Username">
+            <input
+              value={form.username}
+              onChange={set("username")}
+              placeholder="agent_handle"
+              className={inputCls}
+              maxLength={30}
+            />
+          </Field>
           <Field label="Gender">
             <select value={form.gender} onChange={set("gender")} className={inputCls}>
               <option value="">Select gender</option>
-              <option>Male</option><option>Female</option><option>Other</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
             </select>
           </Field>
-          <Field label="Temporary Password *"><input required type="password" autoComplete="new-password" value={form.password} onChange={set("password")} placeholder="min 8 characters" className={inputCls} minLength={8} maxLength={72} /></Field>
+          <Field label="Temporary Password *">
+            <input
+              required
+              type="password"
+              autoComplete="new-password"
+              value={form.password}
+              onChange={set("password")}
+              placeholder="min 8 characters"
+              className={inputCls}
+              minLength={8}
+              maxLength={72}
+            />
+          </Field>
 
-          <Field label="Country"><input value={form.country} onChange={set("country")} placeholder="Qatar" className={inputCls} maxLength={80} /></Field>
-          <Field label="City"><input value={form.city} onChange={set("city")} placeholder="Doha" className={inputCls} maxLength={80} /></Field>
-          <Field label="&nbsp;" hideLabel><span className="hidden lg:block" /></Field>
+          <Field label="Country">
+            <input
+              value={form.country}
+              onChange={set("country")}
+              placeholder="Qatar"
+              className={inputCls}
+              maxLength={80}
+            />
+          </Field>
+          <Field label="City">
+            <input
+              value={form.city}
+              onChange={set("city")}
+              placeholder="Doha"
+              className={inputCls}
+              maxLength={80}
+            />
+          </Field>
+          <Field label="&nbsp;" hideLabel>
+            <span className="hidden lg:block" />
+          </Field>
 
           <Field label="Address" className="sm:col-span-2 lg:col-span-3">
-            <textarea rows={4} value={form.address} onChange={set("address")} placeholder="Enter address" className={inputCls} maxLength={500} />
+            <textarea
+              rows={4}
+              value={form.address}
+              onChange={set("address")}
+              placeholder="Enter address"
+              className={inputCls}
+              maxLength={500}
+            />
           </Field>
         </div>
 
         <div className="mt-6 flex justify-end gap-2">
-          <button type="button" onClick={() => setForm(empty)} className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</button>
-          <button type="submit" disabled={mut.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+          <button
+            type="button"
+            onClick={() => setForm(empty)}
+            className="rounded-lg border border-border px-4 py-2 text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={mut.isPending}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          >
             {mut.isPending ? "Submitting…" : "Submit"}
           </button>
         </div>
@@ -97,17 +184,30 @@ export function AddAgentForm() {
   );
 }
 
-const inputCls = "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+const inputCls =
+  "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
 
-function Field({ label, children, className = "", hideLabel = false }: { label: string; children: React.ReactNode; className?: string; hideLabel?: boolean }) {
+function Field({
+  label,
+  children,
+  className = "",
+  hideLabel = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+  hideLabel?: boolean;
+}) {
   return (
     <label className={`space-y-1.5 ${className}`}>
-      <span className={`block text-sm font-medium text-foreground ${hideLabel ? "opacity-0" : ""}`} dangerouslySetInnerHTML={{ __html: label }} />
+      <span
+        className={`block text-sm font-medium text-foreground ${hideLabel ? "opacity-0" : ""}`}
+        dangerouslySetInnerHTML={{ __html: label }}
+      />
       {children}
     </label>
   );
 }
-
 
 export function AvatarUploader({
   value,
@@ -196,4 +296,3 @@ export function AvatarUploader({
     </div>
   );
 }
-

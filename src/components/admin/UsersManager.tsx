@@ -212,10 +212,10 @@ function StatCard({
     tone === "rose"
       ? "text-rose-600"
       : tone === "amber"
-      ? "text-amber-600"
-      : tone === "slate"
-      ? "text-slate-600"
-      : "text-primary";
+        ? "text-amber-600"
+        : tone === "slate"
+          ? "text-slate-600"
+          : "text-primary";
   return (
     <div className="rounded-2xl border border-border bg-white p-4">
       <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -499,10 +499,7 @@ function Modal({
   onClose: () => void;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={onClose}>
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-2xl space-y-4 rounded-2xl bg-white p-6 shadow-2xl"

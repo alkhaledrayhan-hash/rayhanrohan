@@ -53,7 +53,9 @@ function mapRow(r: any): Property {
 async function fetchProperties(): Promise<Property[]> {
   const { data, error } = await supabase
     .from("properties")
-    .select("slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,created_at")
+    .select(
+      "slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,created_at",
+    )
     .eq("listing_status", "approved")
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -75,7 +77,9 @@ export function usePropertyBySlug(slug: string | undefined) {
       if (!slug) return null;
       const { data, error } = await supabase
         .from("properties")
-        .select("slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified")
+        .select(
+          "slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified",
+        )
         .eq("slug", slug)
         .eq("listing_status", "approved")
         .maybeSingle();

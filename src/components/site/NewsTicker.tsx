@@ -32,7 +32,6 @@ export function NewsTicker() {
           </span>
         </div>
 
-
         {/* Marquee */}
         <div className="group relative flex-1 overflow-hidden">
           {/* Edge fades */}

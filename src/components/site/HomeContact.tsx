@@ -29,7 +29,10 @@ export function HomeContact() {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-gradient-to-b from-primary via-primary to-[oklch(0.28_0.13_18)] py-20 text-primary-foreground">
+    <section
+      id="contact"
+      className="relative overflow-hidden bg-gradient-to-b from-primary via-primary to-[oklch(0.28_0.13_18)] py-20 text-primary-foreground"
+    >
       <div
         aria-hidden
         className="absolute inset-0 opacity-[0.08]"
@@ -48,8 +51,8 @@ export function HomeContact() {
             Have a question? We'd love to hear from you.
           </h2>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-primary-foreground/80">
-            Whether you're searching for your next home, listing a property, or
-            just exploring the market — our advisors respond within one business hour.
+            Whether you're searching for your next home, listing a property, or just exploring the
+            market — our advisors respond within one business hour.
           </p>
           <div className="mt-8 space-y-4 text-sm">
             <a
@@ -78,8 +81,22 @@ export function HomeContact() {
           className="rounded-3xl border border-white/15 bg-white/10 p-6 shadow-[var(--shadow-soft)] backdrop-blur-xl sm:p-8"
         >
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Full name" name="name" required minLength={2} maxLength={100} placeholder="Your name" />
-            <Field label="Email" name="email" type="email" required maxLength={200} placeholder="you@email.com" />
+            <Field
+              label="Full name"
+              name="name"
+              required
+              minLength={2}
+              maxLength={100}
+              placeholder="Your name"
+            />
+            <Field
+              label="Email"
+              name="email"
+              type="email"
+              required
+              maxLength={200}
+              placeholder="you@email.com"
+            />
             <Field label="Phone" name="phone" type="tel" maxLength={30} placeholder="+974 …" />
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary-foreground/70">
@@ -120,9 +137,7 @@ export function HomeContact() {
             </p>
           ) : null}
           {status === "error" ? (
-            <p className="mt-4 rounded-md bg-red-500/15 px-3 py-2 text-sm text-red-100">
-              {error}
-            </p>
+            <p className="mt-4 rounded-md bg-red-500/15 px-3 py-2 text-sm text-red-100">{error}</p>
           ) : null}
 
           <button

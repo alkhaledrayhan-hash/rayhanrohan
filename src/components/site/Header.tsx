@@ -1,5 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
+import {
+  ChevronDown,
+  Home,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Tag,
+  Users,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -72,12 +81,20 @@ export function Header() {
               : "border-white/15 bg-white/10 text-white/85"
           }`}
         >
-          <NavPill to="/" scrolled={scrolled}>Home</NavPill>
+          <NavPill to="/" scrolled={scrolled}>
+            Home
+          </NavPill>
           <PropertiesDropdown scrolled={scrolled} />
-          
-          <NavPill to="/news" scrolled={scrolled}>News</NavPill>
-          <NavPill to="/about" scrolled={scrolled}>About</NavPill>
-          <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
+
+          <NavPill to="/news" scrolled={scrolled}>
+            News
+          </NavPill>
+          <NavPill to="/about" scrolled={scrolled}>
+            About
+          </NavPill>
+          <NavPill to="/contact" scrolled={scrolled}>
+            Contact
+          </NavPill>
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthed ? (
@@ -145,17 +162,35 @@ export function Header() {
                 </p>
               </div>
               <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
-                <SheetLink to="/" onSelect={() => setOpen(false)}>Home</SheetLink>
-                <SheetLink to="/properties" search={{ status: "rent" }} onSelect={() => setOpen(false)}>
+                <SheetLink to="/" onSelect={() => setOpen(false)}>
+                  Home
+                </SheetLink>
+                <SheetLink
+                  to="/properties"
+                  search={{ status: "rent" }}
+                  onSelect={() => setOpen(false)}
+                >
                   Properties for Rent
                 </SheetLink>
-                <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
+                <SheetLink
+                  to="/properties"
+                  search={{ status: "sale" }}
+                  onSelect={() => setOpen(false)}
+                >
                   Properties for Sale
                 </SheetLink>
-                <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
-                <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
-                <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
-                <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
+                <SheetLink to="/agents" onSelect={() => setOpen(false)}>
+                  Our Agents
+                </SheetLink>
+                <SheetLink to="/news" onSelect={() => setOpen(false)}>
+                  News
+                </SheetLink>
+                <SheetLink to="/about" onSelect={() => setOpen(false)}>
+                  About
+                </SheetLink>
+                <SheetLink to="/contact" onSelect={() => setOpen(false)}>
+                  Contact
+                </SheetLink>
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
                 {isAuthed ? (

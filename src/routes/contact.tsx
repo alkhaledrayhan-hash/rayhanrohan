@@ -1,16 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { submitLead } from "@/lib/leads";
-import {
-  Building2,
-  Clock,
-  Loader2,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
-  Send,
-} from "lucide-react";
+import { Building2, Clock, Loader2, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -44,7 +35,6 @@ const WHATSAPP_E164 = "97433330123";
 const EMAIL = "hello@maisonqatar.qa";
 
 function ContactPage() {
-  
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -182,7 +172,11 @@ function ContactPage() {
               disabled={submitting}
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:opacity-60 sm:w-auto"
             >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
               Send message
             </button>
             <p className="mt-3 text-[12px] text-muted-foreground">
@@ -251,7 +245,11 @@ function ContactPage() {
 }
 
 function ContactTile({
-  icon, label, value, href, external,
+  icon,
+  label,
+  value,
+  href,
+  external,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -288,7 +286,12 @@ function ContactTile({
 }
 
 function FormField({
-  label, value, onChange, type = "text", required, placeholder,
+  label,
+  value,
+  onChange,
+  type = "text",
+  required,
+  placeholder,
 }: {
   label: string;
   value: string;
@@ -316,7 +319,10 @@ function FormField({
 }
 
 function FormSelect({
-  label, value, onChange, options,
+  label,
+  value,
+  onChange,
+  options,
 }: {
   label: string;
   value: string;

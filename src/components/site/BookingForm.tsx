@@ -45,7 +45,6 @@ export function BookingForm({ property }: { property: Property }) {
   }, []);
 
   const today = useMemo(() => {
-
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
@@ -86,11 +85,13 @@ export function BookingForm({ property }: { property: Property }) {
     }
   }
 
-  const selectedTimeLabel =
-    timeSlots.find((t) => t.value === time)?.label ?? time;
+  const selectedTimeLabel = timeSlots.find((t) => t.value === time)?.label ?? time;
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+    <form
+      onSubmit={onSubmit}
+      className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]"
+    >
       <div className="flex items-center gap-2">
         <CalendarCheck className="h-5 w-5 text-primary" />
         <h3 className="font-display text-xl font-semibold">Schedule a viewing</h3>
@@ -183,7 +184,13 @@ export function BookingForm({ property }: { property: Property }) {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Input label="Your name" value={name} onChange={setName} placeholder="Full name" />
-        <Input label="Phone number" value={phone} onChange={setPhone} placeholder="+974 …" type="tel" />
+        <Input
+          label="Phone number"
+          value={phone}
+          onChange={setPhone}
+          placeholder="+974 …"
+          type="tel"
+        />
       </div>
 
       <button
@@ -216,7 +223,9 @@ function Input({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}

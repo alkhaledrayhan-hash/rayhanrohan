@@ -47,15 +47,11 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
   useEffect(() => {
     const ch = supabase
       .channel("inbox")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "conversations" },
-        () => qc.invalidateQueries({ queryKey: ["messages", "conversations"] }),
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () =>
+        qc.invalidateQueries({ queryKey: ["messages", "conversations"] }),
       )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        () => qc.invalidateQueries({ queryKey: ["messages", "conversations"] }),
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () =>
+        qc.invalidateQueries({ queryKey: ["messages", "conversations"] }),
       )
       .subscribe();
     return () => {
@@ -247,9 +243,7 @@ function Thread({ conversationId, isAdmin }: { conversationId: string; isAdmin: 
         <div>
           <h3 className="font-display text-base font-semibold">{convo?.customer_name}</h3>
           <p className="text-xs text-muted-foreground">{convo?.customer_email}</p>
-          {convo?.subject && (
-            <p className="mt-0.5 text-xs text-foreground/80">{convo.subject}</p>
-          )}
+          {convo?.subject && <p className="mt-0.5 text-xs text-foreground/80">{convo.subject}</p>}
         </div>
         <button
           onClick={handleToggleStatus}
@@ -280,7 +274,9 @@ function Thread({ conversationId, isAdmin }: { conversationId: string; isAdmin: 
                     {m.sender_role === "customer" ? m.sender_name || "Customer" : m.sender_role}
                   </p>
                   <p className="whitespace-pre-wrap break-words">{m.body}</p>
-                  <p className={`mt-1 text-[10px] ${isCustomer ? "text-muted-foreground" : "opacity-70"}`}>
+                  <p
+                    className={`mt-1 text-[10px] ${isCustomer ? "text-muted-foreground" : "opacity-70"}`}
+                  >
                     {new Date(m.created_at).toLocaleString()}
                   </p>
                 </div>

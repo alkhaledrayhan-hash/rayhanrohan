@@ -104,10 +104,7 @@ export const approveEmailChange = createServerFn({ method: "POST" })
     });
     if (upErr) throw new Error(upErr.message);
 
-    await supabaseAdmin
-      .from("profiles")
-      .update({ email: req.new_email })
-      .eq("id", req.user_id);
+    await supabaseAdmin.from("profiles").update({ email: req.new_email }).eq("id", req.user_id);
 
     const { error: rErr } = await supabaseAdmin
       .from("email_change_requests")

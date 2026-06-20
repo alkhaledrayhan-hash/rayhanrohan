@@ -49,18 +49,45 @@ function Home() {
   const { data: allProperties = [] } = useProperties();
   const featured = allProperties.slice(0, 6);
   const offers = [
-    allProperties[0] && { property: allProperties[0], discount: 12, tag: "Move-in ready", ends: "Jul 31" },
-    allProperties[2] && { property: allProperties[2], discount: 8, tag: "Sky residence", ends: "Aug 15" },
-    allProperties[1] && { property: allProperties[1], discount: 10, tag: "Signature villa", ends: "Jul 20" },
+    allProperties[0] && {
+      property: allProperties[0],
+      discount: 12,
+      tag: "Move-in ready",
+      ends: "Jul 31",
+    },
+    allProperties[2] && {
+      property: allProperties[2],
+      discount: 8,
+      tag: "Sky residence",
+      ends: "Aug 15",
+    },
+    allProperties[1] && {
+      property: allProperties[1],
+      discount: 10,
+      tag: "Signature villa",
+      ends: "Jul 20",
+    },
   ].filter(Boolean) as { property: any; discount: number; tag: string; ends: string }[];
   const trust = sections.trust?.items ?? [
     { title: "Licensed brokerage", body: "Qatar-registered with verified listings only." },
     { title: "Hand-curated portfolio", body: "Every residence is personally inspected." },
     { title: "Frictionless viewings", body: "Book on WhatsApp or schedule in one tap." },
   ];
-  const featuredHeading = sections.featured ?? { eyebrow: "Featured residences", title: "A portfolio worthy of the address", link_label: "View all listings", link_href: "/properties" };
-  const locationsHeading = sections.locations ?? { eyebrow: "Premium Qatar locations", title: "Live in Qatar's most coveted neighbourhoods" };
-  const trustIcons = [<ShieldCheck className="h-5 w-5" />, <Sparkles className="h-5 w-5" />, <KeyRound className="h-5 w-5" />];
+  const featuredHeading = sections.featured ?? {
+    eyebrow: "Featured residences",
+    title: "A portfolio worthy of the address",
+    link_label: "View all listings",
+    link_href: "/properties",
+  };
+  const locationsHeading = sections.locations ?? {
+    eyebrow: "Premium Qatar locations",
+    title: "Live in Qatar's most coveted neighbourhoods",
+  };
+  const trustIcons = [
+    <ShieldCheck className="h-5 w-5" />,
+    <Sparkles className="h-5 w-5" />,
+    <KeyRound className="h-5 w-5" />,
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,12 +97,16 @@ function Home() {
 
         <NewsTicker />
 
-
         {/* Trust strip */}
         <section className="border-y border-border bg-secondary/40">
           <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
             {trust.slice(0, 3).map((t: any, i: number) => (
-              <Trust key={i} icon={trustIcons[i] ?? <ShieldCheck className="h-5 w-5" />} title={t.title} body={t.body} />
+              <Trust
+                key={i}
+                icon={trustIcons[i] ?? <ShieldCheck className="h-5 w-5" />}
+                title={t.title}
+                body={t.body}
+              />
             ))}
           </div>
         </section>
@@ -135,7 +166,10 @@ function Home() {
                       decoding="async"
                       className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
                     />
-                    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10"
+                    />
                     <div className="relative p-6">
                       <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
                       <p className="mt-2 font-display text-xl font-semibold text-white">{loc}</p>
@@ -183,7 +217,6 @@ function Home() {
                 </Link>
               ))}
             </div>
-
           </div>
         </section>
 

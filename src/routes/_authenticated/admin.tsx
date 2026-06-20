@@ -70,10 +70,7 @@ function useRoles() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return { roles: [] as Role[], user: null };
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", u.user.id);
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", u.user.id);
       return {
         roles: (data ?? []).map((r) => r.role as Role),
         user: u.user,
@@ -103,7 +100,20 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
+    | "overview"
+    | "properties"
+    | "pages"
+    | "agents"
+    | "add-agent"
+    | "users"
+    | "email-requests"
+    | "leads"
+    | "bookings"
+    | "messages"
+    | "media"
+    | "posts"
+    | "calendar"
+    | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -195,8 +205,18 @@ function AdminDashboard() {
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-3 text-sm">
           <NavGroup label="Main" />
-          <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => goSection("overview")} />
-          <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => goSection("properties")} />
+          <NavItem
+            icon={LayoutDashboard}
+            label="Dashboard"
+            active={section === "overview"}
+            onClick={() => goSection("overview")}
+          />
+          <NavItem
+            icon={Building2}
+            label="Properties"
+            active={section === "properties"}
+            onClick={() => goSection("properties")}
+          />
           {isAdmin && (
             <NavGroupExpandable
               icon={FileText}
@@ -216,7 +236,11 @@ function AdminDashboard() {
                   key={p.slug}
                   label={p.label}
                   active={section === "pages" && pageSlug === p.slug}
-                  onClick={() => { setSection("pages"); setPageSlug(p.slug); closeMobileNav(); }}
+                  onClick={() => {
+                    setSection("pages");
+                    setPageSlug(p.slug);
+                    closeMobileNav();
+                  }}
                 />
               ))}
             </NavGroupExpandable>
@@ -230,7 +254,10 @@ function AdminDashboard() {
               action={
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); goSection("add-agent"); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goSection("add-agent");
+                  }}
                   title="Add Agent"
                   className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
                 >
@@ -238,29 +265,86 @@ function AdminDashboard() {
                 </button>
               }
             >
-              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => goSection("agents")} />
-              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => goSection("add-agent")} />
+              <SubNavItem
+                label="All Agents"
+                active={section === "agents"}
+                onClick={() => goSection("agents")}
+              />
+              <SubNavItem
+                icon={UserPlus}
+                label="Add Agent"
+                active={section === "add-agent"}
+                onClick={() => goSection("add-agent")}
+              />
             </NavGroupExpandable>
           )}
           {isAdmin && (
-            <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => goSection("users")} />
+            <NavItem
+              icon={ShieldCheck}
+              label="Users"
+              active={section === "users"}
+              onClick={() => goSection("users")}
+            />
           )}
           {isAdmin && (
-            <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => goSection("email-requests")} />
+            <NavItem
+              icon={Mail}
+              label="Email Requests"
+              active={section === "email-requests"}
+              onClick={() => goSection("email-requests")}
+            />
           )}
 
           <NavGroup label="Operations" />
-          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge={unread.leads ? String(unread.leads) : undefined} />
-          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} badge={unread.bookings ? String(unread.bookings) : undefined} />
-          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} badge={unread.messages ? String(unread.messages) : undefined} />
-          <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => goSection("calendar")} />
+          <NavItem
+            icon={Mail}
+            label="Leads"
+            active={section === "leads"}
+            onClick={() => goSection("leads")}
+            badge={unread.leads ? String(unread.leads) : undefined}
+          />
+          <NavItem
+            icon={FileText}
+            label="Bookings"
+            active={section === "bookings"}
+            onClick={() => goSection("bookings")}
+            badge={unread.bookings ? String(unread.bookings) : undefined}
+          />
+          <NavItem
+            icon={MessageSquare}
+            label="Messages"
+            active={section === "messages"}
+            onClick={() => goSection("messages")}
+            badge={unread.messages ? String(unread.messages) : undefined}
+          />
+          <NavItem
+            icon={Calendar}
+            label="Calendar"
+            active={section === "calendar"}
+            onClick={() => goSection("calendar")}
+          />
 
           <NavGroup label="Content" />
-          <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => goSection("media")} />
-          <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => goSection("posts")} />
+          <NavItem
+            icon={Image}
+            label="Media"
+            active={section === "media"}
+            onClick={() => goSection("media")}
+          />
+          <NavItem
+            icon={Newspaper}
+            label="News & Blogs"
+            active={section === "posts"}
+            onClick={() => goSection("posts")}
+          />
 
           <NavGroup label="System" />
-          <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => goSection("settings")} />
+          <NavItem
+            icon={Settings}
+            label="Settings"
+            active={section === "settings"}
+            onClick={() => goSection("settings")}
+          />
         </nav>
 
         <div className="border-t border-border p-3">
@@ -303,7 +387,8 @@ function AdminDashboard() {
               to="/dashboard"
               className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
             >
-              <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">Dashboard</span>
+              <LayoutDashboard className="h-4 w-4" />{" "}
+              <span className="hidden sm:inline">Dashboard</span>
             </Link>
             <NotificationsBell onNavigate={(s) => goSection(s)} />
             <div className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-3">
@@ -332,20 +417,65 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
+          {section === "overview" && (
+            <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />
+          )}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
-          {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
+          {section === "pages" && isAdmin && (
+            <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />
+          )}
           {section === "agents" && isAdmin && <AgentsPanel />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
-          {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
-          {section === "email-requests" && (isAdmin ? <EmailChangeRequestsPanel /> : <PlaceholderCard icon={Mail} title="Email Requests" desc="Only admins can review email change requests." />)}
+          {section === "users" &&
+            (isAdmin ? (
+              <UsersManager />
+            ) : (
+              <PlaceholderCard
+                icon={ShieldCheck}
+                title="Users"
+                desc="Only admins can manage users."
+              />
+            ))}
+          {section === "email-requests" &&
+            (isAdmin ? (
+              <EmailChangeRequestsPanel />
+            ) : (
+              <PlaceholderCard
+                icon={Mail}
+                title="Email Requests"
+                desc="Only admins can review email change requests."
+              />
+            ))}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
           {section === "bookings" && <BookingsPanel isAdmin={!!isAdmin} />}
           {section === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {section === "calendar" && <CalendarPanel />}
-          {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
-          {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
-          {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
+          {section === "media" &&
+            (isAdmin ? (
+              <MediaPanel />
+            ) : (
+              <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />
+            ))}
+          {section === "posts" &&
+            (isAdmin ? (
+              <PostsManager />
+            ) : (
+              <PlaceholderCard
+                icon={Newspaper}
+                title="News & Blogs"
+                desc="Only admins can manage articles."
+              />
+            ))}
+          {section === "settings" &&
+            (isAdmin ? (
+              <SettingsPanel />
+            ) : (
+              <PlaceholderCard
+                icon={Settings}
+                title="Settings"
+                desc="Only admins can edit website settings."
+              />
+            ))}
         </main>
       </div>
     </div>
@@ -418,14 +548,18 @@ function NavGroupExpandable({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(!!defaultOpen);
-  useEffect(() => { if (defaultOpen) setOpen(true); }, [defaultOpen]);
+  useEffect(() => {
+    if (defaultOpen) setOpen(true);
+  }, [defaultOpen]);
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition ${
-          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          active
+            ? "bg-primary/10 text-primary"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
         }`}
       >
         <span className="flex items-center gap-3">
@@ -456,10 +590,16 @@ function SubNavItem({
     <button
       onClick={onClick}
       className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition ${
-        active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        active
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
-      {Icon ? <Icon className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current opacity-40" />}
+      {Icon ? (
+        <Icon className="h-3.5 w-3.5" />
+      ) : (
+        <span className="h-1.5 w-1.5 rounded-full bg-current opacity-40" />
+      )}
       {label}
     </button>
   );
@@ -542,8 +682,20 @@ function Overview({ name, role }: { name: string | undefined; role: string }) {
               <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
               <YAxis tickLine={false} axisLine={false} fontSize={11} />
               <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-              <Area type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#s1)" />
-              <Area type="monotone" dataKey="exp" stroke="#ea580c" strokeWidth={2} fill="url(#s2)" />
+              <Area
+                type="monotone"
+                dataKey="sales"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                fill="url(#s1)"
+              />
+              <Area
+                type="monotone"
+                dataKey="exp"
+                stroke="#ea580c"
+                strokeWidth={2}
+                fill="url(#s2)"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -600,7 +752,11 @@ function KPI({
   const Trend = trend === "up" ? TrendingUp : TrendingDown;
   const trendColor = trend === "up" ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50";
   const spark = useMemo(
-    () => Array.from({ length: 12 }, (_, i) => ({ x: i, y: Math.sin(i / 2) * 10 + 20 + Math.random() * 8 })),
+    () =>
+      Array.from({ length: 12 }, (_, i) => ({
+        x: i,
+        y: Math.sin(i / 2) * 10 + 20 + Math.random() * 8,
+      })),
     [],
   );
 
@@ -622,7 +778,14 @@ function KPI({
         <div className="h-12 w-24">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={spark}>
-              <Area type="monotone" dataKey="y" stroke={color} strokeWidth={2} fill={color} fillOpacity={0.15} />
+              <Area
+                type="monotone"
+                dataKey="y"
+                stroke={color}
+                strokeWidth={2}
+                fill={color}
+                fillOpacity={0.15}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -696,7 +859,9 @@ function RecentLeads() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusColor(l.status)}`}>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusColor(l.status)}`}
+              >
                 {l.status}
               </span>
               <span className="text-xs text-muted-foreground">{l.time}</span>
@@ -763,12 +928,54 @@ function TopLocations() {
 
 function PropertiesTable() {
   const rows = [
-    { id: "P-1042", title: "Marina Penthouse", loc: "Lusail", price: "QAR 18,500/mo", status: "Active", type: "Rent" },
-    { id: "P-1041", title: "Qanat Quartier 2BR", loc: "The Pearl", price: "QAR 12,000/mo", status: "Reserved", type: "Rent" },
-    { id: "P-1038", title: "West Bay Tower 3BR", loc: "West Bay", price: "QAR 4.6M", status: "Active", type: "Sale" },
-    { id: "P-1037", title: "Al Waab Villa", loc: "Al Waab", price: "QAR 9.2M", status: "Sold", type: "Sale" },
-    { id: "P-1035", title: "Katara Hills Townhouse", loc: "Katara Hills", price: "QAR 22,000/mo", status: "Active", type: "Rent" },
-    { id: "P-1031", title: "Lagoon View Apartment", loc: "The Pearl", price: "QAR 8,400/mo", status: "Pending", type: "Rent" },
+    {
+      id: "P-1042",
+      title: "Marina Penthouse",
+      loc: "Lusail",
+      price: "QAR 18,500/mo",
+      status: "Active",
+      type: "Rent",
+    },
+    {
+      id: "P-1041",
+      title: "Qanat Quartier 2BR",
+      loc: "The Pearl",
+      price: "QAR 12,000/mo",
+      status: "Reserved",
+      type: "Rent",
+    },
+    {
+      id: "P-1038",
+      title: "West Bay Tower 3BR",
+      loc: "West Bay",
+      price: "QAR 4.6M",
+      status: "Active",
+      type: "Sale",
+    },
+    {
+      id: "P-1037",
+      title: "Al Waab Villa",
+      loc: "Al Waab",
+      price: "QAR 9.2M",
+      status: "Sold",
+      type: "Sale",
+    },
+    {
+      id: "P-1035",
+      title: "Katara Hills Townhouse",
+      loc: "Katara Hills",
+      price: "QAR 22,000/mo",
+      status: "Active",
+      type: "Rent",
+    },
+    {
+      id: "P-1031",
+      title: "Lagoon View Apartment",
+      loc: "The Pearl",
+      price: "QAR 8,400/mo",
+      status: "Pending",
+      type: "Rent",
+    },
   ];
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
@@ -814,7 +1021,9 @@ function PropertiesTable() {
                 </td>
                 <td className="px-5 py-3 font-medium">{r.price}</td>
                 <td className="px-5 py-3">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusColor(r.status)}`}>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusColor(r.status)}`}
+                  >
                     {r.status}
                   </span>
                 </td>
@@ -832,11 +1041,7 @@ function PropertiesTable() {
 
 /* ---------- Agents ---------- */
 
-
-
-
 /* ---------- Leads ---------- */
-
 
 function PlaceholderCard({
   icon: Icon,

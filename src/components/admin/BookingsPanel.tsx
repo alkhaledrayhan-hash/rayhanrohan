@@ -60,9 +60,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
   const { data: profiles = [] } = useQuery({
     queryKey: ["all-profiles-min"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, full_name, email");
+      const { data } = await supabase.from("profiles").select("id, full_name, email");
       return (data ?? []) as Profile[];
     },
   });
@@ -80,8 +78,8 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
   }, [profiles]);
 
   function agentForBooking(b: Booking): Profile | null {
-    const id = b.agent_id || (b.property_id ? propertyAgentMap.get(b.property_id) ?? null : null);
-    return id ? profileMap.get(id) ?? null : null;
+    const id = b.agent_id || (b.property_id ? (propertyAgentMap.get(b.property_id) ?? null) : null);
+    return id ? (profileMap.get(id) ?? null) : null;
   }
 
   const setStatus = useMutation({
@@ -177,10 +175,18 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr>
+                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                  Loading…
+                </td>
+              </tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">No bookings yet.</td></tr>
+              <tr>
+                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                  No bookings yet.
+                </td>
+              </tr>
             )}
             {filtered.map((b) => {
               const agent = agentForBooking(b);
@@ -198,7 +204,9 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-4 py-3 text-xs">
                     {agent ? (
                       <div>
-                        <div className="font-medium text-foreground">{agent.full_name || "Agent"}</div>
+                        <div className="font-medium text-foreground">
+                          {agent.full_name || "Agent"}
+                        </div>
                         <div className="text-muted-foreground">{agent.email}</div>
                       </div>
                     ) : (
@@ -216,18 +224,24 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <select
                       value={b.status}
-                      onChange={(e) => setStatus.mutate({ id: b.id, status: e.target.value as Status })}
+                      onChange={(e) =>
+                        setStatus.mutate({ id: b.id, status: e.target.value as Status })
+                      }
                       className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${statusClass[b.status as Status] ?? "bg-muted"}`}
                     >
                       {STATUSES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
                       ))}
                     </select>
                   </td>
                   <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                     {isAdmin && (
                       <button
-                        onClick={() => { if (confirm("Delete this booking?")) remove.mutate(b.id); }}
+                        onClick={() => {
+                          if (confirm("Delete this booking?")) remove.mutate(b.id);
+                        }}
                         className="rounded-md p-1.5 text-muted-foreground hover:bg-rose-50 hover:text-rose-600"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -247,7 +261,9 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
           agent={agentForBooking(selected)}
           isAdmin={isAdmin}
           onClose={() => setSelected(null)}
-          onDelete={() => { if (confirm("Delete this booking?")) remove.mutate(selected.id); }}
+          onDelete={() => {
+            if (confirm("Delete this booking?")) remove.mutate(selected.id);
+          }}
         />
       )}
 
@@ -267,7 +283,11 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
 }
 
 function BookingDetailDialog({
-  booking, agent, isAdmin, onClose, onDelete,
+  booking,
+  agent,
+  isAdmin,
+  onClose,
+  onDelete,
 }: {
   booking: Booking;
   agent: Profile | null;
@@ -308,14 +328,21 @@ function BookingDetailDialog({
       >
         <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Booking details</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Booking details
+            </p>
             <h3 className="font-display text-lg font-semibold">{booking.property_title}</h3>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${statusClass[booking.status as Status] ?? "bg-muted"}`}>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${statusClass[booking.status as Status] ?? "bg-muted"}`}
+            >
               {booking.status}
             </span>
-            <button onClick={onClose} className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
+            <button
+              onClick={onClose}
+              className="rounded-md p-1.5 text-muted-foreground hover:bg-muted"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -329,11 +356,19 @@ function BookingDetailDialog({
             </h4>
             <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-3">
               <Row icon={UserIcon} label="Name" value={booking.customer_name} />
-              <Row icon={Phone} label="Phone" value={booking.customer_phone}
-                href={`tel:${booking.customer_phone}`} />
+              <Row
+                icon={Phone}
+                label="Phone"
+                value={booking.customer_phone}
+                href={`tel:${booking.customer_phone}`}
+              />
               {booking.customer_email && (
-                <Row icon={Mail} label="Email" value={booking.customer_email}
-                  href={`mailto:${booking.customer_email}`} />
+                <Row
+                  icon={Mail}
+                  label="Email"
+                  value={booking.customer_email}
+                  href={`mailto:${booking.customer_email}`}
+                />
               )}
             </div>
           </section>
@@ -347,11 +382,19 @@ function BookingDetailDialog({
               {agent ? (
                 <>
                   <Row icon={UserIcon} label="Name" value={agent.full_name || "Agent"} />
-                  {agent.email && <Row icon={Mail} label="Email" value={agent.email}
-                    href={`mailto:${agent.email}`} />}
+                  {agent.email && (
+                    <Row
+                      icon={Mail}
+                      label="Email"
+                      value={agent.email}
+                      href={`mailto:${agent.email}`}
+                    />
+                  )}
                 </>
               ) : (
-                <p className="text-xs italic text-muted-foreground">No agent assigned to this property yet.</p>
+                <p className="text-xs italic text-muted-foreground">
+                  No agent assigned to this property yet.
+                </p>
               )}
             </div>
           </section>
@@ -364,15 +407,23 @@ function BookingDetailDialog({
             <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-3">
               {!editing ? (
                 <>
-                  <Row icon={CalendarIcon} label="Date"
-                    value={format(new Date(booking.scheduled_date), "EEE, d MMM yyyy")} />
+                  <Row
+                    icon={CalendarIcon}
+                    label="Date"
+                    value={format(new Date(booking.scheduled_date), "EEE, d MMM yyyy")}
+                  />
                   <Row label="Time" value={booking.scheduled_time} />
                   <Row label="Source" value={booking.source} />
                   <Row label="Reference" value={booking.id} mono />
-                  <Row label="Created" value={format(new Date(booking.created_at), "d MMM yyyy, HH:mm")} />
+                  <Row
+                    label="Created"
+                    value={format(new Date(booking.created_at), "d MMM yyyy, HH:mm")}
+                  />
                   {booking.notes && (
                     <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Notes</p>
+                      <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Notes
+                      </p>
                       <p className="mt-1 whitespace-pre-wrap text-sm">{booking.notes}</p>
                     </div>
                   )}
@@ -380,21 +431,41 @@ function BookingDetailDialog({
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Date">
-                    <input type="date" value={scheduledDate}
-                      onChange={(e) => setScheduledDate(e.target.value)} className="input" />
+                    <input
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      className="input"
+                    />
                   </Field>
                   <Field label="Time">
-                    <input type="time" value={scheduledTime}
-                      onChange={(e) => setScheduledTime(e.target.value)} className="input" />
+                    <input
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="input"
+                    />
                   </Field>
                   <Field label="Status">
-                    <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
-                      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as Status)}
+                      className="input"
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
                     </select>
                   </Field>
                   <Field label="Notes" className="sm:col-span-2">
-                    <textarea rows={3} value={notes}
-                      onChange={(e) => setNotes(e.target.value)} className="input" />
+                    <textarea
+                      rows={3}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="input"
+                    />
                   </Field>
                 </div>
               )}
@@ -405,8 +476,10 @@ function BookingDetailDialog({
         <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/30 px-6 py-3">
           <div>
             {isAdmin && !editing && (
-              <button onClick={onDelete}
-                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50">
+              <button
+                onClick={onDelete}
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50"
+              >
                 <Trash2 className="h-3.5 w-3.5" /> Delete
               </button>
             )}
@@ -414,20 +487,33 @@ function BookingDetailDialog({
           <div className="flex gap-2">
             {editing ? (
               <>
-                <button onClick={() => setEditing(false)}
-                  className="rounded-lg border border-border bg-white px-3 py-2 text-sm">Cancel</button>
-                <button disabled={busy} onClick={save}
-                  className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+                <button
+                  onClick={() => setEditing(false)}
+                  className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={busy}
+                  onClick={save}
+                  className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
                   {busy ? "Saving…" : "Save changes"}
                 </button>
               </>
             ) : (
               <>
-                <button onClick={onClose}
-                  className="rounded-lg border border-border bg-white px-3 py-2 text-sm">Close</button>
+                <button
+                  onClick={onClose}
+                  className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+                >
+                  Close
+                </button>
                 {isAdmin && (
-                  <button onClick={() => setEditing(true)}
-                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+                  >
                     Edit booking
                   </button>
                 )}
@@ -442,7 +528,11 @@ function BookingDetailDialog({
 }
 
 function Row({
-  icon: Icon, label, value, href, mono,
+  icon: Icon,
+  label,
+  value,
+  href,
+  mono,
 }: {
   icon?: typeof UserIcon;
   label: string;
@@ -450,17 +540,19 @@ function Row({
   href?: string;
   mono?: boolean;
 }) {
-  const content = (
-    <span className={`text-sm ${mono ? "font-mono text-xs" : ""}`}>{value}</span>
-  );
+  const content = <span className={`text-sm ${mono ? "font-mono text-xs" : ""}`}>{value}</span>;
   return (
     <div className="flex items-start justify-between gap-3">
       <span className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {Icon && <Icon className="h-3.5 w-3.5" />} {label}
       </span>
       {href ? (
-        <a href={href} className="text-primary hover:underline">{content}</a>
-      ) : content}
+        <a href={href} className="text-primary hover:underline">
+          {content}
+        </a>
+      ) : (
+        content
+      )}
     </div>
   );
 }
@@ -518,46 +610,106 @@ function CreateBookingDialog({
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
       <form onSubmit={submit} className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         <h3 className="font-display text-lg font-semibold">New booking</h3>
-        <p className="text-sm text-muted-foreground">Manually book a viewing on behalf of a customer.</p>
+        <p className="text-sm text-muted-foreground">
+          Manually book a viewing on behalf of a customer.
+        </p>
 
         <div className="mt-4 grid gap-3">
           <Field label="Property">
-            <select required value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="input">
-              {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+            <select
+              required
+              value={propertyId}
+              onChange={(e) => setPropertyId(e.target.value)}
+              className="input"
+            >
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
             </select>
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Customer name">
-              <input required value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="input" />
+              <input
+                required
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="input"
+              />
             </Field>
             <Field label="Phone">
-              <input required value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="input" />
+              <input
+                required
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                className="input"
+              />
             </Field>
           </div>
           <Field label="Email (optional)">
-            <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="input" />
+            <input
+              type="email"
+              value={customerEmail}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              className="input"
+            />
           </Field>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Date">
-              <input required type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="input" />
+              <input
+                required
+                type="date"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                className="input"
+              />
             </Field>
             <Field label="Time">
-              <input required type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="input" />
+              <input
+                required
+                type="time"
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                className="input"
+              />
             </Field>
             <Field label="Status">
-              <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
-                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as Status)}
+                className="input"
+              >
+                {STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
               </select>
             </Field>
           </div>
           <Field label="Notes">
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="input" />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              className="input"
+            />
           </Field>
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="rounded-lg border border-border px-3 py-2 text-sm">Cancel</button>
-          <button disabled={busy} className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border px-3 py-2 text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            disabled={busy}
+            className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          >
             {busy ? "Saving…" : "Create booking"}
           </button>
         </div>
@@ -567,10 +719,20 @@ function CreateBookingDialog({
   );
 }
 
-function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <label className={`flex flex-col gap-1 ${className ?? ""}`}>
-      <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );

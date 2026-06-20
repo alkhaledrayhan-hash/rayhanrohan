@@ -69,18 +69,29 @@ function ArticleDetail() {
         <div className="relative isolate">
           <div className="relative h-[55vh] min-h-[420px] w-full overflow-hidden">
             {post.cover_image ? (
-              <img src={post.cover_image} alt={post.title} className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src={post.cover_image}
+                alt={post.title}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             ) : (
               <div className="absolute inset-0 bg-muted" />
             )}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/85" />
             <div className="relative mx-auto flex h-full max-w-4xl flex-col justify-end px-4 pb-12 sm:px-6 lg:px-8">
-              <Link to="/news" className="mb-6 inline-flex w-fit items-center gap-1.5 text-xs text-white/80 hover:text-white">
+              <Link
+                to="/news"
+                className="mb-6 inline-flex w-fit items-center gap-1.5 text-xs text-white/80 hover:text-white"
+              >
                 <ArrowLeft className="h-3.5 w-3.5" /> All articles
               </Link>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-foreground">
-                  {post.type === "news" ? <Newspaper className="h-3 w-3" /> : <PenLine className="h-3 w-3" />}
+                  {post.type === "news" ? (
+                    <Newspaper className="h-3 w-3" />
+                  ) : (
+                    <PenLine className="h-3 w-3" />
+                  )}
                   {post.type}
                 </span>
                 {post.category && (
@@ -92,7 +103,9 @@ function ArticleDetail() {
               <h1 className="mt-4 font-display text-3xl font-semibold leading-tight text-white sm:text-5xl">
                 {post.title}
               </h1>
-              {post.excerpt && <p className="mt-4 max-w-2xl text-sm text-white/85 sm:text-base">{post.excerpt}</p>}
+              {post.excerpt && (
+                <p className="mt-4 max-w-2xl text-sm text-white/85 sm:text-base">{post.excerpt}</p>
+              )}
               <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-white/80">
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
@@ -106,16 +119,18 @@ function ArticleDetail() {
         <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="prose prose-neutral max-w-none space-y-5 text-base leading-relaxed text-foreground">
             {paragraphs.map((p, i) => (
-              <p key={i} className="whitespace-pre-wrap">{p}</p>
+              <p key={i} className="whitespace-pre-wrap">
+                {p}
+              </p>
             ))}
-            {paragraphs.length === 0 && (
-              <p className="text-muted-foreground">No content yet.</p>
-            )}
+            {paragraphs.length === 0 && <p className="text-muted-foreground">No content yet.</p>}
           </div>
 
           {post.tags.length > 0 && (
             <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border pt-8">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tags</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Tags
+              </span>
               {post.tags.map((t) => (
                 <span
                   key={t.id}
@@ -137,7 +152,9 @@ function formatDate(iso: string | null) {
   if (!iso) return "";
   try {
     return new Date(iso).toLocaleDateString(undefined, {
-      year: "numeric", month: "short", day: "numeric",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch {
     return "";

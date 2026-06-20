@@ -43,13 +43,7 @@ const DEFAULT_STYLE: NonNullable<HeroContent["style"]> = {
   align: "left",
 };
 
-export function HeroEditor({
-  sectionId,
-  initial,
-}: {
-  sectionId: string;
-  initial: HeroContent;
-}) {
+export function HeroEditor({ sectionId, initial }: { sectionId: string; initial: HeroContent }) {
   const qc = useQueryClient();
   const [content, setContent] = useState<HeroContent>({
     ...initial,
@@ -119,14 +113,22 @@ export function HeroEditor({
   const overlayBg = `linear-gradient(135deg, ${withAlpha(st.overlay_from!, st.overlay_opacity!)} 0%, ${withAlpha(st.overlay_to!, st.overlay_opacity!)} 100%)`;
   const titleSize =
     st.title_size === "md" ? "text-3xl" : st.title_size === "lg" ? "text-4xl" : "text-5xl";
-  const slides = (content.images && content.images.length > 0)
-    ? content.images
-    : (content.image_url ? [content.image_url] : []);
+  const slides =
+    content.images && content.images.length > 0
+      ? content.images
+      : content.image_url
+        ? [content.image_url]
+        : [];
   const [previewSlide, setPreviewSlide] = useState(0);
-  useEffect(() => { setPreviewSlide(0); }, [slides.length]);
+  useEffect(() => {
+    setPreviewSlide(0);
+  }, [slides.length]);
   useEffect(() => {
     if (slides.length <= 1) return;
-    const id = setInterval(() => setPreviewSlide((s) => (s + 1) % slides.length), content.slide_interval || 2500);
+    const id = setInterval(
+      () => setPreviewSlide((s) => (s + 1) % slides.length),
+      content.slide_interval || 2500,
+    );
     return () => clearInterval(id);
   }, [slides.length, content.slide_interval]);
 
@@ -171,10 +173,7 @@ export function HeroEditor({
             </h2>
           )}
           {content.subtitle && (
-            <p
-              className="mt-2 max-w-xl text-sm"
-              style={{ color: st.subtitle_color }}
-            >
+            <p className="mt-2 max-w-xl text-sm" style={{ color: st.subtitle_color }}>
               {content.subtitle}
             </p>
           )}
@@ -202,26 +201,56 @@ export function HeroEditor({
         {/* Content */}
         <Panel icon={Type} title="Content">
           <Field label="Eyebrow">
-            <input className={inputCls} value={content.eyebrow || ""} onChange={(e) => update("eyebrow", e.target.value)} />
+            <input
+              className={inputCls}
+              value={content.eyebrow || ""}
+              onChange={(e) => update("eyebrow", e.target.value)}
+            />
           </Field>
           <Field label="Title">
-            <textarea rows={2} className={inputCls} value={content.title || ""} onChange={(e) => update("title", e.target.value)} />
+            <textarea
+              rows={2}
+              className={inputCls}
+              value={content.title || ""}
+              onChange={(e) => update("title", e.target.value)}
+            />
           </Field>
           <Field label="Subtitle / description">
-            <textarea rows={3} className={inputCls} value={content.subtitle || ""} onChange={(e) => update("subtitle", e.target.value)} />
+            <textarea
+              rows={3}
+              className={inputCls}
+              value={content.subtitle || ""}
+              onChange={(e) => update("subtitle", e.target.value)}
+            />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Primary button label">
-              <input className={inputCls} value={content.cta_label || ""} onChange={(e) => update("cta_label", e.target.value)} />
+              <input
+                className={inputCls}
+                value={content.cta_label || ""}
+                onChange={(e) => update("cta_label", e.target.value)}
+              />
             </Field>
             <Field label="Primary button link">
-              <input className={inputCls} value={content.cta_link || ""} onChange={(e) => update("cta_link", e.target.value)} />
+              <input
+                className={inputCls}
+                value={content.cta_link || ""}
+                onChange={(e) => update("cta_link", e.target.value)}
+              />
             </Field>
             <Field label="Secondary button label">
-              <input className={inputCls} value={content.cta2_label || ""} onChange={(e) => update("cta2_label", e.target.value)} />
+              <input
+                className={inputCls}
+                value={content.cta2_label || ""}
+                onChange={(e) => update("cta2_label", e.target.value)}
+              />
             </Field>
             <Field label="Secondary button link">
-              <input className={inputCls} value={content.cta2_link || ""} onChange={(e) => update("cta2_link", e.target.value)} />
+              <input
+                className={inputCls}
+                value={content.cta2_link || ""}
+                onChange={(e) => update("cta2_link", e.target.value)}
+              />
             </Field>
           </div>
         </Panel>
@@ -254,17 +283,38 @@ export function HeroEditor({
           {slides.length > 0 && (
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {(content.images || (content.image_url ? [content.image_url] : [])).map((src, i) => (
-                <div key={i} className="group relative overflow-hidden rounded-lg border border-border">
+                <div
+                  key={i}
+                  className="group relative overflow-hidden rounded-lg border border-border"
+                >
                   <img src={src} alt="" className="h-24 w-full object-cover" />
                   <div className="absolute inset-0 flex items-end justify-between gap-1 bg-gradient-to-t from-black/70 to-transparent p-1.5 opacity-0 transition group-hover:opacity-100">
                     <div className="flex gap-1">
-                      <button type="button" onClick={() => moveImage(i, -1)} disabled={i === 0} className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40">←</button>
-                      <button type="button" onClick={() => moveImage(i, 1)} disabled={i === (content.images?.length || 1) - 1} className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40">→</button>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(i, -1)}
+                        disabled={i === 0}
+                        className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40"
+                      >
+                        ←
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(i, 1)}
+                        disabled={i === (content.images?.length || 1) - 1}
+                        className="rounded bg-white/90 px-1.5 text-xs disabled:opacity-40"
+                      >
+                        →
+                      </button>
                     </div>
-                    <button type="button" onClick={() => {
-                      if (content.images) removeImage(i);
-                      else update("image_url", "");
-                    }} className="rounded bg-red-500/90 p-1 text-white">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (content.images) removeImage(i);
+                        else update("image_url", "");
+                      }}
+                      className="rounded bg-red-500/90 p-1 text-white"
+                    >
                       <X className="h-3 w-3" />
                     </button>
                   </div>
@@ -278,7 +328,9 @@ export function HeroEditor({
 
           <UrlAdder onAdd={addUrl} />
 
-          <Field label={`Slide interval (${((content.slide_interval || 2500) / 1000).toFixed(1)}s)`}>
+          <Field
+            label={`Slide interval (${((content.slide_interval || 2500) / 1000).toFixed(1)}s)`}
+          >
             <input
               type="range"
               min={1000}
@@ -297,13 +349,41 @@ export function HeroEditor({
         {/* Style */}
         <Panel icon={Palette} title="Style & colors" className="lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <ColorField label="Eyebrow" value={st.eyebrow_color!} onChange={(v) => updateStyle("eyebrow_color", v)} />
-            <ColorField label="Title" value={st.title_color!} onChange={(v) => updateStyle("title_color", v)} />
-            <ColorField label="Subtitle" value={st.subtitle_color!} onChange={(v) => updateStyle("subtitle_color", v)} />
-            <ColorField label="Button bg" value={st.cta_bg!} onChange={(v) => updateStyle("cta_bg", v)} />
-            <ColorField label="Button text" value={st.cta_text!} onChange={(v) => updateStyle("cta_text", v)} />
-            <ColorField label="Overlay from" value={st.overlay_from!} onChange={(v) => updateStyle("overlay_from", v)} />
-            <ColorField label="Overlay to" value={st.overlay_to!} onChange={(v) => updateStyle("overlay_to", v)} />
+            <ColorField
+              label="Eyebrow"
+              value={st.eyebrow_color!}
+              onChange={(v) => updateStyle("eyebrow_color", v)}
+            />
+            <ColorField
+              label="Title"
+              value={st.title_color!}
+              onChange={(v) => updateStyle("title_color", v)}
+            />
+            <ColorField
+              label="Subtitle"
+              value={st.subtitle_color!}
+              onChange={(v) => updateStyle("subtitle_color", v)}
+            />
+            <ColorField
+              label="Button bg"
+              value={st.cta_bg!}
+              onChange={(v) => updateStyle("cta_bg", v)}
+            />
+            <ColorField
+              label="Button text"
+              value={st.cta_text!}
+              onChange={(v) => updateStyle("cta_text", v)}
+            />
+            <ColorField
+              label="Overlay from"
+              value={st.overlay_from!}
+              onChange={(v) => updateStyle("overlay_from", v)}
+            />
+            <ColorField
+              label="Overlay to"
+              value={st.overlay_to!}
+              onChange={(v) => updateStyle("overlay_to", v)}
+            />
             <Field label={`Overlay opacity (${st.overlay_opacity}%)`}>
               <input
                 type="range"
@@ -367,13 +447,23 @@ const inputCls =
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );
 }
 
-function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function ColorField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <Field label={label}>
       <div className="flex items-center gap-2 rounded-lg border border-input bg-background p-1.5">
@@ -418,7 +508,13 @@ function Panel({
 function withAlpha(hex: string, opacityPct: number) {
   const a = Math.max(0, Math.min(100, opacityPct)) / 100;
   const h = hex.replace("#", "");
-  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const full =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
   const r = parseInt(full.slice(0, 2), 16);
   const g = parseInt(full.slice(2, 4), 16);
   const b = parseInt(full.slice(4, 6), 16);
@@ -435,12 +531,19 @@ function UrlAdder({ onAdd }: { onAdd: (url: string) => void }) {
         value={v}
         onChange={(e) => setV(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") { e.preventDefault(); onAdd(v); setV(""); }
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onAdd(v);
+            setV("");
+          }
         }}
       />
       <button
         type="button"
-        onClick={() => { onAdd(v); setV(""); }}
+        onClick={() => {
+          onAdd(v);
+          setV("");
+        }}
         className="rounded-lg border border-border px-3 py-2 text-xs font-medium hover:bg-muted"
       >
         Add

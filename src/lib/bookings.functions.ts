@@ -18,11 +18,9 @@ const BookingSchema = z.object({
 export type BookingInput = z.infer<typeof BookingSchema>;
 
 function serverClient() {
-  return createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
-  );
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 export const createBooking = createServerFn({ method: "POST" })
@@ -37,9 +35,7 @@ export const createBooking = createServerFn({ method: "POST" })
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
         data.propertyId,
       );
-      const q = supabaseAdmin
-        .from("properties")
-        .select("id, title, assigned_agent_id, created_by");
+      const q = supabaseAdmin.from("properties").select("id, title, assigned_agent_id, created_by");
       const { data: prop } = isUuid
         ? await q.eq("id", data.propertyId).maybeSingle()
         : await q.eq("slug", data.propertyId).maybeSingle();
@@ -121,7 +117,7 @@ export const createManualBooking = createServerFn({ method: "POST" })
     if (!prop) throw new Error("Property not found");
 
     const agentId = isAdmin
-      ? (data.agentId || (prop as { created_by?: string | null }).created_by || context.userId)
+      ? data.agentId || (prop as { created_by?: string | null }).created_by || context.userId
       : context.userId;
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -203,9 +199,7 @@ export const createEnquiry = createServerFn({ method: "POST" })
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       data.propertyId,
     );
-    const q = supabaseAdmin
-      .from("properties")
-      .select("id, title, assigned_agent_id, created_by");
+    const q = supabaseAdmin.from("properties").select("id, title, assigned_agent_id, created_by");
     const { data: prop } = isUuid
       ? await q.eq("id", data.propertyId).maybeSingle()
       : await q.eq("slug", data.propertyId).maybeSingle();

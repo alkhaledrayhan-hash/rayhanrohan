@@ -56,7 +56,10 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const { data: agents = [] } = useQuery({
     queryKey: ["leads-agents"],
     queryFn: async () => {
-      const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "agent");
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "agent");
       const ids = (roles ?? []).map((r) => r.user_id as string);
       if (!ids.length) return [] as AgentProfile[];
       const { data } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
@@ -96,19 +99,35 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
       const { error } = await supabase.from("leads").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Lead deleted"); qc.invalidateQueries({ queryKey: ["admin-leads"] }); },
+    onSuccess: () => {
+      toast.success("Lead deleted");
+      qc.invalidateQueries({ queryKey: ["admin-leads"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
   const exportCsv = () => {
-    if (!filtered.length) { toast.error("No leads to export"); return; }
+    if (!filtered.length) {
+      toast.error("No leads to export");
+      return;
+    }
     const header = ["Date", "Name", "Email", "Phone", "Source", "Subject", "Message", "Status"];
     const esc = (s: any) => `"${String(s ?? "").replace(/"/g, '""')}"`;
     const lines = [header.join(",")].concat(
-      filtered.map((r) => [
-        new Date(r.created_at).toISOString(),
-        r.name, r.email, r.phone || "", r.source, r.subject || "", r.message, r.status,
-      ].map(esc).join(","))
+      filtered.map((r) =>
+        [
+          new Date(r.created_at).toISOString(),
+          r.name,
+          r.email,
+          r.phone || "",
+          r.source,
+          r.subject || "",
+          r.message,
+          r.status,
+        ]
+          .map(esc)
+          .join(","),
+      ),
     );
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -120,16 +139,25 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   };
 
   const emailToAdmin = () => {
-    if (!adminEmail) { toast.error("Set an admin email under Settings first."); return; }
-    if (!filtered.length) { toast.error("No leads to send"); return; }
+    if (!adminEmail) {
+      toast.error("Set an admin email under Settings first.");
+      return;
+    }
+    if (!filtered.length) {
+      toast.error("No leads to send");
+      return;
+    }
     exportCsv();
     const body = filtered
       .slice(0, 20)
-      .map((r) => `• ${r.name} <${r.email}> — ${r.subject || r.source} (${formatDateTime(r.created_at)})`)
+      .map(
+        (r) =>
+          `• ${r.name} <${r.email}> — ${r.subject || r.source} (${formatDateTime(r.created_at)})`,
+      )
       .join("\n");
     const subject = `Leads export — ${filtered.length} records`;
     const mailto = `mailto:${encodeURIComponent(adminEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `${filtered.length} leads exported. CSV downloaded to your computer — please attach it to this email.\n\nRecent leads:\n${body}`
+      `${filtered.length} leads exported. CSV downloaded to your computer — please attach it to this email.\n\nRecent leads:\n${body}`,
     )}`;
     window.location.href = mailto;
   };
@@ -146,23 +174,43 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
             className="w-full rounded-lg border border-input bg-white py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <select value={src} onChange={(e) => setSrc(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+        <select
+          value={src}
+          onChange={(e) => setSrc(e.target.value)}
+          className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
+        >
           <option value="all">All sources</option>
-          {sources.map((s) => <option key={s} value={s}>{s}</option>)}
+          {sources.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
         {isAdmin && (
-          <select value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+          <select
+            value={agentFilter}
+            onChange={(e) => setAgentFilter(e.target.value)}
+            className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
+          >
             <option value="all">All agents</option>
             <option value="unassigned">Unassigned</option>
             {agents.map((a) => (
-              <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+              <option key={a.id} value={a.id}>
+                {a.full_name || a.email}
+              </option>
             ))}
           </select>
         )}
-        <button onClick={exportCsv} className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm hover:bg-muted">
+        <button
+          onClick={exportCsv}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm hover:bg-muted"
+        >
           <Download className="h-4 w-4" /> Export CSV
         </button>
-        <button onClick={emailToAdmin} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+        <button
+          onClick={emailToAdmin}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+        >
           <Mail className="h-4 w-4" /> Email to admin
         </button>
       </div>
@@ -183,29 +231,62 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && (
+                <tr>
+                  <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
+                    Loading…
+                  </td>
+                </tr>
+              )}
+              {!isLoading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
+                    No leads yet.
+                  </td>
+                </tr>
+              )}
               {filtered.map((r) => (
                 <tr key={r.id} className="align-top hover:bg-muted/30">
-                  <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{formatDateTime(r.created_at)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
+                    {formatDateTime(r.created_at)}
+                  </td>
                   <td className="px-4 py-3 font-medium">{r.name}</td>
                   <td className="px-4 py-3 text-xs">
-                    <a href={`mailto:${r.email}`} className="block text-primary hover:underline">{r.email}</a>
-                    {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
+                    <a href={`mailto:${r.email}`} className="block text-primary hover:underline">
+                      {r.email}
+                    </a>
+                    {r.phone && (
+                      <a href={`tel:${r.phone}`} className="block text-muted-foreground">
+                        {r.phone}
+                      </a>
+                    )}
                   </td>
-                  <td className="px-4 py-3"><span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">{r.property_title || "—"}</td>
+                  <td className="px-4 py-3">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      {r.source}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">
+                    {r.property_title || "—"}
+                  </td>
                   <td className="px-4 py-3 text-xs">{agentName(r.agent_id)}</td>
                   <td className="px-4 py-3 max-w-md">
-                    {r.subject && <div className="text-xs font-semibold text-foreground/70">{r.subject}</div>}
+                    {r.subject && (
+                      <div className="text-xs font-semibold text-foreground/70">{r.subject}</div>
+                    )}
                     <p className="line-clamp-3 text-xs text-muted-foreground">{r.message}</p>
                   </td>
                   {isAdmin && (
                     <td className="px-4 py-3 text-right">
                       <button
-                        onClick={() => { if (confirm("Delete this lead?")) del.mutate(r.id); }}
-                        className="rounded p-1.5 text-rose-600 hover:bg-rose-50" title="Delete"
-                      ><Trash2 className="h-4 w-4" /></button>
+                        onClick={() => {
+                          if (confirm("Delete this lead?")) del.mutate(r.id);
+                        }}
+                        className="rounded p-1.5 text-rose-600 hover:bg-rose-50"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </td>
                   )}
                 </tr>

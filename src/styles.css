@@ -73,7 +73,11 @@
   --shadow-soft: 0 4px 24px -8px color-mix(in oklab, var(--primary) 18%, transparent);
   --shadow-card: 0 2px 14px -4px oklch(0 0 0 / 0.08);
   --gradient-maroon: linear-gradient(135deg, oklch(0.34 0.13 18), oklch(0.42 0.14 22));
-  --gradient-hero-overlay: linear-gradient(180deg, oklch(0.15 0.04 25 / 0.55), oklch(0.18 0.04 25 / 0.75));
+  --gradient-hero-overlay: linear-gradient(
+    180deg,
+    oklch(0.15 0.04 25 / 0.55),
+    oklch(0.18 0.04 25 / 0.75)
+  );
 }
 
 .dark {
@@ -108,15 +112,22 @@
     color: var(--color-foreground);
     font-feature-settings: "ss01", "cv11";
   }
-  h1, h2, h3, .font-display {
+  h1,
+  h2,
+  h3,
+  .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
 }
 
 @keyframes route-progress-slide {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .route-progress-animate {
@@ -124,8 +135,14 @@
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @utility animate-fade-in-up {
@@ -138,13 +155,21 @@ img {
 
 /* Footer flying plane along Qatar flight path */
 @keyframes footer-plane-fly {
-  0% { offset-distance: 0%; }
-  100% { offset-distance: 100%; }
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
 }
 
 @keyframes footer-trail-draw {
-  0% { stroke-dashoffset: 1080; }
-  100% { stroke-dashoffset: 0; }
+  0% {
+    stroke-dashoffset: 1080;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 .footer-plane {
@@ -160,11 +185,13 @@ img {
   animation: footer-trail-draw 9s ease-in-out infinite;
 }
 
-
-
 @keyframes logo-marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .logo-marquee {

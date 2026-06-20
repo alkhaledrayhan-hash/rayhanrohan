@@ -34,7 +34,9 @@ export function useSiteSettings() {
       const { data, error } = await supabase.from("site_settings").select("key, value");
       if (error) throw error;
       const map: Record<string, string> = {};
-      (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
+      (data || []).forEach((r: any) => {
+        map[r.key] = r.value || "";
+      });
       const out: SiteSettings = { ...DEFAULTS };
       (Object.keys(DEFAULTS) as (keyof SiteSettings)[]).forEach((k) => {
         if (map[k]) (out as any)[k] = map[k];

@@ -31,8 +31,7 @@ export function LogoMarquee() {
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/2 -z-10 h-[480px] w-[900px] -translate-x-1/2 rounded-full opacity-50 blur-3xl"
         style={{
-          background:
-            "radial-gradient(circle, oklch(0.85 0.16 85 / 0.45), transparent 65%)",
+          background: "radial-gradient(circle, oklch(0.85 0.16 85 / 0.45), transparent 65%)",
         }}
       />
       {/* Maroon corner glow */}
@@ -40,8 +39,7 @@ export function LogoMarquee() {
         aria-hidden
         className="pointer-events-none absolute -bottom-32 -left-32 -z-10 h-[420px] w-[420px] rounded-full opacity-40 blur-3xl"
         style={{
-          background:
-            "radial-gradient(circle, oklch(0.55 0.18 22 / 0.6), transparent 70%)",
+          background: "radial-gradient(circle, oklch(0.55 0.18 22 / 0.6), transparent 70%)",
         }}
       />
       {/* Subtle grid texture */}

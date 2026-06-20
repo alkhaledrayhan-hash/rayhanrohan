@@ -75,13 +75,17 @@ function PropertiesPage() {
         eyebrow={status === "rent" ? "Rentals across Qatar" : "Homes for sale"}
         title={`Properties for ${status === "rent" ? "Rent" : "Sale"}`}
         description="Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab."
-        crumbs={[{ label: "Home", to: "/" }, { label: `For ${status === "rent" ? "Rent" : "Sale"}` }]}
+        crumbs={[
+          { label: "Home", to: "/" },
+          { label: `For ${status === "rent" ? "Rent" : "Sale"}` },
+        ]}
       />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">
-              Showing <span className="text-foreground font-medium">{items.length}</span> result{items.length === 1 ? "" : "s"} in Qatar.
+              Showing <span className="text-foreground font-medium">{items.length}</span> result
+              {items.length === 1 ? "" : "s"} in Qatar.
             </p>
           </div>
           <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
@@ -116,7 +120,9 @@ function PropertiesPage() {
                   className="bg-transparent text-sm outline-none"
                 >
                   {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -214,25 +220,61 @@ function FilterSidebar({
           label="Location"
           value={v.location ?? "all"}
           onChange={(x) => set("location", x)}
-          options={[{ value: "all", label: "All locations" }, ...LOCATIONS.map((l) => ({ value: l, label: l }))]}
+          options={[
+            { value: "all", label: "All locations" },
+            ...LOCATIONS.map((l) => ({ value: l, label: l })),
+          ]}
         />
         <FieldSelect
           label="Type"
           value={v.type ?? "all"}
           onChange={(x) => set("type", x)}
-          options={[{ value: "all", label: "Any type" }, ...TYPES.map((t) => ({ value: t, label: t }))]}
+          options={[
+            { value: "all", label: "Any type" },
+            ...TYPES.map((t) => ({ value: t, label: t })),
+          ]}
         />
         <div className="grid grid-cols-2 gap-3">
-          <FieldNumber label="Beds" value={v.beds} onChange={(x) => set("beds", x)} placeholder="Any" />
-          <FieldNumber label="Baths" value={v.baths} onChange={(x) => set("baths", x)} placeholder="Any" />
+          <FieldNumber
+            label="Beds"
+            value={v.beds}
+            onChange={(x) => set("beds", x)}
+            placeholder="Any"
+          />
+          <FieldNumber
+            label="Baths"
+            value={v.baths}
+            onChange={(x) => set("baths", x)}
+            placeholder="Any"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <FieldNumber label="Min price" value={v.minPrice} onChange={(x) => set("minPrice", x)} placeholder="QAR" />
-          <FieldNumber label="Max price" value={v.maxPrice} onChange={(x) => set("maxPrice", x)} placeholder="QAR" />
+          <FieldNumber
+            label="Min price"
+            value={v.minPrice}
+            onChange={(x) => set("minPrice", x)}
+            placeholder="QAR"
+          />
+          <FieldNumber
+            label="Max price"
+            value={v.maxPrice}
+            onChange={(x) => set("maxPrice", x)}
+            placeholder="QAR"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <FieldNumber label="Min area" value={v.minArea} onChange={(x) => set("minArea", x)} placeholder="ft²" />
-          <FieldNumber label="Max area" value={v.maxArea} onChange={(x) => set("maxArea", x)} placeholder="ft²" />
+          <FieldNumber
+            label="Min area"
+            value={v.minArea}
+            onChange={(x) => set("minArea", x)}
+            placeholder="ft²"
+          />
+          <FieldNumber
+            label="Max area"
+            value={v.maxArea}
+            onChange={(x) => set("maxArea", x)}
+            placeholder="ft²"
+          />
         </div>
       </div>
 
@@ -258,11 +300,21 @@ function FilterSidebar({
 }
 
 function FieldText({
-  label, value, onChange, placeholder,
-}: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -274,28 +326,52 @@ function FieldText({
 }
 
 function FieldSelect({
-  label, value, onChange, options,
-}: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
       </select>
     </label>
   );
 }
 
 function FieldNumber({
-  label, value, onChange, placeholder,
-}: { label: string; value?: number; onChange: (v: number | undefined) => void; placeholder?: string }) {
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value?: number;
+  onChange: (v: number | undefined) => void;
+  placeholder?: string;
+}) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       <input
         type="number"
         value={value ?? ""}

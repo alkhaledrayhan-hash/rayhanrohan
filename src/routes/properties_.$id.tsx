@@ -73,7 +73,9 @@ function PropertyDetail() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">Loading property…</main>
+        <main className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">
+          Loading property…
+        </main>
         <Footer />
       </div>
     );
@@ -130,7 +132,6 @@ function PropertyDetail() {
         ]}
       />
       <main className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
-
         {/* Gallery */}
         <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
           <div className="relative overflow-hidden rounded-2xl border border-border">
@@ -175,7 +176,6 @@ function PropertyDetail() {
           </div>
         </div>
 
-
         <div className="mt-8 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
           <div>
             {/* Title row */}
@@ -207,7 +207,9 @@ function PropertyDetail() {
                 <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
                   {formatPrice(property)}
                 </p>
-                <p className="text-sm text-muted-foreground">{property.sqft.toLocaleString()} Sq Ft</p>
+                <p className="text-sm text-muted-foreground">
+                  {property.sqft.toLocaleString()} Sq Ft
+                </p>
               </div>
             </div>
 
@@ -220,18 +222,40 @@ function PropertyDetail() {
                 </p>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
-                <OverviewStat icon={<Bed className="h-4 w-4" />} label="Bedrooms" value={property.bedrooms} />
-                <OverviewStat icon={<Bath className="h-4 w-4" />} label="Bathrooms" value={property.bathrooms} />
-                <OverviewStat icon={<DoorOpen className="h-4 w-4" />} label="Rooms" value={property.rooms} />
-                <OverviewStat icon={<Maximize2 className="h-4 w-4" />} label="Size" value={`${property.sqft.toLocaleString()} ft²`} />
-                <OverviewStat icon={<Calendar className="h-4 w-4" />} label="Year Built" value={property.yearBuilt} />
+                <OverviewStat
+                  icon={<Bed className="h-4 w-4" />}
+                  label="Bedrooms"
+                  value={property.bedrooms}
+                />
+                <OverviewStat
+                  icon={<Bath className="h-4 w-4" />}
+                  label="Bathrooms"
+                  value={property.bathrooms}
+                />
+                <OverviewStat
+                  icon={<DoorOpen className="h-4 w-4" />}
+                  label="Rooms"
+                  value={property.rooms}
+                />
+                <OverviewStat
+                  icon={<Maximize2 className="h-4 w-4" />}
+                  label="Size"
+                  value={`${property.sqft.toLocaleString()} ft²`}
+                />
+                <OverviewStat
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Year Built"
+                  value={property.yearBuilt}
+                />
               </div>
             </section>
 
             {/* Description */}
             <section className="mt-10">
               <h2 className="font-display text-2xl font-semibold">About this residence</h2>
-              <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">{property.description}</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+                {property.description}
+              </p>
             </section>
 
             {/* Features */}
@@ -239,7 +263,10 @@ function PropertyDetail() {
               <h2 className="font-display text-2xl font-semibold">Features & amenities</h2>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                 {property.features.map((f: string) => (
-                  <li key={f} className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm">
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm"
+                  >
                     <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                     {f}
                   </li>
@@ -292,15 +319,23 @@ function PropertyDetail() {
 }
 
 function OverviewStat({
-  icon, label, value,
-}: { icon: React.ReactNode; label: string; value: number | string }) {
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+}) {
   return (
     <div className="min-w-0 rounded-xl border border-border bg-card px-3 py-4 text-center">
       <p className="flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
         <span className="shrink-0 text-primary">{icon}</span>
         <span className="truncate">{label}</span>
       </p>
-      <p className="mt-1 truncate font-display text-lg font-semibold text-foreground sm:text-xl">{value}</p>
+      <p className="mt-1 truncate font-display text-lg font-semibold text-foreground sm:text-xl">
+        {value}
+      </p>
     </div>
   );
 }

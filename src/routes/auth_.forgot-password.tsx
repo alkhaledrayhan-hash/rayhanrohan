@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Home, Loader2 } from "lucide-react";
 import { AuthBackground } from "@/components/site/AuthBackground";
 
-
 export const Route = createFileRoute("/auth_/forgot-password")({
   head: () => ({
     meta: [
@@ -74,7 +73,13 @@ function ForgotPassword() {
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                  />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full">
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

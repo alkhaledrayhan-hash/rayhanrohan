@@ -2,7 +2,16 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, ChevronRight, Home, Info, Mail, Newspaper, Building2, Users } from "lucide-react";
+import {
+  FileText,
+  ChevronRight,
+  Home,
+  Info,
+  Mail,
+  Newspaper,
+  Building2,
+  Users,
+} from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 
 type Section = {
@@ -66,8 +75,15 @@ export function PagesManager({
     mutationFn: async () => {
       if (!active) return;
       let parsed: any;
-      try { parsed = JSON.parse(draft); } catch { throw new Error("Invalid JSON"); }
-      const { error } = await supabase.from("page_sections").update({ content: parsed }).eq("id", active.id);
+      try {
+        parsed = JSON.parse(draft);
+      } catch {
+        throw new Error("Invalid JSON");
+      }
+      const { error } = await supabase
+        .from("page_sections")
+        .update({ content: parsed })
+        .eq("id", active.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -82,10 +98,11 @@ export function PagesManager({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
-
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
-        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
+        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Sections
+        </p>
         {sections.length === 0 && currentPage && !currentPage.editable && (
           <p className="px-3 py-4 text-xs text-muted-foreground">
             No editable sections yet for <strong>{currentPage.label}</strong>.
@@ -97,7 +114,9 @@ export function PagesManager({
             onClick={() => setActiveKey(s.section_key)}
             className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.id === s.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
           >
-            <span className="flex items-center gap-2"><FileText className="h-3.5 w-3.5" /> {s.label}</span>
+            <span className="flex items-center gap-2">
+              <FileText className="h-3.5 w-3.5" /> {s.label}
+            </span>
           </button>
         ))}
       </div>
@@ -109,7 +128,9 @@ export function PagesManager({
             <>
               <div className="mb-4">
                 <h3 className="font-display text-lg font-semibold">{active.label}</h3>
-                <p className="text-xs text-muted-foreground">{active.page_slug} · live preview below</p>
+                <p className="text-xs text-muted-foreground">
+                  {active.page_slug} · live preview below
+                </p>
               </div>
               <HeroEditor sectionId={active.id} initial={active.content || {}} />
             </>
@@ -118,9 +139,15 @@ export function PagesManager({
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h3 className="font-display text-base font-semibold">{active.label}</h3>
-                  <p className="text-xs text-muted-foreground">{active.page_slug} · {active.section_key}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {active.page_slug} · {active.section_key}
+                  </p>
                 </div>
-                <button onClick={() => saveJson.mutate()} disabled={saveJson.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+                <button
+                  onClick={() => saveJson.mutate()}
+                  disabled={saveJson.isPending}
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
                   {saveJson.isPending ? "Saving…" : "Save section"}
                 </button>
               </div>
@@ -131,7 +158,9 @@ export function PagesManager({
                 spellCheck={false}
                 className="w-full rounded-lg border border-input bg-muted/30 p-3 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
-              <p className="mt-2 text-xs text-muted-foreground">Edit the JSON content for this section. Changes appear instantly on the live site.</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Edit the JSON content for this section. Changes appear instantly on the live site.
+              </p>
             </>
           )
         ) : (

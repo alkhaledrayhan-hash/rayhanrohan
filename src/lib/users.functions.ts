@@ -11,7 +11,12 @@ const createSchema = z.object({
   email: z.string().trim().email().max(255),
   password: z.string().min(8).max(72),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9_]{3,30}$/)
+    .optional()
+    .or(z.literal("")),
   role: roleEnum,
 });
 
@@ -19,7 +24,12 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   full_name: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9_]{3,30}$/)
+    .optional()
+    .or(z.literal("")),
   role: roleEnum,
 });
 
@@ -60,8 +70,8 @@ export const listUsers = createServerFn({ method: "GET" })
       const primary: Role = roles.includes("admin")
         ? "admin"
         : roles.includes("agent")
-        ? "agent"
-        : "user";
+          ? "agent"
+          : "user";
       return { ...p, roles, role: primary };
     });
 
@@ -88,12 +98,15 @@ export const createUser = createServerFn({ method: "POST" })
 
     const newId = created.user.id;
 
-    await supabaseAdmin.from("profiles").update({
-      full_name: data.full_name,
-      phone: data.phone || null,
-      avatar_url: null,
-      username: data.username || null,
-    }).eq("id", newId);
+    await supabaseAdmin
+      .from("profiles")
+      .update({
+        full_name: data.full_name,
+        phone: data.phone || null,
+        avatar_url: null,
+        username: data.username || null,
+      })
+      .eq("id", newId);
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", newId);
     const { error: roleErr } = await supabaseAdmin.from("user_roles").insert({
@@ -112,11 +125,14 @@ export const updateUser = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { error } = await supabaseAdmin.from("profiles").update({
-      full_name: data.full_name,
-      phone: data.phone || null,
-      username: data.username || null,
-    }).eq("id", data.id);
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        full_name: data.full_name,
+        phone: data.phone || null,
+        username: data.username || null,
+      })
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
 
     // Replace role (single primary role)

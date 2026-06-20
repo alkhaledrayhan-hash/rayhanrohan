@@ -25,7 +25,11 @@ export function AgentsPanel() {
   const [editing, setEditing] = useState<Agent | null>(null);
 
   if (isLoading) {
-    return <div className="rounded-2xl border border-border bg-white p-10 text-center text-sm text-muted-foreground">Loading agents…</div>;
+    return (
+      <div className="rounded-2xl border border-border bg-white p-10 text-center text-sm text-muted-foreground">
+        Loading agents…
+      </div>
+    );
   }
 
   const agents = (data?.agents ?? []) as Agent[];
@@ -77,20 +81,32 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
     <div className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
       <div className="mx-auto h-20 w-20 overflow-hidden rounded-full bg-primary/10">
         {agent.avatar_url ? (
-          <img src={agent.avatar_url} alt={agent.full_name ?? ""} className="h-full w-full object-cover" />
+          <img
+            src={agent.avatar_url}
+            alt={agent.full_name ?? ""}
+            className="h-full w-full object-cover"
+          />
         ) : (
-          <div className="grid h-full w-full place-items-center font-semibold text-primary">{initials}</div>
+          <div className="grid h-full w-full place-items-center font-semibold text-primary">
+            {initials}
+          </div>
         )}
       </div>
-      <p className="mt-3 font-display text-base font-semibold">{agent.full_name || "Unnamed agent"}</p>
+      <p className="mt-3 font-display text-base font-semibold">
+        {agent.full_name || "Unnamed agent"}
+      </p>
       {agent.username && <p className="text-xs text-muted-foreground">@{agent.username}</p>}
 
       <div className="mt-3 space-y-1.5 text-left text-xs text-muted-foreground">
         {agent.email && (
-          <p className="flex items-center gap-1.5 truncate"><Mail className="h-3 w-3 shrink-0" /> {agent.email}</p>
+          <p className="flex items-center gap-1.5 truncate">
+            <Mail className="h-3 w-3 shrink-0" /> {agent.email}
+          </p>
         )}
         {agent.phone && (
-          <p className="flex items-center gap-1.5"><Phone className="h-3 w-3 shrink-0" /> {agent.phone}</p>
+          <p className="flex items-center gap-1.5">
+            <Phone className="h-3 w-3 shrink-0" /> {agent.phone}
+          </p>
         )}
       </div>
 
@@ -104,7 +120,8 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
         <button
           disabled={mut.isPending}
           onClick={() => {
-            if (confirm(`Remove agent “${agent.full_name || agent.email}”? This cannot be undone.`)) mut.mutate();
+            if (confirm(`Remove agent “${agent.full_name || agent.email}”? This cannot be undone.`))
+              mut.mutate();
           }}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-100 disabled:opacity-60"
         >
@@ -139,29 +156,57 @@ function EditAgentDialog({ agent, onClose }: { agent: Agent; onClose: () => void
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={onClose}>
       <form
         onClick={(e) => e.stopPropagation()}
-        onSubmit={(e) => { e.preventDefault(); mut.mutate(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          mut.mutate();
+        }}
         className="w-full max-w-3xl space-y-5 rounded-2xl bg-white p-6 shadow-2xl"
       >
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg font-semibold">Edit Agent</h3>
-          <button type="button" onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground">Close</button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Close
+          </button>
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
-          <AvatarUploader value={form.avatar_url} onChange={(v) => setForm((f) => ({ ...f, avatar_url: v }))} />
+          <AvatarUploader
+            value={form.avatar_url}
+            onChange={(v) => setForm((f) => ({ ...f, avatar_url: v }))}
+          />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="space-y-1.5">
               <span className="block text-sm font-medium">Full name *</span>
-              <input required value={form.full_name} onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))} className={fieldCls} maxLength={100} />
+              <input
+                required
+                value={form.full_name}
+                onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
+                className={fieldCls}
+                maxLength={100}
+              />
             </label>
             <label className="space-y-1.5">
               <span className="block text-sm font-medium">Phone</span>
-              <input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className={fieldCls} maxLength={40} />
+              <input
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                className={fieldCls}
+                maxLength={40}
+              />
             </label>
             <label className="space-y-1.5 sm:col-span-2">
               <span className="block text-sm font-medium">Username</span>
-              <input value={form.username} onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))} className={fieldCls} maxLength={30} />
+              <input
+                value={form.username}
+                onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+                className={fieldCls}
+                maxLength={30}
+              />
             </label>
             <label className="space-y-1.5 sm:col-span-2">
               <span className="block text-sm font-medium">Email (read only)</span>
@@ -171,8 +216,18 @@ function EditAgentDialog({ agent, onClose }: { agent: Agent; onClose: () => void
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border pt-4">
-          <button type="button" onClick={onClose} className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</button>
-          <button type="submit" disabled={mut.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border px-4 py-2 text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={mut.isPending}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          >
             {mut.isPending ? "Saving…" : "Save changes"}
           </button>
         </div>
@@ -181,4 +236,5 @@ function EditAgentDialog({ agent, onClose }: { agent: Agent; onClose: () => void
   );
 }
 
-const fieldCls = "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+const fieldCls =
+  "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";

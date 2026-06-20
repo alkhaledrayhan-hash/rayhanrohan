@@ -37,11 +37,9 @@ const upsertTaxSchema = z.object({
 });
 
 function pubClient() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
-  );
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
@@ -57,7 +55,9 @@ export const listPublishedPosts = createServerFn({ method: "GET" }).handler(asyn
   const sb = pubClient();
   const { data: posts, error } = await sb
     .from("posts")
-    .select("id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at, is_featured")
+    .select(
+      "id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at, is_featured",
+    )
     .eq("status", "published")
     .order("is_featured", { ascending: false })
     .order("published_at", { ascending: false, nullsFirst: false })
@@ -103,7 +103,11 @@ export const getPublishedPost = createServerFn({ method: "POST" })
 
     const [{ data: cat }, { data: links }] = await Promise.all([
       post.category_id
-        ? sb.from("post_categories").select("id, name, slug").eq("id", post.category_id).maybeSingle()
+        ? sb
+            .from("post_categories")
+            .select("id, name, slug")
+            .eq("id", post.category_id)
+            .maybeSingle()
         : Promise.resolve({ data: null }),
       sb.from("post_tag_links").select("tag_id, post_tags(id, name, slug)").eq("post_id", post.id),
     ]);
@@ -128,9 +132,7 @@ export const listAllPostsAdmin = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
 
-    const { data: links } = await context.supabase
-      .from("post_tag_links")
-      .select("post_id, tag_id");
+    const { data: links } = await context.supabase.from("post_tag_links").select("post_id, tag_id");
     const byPost = new Map<string, string[]>();
     (links ?? []).forEach((l: any) => {
       const arr = byPost.get(l.post_id) ?? [];
@@ -238,11 +240,13 @@ export const deleteCategory = createServerFn({ method: "POST" })
 export const upsertTag = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z.object({
-      id: z.string().uuid().optional().nullable(),
-      name: z.string().trim().min(1).max(60),
-      slug: z.string().trim().max(60).optional().nullable(),
-    }).parse(data),
+    z
+      .object({
+        id: z.string().uuid().optional().nullable(),
+        name: z.string().trim().min(1).max(60),
+        slug: z.string().trim().max(60).optional().nullable(),
+      })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
@@ -250,10 +254,7 @@ export const upsertTag = createServerFn({ method: "POST" })
     if (!slug) throw new Error("Slug required");
     const payload = { name: data.name, slug };
     if (data.id) {
-      const { error } = await context.supabase
-        .from("post_tags")
-        .update(payload)
-        .eq("id", data.id);
+      const { error } = await context.supabase.from("post_tags").update(payload).eq("id", data.id);
       if (error) throw new Error(error.message);
       return { id: data.id };
     }

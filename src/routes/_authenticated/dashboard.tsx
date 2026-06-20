@@ -6,10 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
-import {
-  listMyEmailChangeRequests,
-  requestEmailChange,
-} from "@/lib/email-change.functions";
+import { listMyEmailChangeRequests, requestEmailChange } from "@/lib/email-change.functions";
 import {
   Building2,
   Heart,
@@ -117,10 +114,30 @@ function Dashboard() {
         </Link>
 
         <nav className="flex-1 space-y-1 p-3">
-          <SideItem icon={LayoutDashboard} label="Overview" active={active === "overview"} onClick={() => setActive("overview")} />
-          <SideItem icon={User} label="My Profile" active={active === "profile"} onClick={() => setActive("profile")} />
-          <SideItem icon={Heart} label="Saved Properties" active={active === "saved"} onClick={() => setActive("saved")} />
-          <SideItem icon={Mail} label="Messages" active={active === "messages"} onClick={() => setActive("messages")} />
+          <SideItem
+            icon={LayoutDashboard}
+            label="Overview"
+            active={active === "overview"}
+            onClick={() => setActive("overview")}
+          />
+          <SideItem
+            icon={User}
+            label="My Profile"
+            active={active === "profile"}
+            onClick={() => setActive("profile")}
+          />
+          <SideItem
+            icon={Heart}
+            label="Saved Properties"
+            active={active === "saved"}
+            onClick={() => setActive("saved")}
+          />
+          <SideItem
+            icon={Mail}
+            label="Messages"
+            active={active === "messages"}
+            onClick={() => setActive("messages")}
+          />
           {isAdmin && (
             <Link
               to="/admin"
@@ -179,7 +196,13 @@ function Dashboard() {
         <div className="p-6">
           {active === "overview" && <Overview user={user} profile={profile} isAdmin={!!isAdmin} />}
           {active === "profile" && <ProfileSection userId={user?.id} profile={profile} />}
-          {active === "saved" && <PlaceholderPanel icon={Heart} title="Saved Properties" desc="Properties you save will appear here." />}
+          {active === "saved" && (
+            <PlaceholderPanel
+              icon={Heart}
+              title="Saved Properties"
+              desc="Properties you save will appear here."
+            />
+          )}
           {active === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {active === "admin" && isAdmin && <AdminPanel />}
         </div>
@@ -255,10 +278,14 @@ function Overview({
         <h2 className="font-display text-lg font-semibold">Quick actions</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button asChild variant="default">
-            <Link to="/properties" search={{ status: "rent" }}>Browse Rentals</Link>
+            <Link to="/properties" search={{ status: "rent" }}>
+              Browse Rentals
+            </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/properties" search={{ status: "sale" }}>Browse Sales</Link>
+            <Link to="/properties" search={{ status: "sale" }}>
+              Browse Sales
+            </Link>
           </Button>
           <Button asChild variant="outline">
             <Link to="/contact">Contact agent</Link>
@@ -472,8 +499,8 @@ function EmailChangeCard({ currentEmail }: { currentEmail: string }) {
         <MailQuestion className="h-4 w-4" /> Request email change
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        Email changes require admin approval for security. Submit a request and an admin will
-        review it.
+        Email changes require admin approval for security. Submit a request and an admin will review
+        it.
       </p>
 
       {pending ? (
@@ -544,8 +571,8 @@ function EmailChangeCard({ currentEmail }: { currentEmail: string }) {
                     r.status === "approved"
                       ? "bg-emerald-50 text-emerald-700"
                       : r.status === "rejected"
-                      ? "bg-rose-50 text-rose-700"
-                      : "bg-amber-50 text-amber-700"
+                        ? "bg-rose-50 text-rose-700"
+                        : "bg-amber-50 text-amber-700"
                   }`}
                 >
                   {r.status}

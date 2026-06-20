@@ -44,9 +44,21 @@ export function useUnreadCounts() {
     refetchOnWindowFocus: true,
     queryFn: async () => {
       const [leadsRes, bookingsRes, convRes] = await Promise.all([
-        supabase.from("leads").select("created_at").order("created_at", { ascending: false }).limit(50),
-        supabase.from("bookings").select("created_at").order("created_at", { ascending: false }).limit(50),
-        supabase.from("conversations").select("last_message_at, created_at").order("last_message_at", { ascending: false }).limit(50),
+        supabase
+          .from("leads")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase
+          .from("bookings")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase
+          .from("conversations")
+          .select("last_message_at, created_at")
+          .order("last_message_at", { ascending: false })
+          .limit(50),
       ]);
       return {
         leads: (leadsRes.data ?? []).map((r) => r.created_at as string),
@@ -67,7 +79,9 @@ export function useUnreadCounts() {
 
   const markRead = (section: UnreadSection) => {
     const now = new Date().toISOString();
-    try { localStorage.setItem(KEYS[section], now); } catch {}
+    try {
+      localStorage.setItem(KEYS[section], now);
+    } catch {}
     setSeen((s) => ({ ...s, [section]: now }));
   };
 

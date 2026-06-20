@@ -31,9 +31,7 @@ export function PropertyCard({ property }: { property: Property }) {
         </span>
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display text-xl font-semibold text-foreground">
-          {property.title}
-        </h3>
+        <h3 className="font-display text-xl font-semibold text-foreground">{property.title}</h3>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
           <MapPin className="h-3.5 w-3.5 text-primary" />
           {property.location} · {property.address}
@@ -41,7 +39,10 @@ export function PropertyCard({ property }: { property: Property }) {
         <div className="mt-4 flex items-center gap-5 border-t border-border pt-4 text-sm text-muted-foreground">
           <Spec icon={<Bed className="h-4 w-4" />} label={`${property.bedrooms} bd`} />
           <Spec icon={<Bath className="h-4 w-4" />} label={`${property.bathrooms} ba`} />
-          <Spec icon={<Maximize2 className="h-4 w-4" />} label={`${property.sqft.toLocaleString()} ft²`} />
+          <Spec
+            icon={<Maximize2 className="h-4 w-4" />}
+            label={`${property.sqft.toLocaleString()} ft²`}
+          />
         </div>
       </div>
     </Link>
