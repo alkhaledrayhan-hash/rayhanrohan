@@ -225,6 +225,22 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-5 py-3">
                     {isAdmin ? (
                       <select
+                        value={r.assigned_agent_id || ""}
+                        onChange={(e) => assignAgent.mutate({ id: r.id, agentId: e.target.value || null })}
+                        className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
+                      >
+                        <option value="">— Unassigned —</option>
+                        {agents.map((a) => (
+                          <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">{agentName(r.assigned_agent_id)}</span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3">
+                    {isAdmin ? (
+                      <select
                         value={r.listing_status}
                         onChange={(e) => setStatus.mutate({ id: r.id, status: e.target.value as any })}
                         className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
