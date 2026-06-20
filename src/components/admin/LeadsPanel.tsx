@@ -15,13 +15,19 @@ type Lead = {
   source: string;
   status: string;
   created_at: string;
+  property_id: string | null;
+  property_title: string | null;
+  agent_id: string | null;
 };
+
+type AgentProfile = { id: string; full_name: string | null; email: string | null };
 
 export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
   const { formatDateTime } = useFormatters();
   const [q, setQ] = useState("");
   const [src, setSrc] = useState<string>("all");
+  const [agentFilter, setAgentFilter] = useState<string>("all");
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
