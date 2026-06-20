@@ -32,7 +32,6 @@ import { UsersManager } from "@/components/admin/UsersManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import { NotificationsBell } from "@/components/admin/NotificationsBell";
 import {
-  Bell,
   Building2,
   Calendar,
   ChevronDown,
