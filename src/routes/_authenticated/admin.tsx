@@ -30,6 +30,7 @@ import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
+import { NotificationsBell } from "@/components/admin/NotificationsBell";
 import {
   Bell,
   Building2,
