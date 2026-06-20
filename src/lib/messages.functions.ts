@@ -5,6 +5,7 @@ const createSchema = z.object({
   name: z.string().trim().min(1, "Name required").max(100),
   email: z.string().trim().email("Invalid email").max(255),
   property_id: z.string().uuid().nullable().optional(),
+  agent_id: z.string().uuid().nullable().optional(),
   subject: z.string().trim().max(200).optional().nullable(),
   body: z.string().trim().min(1, "Message required").max(4000),
 });
@@ -23,14 +24,17 @@ export const createConversation = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    let assignedAgentId: string | null = null;
-    if (data.property_id) {
+    let assignedAgentId: string | null = data.agent_id ?? null;
+    if (!assignedAgentId && data.property_id) {
       const { data: prop } = await supabaseAdmin
         .from("properties")
-        .select("created_by")
+        .select("assigned_agent_id, created_by")
         .eq("id", data.property_id)
         .maybeSingle();
-      assignedAgentId = (prop?.created_by as string | null) ?? null;
+      assignedAgentId =
+        (prop?.assigned_agent_id as string | null) ??
+        (prop?.created_by as string | null) ??
+        null;
     }
 
     const { data: conv, error: convErr } = await supabaseAdmin
