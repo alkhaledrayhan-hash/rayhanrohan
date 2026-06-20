@@ -53,16 +53,41 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     },
   });
 
+  const { data: agents = [] } = useQuery({
+    queryKey: ["leads-agents"],
+    queryFn: async () => {
+      const { data: roles } = await supabase.from("user_roles").select("user_id").eq("role", "agent");
+      const ids = (roles ?? []).map((r) => r.user_id as string);
+      if (!ids.length) return [] as AgentProfile[];
+      const { data } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
+      return (data ?? []) as AgentProfile[];
+    },
+  });
+
+  const agentMap = useMemo(() => {
+    const m = new Map<string, AgentProfile>();
+    for (const a of agents) m.set(a.id, a);
+    return m;
+  }, [agents]);
+  const agentName = (id: string | null) => {
+    if (!id) return "—";
+    const a = agentMap.get(id);
+    return a?.full_name || a?.email || "Agent";
+  };
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (src !== "all" && r.source !== src) return false;
+      if (agentFilter !== "all") {
+        if (agentFilter === "unassigned" ? r.agent_id : r.agent_id !== agentFilter) return false;
+      }
       if (!needle) return true;
-      return [r.name, r.email, r.phone, r.subject, r.message]
+      return [r.name, r.email, r.phone, r.subject, r.message, r.property_title]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(needle));
     });
-  }, [rows, q, src]);
+  }, [rows, q, src, agentFilter]);
 
   const sources = useMemo(() => Array.from(new Set(rows.map((r) => r.source))).sort(), [rows]);
 
