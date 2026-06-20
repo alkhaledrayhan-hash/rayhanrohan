@@ -19,12 +19,13 @@ type Post = {
   id: string; slug: string; title: string; excerpt: string | null;
   cover_image: string | null; type: "blog" | "news"; status: "draft" | "published";
   published_at: string | null; category_id: string | null; tag_ids: string[];
+  is_featured?: boolean;
   content?: string; created_at: string;
 };
 
 const empty: Partial<Post> = {
   title: "", slug: "", excerpt: "", content: "", cover_image: "",
-  type: "blog", status: "draft", category_id: null, tag_ids: [],
+  type: "blog", status: "draft", category_id: null, tag_ids: [], is_featured: false,
 };
 
 export function PostsManager() {
