@@ -146,26 +146,50 @@ function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#f5f7fa]">
-      {/* Sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-white md:flex">
-        <Link to="/" className="flex items-center gap-2 border-b border-border px-6 py-5">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
-            <Home className="h-4 w-4" />
-          </span>
-          <div className="flex flex-col leading-tight">
-            <span className="font-display text-sm font-semibold">
-              Ayesha <span className="text-gold">Qatar</span>
+      {/* Mobile overlay */}
+      {mobileNavOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={closeMobileNav}
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+        />
+      )}
+
+      {/* Sidebar — drawer on mobile, static on md+ */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-transform duration-200 md:static md:z-auto md:w-64 md:max-w-none md:translate-x-0 ${
+          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-border px-4 py-4 md:px-6 md:py-5">
+          <Link to="/" className="flex items-center gap-2" onClick={closeMobileNav}>
+            <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
+              <Home className="h-4 w-4" />
             </span>
-            <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-              {roleLabel} Panel
-            </span>
-          </div>
-        </Link>
+            <div className="flex flex-col leading-tight">
+              <span className="font-display text-sm font-semibold">
+                Ayesha <span className="text-gold">Qatar</span>
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                {roleLabel} Panel
+              </span>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={closeMobileNav}
+            aria-label="Close menu"
+            className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:bg-muted md:hidden"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-3 text-sm">
           <NavGroup label="Main" />
-          <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => setSection("overview")} />
-          <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => setSection("properties")} />
+          <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => goSection("overview")} />
+          <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => goSection("properties")} />
           {isAdmin && (
             <NavGroupExpandable
               icon={FileText}
@@ -185,7 +209,7 @@ function AdminDashboard() {
                   key={p.slug}
                   label={p.label}
                   active={section === "pages" && pageSlug === p.slug}
-                  onClick={() => { setSection("pages"); setPageSlug(p.slug); }}
+                  onClick={() => { setSection("pages"); setPageSlug(p.slug); closeMobileNav(); }}
                 />
               ))}
             </NavGroupExpandable>
@@ -199,7 +223,7 @@ function AdminDashboard() {
               action={
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setSection("add-agent"); }}
+                  onClick={(e) => { e.stopPropagation(); goSection("add-agent"); }}
                   title="Add Agent"
                   className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
                 >
@@ -207,32 +231,29 @@ function AdminDashboard() {
                 </button>
               }
             >
-              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => setSection("agents")} />
-              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => setSection("add-agent")} />
+              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => goSection("agents")} />
+              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => goSection("add-agent")} />
             </NavGroupExpandable>
           )}
           {isAdmin && (
-            <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => setSection("users")} />
+            <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => goSection("users")} />
           )}
           {isAdmin && (
-            <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => setSection("email-requests")} />
+            <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => goSection("email-requests")} />
           )}
 
           <NavGroup label="Operations" />
-          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => setSection("leads")} badge="12" />
-          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => setSection("bookings")} />
-          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => setSection("messages")} />
-          <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => setSection("calendar")} />
+          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge="12" />
+          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} />
+          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} />
+          <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => goSection("calendar")} />
 
           <NavGroup label="Content" />
-          <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => setSection("media")} />
-          <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => setSection("posts")} />
-
-
-
+          <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => goSection("media")} />
+          <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => goSection("posts")} />
 
           <NavGroup label="System" />
-          <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => setSection("settings")} />
+          <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => goSection("settings")} />
         </nav>
 
         <div className="border-t border-border p-3">
@@ -246,17 +267,25 @@ function AdminDashboard() {
       </aside>
 
       {/* Main */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="flex items-center justify-between gap-4 border-b border-border bg-white px-6 py-3">
-          <div className="relative w-full max-w-md">
+        <header className="flex items-center gap-3 border-b border-border bg-white px-4 py-3 md:px-6">
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(true)}
+            aria-label="Open menu"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border bg-white text-muted-foreground hover:text-foreground md:hidden"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+          <div className="relative hidden w-full max-w-md md:block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               placeholder="Search properties, agents, leads…"
               className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2 md:gap-3">
             <Link
               to="/"
               className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
