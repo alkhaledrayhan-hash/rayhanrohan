@@ -411,6 +411,15 @@ function PostEditor({
               <option value="published">Published</option>
             </select>
           </Field>
+          <Field label="Featured" hint="Show as the highlighted story on the News page" className="col-span-2">
+            <label className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={!!value.is_featured}
+                onChange={(e) => onChange({ ...value, is_featured: e.target.checked })}
+              />
+              Mark this {value.type || "post"} as featured
+            </label>
           <Field label="Cover image URL" className="col-span-2">
             <input
               maxLength={2000}
