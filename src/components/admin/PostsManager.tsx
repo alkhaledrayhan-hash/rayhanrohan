@@ -19,12 +19,13 @@ type Post = {
   id: string; slug: string; title: string; excerpt: string | null;
   cover_image: string | null; type: "blog" | "news"; status: "draft" | "published";
   published_at: string | null; category_id: string | null; tag_ids: string[];
+  is_featured?: boolean;
   content?: string; created_at: string;
 };
 
 const empty: Partial<Post> = {
   title: "", slug: "", excerpt: "", content: "", cover_image: "",
-  type: "blog", status: "draft", category_id: null, tag_ids: [],
+  type: "blog", status: "draft", category_id: null, tag_ids: [], is_featured: false,
 };
 
 export function PostsManager() {
@@ -84,6 +85,7 @@ export function PostsManager() {
           category_id: p.category_id || null,
           type: (p.type as any) || "blog",
           status: (p.status as any) || "draft",
+          is_featured: !!p.is_featured,
           published_at: p.published_at || null,
           tag_ids: p.tag_ids || [],
         },
@@ -207,7 +209,14 @@ export function PostsManager() {
                   {filtered.map((p) => (
                     <tr key={p.id} className="hover:bg-muted/30">
                       <td className="px-5 py-3">
-                        <p className="font-medium">{p.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{p.title}</p>
+                          {p.is_featured && (
+                            <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+                              Featured
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[11px] text-muted-foreground">/{p.slug}</p>
                       </td>
                       <td className="px-5 py-3">
@@ -401,6 +410,16 @@ function PostEditor({
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
+          </Field>
+          <Field label="Featured" hint="Show as the highlighted story on the News page" className="col-span-2">
+            <label className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={!!value.is_featured}
+                onChange={(e) => onChange({ ...value, is_featured: e.target.checked })}
+              />
+              Mark this {value.type || "post"} as featured
+            </label>
           </Field>
           <Field label="Cover image URL" className="col-span-2">
             <input

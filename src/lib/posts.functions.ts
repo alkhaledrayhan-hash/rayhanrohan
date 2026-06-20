@@ -22,6 +22,7 @@ const upsertPostSchema = z.object({
   category_id: z.string().uuid().optional().nullable(),
   type: z.enum(["blog", "news"]).default("blog"),
   status: z.enum(["draft", "published"]).default("draft"),
+  is_featured: z.boolean().default(false),
   published_at: z.string().optional().nullable(),
   tag_ids: z.array(z.string().uuid()).default([]),
 });
@@ -56,8 +57,9 @@ export const listPublishedPosts = createServerFn({ method: "GET" }).handler(asyn
   const sb = pubClient();
   const { data: posts, error } = await sb
     .from("posts")
-    .select("id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at")
+    .select("id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at, is_featured")
     .eq("status", "published")
+    .order("is_featured", { ascending: false })
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(200);
@@ -121,7 +123,7 @@ export const listAllPostsAdmin = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("posts")
       .select(
-        "id, slug, title, excerpt, cover_image, type, status, published_at, category_id, created_at, updated_at",
+        "id, slug, title, excerpt, cover_image, type, status, published_at, category_id, created_at, updated_at, is_featured",
       )
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -155,6 +157,7 @@ export const upsertPost = createServerFn({ method: "POST" })
       category_id: data.category_id || null,
       type: data.type,
       status: data.status,
+      is_featured: data.is_featured,
       published_at:
         data.status === "published" ? data.published_at || new Date().toISOString() : null,
     };
