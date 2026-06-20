@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { getPublicAgent } from "@/lib/public-agents.functions";
+import { MessageAgentDialog } from "@/components/site/MessageAgentDialog";
 
 const agentQuery = (id: string) =>
   queryOptions({
@@ -107,6 +108,7 @@ function AgentDetailPage() {
                   <Building2 className="h-3.5 w-3.5" />
                   {agent.property_count} {agent.property_count === 1 ? "property" : "properties"}
                 </span>
+                <MessageAgentDialog agentId={agent.id} agentName={agent.full_name || "this agent"} />
               </div>
             </div>
           </div>
