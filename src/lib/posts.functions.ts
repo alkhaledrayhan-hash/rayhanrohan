@@ -57,8 +57,9 @@ export const listPublishedPosts = createServerFn({ method: "GET" }).handler(asyn
   const sb = pubClient();
   const { data: posts, error } = await sb
     .from("posts")
-    .select("id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at")
+    .select("id, slug, title, excerpt, cover_image, type, published_at, category_id, created_at, is_featured")
     .eq("status", "published")
+    .order("is_featured", { ascending: false })
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(200);
