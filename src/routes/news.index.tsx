@@ -18,6 +18,7 @@ type PostListItem = {
   published_at: string | null;
   created_at: string;
   category_id: string | null;
+  is_featured?: boolean;
   tags: { id: string; name: string; slug: string }[];
 };
 
