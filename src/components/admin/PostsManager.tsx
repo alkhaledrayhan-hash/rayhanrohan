@@ -85,6 +85,7 @@ export function PostsManager() {
           category_id: p.category_id || null,
           type: (p.type as any) || "blog",
           status: (p.status as any) || "draft",
+          is_featured: !!p.is_featured,
           published_at: p.published_at || null,
           tag_ids: p.tag_ids || [],
         },
