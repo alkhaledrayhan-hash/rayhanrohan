@@ -49,15 +49,19 @@ export const listPublicAgents = createServerFn({ method: "GET" }).handler(
 
     const { data: props, error: cErr } = await supabaseAdmin
       .from("properties")
-      .select("created_by")
-      .in("created_by", ids)
+      .select("created_by, assigned_agent_id")
+      .or(
+        `assigned_agent_id.in.(${ids.join(",")}),created_by.in.(${ids.join(",")})`,
+      )
       .eq("listing_status", "approved");
     if (cErr) throw new Error(cErr.message);
 
     const counts = new Map<string, number>();
     for (const p of props ?? []) {
-      if (!p.created_by) continue;
-      counts.set(p.created_by, (counts.get(p.created_by) ?? 0) + 1);
+      // Count toward assigned agent if set, otherwise creator
+      const ownerId = p.assigned_agent_id ?? p.created_by;
+      if (!ownerId) continue;
+      counts.set(ownerId, (counts.get(ownerId) ?? 0) + 1);
     }
 
     const agents: PublicAgent[] = (profiles ?? [])
