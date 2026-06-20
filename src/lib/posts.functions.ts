@@ -157,6 +157,7 @@ export const upsertPost = createServerFn({ method: "POST" })
       category_id: data.category_id || null,
       type: data.type,
       status: data.status,
+      is_featured: data.is_featured,
       published_at:
         data.status === "published" ? data.published_at || new Date().toISOString() : null,
     };
