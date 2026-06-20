@@ -107,6 +107,7 @@ function AgentDetailPage() {
                   <Building2 className="h-3.5 w-3.5" />
                   {agent.property_count} {agent.property_count === 1 ? "property" : "properties"}
                 </span>
+                <MessageAgentDialog agentId={agent.id} agentName={agent.full_name || "this agent"} />
               </div>
             </div>
           </div>
