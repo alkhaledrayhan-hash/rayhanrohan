@@ -420,6 +420,7 @@ function PostEditor({
               />
               Mark this {value.type || "post"} as featured
             </label>
+          </Field>
           <Field label="Cover image URL" className="col-span-2">
             <input
               maxLength={2000}
