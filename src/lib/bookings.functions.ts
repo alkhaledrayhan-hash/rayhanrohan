@@ -246,9 +246,21 @@ const ContactSchema = z.object({
 export const createContact = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => ContactSchema.parse(data))
   .handler(async ({ data }) => {
-    const id = `ct_${Date.now().toString(36)}`;
-    console.log("[contact]", id, JSON.stringify(data));
-    return { ok: true, id };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: inserted, error } = await supabaseAdmin
+      .from("leads")
+      .insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        subject: data.subject,
+        message: data.message,
+        source: "contact",
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { ok: true, id: inserted.id };
   });
 
 // Re-export for compatibility with serverClient unused warning
