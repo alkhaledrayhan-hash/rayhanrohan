@@ -95,6 +95,8 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
       };
+      // Only admins can (re)assign agents
+      if (isAdmin) payload.assigned_agent_id = p.assigned_agent_id || null;
       if (p.id) {
         const { error } = await supabase.from("properties").update(payload).eq("id", p.id);
         if (error) throw error;
