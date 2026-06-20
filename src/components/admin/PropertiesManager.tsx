@@ -60,6 +60,28 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     },
   });
 
+  // Agent list (admin assigns any agent to a property)
+  const { data: agents = [] } = useQuery({
+    queryKey: ["agents-for-assignment"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data: roles, error: rErr } = await supabase
+        .from("user_roles").select("user_id").eq("role", "agent");
+      if (rErr) throw rErr;
+      const ids = (roles ?? []).map((r: any) => r.user_id);
+      if (!ids.length) return [] as { id: string; full_name: string | null; email: string | null }[];
+      const { data, error } = await supabase
+        .from("profiles").select("id, full_name, email").in("id", ids);
+      if (error) throw error;
+      return (data ?? []) as { id: string; full_name: string | null; email: string | null }[];
+    },
+  });
+  const agentName = (id: string | null) => {
+    if (!id) return "—";
+    const a = agents.find((x) => x.id === id);
+    return a?.full_name || a?.email || "Agent";
+  };
+
   const save = useMutation({
     mutationFn: async (p: Partial<PropertyRow>) => {
       const { data: u } = await supabase.auth.getUser();
