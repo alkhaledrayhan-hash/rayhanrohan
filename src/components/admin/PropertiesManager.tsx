@@ -124,6 +124,18 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const assignAgent = useMutation({
+    mutationFn: async ({ id, agentId }: { id: string; agentId: string | null }) => {
+      const { error } = await supabase
+        .from("properties")
+        .update({ assigned_agent_id: agentId })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Agent assigned"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("properties").delete().eq("id", id);
