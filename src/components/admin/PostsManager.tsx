@@ -209,7 +209,14 @@ export function PostsManager() {
                   {filtered.map((p) => (
                     <tr key={p.id} className="hover:bg-muted/30">
                       <td className="px-5 py-3">
-                        <p className="font-medium">{p.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{p.title}</p>
+                          {p.is_featured && (
+                            <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+                              Featured
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[11px] text-muted-foreground">/{p.slug}</p>
                       </td>
                       <td className="px-5 py-3">
