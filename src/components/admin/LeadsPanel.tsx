@@ -150,6 +150,15 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
           <option value="all">All sources</option>
           {sources.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
+        {isAdmin && (
+          <select value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+            <option value="all">All agents</option>
+            <option value="unassigned">Unassigned</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
+            ))}
+          </select>
+        )}
         <button onClick={exportCsv} className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm hover:bg-muted">
           <Download className="h-4 w-4" /> Export CSV
         </button>
