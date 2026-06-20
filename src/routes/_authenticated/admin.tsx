@@ -31,6 +31,7 @@ import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import { NotificationsBell } from "@/components/admin/NotificationsBell";
+import { useUnreadCounts, type UnreadSection } from "@/hooks/use-unread-counts";
 import {
   Building2,
   Calendar,
@@ -107,8 +108,14 @@ function AdminDashboard() {
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const closeMobileNav = () => setMobileNavOpen(false);
-  // Wrap setSection so picking an item on mobile also closes the drawer
-  const goSection = (s: typeof section) => { setSection(s); closeMobileNav(); };
+  const { counts: unread, markRead } = useUnreadCounts();
+  // Wrap setSection so picking an item on mobile also closes the drawer, and
+  // mark the corresponding section read so its badge clears.
+  const goSection = (s: typeof section) => {
+    setSection(s);
+    closeMobileNav();
+    if (s === "leads" || s === "bookings" || s === "messages") markRead(s as UnreadSection);
+  };
 
   const isAdmin = roleData?.roles.includes("admin");
   const isAgent = roleData?.roles.includes("agent");
@@ -243,9 +250,9 @@ function AdminDashboard() {
           )}
 
           <NavGroup label="Operations" />
-          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge="12" />
-          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} />
-          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} />
+          <NavItem icon={Mail} label="Leads" active={section === "leads"} onClick={() => goSection("leads")} badge={unread.leads ? String(unread.leads) : undefined} />
+          <NavItem icon={FileText} label="Bookings" active={section === "bookings"} onClick={() => goSection("bookings")} badge={unread.bookings ? String(unread.bookings) : undefined} />
+          <NavItem icon={MessageSquare} label="Messages" active={section === "messages"} onClick={() => goSection("messages")} badge={unread.messages ? String(unread.messages) : undefined} />
           <NavItem icon={Calendar} label="Calendar" active={section === "calendar"} onClick={() => goSection("calendar")} />
 
           <NavGroup label="Content" />
