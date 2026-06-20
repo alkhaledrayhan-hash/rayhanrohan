@@ -107,34 +107,53 @@ function NewsPage() {
             </p>
           </div>
 
-          {/* Category & tag filter chips */}
+          {/* Category & tag filter dropdowns */}
           {(data.categories.length > 0 || data.tags.length > 0) && (
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               {data.categories.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Category
                   </span>
-                  <Chip active={activeCat === "all"} onClick={() => setActiveCat("all")}>All</Chip>
-                  {data.categories.map((c) => (
-                    <Chip key={c.id} active={activeCat === c.id} onClick={() => setActiveCat(c.id)}>
-                      {c.name}
-                    </Chip>
-                  ))}
+                  <Select value={activeCat} onValueChange={setActiveCat}>
+                    <SelectTrigger className="h-9 w-[180px] rounded-full">
+                      <SelectValue placeholder="All categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All categories</SelectItem>
+                      {data.categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
               {data.tags.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Tag
                   </span>
-                  <Chip active={activeTag === "all"} onClick={() => setActiveTag("all")}>All</Chip>
-                  {data.tags.map((t) => (
-                    <Chip key={t.id} active={activeTag === t.id} onClick={() => setActiveTag(t.id)}>
-                      #{t.name}
-                    </Chip>
-                  ))}
+                  <Select value={activeTag} onValueChange={setActiveTag}>
+                    <SelectTrigger className="h-9 w-[180px] rounded-full">
+                      <SelectValue placeholder="All tags" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All tags</SelectItem>
+                      {data.tags.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>#{t.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+              )}
+              {(activeCat !== "all" || activeTag !== "all") && (
+                <button
+                  type="button"
+                  onClick={() => { setActiveCat("all"); setActiveTag("all"); }}
+                  className="text-xs font-medium text-primary hover:underline"
+                >
+                  Clear filters
+                </button>
               )}
             </div>
           )}
