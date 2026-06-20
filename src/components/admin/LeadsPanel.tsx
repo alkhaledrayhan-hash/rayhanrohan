@@ -176,13 +176,15 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Contact</th>
                 <th className="px-4 py-3">Source</th>
+                <th className="px-4 py-3">Property</th>
+                <th className="px-4 py-3">Agent</th>
                 <th className="px-4 py-3">Message</th>
                 {isAdmin && <th className="px-4 py-3 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="align-top hover:bg-muted/30">
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{formatDateTime(r.created_at)}</td>
@@ -192,6 +194,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                     {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
                   </td>
                   <td className="px-4 py-3"><span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">{r.property_title || "—"}</td>
+                  <td className="px-4 py-3 text-xs">{agentName(r.agent_id)}</td>
                   <td className="px-4 py-3 max-w-md">
                     {r.subject && <div className="text-xs font-semibold text-foreground/70">{r.subject}</div>}
                     <p className="line-clamp-3 text-xs text-muted-foreground">{r.message}</p>
