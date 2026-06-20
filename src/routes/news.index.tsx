@@ -79,85 +79,76 @@ function NewsPage() {
         />
 
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          {/* Type tabs */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-[var(--shadow-soft)]">
-              {([
-                { id: "all", label: "All", icon: null },
-                { id: "news", label: "News", icon: Newspaper },
-                { id: "blog", label: "Blog", icon: PenLine },
-              ] as const).map(({ id, label, icon: Icon }) => {
-                const active = tab === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => setTab(id)}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                      active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {Icon && <Icon className="h-3.5 w-3.5" />}
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-              {filtered.length} {filtered.length === 1 ? "article" : "articles"}
-            </p>
-          </div>
+          {/* Tabs + filters (single row) */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-[var(--shadow-soft)]">
+                {([
+                  { id: "all", label: "All", icon: null },
+                  { id: "news", label: "News", icon: Newspaper },
+                  { id: "blog", label: "Blog", icon: PenLine },
+                ] as const).map(({ id, label, icon: Icon }) => {
+                  const active = tab === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setTab(id)}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {Icon && <Icon className="h-3.5 w-3.5" />}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Category & tag filter dropdowns */}
-          {(data.categories.length > 0 || data.tags.length > 0) && (
-            <div className="mt-6 flex flex-wrap items-center gap-3">
               {data.categories.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Category
-                  </span>
-                  <Select value={activeCat} onValueChange={setActiveCat}>
-                    <SelectTrigger className="h-9 w-[180px] rounded-full">
-                      <SelectValue placeholder="All categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All categories</SelectItem>
-                      {data.categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={activeCat} onValueChange={setActiveCat}>
+                  <SelectTrigger className="h-9 w-[170px] rounded-full">
+                    <SelectValue placeholder="All categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All categories</SelectItem>
+                    {data.categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
+
               {data.tags.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Tag
-                  </span>
-                  <Select value={activeTag} onValueChange={setActiveTag}>
-                    <SelectTrigger className="h-9 w-[180px] rounded-full">
-                      <SelectValue placeholder="All tags" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All tags</SelectItem>
-                      {data.tags.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>#{t.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={activeTag} onValueChange={setActiveTag}>
+                  <SelectTrigger className="h-9 w-[150px] rounded-full">
+                    <SelectValue placeholder="All tags" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All tags</SelectItem>
+                    {data.tags.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>#{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
+
               {(activeCat !== "all" || activeTag !== "all") && (
                 <button
                   type="button"
                   onClick={() => { setActiveCat("all"); setActiveTag("all"); }}
                   className="text-xs font-medium text-primary hover:underline"
                 >
-                  Clear filters
+                  Clear
                 </button>
               )}
             </div>
-          )}
+
+            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+              {filtered.length} {filtered.length === 1 ? "article" : "articles"}
+            </p>
+          </div>
+
 
           {/* Featured */}
           {featured && (
