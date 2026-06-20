@@ -66,8 +66,8 @@ function NewsPage() {
     });
   }, [data.posts, tab, activeCat, activeTag]);
 
-  const featured = filtered[0];
-  const rest = filtered.slice(1);
+  const featured = filtered.find((p) => p.is_featured) ?? filtered[0];
+  const rest = filtered.filter((p) => p.id !== featured?.id);
 
   return (
     <div className="min-h-screen bg-background">
