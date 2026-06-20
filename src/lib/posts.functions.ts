@@ -22,6 +22,7 @@ const upsertPostSchema = z.object({
   category_id: z.string().uuid().optional().nullable(),
   type: z.enum(["blog", "news"]).default("blog"),
   status: z.enum(["draft", "published"]).default("draft"),
+  is_featured: z.boolean().default(false),
   published_at: z.string().optional().nullable(),
   tag_ids: z.array(z.string().uuid()).default([]),
 });
