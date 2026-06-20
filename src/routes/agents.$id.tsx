@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { getPublicAgent } from "@/lib/public-agents.functions";
+import { MessageAgentDialog } from "@/components/site/MessageAgentDialog";
 
 const agentQuery = (id: string) =>
   queryOptions({
