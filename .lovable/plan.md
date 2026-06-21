@@ -1,90 +1,89 @@
-## Goal
-Build a messaging system where customers can send a message from the homepage, the right agent (owner of the property) and any admin can see and reply, and customers can read replies on a dedicated thread page.
 
-## 1. Database (migration)
+# Vercel Deploy with Your Own Supabase Project
 
-Two new tables in `public`:
+Apni Lovable Cloud er bodole nijer Supabase project use korben Vercel e. Eta full manual setup — Lovable er role thakbe shudhu code edit korar, backend apnar.
 
-### `conversations`
-- `id` uuid pk
-- `customer_name` text
-- `customer_email` text (indexed)
-- `customer_user_id` uuid nullable (if customer is signed in)
-- `property_id` uuid nullable → `public.properties(id)` on delete set null
-- `assigned_agent_id` uuid nullable (defaults to `properties.created_by` when `property_id` set)
-- `subject` text
-- `status` text ('open' | 'closed') default 'open'
-- `access_token` uuid default `gen_random_uuid()` — lets a guest customer revisit the thread via URL
-- `last_message_at`, `created_at`, `updated_at`
+## Step 1: Notun Supabase Project Banano
 
-### `messages`
-- `id` uuid pk
-- `conversation_id` uuid → `conversations(id)` on delete cascade
-- `sender_role` text ('customer' | 'agent' | 'admin')
-- `sender_user_id` uuid nullable
-- `sender_name` text (display fallback for guests)
-- `body` text
-- `created_at`
+1. https://supabase.com e gie sign up / login korun
+2. **New Project** click korun → name, password, region (Qatar er kache: Mumbai/Singapore) din
+3. Project create howar por **Settings → API** e jaan ebong ei 3ta value copy korun:
+   - **Project URL** → `https://xxxxx.supabase.co`
+   - **anon public key** → publishable key
+   - **service_role key** → secret (ekdom kauke dekhaben na)
 
-Trigger: on insert into `messages`, bump `conversations.last_message_at`.
+## Step 2: Database Migrations Apply Kora
 
-### RLS
-- **conversations**
-  - INSERT: anyone (anon + authenticated) — needed for the guest widget. Server fn / `assigned_agent_id` derived from property.
-  - SELECT: admin (all); agent where `assigned_agent_id = auth.uid()`; authenticated customer where `customer_user_id = auth.uid()`. Guest access goes through a server fn that checks `access_token`, not RLS.
-  - UPDATE: admin + assigned agent (status only).
-- **messages**
-  - SELECT: admin; agent if conversation belongs to them; authenticated customer if owner. Guest read via server fn.
-  - INSERT: admin/agent for their conversation; authenticated customer for their conversation. Guest writes via server fn that verifies `access_token`.
+Apnar local machine e (terminal):
 
-### Grants
-`GRANT SELECT, INSERT, UPDATE on conversations to authenticated;` `GRANT INSERT on conversations to anon;` (for guest widget — RLS still applies), `GRANT ALL ... to service_role`. Same shape for `messages`.
+```bash
+# Supabase CLI install (Mac)
+brew install supabase/tap/supabase
 
-### Realtime
-Add `messages` and `conversations` to `supabase_realtime` publication.
+# Login
+supabase login
 
-## 2. Server functions (`src/lib/messages.functions.ts`)
-- `createConversation({ name, email, property_id?, subject, body })` — public (no auth). Inserts conversation (resolves `assigned_agent_id` from property), inserts first message, returns `{ id, access_token }`.
-- `fetchGuestThread({ id, token })` — public; returns conversation + messages if token matches.
-- `replyAsGuest({ id, token, body })` — public; appends message after token check.
-- `replyAsStaff({ conversation_id, body })` — `requireSupabaseAuth`; verifies caller is admin OR `assigned_agent_id`; inserts message with `sender_role` derived from role.
-- `listMyConversations()` — `requireSupabaseAuth`; admin → all, agent → assigned, customer → own.
-- `closeConversation({ id })` — `requireSupabaseAuth`; admin or assigned agent.
+# Apnar notun project er sathe link
+supabase link --project-ref <NEW_PROJECT_REF>
 
-## 3. UI
+# Migrations push (shob table, RLS, policies create hobe)
+supabase db push
+```
 
-### Homepage chat widget — `src/components/site/ChatWidget.tsx`
-- Floating round button bottom-right (mobile + desktop), opens a panel.
-- Form fields: name, email, message (property auto-prefilled if user came from a property page — phase 2; phase 1: optional property dropdown using `useProperties`).
-- On submit: calls `createConversation`, stores `{id, token}` in `localStorage` (`maison_chat`), shows the thread inline in the widget with realtime updates and a reply box (uses `replyAsGuest`).
-- On reopen: if localStorage has a thread, fetch + show it directly with a "Start a new conversation" link.
-- Mounted from `src/routes/__root.tsx` so it appears site-wide.
+Eta `supabase/migrations/` folder er shob SQL file run korbe.
 
-### Agent dashboard — new "Messages" tab in `_authenticated/dashboard.tsx`
-- Two-pane: left list of conversations (assigned to me), right thread + reply composer. Realtime subscribe.
+## Step 3: Storage Buckets Banano
 
-### Admin panel — new `MessagesPanel.tsx` rendered from `admin.tsx`
-- Same two-pane layout but shows all conversations, with filter by status and search by customer email.
-- Reply uses `replyAsStaff` (role is admin).
+Notun Supabase project er **Storage** section e gie manually create korun:
+- `agent-avatars` (private)
+- `media` (private)
 
-### Standalone thread page — `src/routes/messages.$id.tsx` (public)
-- Reads `?token=` from search params and calls `fetchGuestThread`. Used if customer clears localStorage; we can also email this link later.
+## Step 4: Auth Configure Kora
 
-## 4. Notifications (out of scope for v1)
-Email pings on new replies — flagged for a later turn.
+Supabase Dashboard → **Authentication → URL Configuration**:
+- **Site URL**: `https://your-app.vercel.app`
+- **Redirect URLs**: `https://your-app.vercel.app/**`, `http://localhost:8080/**`
 
-## Technical notes
-- Customer widget is anon — use `supabase` browser client only for realtime; all writes go through the server fn so we control `assigned_agent_id` and never trust client-supplied agent IDs.
-- Realtime channels filter by `conversation_id=eq.<id>` for the thread, and by `assigned_agent_id=eq.<uid>` (or all rows for admin) for the inbox list.
-- Use existing toast (`sonner`) for feedback. Use existing `useFormatters` to render timestamps.
-- Chat widget styling matches site (rounded-2xl, primary color, gold accents) — not generic AI chat aesthetics.
+Google login chaile → **Authentication → Providers → Google** enable korun (Google Cloud Console e OAuth client banate hobe).
 
-## Files added/changed
-- Migration (new tables + RLS + grants + trigger + realtime publication)
-- `src/lib/messages.functions.ts` (new)
-- `src/components/site/ChatWidget.tsx` (new)
-- `src/components/admin/MessagesPanel.tsx` (new)
-- `src/routes/__root.tsx` (mount widget)
-- `src/routes/_authenticated/dashboard.tsx` (Messages tab)
-- `src/routes/_authenticated/admin.tsx` (Messages section)
-- `src/routes/messages.$id.tsx` (new, public thread view)
+## Step 5: GitHub e Code Push
+
+```bash
+git push origin main
+```
+
+## Step 6: Vercel e Deploy
+
+1. https://vercel.com → **Add New Project** → GitHub repo import
+2. Framework auto-detect hobe (`vercel.json` already ache)
+3. **Environment Variables** section e ei 5ta add korun:
+
+| Name | Value |
+|------|-------|
+| `VITE_SUPABASE_URL` | Step 1 er Project URL |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Step 1 er anon key |
+| `SUPABASE_URL` | Same Project URL |
+| `SUPABASE_PUBLISHABLE_KEY` | Same anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Step 1 er service_role key |
+
+4. **Deploy** click korun
+
+## Step 7: LOVABLE_API_KEY (Optional)
+
+Apnar app e Lovable AI Gateway use hocche kina check korun (chat, AI features). Hole `LOVABLE_API_KEY` o lagbe — Lovable Cloud disconnect korle eta kaaj korbe na, apnake **OpenAI / Anthropic** er nijer API key use korte code modify korte hobe.
+
+---
+
+## Important Warnings
+
+- **Data migrate hobe na**: Lovable Cloud er `zavgbuhzvotyaxdrhspi` project er existing data (properties, users, bookings) notun Supabase e auto-copy hobe na. Lagle manually export/import korte hobe (`pg_dump`).
+- **Lovable preview vs Vercel**: Vercel deploy er por Lovable preview o notun Supabase project er sathe connect korte chaile, `.env` file Lovable Cloud override korbe na — preview Lovable Cloud DB e thakbe.
+- **Service role key kokhono frontend e expose korben na** — shudhu Vercel env variable hisebe rakhben.
+
+---
+
+## Aamar Kora Lagbe?
+
+Ei plan e Lovable side e **kono code change nei** — pura kaaj apnar Supabase + Vercel dashboard e. Apnar local terminal e migrations push korte hobe.
+
+Confirm korun — plan approve korle ami extra `deploy.md` update kore din-by-din checklist likhe dite pari, ba kichu specific code adjustment lagle (jemon LOVABLE_API_KEY replace) shei kaaj korte pari.
