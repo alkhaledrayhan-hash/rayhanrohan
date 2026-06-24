@@ -44,11 +44,24 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<"user" | "agent">("user");
 
+  async function routeByRole() {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return navigate({ to: "/dashboard" });
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", u.user.id);
+    const set = new Set((roles ?? []).map((r: any) => r.role));
+    if (set.has("admin") || set.has("agent")) navigate({ to: "/admin" });
+    else navigate({ to: "/dashboard" });
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+      if (data.session) routeByRole();
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -80,7 +93,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back!");
-    navigate({ to: "/dashboard" });
+    await routeByRole();
   }
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
