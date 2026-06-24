@@ -1,13 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { RotateCcw, Search as SearchIcon } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
+import { Pagination } from "@/components/site/Pagination";
 import { filterProperties, LOCATIONS, useProperties, type SortKey } from "@/lib/properties";
 import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=webp";
+
+const PAGE_SIZE = 9;
 
 const searchSchema = z.object({
   status: z.enum(["rent", "sale"]).optional(),
