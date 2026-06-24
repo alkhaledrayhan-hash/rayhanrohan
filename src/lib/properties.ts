@@ -24,6 +24,10 @@ export interface Property {
   description: string;
   features: string[];
   verified?: boolean;
+  isOffer?: boolean;
+  offerDiscount?: number;
+  offerTag?: string;
+  offerEnds?: string;
 }
 
 function mapRow(r: any): Property {
@@ -47,17 +51,40 @@ function mapRow(r: any): Property {
     description: r.description || "",
     features,
     verified: !!r.verified,
+    isOffer: !!r.is_offer,
+    offerDiscount: Number(r.offer_discount) || 0,
+    offerTag: r.offer_tag || "",
+    offerEnds: r.offer_ends || "",
   };
 }
+
+const PROPERTY_COLS = "slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,is_offer,offer_discount,offer_tag,offer_ends,created_at";
 
 async function fetchProperties(): Promise<Property[]> {
   const { data, error } = await supabase
     .from("properties")
-    .select("slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,created_at")
+    .select(PROPERTY_COLS)
     .eq("listing_status", "approved")
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data || []).map(mapRow);
+}
+
+export function useOfferProperties() {
+  return useQuery({
+    queryKey: ["offer-properties"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("properties")
+        .select(PROPERTY_COLS)
+        .eq("listing_status", "approved")
+        .eq("is_offer", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []).map(mapRow);
+    },
+    staleTime: 60_000,
+  });
 }
 
 export function useProperties() {
