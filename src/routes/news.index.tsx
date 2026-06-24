@@ -209,50 +209,53 @@ function NewsPage() {
 
           {/* Grid */}
           {rest.length > 0 && (
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {rest.map((a) => (
-                <Link
-                  key={a.id}
-                  to="/news/$slug"
-                  params={{ slug: a.slug }}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={resolveCover(a.cover_image, a.slug)}
-                      alt={a.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute left-3 top-3">
-                      <TypeBadge type={a.type} />
+            <>
+              <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {pageItems.map((a) => (
+                  <Link
+                    key={a.id}
+                    to="/news/$slug"
+                    params={{ slug: a.slug }}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <img
+                        src={resolveCover(a.cover_image, a.slug)}
+                        alt={a.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute left-3 top-3">
+                        <TypeBadge type={a.type} />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-1 flex-col gap-3 p-5">
-                    <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                      {a.tags[0] && (
-                        <span className="inline-flex items-center gap-1.5 text-gold">
-                          <TagIcon className="h-3 w-3" /> {a.tags[0].name}
-                        </span>
+                    <div className="flex flex-1 flex-col gap-3 p-5">
+                      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                        {a.tags[0] && (
+                          <span className="inline-flex items-center gap-1.5 text-gold">
+                            <TagIcon className="h-3 w-3" /> {a.tags[0].name}
+                          </span>
+                        )}
+                        <span>·</span>
+                        <span>{formatDate(a.published_at || a.created_at)}</span>
+                      </div>
+                      <h3 className="font-display text-lg font-semibold text-foreground transition group-hover:text-primary">
+                        {a.title}
+                      </h3>
+                      {a.excerpt && (
+                        <p className="line-clamp-2 text-sm text-muted-foreground">{a.excerpt}</p>
                       )}
-                      <span>·</span>
-                      <span>{formatDate(a.published_at || a.created_at)}</span>
+                      <div className="mt-auto flex items-center justify-end border-t border-border pt-3 text-xs">
+                        <span className="inline-flex items-center gap-1 font-medium text-primary transition group-hover:translate-x-0.5">
+                          Read <ArrowRight className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
                     </div>
-                    <h3 className="font-display text-lg font-semibold text-foreground transition group-hover:text-primary">
-                      {a.title}
-                    </h3>
-                    {a.excerpt && (
-                      <p className="line-clamp-2 text-sm text-muted-foreground">{a.excerpt}</p>
-                    )}
-                    <div className="mt-auto flex items-center justify-end border-t border-border pt-3 text-xs">
-                      <span className="inline-flex items-center gap-1 font-medium text-primary transition group-hover:translate-x-0.5">
-                        Read <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  </Link>
+                ))}
+              </div>
+              <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+            </>
           )}
 
           {filtered.length === 0 && (
