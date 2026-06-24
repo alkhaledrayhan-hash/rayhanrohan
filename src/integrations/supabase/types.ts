@@ -484,8 +484,12 @@ export type Database = {
           gallery: Json
           id: string
           image: string | null
+          is_offer: boolean
           listing_status: Database["public"]["Enums"]["listing_status"]
           location: string
+          offer_discount: number
+          offer_ends: string | null
+          offer_tag: string | null
           price: number
           rooms: number
           slug: string
@@ -509,8 +513,12 @@ export type Database = {
           gallery?: Json
           id?: string
           image?: string | null
+          is_offer?: boolean
           listing_status?: Database["public"]["Enums"]["listing_status"]
           location: string
+          offer_discount?: number
+          offer_ends?: string | null
+          offer_tag?: string | null
           price: number
           rooms?: number
           slug: string
@@ -534,8 +542,12 @@ export type Database = {
           gallery?: Json
           id?: string
           image?: string | null
+          is_offer?: boolean
           listing_status?: Database["public"]["Enums"]["listing_status"]
           location?: string
+          offer_discount?: number
+          offer_ends?: string | null
+          offer_tag?: string | null
           price?: number
           rooms?: number
           slug?: string
