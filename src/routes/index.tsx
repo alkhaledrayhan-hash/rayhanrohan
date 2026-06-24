@@ -109,7 +109,7 @@ function Home() {
         <LogoMarquee />
 
         {/* Exclusive offers */}
-        <OffersSection offers={offers} />
+        {offers.length > 0 && <OffersSection offers={offers} />}
 
         {/* Locations */}
         <section className="bg-secondary/40 py-20">
