@@ -116,7 +116,9 @@ function PropertiesPage() {
           <section>
             <div className="mb-5 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Showing 1–{items.length} of {items.length} results
+                {items.length === 0
+                  ? "No results"
+                  : `Showing ${start + 1}–${start + pageItems.length} of ${items.length} results`}
               </p>
               <label className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Sort</span>
@@ -131,7 +133,8 @@ function PropertiesPage() {
                 </select>
               </label>
             </div>
-            <PropertyGrid properties={items} />
+            <PropertyGrid properties={pageItems} />
+            <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
           </section>
 
           {/* Sidebar filters */}
