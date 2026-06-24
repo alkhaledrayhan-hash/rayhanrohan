@@ -60,6 +60,7 @@ function NewsPage() {
   const [tab, setTab] = useState<"all" | "news" | "blog">("all");
   const [activeCat, setActiveCat] = useState<string>("all");
   const [activeTag, setActiveTag] = useState<string>("all");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     return data.posts.filter((p) => {
@@ -72,6 +73,12 @@ function NewsPage() {
 
   const featured = filtered.find((p) => p.is_featured) ?? filtered[0];
   const rest = filtered.filter((p) => p.id !== featured?.id);
+
+  const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = rest.slice(pageStart, pageStart + PAGE_SIZE);
+  useEffect(() => { setPage(1); }, [tab, activeCat, activeTag]);
 
   return (
     <div className="min-h-screen bg-background">
