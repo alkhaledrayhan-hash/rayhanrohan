@@ -69,11 +69,7 @@ function ArticleDetail() {
       <main>
         <div className="relative isolate">
           <div className="relative h-[55vh] min-h-[420px] w-full overflow-hidden">
-            {post.cover_image ? (
-              <img src={post.cover_image} alt={post.title} className="absolute inset-0 h-full w-full object-cover" />
-            ) : (
-              <div className="absolute inset-0 bg-muted" />
-            )}
+            <img src={resolveCover(post.cover_image, post.slug)} alt={post.title} className="absolute inset-0 h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/85" />
             <div className="relative mx-auto flex h-full max-w-4xl flex-col justify-end px-4 pb-12 sm:px-6 lg:px-8">
               <Link to="/news" className="mb-6 inline-flex w-fit items-center gap-1.5 text-xs text-white/80 hover:text-white">
