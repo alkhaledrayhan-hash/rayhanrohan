@@ -145,6 +145,19 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const toggleOffer = useMutation({
+    mutationFn: async ({ id, is_offer }: { id: string; is_offer: boolean }) => {
+      const { error } = await supabase.from("properties").update({ is_offer }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Offer updated");
+      qc.invalidateQueries({ queryKey: ["admin-properties"] });
+      qc.invalidateQueries({ queryKey: ["offer-properties"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("properties").delete().eq("id", id);
