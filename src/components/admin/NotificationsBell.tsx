@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Calendar, Mail, MessageSquare } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useFormatters } from "@/lib/format";
-
-type NotifSection = "leads" | "bookings" | "messages";
+import { adminNotifsQuery, type NotifSection } from "@/lib/admin-notifs-shared";
 
 type Notif = {
   id: string;
@@ -33,61 +31,42 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const { data: notifs = [] } = useQuery({
-    queryKey: ["admin-notifications"],
-    refetchInterval: 30_000,
-    refetchOnWindowFocus: true,
-    queryFn: async () => {
-      const [leadsRes, bookingsRes, convosRes] = await Promise.all([
-        supabase
-          .from("leads")
-          .select("id, name, subject, source, property_title, created_at")
-          .order("created_at", { ascending: false })
-          .limit(15),
-        supabase
-          .from("bookings")
-          .select("id, customer_name, property_title, scheduled_date, created_at")
-          .order("created_at", { ascending: false })
-          .limit(15),
-        supabase
-          .from("conversations")
-          .select("id, customer_name, subject, last_message_at, created_at")
-          .order("last_message_at", { ascending: false })
-          .limit(15),
-      ]);
-      const out: Notif[] = [];
-      for (const l of leadsRes.data ?? []) {
-        out.push({
-          id: `lead-${l.id}`,
-          kind: "leads",
-          title: `New lead · ${l.name}`,
-          subtitle: l.property_title || l.subject || l.source || "Website lead",
-          created_at: l.created_at as string,
-        });
-      }
-      for (const b of bookingsRes.data ?? []) {
-        out.push({
-          id: `book-${b.id}`,
-          kind: "bookings",
-          title: `Viewing request · ${b.customer_name}`,
-          subtitle: `${b.property_title} — ${b.scheduled_date}`,
-          created_at: b.created_at as string,
-        });
-      }
-      for (const c of convosRes.data ?? []) {
-        out.push({
-          id: `msg-${c.id}`,
-          kind: "messages",
-          title: `Message · ${c.customer_name}`,
-          subtitle: c.subject || "Customer enquiry",
-          created_at: (c.last_message_at || c.created_at) as string,
-        });
-      }
-      return out
-        .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
-        .slice(0, 20);
-    },
-  });
+  const { data } = useQuery(adminNotifsQuery);
+
+  const notifs = useMemo<Notif[]>(() => {
+    if (!data) return [];
+    const out: Notif[] = [];
+    for (const l of data.leads) {
+      out.push({
+        id: `lead-${l.id}`,
+        kind: "leads",
+        title: `New lead · ${l.name ?? ""}`,
+        subtitle: l.property_title || l.subject || l.source || "Website lead",
+        created_at: l.created_at,
+      });
+    }
+    for (const b of data.bookings) {
+      out.push({
+        id: `book-${b.id}`,
+        kind: "bookings",
+        title: `Viewing request · ${b.customer_name ?? ""}`,
+        subtitle: `${b.property_title ?? ""} — ${b.scheduled_date ?? ""}`,
+        created_at: b.created_at,
+      });
+    }
+    for (const c of data.messages) {
+      out.push({
+        id: `msg-${c.id}`,
+        kind: "messages",
+        title: `Message · ${c.customer_name ?? ""}`,
+        subtitle: c.subject || "Customer enquiry",
+        created_at: c.last_message_at || c.created_at,
+      });
+    }
+    return out
+      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
+      .slice(0, 20);
+  }, [data]);
 
   const unread = useMemo(
     () => notifs.filter((n) => new Date(n.created_at) > new Date(seenAt)).length,

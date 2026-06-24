@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { RotateCcw, Search as SearchIcon } from "lucide-react";
 import { Header } from "@/components/site/Header";
@@ -61,14 +61,20 @@ function PropertiesPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const status = search.status ?? "rent";
   const { data: allProperties = [] } = useProperties();
-  const items = filterProperties(allProperties, { ...search, status });
+  // Stable signature for memo deps — avoids JSON.stringify on every render.
+  const searchKey = `${status}|${search.location ?? ""}|${search.type ?? ""}|${search.beds ?? ""}|${search.baths ?? ""}|${search.minPrice ?? ""}|${search.maxPrice ?? ""}|${search.minArea ?? ""}|${search.maxArea ?? ""}|${search.q ?? ""}|${search.sort ?? ""}`;
+  const items = useMemo(
+    () => filterProperties(allProperties, { ...search, status }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allProperties, searchKey],
+  );
 
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-  useEffect(() => { setPage(1); }, [JSON.stringify(search)]);
+  useEffect(() => { setPage(1); }, [searchKey]);
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = items.slice(start, start + PAGE_SIZE);
+  const pageItems = useMemo(() => items.slice(start, start + PAGE_SIZE), [items, start]);
 
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
@@ -140,7 +146,7 @@ function PropertiesPage() {
           {/* Sidebar filters */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <FilterSidebar
-              key={JSON.stringify(search)} // reset local inputs when URL changes
+              key={searchKey} // reset local inputs when URL changes
               initial={search}
               onApply={(patch) => update(patch)}
               onReset={reset}
