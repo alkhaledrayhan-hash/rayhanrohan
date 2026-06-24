@@ -63,6 +63,13 @@ function PropertiesPage() {
   const { data: allProperties = [] } = useProperties();
   const items = filterProperties(allProperties, { ...search, status });
 
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  useEffect(() => { setPage(1); }, [JSON.stringify(search)]);
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = items.slice(start, start + PAGE_SIZE);
+
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
   }
