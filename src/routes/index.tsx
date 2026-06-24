@@ -8,7 +8,7 @@ import { HomeContact } from "@/components/site/HomeContact";
 import { OffersSection } from "@/components/site/OffersSection";
 import { LogoMarquee } from "@/components/site/LogoMarquee";
 import { NewsTicker } from "@/components/site/NewsTicker";
-import { useProperties, LOCATIONS } from "@/lib/properties";
+import { useProperties, useOfferProperties, LOCATIONS } from "@/lib/properties";
 import { usePageSections } from "@/lib/page-sections";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
@@ -47,12 +47,14 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: sections = {} } = usePageSections("home");
   const { data: allProperties = [] } = useProperties();
+  const { data: offerProperties = [] } = useOfferProperties();
   const featured = allProperties.slice(0, 6);
-  const offers = [
-    allProperties[0] && { property: allProperties[0], discount: 12, tag: "Move-in ready", ends: "Jul 31" },
-    allProperties[2] && { property: allProperties[2], discount: 8, tag: "Sky residence", ends: "Aug 15" },
-    allProperties[1] && { property: allProperties[1], discount: 10, tag: "Signature villa", ends: "Jul 20" },
-  ].filter(Boolean) as { property: any; discount: number; tag: string; ends: string }[];
+  const offers = offerProperties.slice(0, 9).map((property) => ({
+    property,
+    discount: property.offerDiscount || 0,
+    tag: property.offerTag || "Special offer",
+    ends: property.offerEnds || "",
+  }));
   const trust = sections.trust?.items ?? [
     { title: "Licensed brokerage", body: "Qatar-registered with verified listings only." },
     { title: "Hand-curated portfolio", body: "Every residence is personally inspected." },
@@ -107,7 +109,7 @@ function Home() {
         <LogoMarquee />
 
         {/* Exclusive offers */}
-        <OffersSection offers={offers} />
+        {offers.length > 0 && <OffersSection offers={offers} />}
 
         {/* Locations */}
         <section className="bg-secondary/40 py-20">

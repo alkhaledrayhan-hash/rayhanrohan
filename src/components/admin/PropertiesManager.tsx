@@ -27,6 +27,10 @@ type PropertyRow = {
   listing_status: "pending" | "approved" | "rejected";
   created_by: string | null;
   assigned_agent_id: string | null;
+  is_offer: boolean;
+  offer_discount: number;
+  offer_tag: string | null;
+  offer_ends: string | null;
   created_at: string;
 };
 
@@ -34,6 +38,7 @@ const empty: Partial<PropertyRow> = {
   title: "", slug: "", location: "Doha", address: "", type: "Apartment",
   status: "rent", price: 0, bedrooms: 1, bathrooms: 1, rooms: 1, sqft: 0,
   image: "", gallery: [], description: "", features: [], assigned_agent_id: null,
+  is_offer: false, offer_discount: 0, offer_tag: "", offer_ends: "",
 };
 
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
@@ -94,6 +99,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         image: p.image || null, description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
+        is_offer: !!p.is_offer,
+        offer_discount: Number(p.offer_discount) || 0,
+        offer_tag: p.offer_tag || null,
+        offer_ends: p.offer_ends || null,
       };
       // Only admins can (re)assign agents
       if (isAdmin) payload.assigned_agent_id = p.assigned_agent_id || null;
@@ -133,6 +142,19 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Agent assigned"); qc.invalidateQueries({ queryKey: ["admin-properties"] }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const toggleOffer = useMutation({
+    mutationFn: async ({ id, is_offer }: { id: string; is_offer: boolean }) => {
+      const { error } = await supabase.from("properties").update({ is_offer }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Offer updated");
+      qc.invalidateQueries({ queryKey: ["admin-properties"] });
+      qc.invalidateQueries({ queryKey: ["offer-properties"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -210,12 +232,13 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <th className="px-5 py-3">Price</th>
                 <th className="px-5 py-3">Agent</th>
                 <th className="px-5 py-3">Approval</th>
+                <th className="px-5 py-3">Offer</th>
                 <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-5 py-3 font-medium">{r.title}</td>
@@ -260,6 +283,20 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                         : "bg-rose-50 text-rose-700"
                       }`}>{r.listing_status}</span>
                     )}
+                  </td>
+                  <td className="px-5 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleOffer.mutate({ id: r.id, is_offer: !r.is_offer })}
+                      title={r.is_offer ? "Remove from offers" : "Mark as offer"}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase transition ${
+                        r.is_offer
+                          ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                          : "bg-muted text-muted-foreground hover:bg-muted/70"
+                      }`}
+                    >
+                      {r.is_offer ? `★ ${r.offer_discount || 0}% off` : "Add offer"}
+                    </button>
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
@@ -324,6 +361,31 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Features (comma separated)" className="col-span-2">
                 <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
               </Field>
+
+              <div className="col-span-2 mt-2 rounded-xl border border-amber-200 bg-amber-50/60 p-3 space-y-3">
+                <label className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                  <input
+                    type="checkbox"
+                    checked={!!editing.is_offer}
+                    onChange={(e) => setEditing({ ...editing, is_offer: e.target.checked })}
+                    className="h-4 w-4 rounded border-amber-300"
+                  />
+                  Mark as Special Offer (shown on home page Offers section & Offers page)
+                </label>
+                {editing.is_offer && (
+                  <div className="grid grid-cols-3 gap-2">
+                    <Field label="Discount %">
+                      <input type="number" min={0} max={90} value={editing.offer_discount ?? 0} onChange={(e) => setEditing({ ...editing, offer_discount: Number(e.target.value) })} className={inputCls} />
+                    </Field>
+                    <Field label="Tag (e.g. Move-in ready)">
+                      <input value={editing.offer_tag || ""} onChange={(e) => setEditing({ ...editing, offer_tag: e.target.value })} className={inputCls} />
+                    </Field>
+                    <Field label="Ends (e.g. Jul 31)">
+                      <input value={editing.offer_ends || ""} onChange={(e) => setEditing({ ...editing, offer_ends: e.target.value })} className={inputCls} />
+                    </Field>
+                  </div>
+                )}
+              </div>
 
               <div className="col-span-2 mt-2 flex justify-end gap-2">
                 <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</button>

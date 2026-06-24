@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
+import { BadgePercent, ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -152,6 +152,7 @@ export function Header() {
                 <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
                   Properties for Sale
                 </SheetLink>
+                <SheetLink to="/offers" onSelect={() => setOpen(false)}>Special Offers</SheetLink>
                 <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
                 <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
                 <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
@@ -286,6 +287,12 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
             icon={<Tag className="h-4 w-4" />}
             label="For Sale"
             hint="Buy your next home"
+          />
+          <DropdownItem
+            to="/offers"
+            icon={<BadgePercent className="h-4 w-4" />}
+            label="Special Offers"
+            hint="Limited-time discounted listings"
           />
           <DropdownItem
             to="/agents"
