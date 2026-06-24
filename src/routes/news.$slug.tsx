@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Newspaper, PenLine, Tag as TagIcon } from "lucide-
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getPublishedPost } from "@/lib/posts.functions";
+import { resolveCover } from "@/lib/post-images";
 
 type FullPost = {
   id: string;
