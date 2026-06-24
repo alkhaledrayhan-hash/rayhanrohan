@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BadgePercent, Bed, Bath, Maximize2, Clock, Flame, ArrowRight } from "lucide-react";
+import { BadgePercent, Bed, Bath, Maximize2, Clock, Flame, ArrowRight, ChevronRight, Home } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { useOfferProperties, formatPrice, type Property } from "@/lib/properties";
+import offersCover from "@/assets/offers-cover.jpg";
 
 export const Route = createFileRoute("/offers")({
   head: () => ({
