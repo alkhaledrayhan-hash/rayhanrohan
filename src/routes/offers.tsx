@@ -69,7 +69,7 @@ function OffersPage() {
               <Flame className="h-3.5 w-3.5" />
               Limited-time offers
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-5xl lg:text-6xl">
               Exclusive residences,{" "}
               <span className="italic text-gold">exceptional value</span>
             </h1>
