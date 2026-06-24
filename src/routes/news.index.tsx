@@ -208,16 +208,12 @@ function NewsPage() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    {a.cover_image ? (
-                      <img
-                        src={a.cover_image}
-                        alt={a.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-muted" />
-                    )}
+                    <img
+                      src={resolveCover(a.cover_image, a.slug)}
+                      alt={a.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
                     <div className="absolute left-3 top-3">
                       <TypeBadge type={a.type} />
                     </div>
