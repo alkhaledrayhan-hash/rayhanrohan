@@ -235,47 +235,234 @@ function Overview({
   profile: Profile | null | undefined;
   isAdmin: boolean;
 }) {
-  const stats = [
-    { label: "Saved Properties", value: 0, icon: Heart },
-    { label: "Active Enquiries", value: 0, icon: Mail },
-    { label: "Viewings", value: 0, icon: Building2 },
+  const firstName = profile?.full_name?.split(" ")[0] || "there";
+  const initials = (profile?.full_name || user?.email || "U")
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const activity = useMemo(
+    () => [
+      { d: "Mon", v: 4 },
+      { d: "Tue", v: 9 },
+      { d: "Wed", v: 6 },
+      { d: "Thu", v: 14 },
+      { d: "Fri", v: 11 },
+      { d: "Sat", v: 18 },
+      { d: "Sun", v: 13 },
+    ],
+    [],
+  );
+  const prefs = [
+    { name: "Apartments", value: 42, color: "#6366f1" },
+    { name: "Villas", value: 28, color: "#f59e0b" },
+    { name: "Penthouses", value: 18, color: "#ef4444" },
+    { name: "Studios", value: 12, color: "#10b981" },
   ];
+
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-background p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
-              <s.icon className="h-4 w-4 text-primary" />
+    <div className="space-y-5">
+      {/* Profile hero */}
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-[#4a0f1d] p-6 text-white shadow-sm lg:col-span-2">
+          <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-gold/30 blur-2xl" />
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+            <div className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-white/15 text-2xl font-semibold backdrop-blur">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="" className="h-full w-full rounded-2xl object-cover" />
+              ) : (
+                initials
+              )}
             </div>
-            <p className="mt-3 font-display text-3xl font-semibold">{s.value}</p>
+            <div className="min-w-0 flex-1">
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur">
+                <Sparkles className="h-3 w-3" /> {isAdmin ? "Admin" : "Member"}
+              </p>
+              <h2 className="mt-2 truncate font-display text-2xl font-semibold">
+                Welcome back, {firstName}
+              </h2>
+              <p className="mt-1 text-sm text-white/80">
+                Track your saved homes, enquiries and viewings — all in one place.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  to="/properties"
+                  search={{ status: "rent" }}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-primary transition hover:bg-white/90"
+                >
+                  Browse rentals <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  to="/offers"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold backdrop-blur transition hover:bg-white/20"
+                >
+                  See offers
+                </Link>
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
+
+        {/* Account snapshot */}
+        <div className="rounded-2xl border border-border bg-background p-5 shadow-sm">
+          <h3 className="font-display text-sm font-semibold text-muted-foreground">
+            Account
+          </h3>
+          <dl className="mt-3 space-y-2.5 text-sm">
+            <Row label="Email" value={profile?.email || user?.email || "—"} />
+            <Row label="Phone" value={profile?.phone || "—"} />
+            <Row label="Role" value={isAdmin ? "Admin" : "User"} />
+          </dl>
+        </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-background p-6">
-        <h2 className="font-display text-lg font-semibold">Account</h2>
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-          <Row label="Name" value={profile?.full_name || "—"} />
-          <Row label="Email" value={profile?.email || user?.email || "—"} />
-          <Row label="Phone" value={profile?.phone || "—"} />
-          <Row label="Role" value={isAdmin ? "Admin" : "User"} />
-        </dl>
+      {/* KPI cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <KpiCard label="Saved Properties" value="0" delta="+0%" icon={Heart} color="#ef4444" />
+        <KpiCard label="Active Enquiries" value="0" delta="+0%" icon={Mail} color="#6366f1" />
+        <KpiCard label="Upcoming Viewings" value="0" delta="+0%" icon={CalendarCheck} color="#f59e0b" />
       </div>
 
-      <div className="rounded-xl border border-border bg-background p-6">
-        <h2 className="font-display text-lg font-semibold">Quick actions</h2>
+      {/* Activity + preferences */}
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="rounded-2xl border border-border bg-background p-5 shadow-sm lg:col-span-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Browse activity</p>
+              <p className="mt-1 font-display text-2xl font-semibold">
+                75 <span className="ml-1 text-xs font-semibold text-emerald-600">+3.48%</span>
+              </p>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
+              This week
+            </span>
+          </div>
+          <div className="mt-4 h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={activity}>
+                <defs>
+                  <linearGradient id="user-activity" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
+                <Area
+                  type="monotone"
+                  dataKey="v"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2.5}
+                  fill="url(#user-activity)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-background p-5 shadow-sm">
+          <h3 className="font-display text-base font-semibold">Your preferences</h3>
+          <p className="text-xs text-muted-foreground">Most browsed property types</p>
+          <div className="mt-2 grid grid-cols-2 items-center">
+            <ResponsiveContainer width="100%" height={160}>
+              <PieChart>
+                <Pie data={prefs} dataKey="value" innerRadius={40} outerRadius={64} paddingAngle={3}>
+                  {prefs.map((d) => (
+                    <Cell key={d.name} fill={d.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <ul className="space-y-1.5 text-xs">
+              {prefs.map((d) => (
+                <li key={d.name} className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full" style={{ background: d.color }} />
+                    {d.name}
+                  </span>
+                  <span className="font-semibold text-foreground">{d.value}%</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick actions */}
+      <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+        <h2 className="font-display text-base font-semibold">Quick actions</h2>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button asChild variant="default">
+          <Button asChild>
             <Link to="/properties" search={{ status: "rent" }}>Browse Rentals</Link>
           </Button>
           <Button asChild variant="outline">
             <Link to="/properties" search={{ status: "sale" }}>Browse Sales</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/contact">Contact agent</Link>
+            <Link to="/agents">Meet agents</Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link to="/contact">Contact us</Link>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function KpiCard({
+  label,
+  value,
+  delta,
+  icon: Icon,
+  color,
+}: {
+  label: string;
+  value: string;
+  delta: string;
+  icon: typeof Heart;
+  color: string;
+}) {
+  const spark = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        x: i,
+        y: Math.sin(i / 1.5) * 8 + 18 + Math.random() * 6,
+      })),
+    [],
+  );
+  return (
+    <div className="rounded-2xl border border-border bg-background p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <span
+          className="grid h-9 w-9 place-items-center rounded-xl"
+          style={{ background: `${color}1a`, color }}
+        >
+          <Icon className="h-4 w-4" />
+        </span>
+      </div>
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <div>
+          <p className="font-display text-3xl font-semibold">{value}</p>
+          <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+            <TrendingUp className="h-3 w-3" /> {delta}
+          </span>
+        </div>
+        <div className="h-10 w-20">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={spark}>
+              <Area
+                type="monotone"
+                dataKey="y"
+                stroke={color}
+                strokeWidth={2}
+                fill={color}
+                fillOpacity={0.15}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
@@ -284,12 +471,13 @@ function Overview({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex items-center justify-between gap-3">
       <dt className="text-xs uppercase tracking-wider text-muted-foreground">{label}</dt>
-      <dd className="mt-1 font-medium text-foreground">{value}</dd>
+      <dd className="truncate text-right font-medium text-foreground">{value}</dd>
     </div>
   );
 }
+
 
 function ProfileSection({
   userId,
