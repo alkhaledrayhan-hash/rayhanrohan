@@ -284,6 +284,20 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                       }`}>{r.listing_status}</span>
                     )}
                   </td>
+                  <td className="px-5 py-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleOffer.mutate({ id: r.id, is_offer: !r.is_offer })}
+                      title={r.is_offer ? "Remove from offers" : "Mark as offer"}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase transition ${
+                        r.is_offer
+                          ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                          : "bg-muted text-muted-foreground hover:bg-muted/70"
+                      }`}
+                    >
+                      {r.is_offer ? `★ ${r.offer_discount || 0}% off` : "Add offer"}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
