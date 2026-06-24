@@ -288,6 +288,12 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
             hint="Buy your next home"
           />
           <DropdownItem
+            to="/offers"
+            icon={<BadgePercent className="h-4 w-4" />}
+            label="Special Offers"
+            hint="Limited-time discounted listings"
+          />
+          <DropdownItem
             to="/agents"
             icon={<Users className="h-4 w-4" />}
             label="Our Agents"
