@@ -81,7 +81,7 @@ function OffersPage() {
         </section>
 
         {/* Offers grid */}
-        <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:px-8">
           {isLoading ? (
             <p className="py-16 text-center text-muted-foreground">Loading offers…</p>
           ) : offers.length === 0 ? (
