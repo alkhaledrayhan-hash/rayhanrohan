@@ -334,6 +334,31 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
               </Field>
 
+              <div className="col-span-2 mt-2 rounded-xl border border-amber-200 bg-amber-50/60 p-3 space-y-3">
+                <label className="flex items-center gap-2 text-sm font-medium text-amber-900">
+                  <input
+                    type="checkbox"
+                    checked={!!editing.is_offer}
+                    onChange={(e) => setEditing({ ...editing, is_offer: e.target.checked })}
+                    className="h-4 w-4 rounded border-amber-300"
+                  />
+                  Mark as Special Offer (shown on home page Offers section & Offers page)
+                </label>
+                {editing.is_offer && (
+                  <div className="grid grid-cols-3 gap-2">
+                    <Field label="Discount %">
+                      <input type="number" min={0} max={90} value={editing.offer_discount ?? 0} onChange={(e) => setEditing({ ...editing, offer_discount: Number(e.target.value) })} className={inputCls} />
+                    </Field>
+                    <Field label="Tag (e.g. Move-in ready)">
+                      <input value={editing.offer_tag || ""} onChange={(e) => setEditing({ ...editing, offer_tag: e.target.value })} className={inputCls} />
+                    </Field>
+                    <Field label="Ends (e.g. Jul 31)">
+                      <input value={editing.offer_ends || ""} onChange={(e) => setEditing({ ...editing, offer_ends: e.target.value })} className={inputCls} />
+                    </Field>
+                  </div>
+                )}
+              </div>
+
               <div className="col-span-2 mt-2 flex justify-end gap-2">
                 <button type="button" onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm">Cancel</button>
                 <button type="submit" disabled={save.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
