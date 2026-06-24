@@ -47,7 +47,7 @@ export const PropertyCard = memo(function PropertyCard({ property }: { property:
       </div>
     </Link>
   );
-}
+});
 
 function Spec({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
