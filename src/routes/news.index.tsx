@@ -6,6 +6,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { listPublishedPosts } from "@/lib/posts.functions";
+import { resolveCover } from "@/lib/post-images";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type PostListItem = {
@@ -159,15 +160,11 @@ function NewsPage() {
               className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 md:grid-cols-2"
             >
               <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
-                {featured.cover_image ? (
-                  <img
-                    src={featured.cover_image}
-                    alt={featured.title}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-muted" />
-                )}
+                <img
+                  src={resolveCover(featured.cover_image, featured.slug)}
+                  alt={featured.title}
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
                 <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
                   Featured
                 </span>
@@ -211,16 +208,12 @@ function NewsPage() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    {a.cover_image ? (
-                      <img
-                        src={a.cover_image}
-                        alt={a.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-muted" />
-                    )}
+                    <img
+                      src={resolveCover(a.cover_image, a.slug)}
+                      alt={a.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
                     <div className="absolute left-3 top-3">
                       <TypeBadge type={a.type} />
                     </div>
