@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
+import { BadgePercent, ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
