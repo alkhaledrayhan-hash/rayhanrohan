@@ -99,6 +99,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         image: p.image || null, description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
+        is_offer: !!p.is_offer,
+        offer_discount: Number(p.offer_discount) || 0,
+        offer_tag: p.offer_tag || null,
+        offer_ends: p.offer_ends || null,
       };
       // Only admins can (re)assign agents
       if (isAdmin) payload.assigned_agent_id = p.assigned_agent_id || null;
