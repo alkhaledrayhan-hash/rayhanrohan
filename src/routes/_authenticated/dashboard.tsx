@@ -1,8 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import {
+  Area,
+  AreaChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
@@ -11,7 +20,9 @@ import {
   requestEmailChange,
 } from "@/lib/email-change.functions";
 import {
+  ArrowRight,
   Building2,
+  CalendarCheck,
   Heart,
   Home,
   KeyRound,
@@ -21,6 +32,8 @@ import {
   MailQuestion,
   Settings,
   ShieldCheck,
+  Sparkles,
+  TrendingUp,
   User,
 } from "lucide-react";
 
