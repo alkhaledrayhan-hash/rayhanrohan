@@ -146,7 +146,7 @@ function PropertiesPage() {
           {/* Sidebar filters */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <FilterSidebar
-              key={JSON.stringify(search)} // reset local inputs when URL changes
+              key={searchKey} // reset local inputs when URL changes
               initial={search}
               onApply={(patch) => update(patch)}
               onReset={reset}
