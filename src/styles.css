@@ -174,3 +174,15 @@ img {
 .logo-marquee:hover {
   animation-play-state: paused;
 }
+
+/* Hide Lovable badge */
+#lovable-badge,
+a[href*="lovable.dev"][href*="badge"],
+a[href*="lovable.dev/?via=badge"],
+[data-lovable-badge],
+.lovable-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
