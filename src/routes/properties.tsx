@@ -1,13 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { RotateCcw, Search as SearchIcon } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
+import { Pagination } from "@/components/site/Pagination";
 import { filterProperties, LOCATIONS, useProperties, type SortKey } from "@/lib/properties";
 import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=webp";
+
+const PAGE_SIZE = 9;
 
 const searchSchema = z.object({
   status: z.enum(["rent", "sale"]).optional(),
@@ -60,6 +63,13 @@ function PropertiesPage() {
   const { data: allProperties = [] } = useProperties();
   const items = filterProperties(allProperties, { ...search, status });
 
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  useEffect(() => { setPage(1); }, [JSON.stringify(search)]);
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = items.slice(start, start + PAGE_SIZE);
+
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
   }
@@ -106,7 +116,9 @@ function PropertiesPage() {
           <section>
             <div className="mb-5 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Showing 1–{items.length} of {items.length} results
+                {items.length === 0
+                  ? "No results"
+                  : `Showing ${start + 1}–${start + pageItems.length} of ${items.length} results`}
               </p>
               <label className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Sort</span>
@@ -121,7 +133,8 @@ function PropertiesPage() {
                 </select>
               </label>
             </div>
-            <PropertyGrid properties={items} />
+            <PropertyGrid properties={pageItems} />
+            <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
           </section>
 
           {/* Sidebar filters */}
