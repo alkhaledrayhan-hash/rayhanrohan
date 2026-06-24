@@ -32,26 +32,39 @@ function OffersPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        {/* Hero */}
-        <section className="relative overflow-hidden pt-32 pb-16">
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10"
-            style={{
-              background:
-                "linear-gradient(180deg, oklch(0.985 0.012 85) 0%, oklch(0.97 0.022 85) 100%)",
-            }}
+        {/* Cover hero */}
+        <section className="relative isolate overflow-hidden">
+          <img
+            src={offersCover}
+            alt="Doha luxury waterfront at golden hour"
+            width={1920}
+            height={800}
+            className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[oklch(0.45_0.12_60)]">
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/40 to-black/75" />
+          <div className="mx-auto max-w-7xl px-4 pt-36 pb-20 sm:px-6 lg:px-8 lg:pt-44 lg:pb-28">
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-white/80">
+              <Link to="/" className="inline-flex items-center gap-1 hover:text-white">
+                <Home className="h-3.5 w-3.5" /> Home
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              <Link to="/properties" search={{ status: "rent" }} className="hover:text-white">
+                Properties
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              <span className="font-medium text-white">Special Offers</span>
+            </nav>
+
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-white backdrop-blur">
               <Flame className="h-3.5 w-3.5" />
               Limited-time offers
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold text-foreground sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
               Exclusive residences,{" "}
-              <span className="italic text-primary">exceptional value</span>
+              <span className="italic text-gold">exceptional value</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-base text-white/85">
               A curated list of premium residences available at preferential pricing this season.
               Reserved for early enquiries only — once they're gone, they're gone.
             </p>
