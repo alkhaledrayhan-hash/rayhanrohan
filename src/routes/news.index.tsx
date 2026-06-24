@@ -160,15 +160,11 @@ function NewsPage() {
               className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 md:grid-cols-2"
             >
               <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
-                {featured.cover_image ? (
-                  <img
-                    src={featured.cover_image}
-                    alt={featured.title}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-muted" />
-                )}
+                <img
+                  src={resolveCover(featured.cover_image, featured.slug)}
+                  alt={featured.title}
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
                 <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
                   Featured
                 </span>
