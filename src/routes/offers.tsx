@@ -51,9 +51,9 @@ function OffersPage() {
             className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
           <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/40 to-black/75" />
-          <div className="mx-auto max-w-7xl px-4 pt-36 pb-20 sm:px-6 lg:px-8 lg:pt-44 lg:pb-28">
+          <div className="mx-auto max-w-7xl px-4 pt-28 pb-14 sm:px-6 sm:pt-36 sm:pb-20 lg:px-8 lg:pt-44 lg:pb-28">
             {/* Breadcrumb */}
-            <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-white/80">
+            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-white/80">
               <Link to="/" className="inline-flex items-center gap-1 hover:text-white">
                 <Home className="h-3.5 w-3.5" /> Home
               </Link>
@@ -69,7 +69,7 @@ function OffersPage() {
               <Flame className="h-3.5 w-3.5" />
               Limited-time offers
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-5xl lg:text-6xl">
               Exclusive residences,{" "}
               <span className="italic text-gold">exceptional value</span>
             </h1>
@@ -81,7 +81,7 @@ function OffersPage() {
         </section>
 
         {/* Offers grid */}
-        <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:px-8">
           {isLoading ? (
             <p className="py-16 text-center text-muted-foreground">Loading offers…</p>
           ) : offers.length === 0 ? (
