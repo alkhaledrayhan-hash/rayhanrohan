@@ -102,7 +102,7 @@ export function usePropertyBySlug(slug: string | undefined) {
       if (!slug) return null;
       const { data, error } = await supabase
         .from("properties")
-        .select("slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified")
+        .select(PROPERTY_COLS)
         .eq("slug", slug)
         .eq("listing_status", "approved")
         .maybeSingle();
