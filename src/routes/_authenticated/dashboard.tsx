@@ -141,12 +141,12 @@ function Dashboard() {
           <SideItem icon={User} label="My Profile" active={active === "profile"} onClick={() => setActive("profile")} />
           <SideItem icon={Heart} label="Saved Properties" active={active === "saved"} onClick={() => setActive("saved")} />
           <SideItem icon={Mail} label="Messages" active={active === "messages"} onClick={() => setActive("messages")} />
-          {isAdmin && (
+          {canAccessAdmin && (
             <Link
               to="/admin"
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
             >
-              <ShieldCheck className="h-4 w-4" /> Admin Panel
+              <ShieldCheck className="h-4 w-4" /> {isAdmin ? "Admin Panel" : "Agent Panel"}
             </Link>
           )}
         </nav>
@@ -177,17 +177,18 @@ function Dashboard() {
             >
               <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
             </Link>
-            {isAdmin && (
+            {canAccessAdmin && (
               <Link
                 to="/admin"
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+                title={isAdmin ? "Go to admin panel" : "Go to agent panel"}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
               >
-                <ShieldCheck className="h-4 w-4" /> <span className="hidden sm:inline">Admin</span>
+                <ShieldCheck className="h-4 w-4" /> <span className="hidden sm:inline">{isAdmin ? "Admin Panel" : "Agent Panel"}</span>
               </Link>
             )}
-            {isAdmin && (
+            {(isAdmin || isAgent) && (
               <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
-                Admin
+                {isAdmin ? "Admin" : "Agent"}
               </span>
             )}
             <div className="grid h-10 w-10 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
