@@ -5,9 +5,12 @@ import { ArrowRight, Calendar, Newspaper, PenLine, Tag as TagIcon } from "lucide
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { Pagination } from "@/components/site/Pagination";
 import { listPublishedPosts } from "@/lib/posts.functions";
 import { resolveCover } from "@/lib/post-images";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const PAGE_SIZE = 6;
 
 type PostListItem = {
   id: string;
