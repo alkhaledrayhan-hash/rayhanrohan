@@ -100,11 +100,14 @@ function OffersPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {offers.map((p) => (
-                <OfferCard key={p.id} property={p} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {pageItems.map((p) => (
+                  <OfferCard key={p.id} property={p} />
+                ))}
+              </div>
+              <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+            </>
           )}
         </section>
       </main>
