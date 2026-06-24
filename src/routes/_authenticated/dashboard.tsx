@@ -76,7 +76,7 @@ function useProfile(userId: string | undefined) {
   });
 }
 
-function useIsAdmin(userId: string | undefined) {
+function useRoles(userId: string | undefined) {
   return useQuery({
     queryKey: ["roles", userId],
     enabled: !!userId,
@@ -86,7 +86,11 @@ function useIsAdmin(userId: string | undefined) {
         .select("role")
         .eq("user_id", userId!);
       if (error) throw error;
-      return (data ?? []).some((r) => r.role === "admin");
+      const roles = (data ?? []).map((r) => r.role);
+      return {
+        isAdmin: roles.includes("admin"),
+        isAgent: roles.includes("agent"),
+      };
     },
   });
 }
@@ -96,7 +100,10 @@ function Dashboard() {
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
   const { data: profile } = useProfile(user?.id);
-  const { data: isAdmin } = useIsAdmin(user?.id);
+  const { data: roles } = useRoles(user?.id);
+  const isAdmin = !!roles?.isAdmin;
+  const isAgent = !!roles?.isAgent;
+  const canAccessAdmin = isAdmin || isAgent;
   const [active, setActive] = useState<"overview" | "profile" | "saved" | "messages" | "admin">(
     "overview",
   );
