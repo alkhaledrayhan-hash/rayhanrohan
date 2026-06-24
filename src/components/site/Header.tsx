@@ -152,6 +152,7 @@ export function Header() {
                 <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
                   Properties for Sale
                 </SheetLink>
+                <SheetLink to="/offers" onSelect={() => setOpen(false)}>Special Offers</SheetLink>
                 <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
                 <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
                 <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
