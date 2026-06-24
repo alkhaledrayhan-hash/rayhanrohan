@@ -50,12 +50,17 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const [fType, setFType] = useState<string>("all");
 
   const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["admin-properties"],
+    queryKey: ["admin-properties", isAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .order("created_at", { ascending: false });
+      let q = supabase.from("properties").select("*").order("created_at", { ascending: false });
+      if (!isAdmin) {
+        // Agents only see properties they created OR are assigned to.
+        const { data: u } = await supabase.auth.getUser();
+        const uid = u.user?.id;
+        if (!uid) return [];
+        q = q.or(`created_by.eq.${uid},assigned_agent_id.eq.${uid}`);
+      }
+      const { data, error } = await q;
       if (error) throw error;
       return (data || []).map((r: any) => ({
         ...r,
