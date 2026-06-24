@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bed, Bath, Maximize2, MapPin } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
 
-export function PropertyCard({ property }: { property: Property }) {
+export const PropertyCard = memo(function PropertyCard({ property }: { property: Property }) {
   return (
     <Link
       to="/properties/$id"
