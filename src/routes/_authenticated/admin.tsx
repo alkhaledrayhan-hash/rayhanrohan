@@ -23,6 +23,7 @@ import { AddAgentForm } from "@/components/admin/AddAgentForm";
 import { AgentsPanel } from "@/components/admin/AgentsPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
+import { AgentSettingsPanel } from "@/components/admin/AgentSettingsPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { MediaPanel } from "@/components/admin/MediaPanel";
 import { PostsManager } from "@/components/admin/PostsManager";
@@ -301,9 +302,10 @@ function AdminDashboard() {
             </Link>
             <Link
               to="/dashboard"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              title="Go to user dashboard"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
             >
-              <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">Dashboard</span>
+              <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">User Dashboard</span>
             </Link>
             <NotificationsBell onNavigate={(s) => goSection(s)} />
             <div className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-3">
@@ -345,7 +347,7 @@ function AdminDashboard() {
           {section === "calendar" && <CalendarPanel />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
           {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
-          {section === "settings" && (isAdmin ? <SettingsPanel /> : <PlaceholderCard icon={Settings} title="Settings" desc="Only admins can edit website settings." />)}
+          {section === "settings" && (isAdmin ? <SettingsPanel /> : <AgentSettingsPanel />)}
         </main>
       </div>
     </div>
