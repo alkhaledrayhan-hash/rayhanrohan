@@ -31,6 +31,11 @@ export const Route = createFileRoute("/offers")({
 
 function OffersPage() {
   const { data: offers = [], isLoading } = useOfferProperties();
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(offers.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = offers.slice(start, start + PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-background">
