@@ -42,6 +42,7 @@ const signUpSchema = z.object({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const settings = useSiteSettings();
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<"user" | "agent">("user");
 
