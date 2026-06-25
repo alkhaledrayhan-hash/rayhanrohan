@@ -163,35 +163,37 @@ function Dashboard() {
 
       {/* Main */}
       <main className="flex-1">
-        <header className="flex items-center justify-between border-b border-border bg-background px-6 py-4">
-          <div>
-            <h1 className="font-display text-xl font-semibold text-foreground">
+        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-background px-4 py-3 sm:flex sm:px-6 sm:py-4">
+          <div className="min-w-0">
+            <h1 className="truncate font-display text-base font-semibold text-foreground sm:text-xl">
               Welcome back, {profile?.full_name?.split(" ")[0] || "there"}
             </h1>
-            <p className="text-xs text-muted-foreground">Your Ayesha Maison Qatar account</p>
+            <p className="hidden text-xs text-muted-foreground sm:block">Your Ayesha Maison Qatar account</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <Link
               to="/"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              aria-label="Home"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-2.5 text-xs font-medium text-muted-foreground transition hover:text-foreground sm:px-3"
             >
               <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
             </Link>
             {canAccessAdmin && (
               <Link
                 to="/admin"
+                aria-label={isAdmin ? "Admin panel" : "Agent panel"}
                 title={isAdmin ? "Go to admin panel" : "Go to agent panel"}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-2.5 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground sm:px-3"
               >
                 <ShieldCheck className="h-4 w-4" /> <span className="hidden sm:inline">{isAdmin ? "Admin Panel" : "Agent Panel"}</span>
               </Link>
             )}
             {(isAdmin || isAgent) && (
-              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
+              <span className="hidden rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary sm:inline">
                 {isAdmin ? "Admin" : "Agent"}
               </span>
             )}
-            <div className="grid h-10 w-10 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground sm:h-10 sm:w-10">
               {initials}
             </div>
           </div>
