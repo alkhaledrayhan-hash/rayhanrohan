@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
-import Autoplay from "embla-carousel-autoplay";
+import AutoScroll from "embla-carousel-auto-scroll";
+
 import { ArrowRight, BadgePercent, Clock, Flame, Bed, Bath, Maximize2 } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
 import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
@@ -21,9 +22,10 @@ interface Offer {
 }
 
 export function OffersSection({ offers }: { offers: Offer[] }) {
-  const autoplay = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true }),
+  const autoScroll = useRef(
+    AutoScroll({ speed: 1, direction: "backward", stopOnInteraction: false, stopOnMouseEnter: true }),
   );
+
 
   return (
     <section className="relative overflow-hidden py-20">
@@ -72,10 +74,11 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
         </div>
 
         <Carousel
-          opts={{ align: "start", loop: true, duration: 40 }}
-          plugins={[autoplay.current]}
+          opts={{ align: "start", loop: true, dragFree: true }}
+          plugins={[autoScroll.current]}
           className="mt-12"
         >
+
           <CarouselContent className="-ml-6">
             {offers.map(({ property, discount, tag, ends }) => {
               const discounted = Math.round(property.price * (1 - discount / 100));
