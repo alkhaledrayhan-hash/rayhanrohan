@@ -178,11 +178,20 @@ export function ChatWidget() {
         <div className="fixed bottom-24 right-5 z-50 flex h-[560px] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
-            <div className="flex flex-col leading-tight">
-              <span className="font-display text-sm font-semibold">Chat With Our Team</span>
-              <span className="text-[11px] opacity-80">
-                {stored ? "We'll reply here" : "Send us a message"}
-              </span>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <ChatHeaderAvatar agent={selectedAgent} />
+              <div className="flex min-w-0 flex-col leading-tight">
+                <span className="truncate font-display text-sm font-semibold">
+                  {selectedAgent ? selectedAgent.full_name || selectedAgent.username || "Agent" : "Chat With Our Team"}
+                </span>
+                <span className="truncate text-[11px] opacity-80">
+                  {stored
+                    ? "We'll reply here"
+                    : selectedAgent
+                    ? "Direct message · Agent"
+                    : "Direct message · Support"}
+                </span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {stored && (
@@ -202,6 +211,7 @@ export function ChatWidget() {
               </button>
             </div>
           </div>
+
 
 
           {/* Body */}
