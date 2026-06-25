@@ -512,6 +512,104 @@ function PasswordDialog({ user, onClose }: { user: Row; onClose: () => void }) {
   );
 }
 
+function ViewDialog({
+  user,
+  onClose,
+  onEdit,
+  onPassword,
+}: {
+  user: Row;
+  onClose: () => void;
+  onEdit: () => void;
+  onPassword: () => void;
+}) {
+  const initials = (user.full_name || user.email || "U")
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  const created = new Date(user.created_at).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  return (
+    <Modal title="User profile" onClose={onClose}>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-primary/10 text-base font-semibold text-primary">
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              initials
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-lg font-semibold">
+              {user.full_name || "—"}
+            </p>
+            {user.username && (
+              <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
+            )}
+            <span
+              className={`mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium capitalize ${roleBadge[user.role]}`}
+            >
+              {user.role === "admin" && <ShieldCheck className="h-3 w-3" />}
+              {user.role}
+            </span>
+          </div>
+        </div>
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <InfoRow label="Email" value={user.email} />
+          <InfoRow label="Phone" value={user.phone} />
+          <InfoRow label="Username" value={user.username} />
+          <InfoRow label="Joined" value={created} />
+          <InfoRow label="All roles" value={user.roles.join(", ") || user.role} />
+          <InfoRow label="User ID" value={user.id} mono />
+        </dl>
+        <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border px-4 py-2 text-sm"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={onPassword}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm hover:bg-muted"
+          >
+            <KeyRound className="h-3.5 w-3.5" /> Set password
+          </button>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function InfoRow({ label, value, mono }: { label: string; value: string | null; mono?: boolean }) {
+  return (
+    <div className="rounded-lg border border-border bg-white p-3">
+      <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </dt>
+      <dd className={`mt-0.5 break-words text-sm ${mono ? "font-mono text-xs" : ""}`}>
+        {value || "—"}
+      </dd>
+    </div>
+  );
+}
+
+
 function Modal({
   title,
   children,
