@@ -19,6 +19,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
 import { formatPrice, usePropertyBySlug } from "@/lib/properties";
+import { OfferCountdown } from "@/components/site/OfferCountdown";
 
 export const Route = createFileRoute("/properties_/$id")({
   head: ({ params }) => {
@@ -174,6 +175,18 @@ function PropertyDetail() {
             ))}
           </div>
         </div>
+
+
+
+        {property.isOffer && property.offerEnds ? (
+          <OfferCountdown
+            endsAt={property.offerEnds}
+            discount={property.offerDiscount}
+            tag={property.offerTag}
+          />
+        ) : null}
+
+
 
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
