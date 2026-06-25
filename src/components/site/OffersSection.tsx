@@ -22,9 +22,10 @@ interface Offer {
 }
 
 export function OffersSection({ offers }: { offers: Offer[] }) {
-  const autoplay = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true }),
+  const autoScroll = useRef(
+    AutoScroll({ speed: 1, direction: "backward", stopOnInteraction: false, stopOnMouseEnter: true }),
   );
+
 
   return (
     <section className="relative overflow-hidden py-20">
