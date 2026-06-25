@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { MessageCircle, X, Send, Loader2, Home, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   createConversation,
   fetchGuestThread,
   replyAsGuest,
 } from "@/lib/messages.functions";
+import { listPublicAgents, type PublicAgent } from "@/lib/public-agents.functions";
+
 
 const STORAGE_KEY = "maison_chat_thread";
 
