@@ -314,6 +314,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
+                      <button onClick={() => setViewing(r)} title="View" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Eye className="h-4 w-4" /></button>
                       <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
                       {isAdmin && (
                         <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
