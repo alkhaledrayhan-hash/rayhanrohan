@@ -474,7 +474,9 @@ export function SettingsPanel() {
           <Save className="h-4 w-4" /> {save.isPending ? "Saving…" : "Save changes"}
         </button>
       </div>
-    </form>
+      </form>
+      )}
+    </div>
   );
 }
 
