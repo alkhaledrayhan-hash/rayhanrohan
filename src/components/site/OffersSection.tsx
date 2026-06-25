@@ -74,10 +74,11 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
         </div>
 
         <Carousel
-          opts={{ align: "start", loop: true, duration: 40 }}
-          plugins={[autoplay.current]}
+          opts={{ align: "start", loop: true, dragFree: true }}
+          plugins={[autoScroll.current]}
           className="mt-12"
         >
+
           <CarouselContent className="-ml-6">
             {offers.map(({ property, discount, tag, ends }) => {
               const discounted = Math.round(property.price * (1 - discount / 100));
