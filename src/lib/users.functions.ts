@@ -6,12 +6,17 @@ type Role = "admin" | "agent" | "user";
 
 const roleEnum = z.enum(["admin", "agent", "user"]);
 
+const usernameSchema = z
+  .string()
+  .trim()
+  .regex(/^[a-zA-Z0-9_]{3,30}$/, "Username must be 3-30 chars, letters/numbers/_");
+
 const createSchema = z.object({
   full_name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(255),
   password: z.string().min(8).max(72),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: usernameSchema,
   role: roleEnum,
 });
 
@@ -19,9 +24,10 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   full_name: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: usernameSchema,
   role: roleEnum,
 });
+
 
 async function assertAdmin(context: any) {
   const { data: isAdmin } = await context.supabase.rpc("has_role", {
