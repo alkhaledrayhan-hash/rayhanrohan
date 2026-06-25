@@ -329,98 +329,95 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       </div>
 
       {viewing && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={() => setViewing(null)}>
-          <div className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-3 sm:p-4" onClick={() => setViewing(null)}>
+          <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative">
               {viewing.image ? (
-                <img src={viewing.image} alt={viewing.title} className="aspect-[16/8] w-full object-cover" />
+                <img src={viewing.image} alt={viewing.title} className="aspect-[16/9] w-full object-cover" />
               ) : (
-                <div className="aspect-[16/8] w-full bg-muted" />
+                <div className="aspect-[16/9] w-full bg-muted" />
               )}
               <button
                 onClick={() => setViewing(null)}
                 aria-label="Close"
-                className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-foreground shadow hover:bg-white"
+                className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-foreground shadow hover:bg-white"
               >
                 <X className="h-4 w-4" />
               </button>
-              <span className="absolute left-3 top-3 rounded-md bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow">
+              <span className="absolute left-2 top-2 rounded-md bg-white/95 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow">
                 For {viewing.status}
               </span>
               {viewing.is_offer && (
-                <span className="absolute left-3 bottom-3 inline-flex items-center gap-1 rounded-md bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white shadow">
-                  <Tag className="h-3 w-3" /> {viewing.offer_tag || "Special offer"}{viewing.offer_discount ? ` · ${viewing.offer_discount}% OFF` : ""}
+                <span className="absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
+                  <Tag className="h-3 w-3" /> {viewing.offer_discount ? `${viewing.offer_discount}% OFF` : (viewing.offer_tag || "Offer")}
                 </span>
               )}
             </div>
-            <div className="max-h-[60vh] overflow-y-auto p-6">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-display text-xl font-semibold text-foreground">{viewing.title}</h3>
-                    {viewing.verified && <BadgeCheck className="h-5 w-5 text-amber-500" />}
+            <div className="max-h-[55vh] overflow-y-auto p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="truncate font-display text-base font-semibold text-foreground">{viewing.title}</h3>
+                    {viewing.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-amber-500" />}
                   </div>
-                  <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" /> {viewing.location}{viewing.address ? ` · ${viewing.address}` : ""}
+                  <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
+                    <MapPin className="h-3 w-3 shrink-0" /> {viewing.location}
                   </p>
                 </div>
-                <div className="text-right">
-                  <div className="font-display text-2xl font-semibold text-primary">QAR {Number(viewing.price).toLocaleString()}</div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">{viewing.type}</div>
+                <div className="shrink-0 text-right">
+                  <div className="font-display text-lg font-semibold text-primary">QAR {Number(viewing.price).toLocaleString()}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{viewing.type}</div>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-                <Stat icon={<Bed className="h-4 w-4" />} label="Beds" value={viewing.bedrooms} />
-                <Stat icon={<Bath className="h-4 w-4" />} label="Baths" value={viewing.bathrooms} />
-                <Stat icon={<Maximize2 className="h-4 w-4" />} label="Area" value={`${Number(viewing.sqft).toLocaleString()} sqft`} />
-                <Stat icon={<Calendar className="h-4 w-4" />} label="Built" value={viewing.year_built || "—"} />
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-lg bg-secondary/60 px-3 py-2 text-xs text-foreground">
+                <span className="inline-flex items-center gap-1"><Bed className="h-3.5 w-3.5 text-muted-foreground" /> {viewing.bedrooms} beds</span>
+                <span className="inline-flex items-center gap-1"><Bath className="h-3.5 w-3.5 text-muted-foreground" /> {viewing.bathrooms} baths</span>
+                <span className="inline-flex items-center gap-1"><Maximize2 className="h-3.5 w-3.5 text-muted-foreground" /> {Number(viewing.sqft).toLocaleString()} sqft</span>
+                {viewing.year_built && <span className="inline-flex items-center gap-1"><Calendar className="h-3.5 w-3.5 text-muted-foreground" /> {viewing.year_built}</span>}
               </div>
 
-              <div className="mt-4 grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
-                <InfoRow label="Approval" value={viewing.listing_status} />
-                <InfoRow label="Agent" value={agentName(viewing.assigned_agent_id)} />
-                <InfoRow label="Slug" value={viewing.slug} />
+              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                <div className="flex justify-between gap-2"><span>Approval</span><span className="font-medium text-foreground capitalize">{viewing.listing_status}</span></div>
+                <div className="flex justify-between gap-2"><span>Agent</span><span className="truncate font-medium text-foreground">{agentName(viewing.assigned_agent_id)}</span></div>
               </div>
 
               {viewing.description && (
-                <div className="mt-5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</h4>
-                  <p className="mt-1.5 whitespace-pre-line text-sm text-foreground/90">{viewing.description}</p>
-                </div>
+                <p className="mt-3 line-clamp-4 text-xs leading-relaxed text-foreground/80">{viewing.description}</p>
               )}
 
               {viewing.features?.length > 0 && (
-                <div className="mt-5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Features</h4>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {viewing.features.map((f, i) => (
-                      <span key={i} className="rounded-md bg-secondary px-2 py-1 text-xs">{f}</span>
-                    ))}
-                  </div>
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {viewing.features.slice(0, 6).map((f, i) => (
+                    <span key={i} className="rounded-md bg-secondary px-2 py-0.5 text-[11px]">{f}</span>
+                  ))}
+                  {viewing.features.length > 6 && <span className="text-[11px] text-muted-foreground">+{viewing.features.length - 6} more</span>}
                 </div>
               )}
 
               {viewing.gallery?.length > 0 && (
-                <div className="mt-5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Gallery</h4>
-                  <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {viewing.gallery.map((g, i) => (
-                      <img key={i} src={g} alt={`${viewing.title} ${i + 1}`} className="aspect-square w-full rounded-md object-cover" />
-                    ))}
-                  </div>
+                <div className="mt-3 grid grid-cols-4 gap-1.5">
+                  {viewing.gallery.slice(0, 4).map((g, i) => (
+                    <img key={i} src={g} alt="" className="aspect-square w-full rounded-md object-cover" />
+                  ))}
                 </div>
               )}
-
-              <div className="mt-6 flex justify-end gap-2">
-                <button onClick={() => setViewing(null)} className="rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-secondary">Close</button>
-                <button
-                  onClick={() => { setEditing(viewing); setViewing(null); }}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-                >
-                  <Pencil className="h-3.5 w-3.5" /> Edit
-                </button>
-              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t bg-secondary/30 px-4 py-2.5">
+              <a
+                href={`/properties/${viewing.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-md border border-input bg-background px-3 py-1.5 text-xs hover:bg-secondary"
+              >
+                Open public page
+              </a>
+              <button
+                onClick={() => { setEditing(viewing); setViewing(null); }}
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90"
+              >
+                <Pencil className="h-3.5 w-3.5" /> Edit
+              </button>
             </div>
           </div>
         </div>
