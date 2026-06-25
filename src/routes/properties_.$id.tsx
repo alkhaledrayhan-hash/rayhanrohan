@@ -151,12 +151,12 @@ function PropertyDetail() {
               <Share2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:flex md:h-full md:flex-col md:gap-2">
-            {property.gallery.map((g: string, i: number) => (
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:h-full md:grid-cols-2 md:grid-rows-2 md:gap-2">
+            {property.gallery.slice(0, 4).map((g: string, i: number) => (
               <button
                 key={`${g}-${i}`}
                 onClick={() => setActiveImg(g)}
-                className={`relative overflow-hidden rounded-lg border transition md:min-h-0 md:flex-1 ${
+                className={`relative overflow-hidden rounded-lg border transition md:min-h-0 ${
                   currentImg === g
                     ? "border-primary ring-2 ring-primary/30"
                     : "border-border hover:border-primary/40"
