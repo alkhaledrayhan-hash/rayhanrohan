@@ -162,6 +162,56 @@ export function SettingsPanel() {
             />
           </Field>
 
+          <Field icon={ImageIcon} label="Site logo" hint="Shown in the header, footer and auth pages. Square image works best.">
+            <div className="space-y-3">
+              <input
+                value={(form.site_logo_url || "").startsWith("data:") ? "" : (form.site_logo_url || "")}
+                onChange={(e) => setForm({ ...form, site_logo_url: e.target.value })}
+                placeholder="https://example.com/logo.png"
+                className={inputCls}
+                disabled={(form.site_logo_url || "").startsWith("data:")}
+              />
+              <div className="flex flex-wrap items-center gap-3">
+                {form.site_logo_url && (
+                  <img
+                    src={form.site_logo_url}
+                    alt="Logo preview"
+                    className="h-14 w-14 rounded-md border border-input object-cover"
+                  />
+                )}
+                <input
+                  ref={logoFileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleLogoFile(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => logoFileRef.current?.click()}
+                  disabled={uploadingLogo}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploadingLogo ? "Processing…" : "Upload logo"}
+                </button>
+                {form.site_logo_url && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, site_logo_url: "" })}
+                    className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    <X className="h-4 w-4" /> Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </Field>
+
           <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
             <div className="flex gap-2">
               <input
