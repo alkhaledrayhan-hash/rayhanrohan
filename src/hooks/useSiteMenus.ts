@@ -12,6 +12,20 @@ export type FooterMenuGroup = {
   items: { label: string; to: string }[];
 };
 
+export type HeaderCta = {
+  label: string;
+  to: string;
+  search?: Record<string, string>;
+  enabled: boolean;
+};
+
+export const DEFAULT_HEADER_CTA: HeaderCta = {
+  label: "Browse Listings",
+  to: "/properties",
+  search: { status: "rent" },
+  enabled: true,
+};
+
 export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
   { label: "Home", to: "/" },
   { label: "Properties", to: "/properties", search: { status: "all" } },
@@ -23,6 +37,7 @@ export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];
+
 
 export const DEFAULT_FOOTER_MENU: FooterMenuGroup[] = [
   {
