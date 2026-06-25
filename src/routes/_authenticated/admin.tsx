@@ -299,17 +299,14 @@ function AdminDashboard() {
               <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">User Dashboard</span>
             </Link>
             <NotificationsBell onNavigate={(s) => goSection(s)} />
-            <div className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-3">
-              <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                {initials}
-              </div>
-              <div className="hidden flex-col leading-tight sm:flex">
-                <span className="text-xs font-semibold">{profile?.full_name || "Account"}</span>
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {roleLabel}
-                </span>
-              </div>
-            </div>
+            <AccountMenu
+              initials={initials}
+              fullName={profile?.full_name || "Account"}
+              roleLabel={roleLabel}
+              onSettings={() => goSection("settings")}
+              onSignOut={handleSignOut}
+            />
+
           </div>
         </header>
 
