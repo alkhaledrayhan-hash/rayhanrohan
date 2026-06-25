@@ -5,6 +5,7 @@ export type SiteSettings = {
   site_title: string;
   site_tagline: string;
   site_url: string;
+  site_logo_url: string;
   admin_email: string;
   site_timezone: string;
   date_format: string;
@@ -12,12 +13,17 @@ export type SiteSettings = {
   week_starts_on: string;
   auth_bg_color: string;
   auth_bg_image_url: string;
+  auth_heading: string;
+  auth_subheading: string;
+  auth_signin_heading: string;
+  auth_signup_heading: string;
 };
 
 const DEFAULTS: SiteSettings = {
   site_title: "Ayesha Maison Qatar",
   site_tagline: "Premium Living",
   site_url: "",
+  site_logo_url: "",
   admin_email: "",
   site_timezone: "Asia/Qatar",
   date_format: "MMMM d, yyyy",
@@ -25,6 +31,10 @@ const DEFAULTS: SiteSettings = {
   week_starts_on: "monday",
   auth_bg_color: "#1a0a0f",
   auth_bg_image_url: "",
+  auth_heading: "",
+  auth_subheading: "",
+  auth_signin_heading: "Welcome back",
+  auth_signup_heading: "Create your account",
 };
 
 export function useSiteSettings() {

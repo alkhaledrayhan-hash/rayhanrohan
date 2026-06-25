@@ -23,6 +23,7 @@ const KEYS = [
   "site_title",
   "site_tagline",
   "site_url",
+  "site_logo_url",
   "admin_email",
   "site_timezone",
   "date_format",
@@ -32,6 +33,10 @@ const KEYS = [
   "site_language",
   "auth_bg_color",
   "auth_bg_image_url",
+  "auth_heading",
+  "auth_subheading",
+  "auth_signin_heading",
+  "auth_signup_heading",
 ] as const;
 
 const CURRENCIES = [
@@ -79,8 +84,10 @@ export function SettingsPanel() {
 
   const [form, setForm] = useState<SettingsMap>({});
   const [uploading, setUploading] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
+  const logoFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!data) return;
     const next = { ...data };
@@ -114,6 +121,19 @@ export function SettingsPanel() {
       toast.error(e.message || "Upload failed");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleLogoFile(file: File) {
+    try {
+      setUploadingLogo(true);
+      const dataUrl = await fileToDataUrl(file, { maxSize: 512, quality: 0.9, mime: "image/png" });
+      setForm((f) => ({ ...f, site_logo_url: dataUrl }));
+      toast.success("Logo ready — click Save to apply.");
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+    } finally {
+      setUploadingLogo(false);
     }
   }
 
@@ -155,6 +175,56 @@ export function SettingsPanel() {
               placeholder="A short tagline shown across the site"
               className={inputCls}
             />
+          </Field>
+
+          <Field icon={ImageIcon} label="Site logo" hint="Shown in the header, footer and auth pages. Square image works best.">
+            <div className="space-y-3">
+              <input
+                value={(form.site_logo_url || "").startsWith("data:") ? "" : (form.site_logo_url || "")}
+                onChange={(e) => setForm({ ...form, site_logo_url: e.target.value })}
+                placeholder="https://example.com/logo.png"
+                className={inputCls}
+                disabled={(form.site_logo_url || "").startsWith("data:")}
+              />
+              <div className="flex flex-wrap items-center gap-3">
+                {form.site_logo_url && (
+                  <img
+                    src={form.site_logo_url}
+                    alt="Logo preview"
+                    className="h-14 w-14 rounded-md border border-input object-cover"
+                  />
+                )}
+                <input
+                  ref={logoFileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleLogoFile(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => logoFileRef.current?.click()}
+                  disabled={uploadingLogo}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploadingLogo ? "Processing…" : "Upload logo"}
+                </button>
+                {form.site_logo_url && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, site_logo_url: "" })}
+                    className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    <X className="h-4 w-4" /> Remove
+                  </button>
+                )}
+              </div>
+            </div>
           </Field>
 
           <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
@@ -267,6 +337,43 @@ export function SettingsPanel() {
             <h4 className="font-display text-base font-semibold">Auth pages appearance</h4>
             <p className="text-xs text-muted-foreground">Background color and optional image shown on Sign in, Sign up, Forgot password, and Reset password screens.</p>
           </div>
+
+          <Field icon={Type} label="Brand heading" hint="Shown under the logo. Leave empty to use the site title.">
+            <input
+              value={form.auth_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_heading: e.target.value })}
+              placeholder="e.g. Ayesha Maison Qatar"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Subheading" hint="Optional small text under the brand heading.">
+            <input
+              value={form.auth_subheading || ""}
+              onChange={(e) => setForm({ ...form, auth_subheading: e.target.value })}
+              placeholder="Welcome to your luxury living portal"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Sign in heading">
+            <input
+              value={form.auth_signin_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_signin_heading: e.target.value })}
+              placeholder="Welcome back"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Sign up heading">
+            <input
+              value={form.auth_signup_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_signup_heading: e.target.value })}
+              placeholder="Create your account"
+              className={inputCls}
+            />
+          </Field>
+
 
           <Field icon={Palette} label="Background color">
             <div className="flex items-center gap-3">

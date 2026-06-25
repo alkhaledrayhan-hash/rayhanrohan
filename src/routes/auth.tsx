@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
 import { AuthBackground } from "@/components/site/AuthBackground";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 
 export const Route = createFileRoute("/auth")({
@@ -41,6 +42,7 @@ const signUpSchema = z.object({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const settings = useSiteSettings();
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<"user" | "agent">("user");
 
@@ -141,13 +143,26 @@ function AuthPage() {
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-white">
-            <span className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
-              <Home className="h-5 w-5" />
-            </span>
-            <span className="font-display text-xl font-semibold">
-              Ayesha Maison <span className="text-gold">Qatar</span>
-            </span>
+          <Link to="/" className="mb-8 flex flex-col items-center justify-center gap-3 text-white">
+            <div className="flex items-center gap-2">
+              {settings.site_logo_url ? (
+                <img
+                  src={settings.site_logo_url}
+                  alt={settings.site_title}
+                  className="h-10 w-10 rounded-md object-cover"
+                />
+              ) : (
+                <span className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
+                  <Home className="h-5 w-5" />
+                </span>
+              )}
+              <span className="font-display text-xl font-semibold">
+                {settings.auth_heading || settings.site_title}
+              </span>
+            </div>
+            {settings.auth_subheading && (
+              <span className="text-center text-sm text-white/70">{settings.auth_subheading}</span>
+            )}
           </Link>
 
           <div className="rounded-2xl border border-white/10 bg-white/95 p-8 shadow-2xl backdrop-blur">
@@ -158,6 +173,11 @@ function AuthPage() {
               </TabsList>
 
               <TabsContent value="signin" className="mt-6">
+                {settings.auth_signin_heading && (
+                  <h2 className="mb-4 font-display text-lg font-semibold text-foreground">
+                    {settings.auth_signin_heading}
+                  </h2>
+                )}
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <Field
                     label="Email or Username"
@@ -182,6 +202,11 @@ function AuthPage() {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-6">
+                {settings.auth_signup_heading && (
+                  <h2 className="mb-4 font-display text-lg font-semibold text-foreground">
+                    {settings.auth_signup_heading}
+                  </h2>
+                )}
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label>I want to sign up as</Label>
