@@ -190,11 +190,23 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
                 {c.subject && (
                   <span className="truncate text-xs text-foreground/80">{c.subject}</span>
                 )}
-                {c.status === "closed" && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    Closed
-                  </span>
-                )}
+                <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                  {isAdmin && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      {c.assigned_agent_id
+                        ? (agents?.find((a) => a.id === c.assigned_agent_id)?.full_name ||
+                          agents?.find((a) => a.id === c.assigned_agent_id)?.email ||
+                          "Agent")
+                        : "Support"}
+                    </span>
+                  )}
+                  {c.status === "closed" && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      Closed
+                    </span>
+                  )}
+                </div>
+
               </button>
             ))
           )}
