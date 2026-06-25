@@ -92,9 +92,17 @@ export function Footer() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 lg:grid-cols-3 lg:text-left lg:px-8">
         <div>
           <Link to="/" className="inline-flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
-              <Home className="h-5 w-5" />
-            </span>
+            {settings.site_logo_url ? (
+              <img
+                src={settings.site_logo_url}
+                alt={settings.site_title}
+                className="h-12 w-12 rounded-xl object-cover shadow-[var(--shadow-soft)]"
+              />
+            ) : (
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+                <Home className="h-5 w-5" />
+              </span>
+            )}
             <span className="flex flex-col leading-tight text-left">
               <span className="font-display text-2xl font-semibold text-white">
                 {settings.site_title}
