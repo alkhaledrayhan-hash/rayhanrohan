@@ -24,10 +24,36 @@ type Message = {
   created_at: string;
 };
 
+type AgentOption = { id: string; full_name: string | null; email: string };
+
 export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [agentFilter, setAgentFilter] = useState<string>("all"); // all | unassigned | <agentId>
   const qc = useQueryClient();
+
+  const { data: agents } = useQuery({
+    queryKey: ["messages", "agent-options"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data: roles, error: rolesErr } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "agent");
+      if (rolesErr) throw rolesErr;
+      const ids = (roles ?? []).map((r) => r.user_id);
+      if (ids.length === 0) return [] as AgentOption[];
+      const { data: profs, error: pErr } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", ids);
+      if (pErr) throw pErr;
+      return ((profs ?? []) as AgentOption[]).sort((a, b) =>
+        (a.full_name || a.email).localeCompare(b.full_name || b.email),
+      );
+    },
+  });
+
 
   const { data: convos, isLoading } = useQuery({
     queryKey: ["messages", "conversations"],
