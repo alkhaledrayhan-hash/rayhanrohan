@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { KeyRound, Pencil, Plus, Search, ShieldCheck, Trash2, UserCircle2 } from "lucide-react";
+import { Eye, KeyRound, Pencil, Plus, Search, ShieldCheck, Trash2, UserCircle2 } from "lucide-react";
 import {
   createUser,
   deleteUser,
@@ -41,8 +41,10 @@ export function UsersManager() {
   const [q, setQ] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | Role>("all");
   const [editing, setEditing] = useState<Row | null>(null);
+  const [viewing, setViewing] = useState<Row | null>(null);
   const [creating, setCreating] = useState(false);
   const [resetting, setResetting] = useState<Row | null>(null);
+
 
   const rows = (data?.users ?? []) as Row[];
   const filtered = useMemo(() => {
@@ -138,7 +140,11 @@ export function UsersManager() {
                 .slice(0, 2)
                 .toUpperCase();
               return (
-                <tr key={u.id} className="border-t border-border">
+                <tr
+                  key={u.id}
+                  onClick={() => setViewing(u)}
+                  className="cursor-pointer border-t border-border transition hover:bg-muted/40"
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -166,8 +172,15 @@ export function UsersManager() {
                       {u.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex justify-end gap-1.5">
+                      <button
+                        onClick={() => setViewing(u)}
+                        title="View"
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                      >
+                        <Eye className="h-3 w-3" /> View
+                      </button>
                       <button
                         onClick={() => setResetting(u)}
                         title="Set new password"
@@ -186,6 +199,7 @@ export function UsersManager() {
                     </div>
                   </td>
                 </tr>
+
               );
             })}
           </tbody>
@@ -194,10 +208,19 @@ export function UsersManager() {
 
       {creating && <CreateDialog onClose={() => setCreating(false)} />}
       {editing && <EditDialog user={editing} onClose={() => setEditing(null)} />}
+      {viewing && (
+        <ViewDialog
+          user={viewing}
+          onClose={() => setViewing(null)}
+          onEdit={() => { setEditing(viewing); setViewing(null); }}
+          onPassword={() => { setResetting(viewing); setViewing(null); }}
+        />
+      )}
       {resetting && <PasswordDialog user={resetting} onClose={() => setResetting(null)} />}
     </div>
   );
 }
+
 
 function StatCard({
   label,
@@ -488,6 +511,104 @@ function PasswordDialog({ user, onClose }: { user: Row; onClose: () => void }) {
     </Modal>
   );
 }
+
+function ViewDialog({
+  user,
+  onClose,
+  onEdit,
+  onPassword,
+}: {
+  user: Row;
+  onClose: () => void;
+  onEdit: () => void;
+  onPassword: () => void;
+}) {
+  const initials = (user.full_name || user.email || "U")
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  const created = new Date(user.created_at).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  return (
+    <Modal title="User profile" onClose={onClose}>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-primary/10 text-base font-semibold text-primary">
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              initials
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-lg font-semibold">
+              {user.full_name || "—"}
+            </p>
+            {user.username && (
+              <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
+            )}
+            <span
+              className={`mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium capitalize ${roleBadge[user.role]}`}
+            >
+              {user.role === "admin" && <ShieldCheck className="h-3 w-3" />}
+              {user.role}
+            </span>
+          </div>
+        </div>
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <InfoRow label="Email" value={user.email} />
+          <InfoRow label="Phone" value={user.phone} />
+          <InfoRow label="Username" value={user.username} />
+          <InfoRow label="Joined" value={created} />
+          <InfoRow label="All roles" value={user.roles.join(", ") || user.role} />
+          <InfoRow label="User ID" value={user.id} mono />
+        </dl>
+        <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border px-4 py-2 text-sm"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={onPassword}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm hover:bg-muted"
+          >
+            <KeyRound className="h-3.5 w-3.5" /> Set password
+          </button>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function InfoRow({ label, value, mono }: { label: string; value: string | null; mono?: boolean }) {
+  return (
+    <div className="rounded-lg border border-border bg-white p-3">
+      <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </dt>
+      <dd className={`mt-0.5 break-words text-sm ${mono ? "font-mono text-xs" : ""}`}>
+        {value || "—"}
+      </dd>
+    </div>
+  );
+}
+
 
 function Modal({
   title,

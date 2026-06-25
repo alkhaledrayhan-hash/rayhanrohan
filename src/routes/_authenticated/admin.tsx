@@ -40,13 +40,16 @@ import {
   ChevronRight,
   FileText,
   Home,
+  Info,
   LayoutDashboard,
   LogOut,
   Image,
   Mail,
+  MapPin,
   MessageSquare,
   Newspaper,
   Menu,
+  Phone,
   Plus,
   Search,
   Settings,
@@ -57,6 +60,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard · Ayesha Maison Qatar" }] }),
@@ -206,15 +210,16 @@ function AdminDashboard() {
               defaultOpen={section === "pages"}
             >
               {[
-                { slug: "home", label: "Home" },
-                { slug: "properties", label: "Properties" },
-                { slug: "agents", label: "Our Agents" },
-                { slug: "about", label: "About" },
-                { slug: "news", label: "News" },
-                { slug: "contact", label: "Contact" },
+                { slug: "home", label: "Home", icon: Home },
+                { slug: "properties", label: "Properties", icon: Building2 },
+                { slug: "agents", label: "Our Agents", icon: Users },
+                { slug: "about", label: "About", icon: Info },
+                { slug: "news", label: "News", icon: Newspaper },
+                { slug: "contact", label: "Contact", icon: Phone },
               ].map((p) => (
                 <SubNavItem
                   key={p.slug}
+                  icon={p.icon}
                   label={p.label}
                   active={section === "pages" && pageSlug === p.slug}
                   onClick={() => { setSection("pages"); setPageSlug(p.slug); closeMobileNav(); }}
@@ -223,29 +228,15 @@ function AdminDashboard() {
             </NavGroupExpandable>
           )}
           {isAdmin && (
-            <NavGroupExpandable
-              icon={Users}
-              label="Agents"
-              active={section === "agents" || section === "add-agent"}
-              defaultOpen={section === "agents" || section === "add-agent"}
-              action={
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); goSection("add-agent"); }}
-                  title="Add Agent"
-                  className="grid h-5 w-5 place-items-center rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  <Plus className="h-3 w-3" />
-                </button>
-              }
-            >
-              <SubNavItem label="All Agents" active={section === "agents"} onClick={() => goSection("agents")} />
-              <SubNavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => goSection("add-agent")} />
-            </NavGroupExpandable>
+            <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => goSection("agents")} />
+          )}
+          {isAdmin && (
+            <NavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => goSection("add-agent")} />
           )}
           {isAdmin && (
             <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => goSection("users")} />
           )}
+
           {isAdmin && (
             <NavItem icon={Mail} label="Email Requests" active={section === "email-requests"} onClick={() => goSection("email-requests")} />
           )}
