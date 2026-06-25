@@ -114,7 +114,9 @@
     min-width: 0;
   }
   /* Prevent long unbroken strings (URLs, IDs) from blowing out layouts on small screens */
-  p, span, a, h1, h2, h3, h4, h5, h6, li, td, th {
+  /* Prevent long unbroken strings (URLs, IDs) from blowing out layouts on small screens.
+     Scoped to text containers — never headings (would conflict with `truncate`) */
+  p, li, td, th, blockquote {
     overflow-wrap: anywhere;
   }
   /* Always render images responsively by default */
