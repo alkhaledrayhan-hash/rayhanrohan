@@ -67,7 +67,7 @@ export function AgentsPanel() {
   );
 }
 
-function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
+function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void; onEdit: () => void }) {
   const delFn = useServerFn(deleteAgent);
   const qc = useQueryClient();
   const mut = useMutation({
@@ -87,16 +87,23 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
     .toUpperCase();
 
   return (
-    <div className="rounded-2xl border border-border bg-white p-5 text-center shadow-sm">
-      <div className="mx-auto h-20 w-20 overflow-hidden rounded-full bg-primary/10">
-        {agent.avatar_url ? (
-          <img src={agent.avatar_url} alt={agent.full_name ?? ""} className="h-full w-full object-cover" />
-        ) : (
-          <div className="grid h-full w-full place-items-center font-semibold text-primary">{initials}</div>
-        )}
-      </div>
-      <p className="mt-3 font-display text-base font-semibold">{agent.full_name || "Unnamed agent"}</p>
-      {agent.username && <p className="text-xs text-muted-foreground">@{agent.username}</p>}
+    <div className="group rounded-2xl border border-border bg-white p-5 text-center shadow-sm transition hover:border-primary/40 hover:shadow-md">
+      <button
+        type="button"
+        onClick={onView}
+        className="block w-full cursor-pointer text-center focus:outline-none"
+        aria-label={`View ${agent.full_name || "agent"}`}
+      >
+        <div className="mx-auto h-20 w-20 overflow-hidden rounded-full bg-primary/10">
+          {agent.avatar_url ? (
+            <img src={agent.avatar_url} alt={agent.full_name ?? ""} className="h-full w-full object-cover" />
+          ) : (
+            <div className="grid h-full w-full place-items-center font-semibold text-primary">{initials}</div>
+          )}
+        </div>
+        <p className="mt-3 font-display text-base font-semibold group-hover:text-primary">{agent.full_name || "Unnamed agent"}</p>
+        {agent.username && <p className="text-xs text-muted-foreground">@{agent.username}</p>}
+      </button>
 
       <div className="mt-3 space-y-1.5 text-left text-xs text-muted-foreground">
         {agent.email && (
@@ -109,6 +116,12 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
 
       <div className="mt-4 flex gap-2 border-t border-border pt-3">
         <button
+          onClick={onView}
+          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-muted"
+        >
+          <Eye className="h-3 w-3" /> View
+        </button>
+        <button
           onClick={onEdit}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-muted"
         >
@@ -117,16 +130,99 @@ function AgentCard({ agent, onEdit }: { agent: Agent; onEdit: () => void }) {
         <button
           disabled={mut.isPending}
           onClick={() => {
-            if (confirm(`Remove agent “${agent.full_name || agent.email}”? This cannot be undone.`)) mut.mutate();
+            if (confirm(`Remove agent "${agent.full_name || agent.email}"? This cannot be undone.`)) mut.mutate();
           }}
-          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-100 disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-100 disabled:opacity-60"
+          aria-label="Remove agent"
         >
-          <Trash2 className="h-3 w-3" /> {mut.isPending ? "Removing…" : "Remove"}
+          <Trash2 className="h-3 w-3" />
         </button>
       </div>
     </div>
   );
 }
+
+function ViewAgentDialog({ agent, onClose, onEdit }: { agent: Agent; onClose: () => void; onEdit: () => void }) {
+  const initials = (agent.full_name || agent.email || "A")
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+      >
+        <div className="relative bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-6 text-center">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/80 text-muted-foreground hover:bg-white hover:text-foreground"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-primary/10 shadow">
+            {agent.avatar_url ? (
+              <img src={agent.avatar_url} alt={agent.full_name ?? ""} className="h-full w-full object-cover" />
+            ) : (
+              <div className="grid h-full w-full place-items-center text-xl font-semibold text-primary">{initials}</div>
+            )}
+          </div>
+          <h3 className="mt-3 font-display text-lg font-semibold">{agent.full_name || "Unnamed agent"}</h3>
+          {agent.username && <p className="text-xs text-muted-foreground">@{agent.username}</p>}
+          <span className="mt-2 inline-flex rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">Agent</span>
+        </div>
+
+        <div className="space-y-3 px-6 py-5 text-sm">
+          <Detail icon={<Mail className="h-4 w-4" />} label="Email" value={agent.email} />
+          <Detail icon={<Phone className="h-4 w-4" />} label="Phone" value={agent.phone} />
+          <Detail icon={<AtSign className="h-4 w-4" />} label="Username" value={agent.username} />
+          <Detail icon={<UserCircle2 className="h-4 w-4" />} label="Agent ID" value={agent.id} mono />
+        </div>
+
+        <div className="flex flex-col-reverse gap-2 border-t border-border bg-muted/30 p-4 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium hover:bg-muted"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Detail({ icon, label, value, mono }: { icon: React.ReactNode; label: string; value: string | null; mono?: boolean }) {
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/20 px-3 py-2">
+      <div className="mt-0.5 text-muted-foreground">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+        <p className={`mt-0.5 break-words text-sm ${mono ? "font-mono text-xs" : ""}`}>
+          {value || <span className="text-muted-foreground">—</span>}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
 
 function EditAgentDialog({ agent, onClose }: { agent: Agent; onClose: () => void }) {
   const updateFn = useServerFn(updateAgent);
