@@ -343,6 +343,38 @@ export function ChatWidget() {
   );
 }
 
+function ChatHeaderAvatar({ agent }: { agent: PublicAgent | null }) {
+  if (agent?.avatar_url) {
+    return (
+      <img
+        src={agent.avatar_url}
+        alt={agent.full_name || "Agent"}
+        className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white/40"
+      />
+    );
+  }
+  if (agent) {
+    const initials = (agent.full_name || agent.username || "A")
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+    return (
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 text-xs font-semibold ring-2 ring-white/40">
+        {initials}
+      </span>
+    );
+  }
+  return (
+    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 ring-2 ring-white/40">
+      <Home className="h-5 w-5" />
+    </span>
+  );
+}
+
+
 function MessageBubble({ m }: { m: Message }) {
   const isCustomer = m.sender_role === "customer";
   return (
