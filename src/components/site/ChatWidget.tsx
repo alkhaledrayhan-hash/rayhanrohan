@@ -52,6 +52,21 @@ export function ChatWidget() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [body, setBody] = useState("");
+  // "admin" or agent uuid
+  const [recipient, setRecipient] = useState<string>("admin");
+
+  const listAgentsFn = useServerFn(listPublicAgents);
+  const { data: agentsData } = useQuery({
+    queryKey: ["public-agents-chat"],
+    queryFn: () => listAgentsFn({}),
+    staleTime: 5 * 60_000,
+  });
+  const agents = useMemo<PublicAgent[]>(() => agentsData?.agents ?? [], [agentsData]);
+  const selectedAgent = useMemo(
+    () => (recipient === "admin" ? null : agents.find((a) => a.id === recipient) ?? null),
+    [recipient, agents],
+  );
+
 
   const createFn = useServerFn(createConversation);
   const fetchFn = useServerFn(fetchGuestThread);
