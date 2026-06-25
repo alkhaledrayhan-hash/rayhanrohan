@@ -13,7 +13,7 @@ import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=
 const PAGE_SIZE = 9;
 
 const searchSchema = z.object({
-  status: z.enum(["rent", "sale"]).optional(),
+  status: z.enum(["rent", "sale", "all"]).optional(),
   location: z.string().optional(),
   type: z.string().optional(),
   beds: z.coerce.number().optional(),
