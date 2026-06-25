@@ -3,6 +3,8 @@ import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight, BadgePercent, Clock, Flame, Bed, Bath, Maximize2 } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
+import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
+
 import {
   Carousel,
   CarouselContent,
@@ -107,15 +109,19 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
                         {tag}
                       </span>
 
-                      <div className="absolute inset-x-4 bottom-3">
-                        <p className="text-[10px] uppercase tracking-[0.25em] text-white/80">
-                          For {property.status} · {property.location}
-                        </p>
-                        <p className="font-display text-lg font-semibold text-white drop-shadow">
-                          {property.title}
-                        </p>
+                      <div className="absolute inset-x-4 bottom-3 flex items-end justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] uppercase tracking-[0.25em] text-white/80">
+                            For {property.status} · {property.location}
+                          </p>
+                          <p className="truncate font-display text-lg font-semibold text-white drop-shadow">
+                            {property.title}
+                          </p>
+                        </div>
+                        <PropertyAgentAvatar agentId={property.assignedAgentId} size={40} />
                       </div>
                     </div>
+
 
                     <div className="flex flex-1 flex-col gap-4 p-5">
                       <div className="flex items-center gap-5 text-sm text-muted-foreground">

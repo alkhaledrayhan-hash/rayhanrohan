@@ -28,7 +28,9 @@ export interface Property {
   offerDiscount?: number;
   offerTag?: string;
   offerEnds?: string;
+  assignedAgentId?: string | null;
 }
+
 
 function mapRow(r: any): Property {
   const gallery = Array.isArray(r.gallery) ? r.gallery : [];
@@ -55,10 +57,12 @@ function mapRow(r: any): Property {
     offerDiscount: Number(r.offer_discount) || 0,
     offerTag: r.offer_tag || "",
     offerEnds: r.offer_ends || "",
+    assignedAgentId: r.assigned_agent_id ?? null,
   };
 }
 
-const PROPERTY_COLS = "slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,is_offer,offer_discount,offer_tag,offer_ends,created_at";
+const PROPERTY_COLS = "slug,title,location,address,type,status,price,bedrooms,bathrooms,rooms,sqft,year_built,image,gallery,description,features,verified,is_offer,offer_discount,offer_tag,offer_ends,assigned_agent_id,created_at";
+
 
 async function fetchProperties(): Promise<Property[]> {
   const { data, error } = await supabase
