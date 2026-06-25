@@ -247,7 +247,15 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
-                  <td className="px-5 py-3 font-medium">{r.title}</td>
+                  <td className="px-5 py-3 font-medium">
+                    <button
+                      type="button"
+                      onClick={() => setViewing(r)}
+                      className="text-left text-foreground hover:text-primary hover:underline"
+                    >
+                      {r.title}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-muted-foreground">{r.location}</td>
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
