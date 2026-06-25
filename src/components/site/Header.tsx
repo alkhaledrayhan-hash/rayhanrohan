@@ -154,18 +154,11 @@ export function Header() {
                 </p>
               </div>
               <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
-                <SheetLink to="/" onSelect={() => setOpen(false)}>Home</SheetLink>
-                <SheetLink to="/properties" search={{ status: "rent" }} onSelect={() => setOpen(false)}>
-                  Properties for Rent
-                </SheetLink>
-                <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
-                  Properties for Sale
-                </SheetLink>
-                <SheetLink to="/offers" onSelect={() => setOpen(false)}>Special Offers</SheetLink>
-                <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
-                <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
-                <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
-                <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
+                {headerMenu.map((item, i) => (
+                  <SheetLink key={i} to={item.to} search={item.search} onSelect={() => setOpen(false)}>
+                    {item.label}
+                  </SheetLink>
+                ))}
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
                 {isAuthed ? (
