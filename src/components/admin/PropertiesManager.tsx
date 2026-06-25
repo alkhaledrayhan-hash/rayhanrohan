@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock } from "lucide-react";
+import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock, Eye, MapPin, Bed, Bath, Maximize2, Calendar, BadgeCheck, Tag } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 
 type PropertyRow = {
@@ -44,6 +44,7 @@ const empty: Partial<PropertyRow> = {
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<PropertyRow> | null>(null);
+  const [viewing, setViewing] = useState<PropertyRow | null>(null);
   const [search, setSearch] = useState("");
   const [fStatus, setFStatus] = useState<"all" | "rent" | "sale">("all");
   const [fApproval, setFApproval] = useState<"all" | "approved" | "pending" | "rejected">("all");
@@ -246,7 +247,15 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
-                  <td className="px-5 py-3 font-medium">{r.title}</td>
+                  <td className="px-5 py-3 font-medium">
+                    <button
+                      type="button"
+                      onClick={() => setViewing(r)}
+                      className="text-left text-foreground hover:text-primary hover:underline"
+                    >
+                      {r.title}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-muted-foreground">{r.location}</td>
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
@@ -305,6 +314,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
+                      <button onClick={() => setViewing(r)} title="View" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Eye className="h-4 w-4" /></button>
                       <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
                       {isAdmin && (
                         <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
@@ -317,6 +327,104 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           </table>
         </div>
       </div>
+
+      {viewing && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={() => setViewing(null)}>
+          <div className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="relative">
+              {viewing.image ? (
+                <img src={viewing.image} alt={viewing.title} className="aspect-[16/8] w-full object-cover" />
+              ) : (
+                <div className="aspect-[16/8] w-full bg-muted" />
+              )}
+              <button
+                onClick={() => setViewing(null)}
+                aria-label="Close"
+                className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-foreground shadow hover:bg-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <span className="absolute left-3 top-3 rounded-md bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow">
+                For {viewing.status}
+              </span>
+              {viewing.is_offer && (
+                <span className="absolute left-3 bottom-3 inline-flex items-center gap-1 rounded-md bg-amber-500 px-2.5 py-1 text-[11px] font-semibold text-white shadow">
+                  <Tag className="h-3 w-3" /> {viewing.offer_tag || "Special offer"}{viewing.offer_discount ? ` · ${viewing.offer_discount}% OFF` : ""}
+                </span>
+              )}
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-display text-xl font-semibold text-foreground">{viewing.title}</h3>
+                    {viewing.verified && <BadgeCheck className="h-5 w-5 text-amber-500" />}
+                  </div>
+                  <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" /> {viewing.location}{viewing.address ? ` · ${viewing.address}` : ""}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="font-display text-2xl font-semibold text-primary">QAR {Number(viewing.price).toLocaleString()}</div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">{viewing.type}</div>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                <Stat icon={<Bed className="h-4 w-4" />} label="Beds" value={viewing.bedrooms} />
+                <Stat icon={<Bath className="h-4 w-4" />} label="Baths" value={viewing.bathrooms} />
+                <Stat icon={<Maximize2 className="h-4 w-4" />} label="Area" value={`${Number(viewing.sqft).toLocaleString()} sqft`} />
+                <Stat icon={<Calendar className="h-4 w-4" />} label="Built" value={viewing.year_built || "—"} />
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
+                <InfoRow label="Approval" value={viewing.listing_status} />
+                <InfoRow label="Agent" value={agentName(viewing.assigned_agent_id)} />
+                <InfoRow label="Slug" value={viewing.slug} />
+              </div>
+
+              {viewing.description && (
+                <div className="mt-5">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</h4>
+                  <p className="mt-1.5 whitespace-pre-line text-sm text-foreground/90">{viewing.description}</p>
+                </div>
+              )}
+
+              {viewing.features?.length > 0 && (
+                <div className="mt-5">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Features</h4>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {viewing.features.map((f, i) => (
+                      <span key={i} className="rounded-md bg-secondary px-2 py-1 text-xs">{f}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {viewing.gallery?.length > 0 && (
+                <div className="mt-5">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Gallery</h4>
+                  <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                    {viewing.gallery.map((g, i) => (
+                      <img key={i} src={g} alt={`${viewing.title} ${i + 1}`} className="aspect-square w-full rounded-md object-cover" />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end gap-2">
+                <button onClick={() => setViewing(null)} className="rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-secondary">Close</button>
+                <button
+                  onClick={() => { setEditing(viewing); setViewing(null); }}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+                >
+                  <Pencil className="h-3.5 w-3.5" /> Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editing && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={() => setEditing(null)}>
@@ -505,6 +613,26 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
       </div>
       <input ref={ref} type="file" accept="image/*" multiple className="hidden" onChange={(e) => onFiles(e.target.files)} />
       <p className="text-[11px] text-muted-foreground">You can select multiple images. Stored inline (downscaled).</p>
+    </div>
+  );
+}
+
+function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: React.ReactNode }) {
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
+      <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {icon} {label}
+      </div>
+      <div className="mt-1 text-sm font-medium text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="rounded-md bg-secondary/50 px-3 py-2">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-0.5 truncate text-foreground">{value}</div>
     </div>
   );
 }
