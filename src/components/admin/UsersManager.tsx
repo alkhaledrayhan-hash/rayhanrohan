@@ -41,8 +41,10 @@ export function UsersManager() {
   const [q, setQ] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | Role>("all");
   const [editing, setEditing] = useState<Row | null>(null);
+  const [viewing, setViewing] = useState<Row | null>(null);
   const [creating, setCreating] = useState(false);
   const [resetting, setResetting] = useState<Row | null>(null);
+
 
   const rows = (data?.users ?? []) as Row[];
   const filtered = useMemo(() => {
