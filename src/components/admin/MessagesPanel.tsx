@@ -91,19 +91,39 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
 
   const filtered = useMemo(() => {
     if (!convos) return [];
+    let list = convos;
+    if (isAdmin && agentFilter !== "all") {
+      list = list.filter((c) =>
+        agentFilter === "unassigned"
+          ? !c.assigned_agent_id
+          : c.assigned_agent_id === agentFilter,
+      );
+    }
     const s = search.trim().toLowerCase();
-    if (!s) return convos;
-    return convos.filter(
+    if (!s) return list;
+    return list.filter(
       (c) =>
         c.customer_name.toLowerCase().includes(s) ||
         c.customer_email.toLowerCase().includes(s) ||
         (c.subject ?? "").toLowerCase().includes(s),
     );
-  }, [convos, search]);
+  }, [convos, search, isAdmin, agentFilter]);
 
   useEffect(() => {
     if (!selectedId && filtered.length > 0) setSelectedId(filtered[0].id);
   }, [filtered, selectedId]);
+
+  // counts per agent for the dropdown badges
+  const agentCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    let unassigned = 0;
+    for (const c of convos ?? []) {
+      if (!c.assigned_agent_id) unassigned += 1;
+      else map.set(c.assigned_agent_id, (map.get(c.assigned_agent_id) ?? 0) + 1);
+    }
+    return { map, unassigned, total: convos?.length ?? 0 };
+  }, [convos]);
+
 
   return (
     <div className="grid h-[calc(100vh-220px)] min-h-[500px] grid-cols-1 gap-0 overflow-hidden rounded-xl border border-border bg-background md:grid-cols-[320px_1fr]">
