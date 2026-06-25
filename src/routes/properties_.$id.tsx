@@ -173,7 +173,10 @@ function PropertyDetail() {
                 />
               </button>
             ))}
+          </div>
         </div>
+
+
 
         {property.isOffer && property.offerEnds ? (
           <OfferCountdown
