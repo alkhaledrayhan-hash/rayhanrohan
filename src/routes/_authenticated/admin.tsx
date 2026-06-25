@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AreaChart,
@@ -299,17 +299,14 @@ function AdminDashboard() {
               <LayoutDashboard className="h-4 w-4" /> <span className="hidden sm:inline">User Dashboard</span>
             </Link>
             <NotificationsBell onNavigate={(s) => goSection(s)} />
-            <div className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-3">
-              <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                {initials}
-              </div>
-              <div className="hidden flex-col leading-tight sm:flex">
-                <span className="text-xs font-semibold">{profile?.full_name || "Account"}</span>
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {roleLabel}
-                </span>
-              </div>
-            </div>
+            <AccountMenu
+              initials={initials}
+              fullName={profile?.full_name || "Account"}
+              roleLabel={roleLabel}
+              onSettings={() => goSection("settings")}
+              onSignOut={handleSignOut}
+            />
+
           </div>
         </header>
 
@@ -348,6 +345,94 @@ function AdminDashboard() {
 function sectionTitle(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
+
+function AccountMenu({
+  initials,
+  fullName,
+  roleLabel,
+  onSettings,
+  onSignOut,
+}: {
+  initials: string;
+  fullName: string;
+  roleLabel: string;
+  onSettings: () => void;
+  onSignOut: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-2 transition hover:bg-muted sm:pr-3"
+      >
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+          {initials}
+        </span>
+        <span className="hidden flex-col text-left leading-tight sm:flex">
+          <span className="text-xs font-semibold">{fullName}</span>
+          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            {roleLabel}
+          </span>
+        </span>
+        <ChevronDown className={`hidden h-3.5 w-3.5 text-muted-foreground transition-transform sm:block ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-white p-1 shadow-lg"
+        >
+          <div className="border-b border-border px-3 py-2.5">
+            <p className="truncate text-sm font-semibold">{fullName}</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{roleLabel}</p>
+          </div>
+          <Link
+            to="/dashboard"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <LayoutDashboard className="h-4 w-4" /> Profile
+          </Link>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onSettings(); }}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <Settings className="h-4 w-4" /> Settings
+          </button>
+          <div className="my-1 border-t border-border" />
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onSignOut(); }}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-rose-600 hover:bg-rose-50"
+          >
+            <LogOut className="h-4 w-4" /> Sign out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function NavGroup({ label }: { label: string }) {
   return (
