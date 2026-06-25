@@ -14,7 +14,7 @@ const createSchema = z.object({
   full_name: z.string().trim().min(1).max(100),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/, "Username must be 3-30 chars, letters/numbers/_"),
   password: z.string().min(8).max(72),
   gender: z.string().max(20).optional().default(""),
   city: z.string().max(80).optional().default(""),
@@ -27,7 +27,7 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   full_name: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/, "Username must be 3-30 chars, letters/numbers/_"),
   avatar_url: avatarSchema,
 });
 
@@ -52,7 +52,7 @@ export const createAgent = createServerFn({ method: "POST" })
       email_confirm: true,
       user_metadata: {
         full_name: data.full_name,
-        username: data.username || null,
+        username: data.username,
       },
     });
     if (createErr || !created.user) throw new Error(createErr?.message || "Failed to create user");
@@ -63,7 +63,7 @@ export const createAgent = createServerFn({ method: "POST" })
       full_name: data.full_name,
       phone: data.phone || null,
       avatar_url: data.avatar_url || null,
-      username: data.username || null,
+      username: data.username,
     }).eq("id", newId);
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", newId);
@@ -104,7 +104,7 @@ export const updateAgent = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("profiles").update({
       full_name: data.full_name,
       phone: data.phone || null,
-      username: data.username || null,
+      username: data.username,
       avatar_url: data.avatar_url || null,
     }).eq("id", data.id);
     if (error) throw new Error(error.message);

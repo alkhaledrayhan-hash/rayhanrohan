@@ -515,15 +515,15 @@ function ProfileSection({
     if (!userId) return;
     if (fullName.trim().length === 0 || fullName.length > 100)
       return toast.error("Please enter a valid name (1–100 chars).");
-    if (username && !/^[a-zA-Z0-9_]{3,30}$/.test(username))
-      return toast.error("Username must be 3–30 chars, letters/numbers/_ only.");
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username.trim()))
+      return toast.error("Username is required — 3–30 chars, letters/numbers/_ only.");
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
       .update({
         full_name: fullName.trim() || null,
         phone: phone.trim() || null,
-        username: username.trim() || null,
+        username: username.trim(),
         avatar_url: avatarUrl.trim() || null,
       })
       .eq("id", userId);
@@ -562,8 +562,11 @@ function ProfileSection({
               className={fieldCls}
             />
           </Field>
-          <Field label="Username">
+          <Field label="Username *">
             <input
+              required
+              pattern="^[a-zA-Z0-9_]{3,30}$"
+              title="3–30 chars, letters/numbers/_"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               maxLength={30}

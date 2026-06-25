@@ -42,15 +42,15 @@ export function AgentSettingsPanel() {
     e.preventDefault();
     if (!user?.id) return;
     if (!fullName.trim()) return toast.error("Please enter your name.");
-    if (username && !/^[a-zA-Z0-9_]{3,30}$/.test(username))
-      return toast.error("Username must be 3–30 chars, letters/numbers/_ only.");
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username.trim()))
+      return toast.error("Username is required — 3–30 chars, letters/numbers/_ only.");
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
       .update({
         full_name: fullName.trim() || null,
         phone: phone.trim() || null,
-        username: username.trim() || null,
+        username: username.trim(),
         avatar_url: avatarUrl.trim() || null,
       })
       .eq("id", user.id);
@@ -76,8 +76,8 @@ export function AgentSettingsPanel() {
           <Field label="Phone">
             <input value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} className={cls} />
           </Field>
-          <Field label="Username">
-            <input value={username} onChange={(e) => setUsername(e.target.value)} maxLength={30} placeholder="3–30 chars" className={cls} />
+          <Field label="Username *">
+            <input required pattern="^[a-zA-Z0-9_]{3,30}$" title="3–30 chars, letters/numbers/_" value={username} onChange={(e) => setUsername(e.target.value)} maxLength={30} placeholder="3–30 chars" className={cls} />
           </Field>
           <Field label="Avatar URL">
             <input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} maxLength={500} placeholder="https://…" className={cls} />
