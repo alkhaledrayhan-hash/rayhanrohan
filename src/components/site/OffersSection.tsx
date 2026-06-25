@@ -3,6 +3,8 @@ import { useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight, BadgePercent, Clock, Flame, Bed, Bath, Maximize2 } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
+import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
+
 import {
   Carousel,
   CarouselContent,
