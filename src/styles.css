@@ -117,8 +117,8 @@
   p, span, a, h1, h2, h3, h4, h5, h6, li, td, th {
     overflow-wrap: anywhere;
   }
-  /* Always render media responsively by default */
-  img, video, canvas, svg, iframe {
+  /* Always render images responsively by default */
+  img, video {
     max-width: 100%;
     height: auto;
   }
