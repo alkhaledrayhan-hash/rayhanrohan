@@ -28,7 +28,9 @@ export interface Property {
   offerDiscount?: number;
   offerTag?: string;
   offerEnds?: string;
+  assignedAgentId?: string | null;
 }
+
 
 function mapRow(r: any): Property {
   const gallery = Array.isArray(r.gallery) ? r.gallery : [];
