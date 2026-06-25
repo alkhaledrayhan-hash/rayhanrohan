@@ -338,6 +338,43 @@ export function SettingsPanel() {
             <p className="text-xs text-muted-foreground">Background color and optional image shown on Sign in, Sign up, Forgot password, and Reset password screens.</p>
           </div>
 
+          <Field icon={Type} label="Brand heading" hint="Shown under the logo. Leave empty to use the site title.">
+            <input
+              value={form.auth_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_heading: e.target.value })}
+              placeholder="e.g. Ayesha Maison Qatar"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Subheading" hint="Optional small text under the brand heading.">
+            <input
+              value={form.auth_subheading || ""}
+              onChange={(e) => setForm({ ...form, auth_subheading: e.target.value })}
+              placeholder="Welcome to your luxury living portal"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Sign in heading">
+            <input
+              value={form.auth_signin_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_signin_heading: e.target.value })}
+              placeholder="Welcome back"
+              className={inputCls}
+            />
+          </Field>
+
+          <Field icon={Type} label="Sign up heading">
+            <input
+              value={form.auth_signup_heading || ""}
+              onChange={(e) => setForm({ ...form, auth_signup_heading: e.target.value })}
+              placeholder="Create your account"
+              className={inputCls}
+            />
+          </Field>
+
+
           <Field icon={Palette} label="Background color">
             <div className="flex items-center gap-3">
               <input
