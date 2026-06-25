@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { MessageCircle, X, Send, Loader2, Home, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   createConversation,
   fetchGuestThread,
   replyAsGuest,
 } from "@/lib/messages.functions";
+import { listPublicAgents, type PublicAgent } from "@/lib/public-agents.functions";
+
 
 const STORAGE_KEY = "maison_chat_thread";
 
@@ -49,6 +52,21 @@ export function ChatWidget() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [body, setBody] = useState("");
+  // "admin" or agent uuid
+  const [recipient, setRecipient] = useState<string>("admin");
+
+  const listAgentsFn = useServerFn(listPublicAgents);
+  const { data: agentsData } = useQuery({
+    queryKey: ["public-agents-chat"],
+    queryFn: () => listAgentsFn({}),
+    staleTime: 5 * 60_000,
+  });
+  const agents = useMemo<PublicAgent[]>(() => agentsData?.agents ?? [], [agentsData]);
+  const selectedAgent = useMemo(
+    () => (recipient === "admin" ? null : agents.find((a) => a.id === recipient) ?? null),
+    [recipient, agents],
+  );
+
 
   const createFn = useServerFn(createConversation);
   const fetchFn = useServerFn(fetchGuestThread);
@@ -100,8 +118,15 @@ export function ChatWidget() {
     setSending(true);
     try {
       const res = await createFn({
-        data: { name: name.trim(), email: email.trim(), body: body.trim() },
+        data: {
+          name: name.trim(),
+          email: email.trim(),
+          body: body.trim(),
+          agent_id: recipient === "admin" ? null : recipient,
+          subject: recipient === "admin" ? "Support request" : null,
+        },
       });
+
       const next = { id: res.id, token: res.token };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setStored(next);
@@ -153,11 +178,20 @@ export function ChatWidget() {
         <div className="fixed bottom-24 right-5 z-50 flex h-[560px] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
-            <div className="flex flex-col leading-tight">
-              <span className="font-display text-sm font-semibold">Chat With Our Team</span>
-              <span className="text-[11px] opacity-80">
-                {stored ? "We'll reply here" : "Send us a message"}
-              </span>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <ChatHeaderAvatar agent={selectedAgent} />
+              <div className="flex min-w-0 flex-col leading-tight">
+                <span className="truncate font-display text-sm font-semibold">
+                  {selectedAgent ? selectedAgent.full_name || selectedAgent.username || "Agent" : "Chat With Our Team"}
+                </span>
+                <span className="truncate text-[11px] opacity-80">
+                  {stored
+                    ? "We'll reply here"
+                    : selectedAgent
+                    ? "Direct message · Agent"
+                    : "Direct message · Support"}
+                </span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {stored && (
@@ -179,12 +213,54 @@ export function ChatWidget() {
           </div>
 
 
+
           {/* Body */}
           {!stored ? (
-            <form onSubmit={handleStart} className="flex flex-1 flex-col gap-3 p-4">
+            <form onSubmit={handleStart} className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
               <p className="text-xs text-muted-foreground">
-                Leave your details and an agent will get back to you.
+                Choose who you'd like to chat with and leave your details.
               </p>
+              <div>
+                <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Chat with
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRecipient("admin")}
+                    className={`flex items-center gap-2 rounded-md border px-2.5 py-2 text-left text-xs transition ${
+                      recipient === "admin"
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/40"
+                        : "border-input hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium text-foreground">Support</span>
+                      <span className="block truncate text-[10px] text-muted-foreground">Admin team</span>
+                    </span>
+                  </button>
+                  <select
+                    value={recipient === "admin" ? "" : recipient}
+                    onChange={(e) => setRecipient(e.target.value || "admin")}
+                    className={`rounded-md border bg-background px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary ${
+                      recipient !== "admin"
+                        ? "border-primary ring-1 ring-primary/40"
+                        : "border-input"
+                    }`}
+                  >
+                    <option value="">Choose an agent…</option>
+                    {agents.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.full_name || a.username || "Agent"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -266,6 +342,38 @@ export function ChatWidget() {
     </>
   );
 }
+
+function ChatHeaderAvatar({ agent }: { agent: PublicAgent | null }) {
+  if (agent?.avatar_url) {
+    return (
+      <img
+        src={agent.avatar_url}
+        alt={agent.full_name || "Agent"}
+        className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white/40"
+      />
+    );
+  }
+  if (agent) {
+    const initials = (agent.full_name || agent.username || "A")
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+    return (
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 text-xs font-semibold ring-2 ring-white/40">
+        {initials}
+      </span>
+    );
+  }
+  return (
+    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/15 ring-2 ring-white/40">
+      <Home className="h-5 w-5" />
+    </span>
+  );
+}
+
 
 function MessageBubble({ m }: { m: Message }) {
   const isCustomer = m.sender_role === "customer";
