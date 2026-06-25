@@ -139,7 +139,26 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
               className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
+          {isAdmin && (
+            <select
+              value={agentFilter}
+              onChange={(e) => {
+                setAgentFilter(e.target.value);
+                setSelectedId(null);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="all">All agents ({agentCounts.total})</option>
+              <option value="unassigned">Unassigned · Support ({agentCounts.unassigned})</option>
+              {(agents ?? []).map((a) => (
+                <option key={a.id} value={a.id}>
+                  {(a.full_name || a.email)} ({agentCounts.map.get(a.id) ?? 0})
+                </option>
+              ))}
+            </select>
+          )}
         </div>
+
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="grid h-full place-items-center text-xs text-muted-foreground">
