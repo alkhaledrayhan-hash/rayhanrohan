@@ -124,6 +124,19 @@ export function SettingsPanel() {
     }
   }
 
+  async function handleLogoFile(file: File) {
+    try {
+      setUploadingLogo(true);
+      const dataUrl = await fileToDataUrl(file, { maxSize: 512, quality: 0.9, mime: "image/png" });
+      setForm((f) => ({ ...f, site_logo_url: dataUrl }));
+      toast.success("Logo ready — click Save to apply.");
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+    } finally {
+      setUploadingLogo(false);
+    }
+  }
+
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   const bgColor = form.auth_bg_color || "#1a0a0f";
