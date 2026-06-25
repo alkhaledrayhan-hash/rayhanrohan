@@ -82,12 +82,11 @@ export function Header() {
               : "border-white/15 bg-white/10 text-white/85"
           }`}
         >
-          <NavPill to="/" scrolled={scrolled}>Home</NavPill>
-          <PropertiesDropdown scrolled={scrolled} />
-          
-          <NavPill to="/news" scrolled={scrolled}>News</NavPill>
-          <NavPill to="/about" scrolled={scrolled}>About</NavPill>
-          <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
+          {headerMenu.map((item, i) => (
+            <NavPill key={i} to={item.to} search={item.search} scrolled={scrolled}>
+              {item.label}
+            </NavPill>
+          ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthed ? (
