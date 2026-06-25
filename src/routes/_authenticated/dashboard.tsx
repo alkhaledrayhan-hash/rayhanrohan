@@ -562,8 +562,11 @@ function ProfileSection({
               className={fieldCls}
             />
           </Field>
-          <Field label="Username">
+          <Field label="Username *">
             <input
+              required
+              pattern="^[a-zA-Z0-9_]{3,30}$"
+              title="3–30 chars, letters/numbers/_"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               maxLength={30}
