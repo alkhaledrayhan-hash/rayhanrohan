@@ -118,8 +118,15 @@ export function ChatWidget() {
     setSending(true);
     try {
       const res = await createFn({
-        data: { name: name.trim(), email: email.trim(), body: body.trim() },
+        data: {
+          name: name.trim(),
+          email: email.trim(),
+          body: body.trim(),
+          agent_id: recipient === "admin" ? null : recipient,
+          subject: recipient === "admin" ? "Support request" : null,
+        },
       });
+
       const next = { id: res.id, token: res.token };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setStored(next);
