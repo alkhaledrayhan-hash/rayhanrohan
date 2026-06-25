@@ -122,7 +122,8 @@ export const updateUser = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("profiles").update({
       full_name: data.full_name,
       phone: data.phone || null,
-      username: data.username || null,
+      username: data.username,
+
     }).eq("id", data.id);
     if (error) throw new Error(error.message);
 
