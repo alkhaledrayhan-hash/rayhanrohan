@@ -173,8 +173,17 @@ function PropertyDetail() {
                 />
               </button>
             ))}
-          </div>
         </div>
+
+        {property.isOffer && property.offerEnds ? (
+          <OfferCountdown
+            endsAt={property.offerEnds}
+            discount={property.offerDiscount}
+            tag={property.offerTag}
+          />
+        ) : null}
+
+
 
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
