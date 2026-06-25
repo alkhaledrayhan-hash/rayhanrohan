@@ -49,9 +49,17 @@ export function Header() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex min-w-0 items-center gap-2">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
-            <Home className="h-4 w-4" />
-          </span>
+          {settings.site_logo_url ? (
+            <img
+              src={settings.site_logo_url}
+              alt={settings.site_title}
+              className="h-9 w-9 shrink-0 rounded-md object-cover shadow-[var(--shadow-soft)]"
+            />
+          ) : (
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+              <Home className="h-4 w-4" />
+            </span>
+          )}
           <span className="flex min-w-0 flex-col leading-tight">
             <span
               className={`truncate font-display text-lg font-semibold transition-colors ${
