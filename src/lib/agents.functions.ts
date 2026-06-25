@@ -27,7 +27,7 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   full_name: z.string().trim().min(1).max(100),
   phone: z.string().trim().max(40).optional().default(""),
-  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/).optional().or(z.literal("")),
+  username: z.string().trim().regex(/^[a-zA-Z0-9_]{3,30}$/, "Username must be 3-30 chars, letters/numbers/_"),
   avatar_url: avatarSchema,
 });
 
