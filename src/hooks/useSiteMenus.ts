@@ -12,6 +12,20 @@ export type FooterMenuGroup = {
   items: { label: string; to: string }[];
 };
 
+export type HeaderCta = {
+  label: string;
+  to: string;
+  search?: Record<string, string>;
+  enabled: boolean;
+};
+
+export const DEFAULT_HEADER_CTA: HeaderCta = {
+  label: "Browse Listings",
+  to: "/properties",
+  search: { status: "rent" },
+  enabled: true,
+};
+
 export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
   { label: "Home", to: "/" },
   { label: "Properties", to: "/properties", search: { status: "all" } },
@@ -23,6 +37,7 @@ export const DEFAULT_HEADER_MENU: HeaderMenuItem[] = [
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];
+
 
 export const DEFAULT_FOOTER_MENU: FooterMenuGroup[] = [
   {
@@ -61,16 +76,18 @@ export function useSiteMenus() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json"]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json"]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
       return {
         header: safeParse<HeaderMenuItem[]>(map.header_menu_json, DEFAULT_HEADER_MENU),
         footer: safeParse<FooterMenuGroup[]>(map.footer_menu_json, DEFAULT_FOOTER_MENU),
+        cta: safeParse<HeaderCta>(map.header_cta_json, DEFAULT_HEADER_CTA),
       };
     },
     staleTime: 60_000,
   });
-  return data || { header: DEFAULT_HEADER_MENU, footer: DEFAULT_FOOTER_MENU };
+  return data || { header: DEFAULT_HEADER_MENU, footer: DEFAULT_FOOTER_MENU, cta: DEFAULT_HEADER_CTA };
 }
+

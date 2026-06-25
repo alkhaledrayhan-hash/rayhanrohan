@@ -12,7 +12,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
-  const { header: headerMenu } = useSiteMenus();
+  const { header: headerMenu, cta } = useSiteMenus();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -119,13 +119,15 @@ export function Header() {
               Sign In
             </Link>
           )}
-          <Link
-            to="/properties"
-            search={{ status: "rent" }}
-            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
-          >
-            Browse Listings
-          </Link>
+          {cta.enabled && cta.label && cta.to && (
+            <Link
+              to={cta.to as never}
+              search={cta.search as never}
+              className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+            >
+              {cta.label}
+            </Link>
+          )}
         </div>
 
         {/* Mobile + tablet menu */}
@@ -187,14 +189,16 @@ export function Header() {
                     Sign In
                   </Link>
                 )}
-                <Link
-                  to="/properties"
-                  search={{ status: "rent" }}
-                  onClick={() => setOpen(false)}
-                  className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
-                >
-                  Browse Listings
-                </Link>
+                {cta.enabled && cta.label && cta.to && (
+                  <Link
+                    to={cta.to as never}
+                    search={cta.search as never}
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+                  >
+                    {cta.label}
+                  </Link>
+                )}
               </div>
             </div>
           </SheetContent>
