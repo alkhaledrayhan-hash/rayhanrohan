@@ -64,7 +64,8 @@ function PropertiesPage() {
   // Stable signature for memo deps — avoids JSON.stringify on every render.
   const searchKey = `${status}|${search.location ?? ""}|${search.type ?? ""}|${search.beds ?? ""}|${search.baths ?? ""}|${search.minPrice ?? ""}|${search.maxPrice ?? ""}|${search.minArea ?? ""}|${search.maxArea ?? ""}|${search.q ?? ""}|${search.sort ?? ""}`;
   const items = useMemo(
-    () => filterProperties(allProperties, { ...search, status }),
+    () => filterProperties(allProperties, { ...search, status: status === "all" ? undefined : status }),
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [allProperties, searchKey],
   );
