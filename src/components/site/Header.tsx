@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BadgePercent, ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
+import { Home, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteMenus } from "@/hooks/useSiteMenus";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
