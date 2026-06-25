@@ -5,6 +5,8 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Pagination } from "@/components/site/Pagination";
 import { useOfferProperties, formatPrice, type Property } from "@/lib/properties";
+import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
+
 import offersCover from "@/assets/offers-cover.jpg";
 
 const PAGE_SIZE = 9;
