@@ -102,11 +102,25 @@
   }
   html {
     font-family: var(--font-sans);
+    /* Bulletproof horizontal scroll prevention across all breakpoints */
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+    min-width: 0;
+  }
+  /* Prevent long unbroken strings (URLs, IDs) from blowing out layouts on small screens */
+  p, span, a, h1, h2, h3, h4, h5, h6, li, td, th {
+    overflow-wrap: anywhere;
+  }
+  /* Always render media responsively by default */
+  img, video, canvas, svg, iframe {
+    max-width: 100%;
+    height: auto;
   }
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
