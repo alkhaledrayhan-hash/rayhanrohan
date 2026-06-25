@@ -52,7 +52,7 @@ export const createAgent = createServerFn({ method: "POST" })
       email_confirm: true,
       user_metadata: {
         full_name: data.full_name,
-        username: data.username || null,
+        username: data.username,
       },
     });
     if (createErr || !created.user) throw new Error(createErr?.message || "Failed to create user");
