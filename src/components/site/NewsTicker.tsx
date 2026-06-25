@@ -19,14 +19,15 @@ type TickerItem = { slug: string | null; title: string };
 export function NewsTicker() {
   const { data } = useQuery({
     queryKey: ["public-posts"],
-    queryFn: async () => (await listPublishedPosts()) as any[],
+    queryFn: async () => (await listPublishedPosts()) as { posts: any[] },
     staleTime: 60_000,
   });
 
-  const newsItems: TickerItem[] = (data ?? [])
+  const newsItems: TickerItem[] = (data?.posts ?? [])
     .filter((p: any) => p.type === "news")
     .slice(0, 12)
     .map((p: any) => ({ slug: p.slug, title: p.title }));
+
 
   const source: TickerItem[] =
     newsItems.length > 0
