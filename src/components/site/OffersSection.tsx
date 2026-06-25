@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
-import Autoplay from "embla-carousel-autoplay";
+import AutoScroll from "embla-carousel-auto-scroll";
+
 import { ArrowRight, BadgePercent, Clock, Flame, Bed, Bath, Maximize2 } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
 import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
