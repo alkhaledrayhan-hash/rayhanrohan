@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Home, Loader2 } from "lucide-react";
 import { AuthBackground } from "@/components/site/AuthBackground";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 
 export const Route = createFileRoute("/auth")({
