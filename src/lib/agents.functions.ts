@@ -63,7 +63,7 @@ export const createAgent = createServerFn({ method: "POST" })
       full_name: data.full_name,
       phone: data.phone || null,
       avatar_url: data.avatar_url || null,
-      username: data.username || null,
+      username: data.username,
     }).eq("id", newId);
 
     await supabaseAdmin.from("user_roles").delete().eq("user_id", newId);
