@@ -23,6 +23,7 @@ export function AgentsPanel() {
   });
 
   const [editing, setEditing] = useState<Agent | null>(null);
+  const [viewing, setViewing] = useState<Agent | null>(null);
 
   if (isLoading) {
     return <div className="rounded-2xl border border-border bg-white p-10 text-center text-sm text-muted-foreground">Loading agents…</div>;
@@ -36,7 +37,7 @@ export function AgentsPanel() {
         <UserCircle2 className="h-10 w-10 text-muted-foreground" />
         <p className="mt-3 font-display text-lg font-semibold">No agents yet</p>
         <p className="mt-1 max-w-md text-sm text-muted-foreground">
-          Use the “Add Agent” submenu to create your first agent account.
+          Use the "Add Agent" submenu to create your first agent account.
         </p>
       </div>
     );
@@ -46,9 +47,21 @@ export function AgentsPanel() {
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {agents.map((a) => (
-          <AgentCard key={a.id} agent={a} onEdit={() => setEditing(a)} />
+          <AgentCard
+            key={a.id}
+            agent={a}
+            onView={() => setViewing(a)}
+            onEdit={() => setEditing(a)}
+          />
         ))}
       </div>
+      {viewing && (
+        <ViewAgentDialog
+          agent={viewing}
+          onClose={() => setViewing(null)}
+          onEdit={() => { setEditing(viewing); setViewing(null); }}
+        />
+      )}
       {editing && <EditAgentDialog agent={editing} onClose={() => setEditing(null)} />}
     </>
   );
