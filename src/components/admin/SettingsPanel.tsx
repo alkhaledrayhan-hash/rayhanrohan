@@ -144,14 +144,20 @@ export function SettingsPanel() {
   const bgImage = form.auth_bg_image_url || "";
 
   return (
-    <form
-      onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
-      className="max-w-2xl space-y-5 rounded-2xl border border-border bg-white p-6 shadow-sm"
-    >
-      <div className="flex items-center gap-2 border-b border-border">
+    <div className="max-w-3xl space-y-5">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border">
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
+        <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
       </div>
+
+      {tab === "menus" ? (
+        <MenusEditor />
+      ) : (
+      <form
+        onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
+        className="space-y-5 rounded-2xl border border-border bg-white p-6 shadow-sm"
+      >
 
       {tab === "general" && (
         <div className="space-y-5">
