@@ -68,7 +68,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth";
+type TabId = "general" | "auth" | "menus";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
