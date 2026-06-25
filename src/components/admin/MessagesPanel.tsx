@@ -24,10 +24,36 @@ type Message = {
   created_at: string;
 };
 
+type AgentOption = { id: string; full_name: string | null; email: string };
+
 export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [agentFilter, setAgentFilter] = useState<string>("all"); // all | unassigned | <agentId>
   const qc = useQueryClient();
+
+  const { data: agents } = useQuery({
+    queryKey: ["messages", "agent-options"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data: roles, error: rolesErr } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "agent");
+      if (rolesErr) throw rolesErr;
+      const ids = (roles ?? []).map((r) => r.user_id);
+      if (ids.length === 0) return [] as AgentOption[];
+      const { data: profs, error: pErr } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", ids);
+      if (pErr) throw pErr;
+      return ((profs ?? []) as AgentOption[]).sort((a, b) =>
+        (a.full_name || a.email).localeCompare(b.full_name || b.email),
+      );
+    },
+  });
+
 
   const { data: convos, isLoading } = useQuery({
     queryKey: ["messages", "conversations"],
@@ -65,19 +91,39 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
 
   const filtered = useMemo(() => {
     if (!convos) return [];
+    let list = convos;
+    if (isAdmin && agentFilter !== "all") {
+      list = list.filter((c) =>
+        agentFilter === "unassigned"
+          ? !c.assigned_agent_id
+          : c.assigned_agent_id === agentFilter,
+      );
+    }
     const s = search.trim().toLowerCase();
-    if (!s) return convos;
-    return convos.filter(
+    if (!s) return list;
+    return list.filter(
       (c) =>
         c.customer_name.toLowerCase().includes(s) ||
         c.customer_email.toLowerCase().includes(s) ||
         (c.subject ?? "").toLowerCase().includes(s),
     );
-  }, [convos, search]);
+  }, [convos, search, isAdmin, agentFilter]);
 
   useEffect(() => {
     if (!selectedId && filtered.length > 0) setSelectedId(filtered[0].id);
   }, [filtered, selectedId]);
+
+  // counts per agent for the dropdown badges
+  const agentCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    let unassigned = 0;
+    for (const c of convos ?? []) {
+      if (!c.assigned_agent_id) unassigned += 1;
+      else map.set(c.assigned_agent_id, (map.get(c.assigned_agent_id) ?? 0) + 1);
+    }
+    return { map, unassigned, total: convos?.length ?? 0 };
+  }, [convos]);
+
 
   return (
     <div className="grid h-[calc(100vh-220px)] min-h-[500px] grid-cols-1 gap-0 overflow-hidden rounded-xl border border-border bg-background md:grid-cols-[320px_1fr]">
@@ -93,7 +139,26 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
               className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
+          {isAdmin && (
+            <select
+              value={agentFilter}
+              onChange={(e) => {
+                setAgentFilter(e.target.value);
+                setSelectedId(null);
+              }}
+              className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="all">All agents ({agentCounts.total})</option>
+              <option value="unassigned">Unassigned · Support ({agentCounts.unassigned})</option>
+              {(agents ?? []).map((a) => (
+                <option key={a.id} value={a.id}>
+                  {(a.full_name || a.email)} ({agentCounts.map.get(a.id) ?? 0})
+                </option>
+              ))}
+            </select>
+          )}
         </div>
+
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="grid h-full place-items-center text-xs text-muted-foreground">
@@ -125,11 +190,23 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
                 {c.subject && (
                   <span className="truncate text-xs text-foreground/80">{c.subject}</span>
                 )}
-                {c.status === "closed" && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    Closed
-                  </span>
-                )}
+                <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                  {isAdmin && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      {c.assigned_agent_id
+                        ? (agents?.find((a) => a.id === c.assigned_agent_id)?.full_name ||
+                          agents?.find((a) => a.id === c.assigned_agent_id)?.email ||
+                          "Agent")
+                        : "Support"}
+                    </span>
+                  )}
+                  {c.status === "closed" && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      Closed
+                    </span>
+                  )}
+                </div>
+
               </button>
             ))
           )}
