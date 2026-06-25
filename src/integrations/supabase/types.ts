@@ -447,7 +447,7 @@ export type Database = {
           id: string
           phone: string | null
           updated_at: string
-          username: string | null
+          username: string
         }
         Insert: {
           avatar_url?: string | null
@@ -457,7 +457,7 @@ export type Database = {
           id: string
           phone?: string | null
           updated_at?: string
-          username?: string | null
+          username: string
         }
         Update: {
           avatar_url?: string | null
@@ -467,7 +467,7 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
-          username?: string | null
+          username?: string
         }
         Relationships: []
       }
