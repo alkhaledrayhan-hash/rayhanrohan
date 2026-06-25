@@ -13,7 +13,7 @@ import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=
 const PAGE_SIZE = 9;
 
 const searchSchema = z.object({
-  status: z.enum(["rent", "sale"]).optional(),
+  status: z.enum(["rent", "sale", "all"]).optional(),
   location: z.string().optional(),
   type: z.string().optional(),
   beds: z.coerce.number().optional(),
@@ -64,7 +64,8 @@ function PropertiesPage() {
   // Stable signature for memo deps — avoids JSON.stringify on every render.
   const searchKey = `${status}|${search.location ?? ""}|${search.type ?? ""}|${search.beds ?? ""}|${search.baths ?? ""}|${search.minPrice ?? ""}|${search.maxPrice ?? ""}|${search.minArea ?? ""}|${search.maxArea ?? ""}|${search.q ?? ""}|${search.sort ?? ""}`;
   const items = useMemo(
-    () => filterProperties(allProperties, { ...search, status }),
+    () => filterProperties(allProperties, { ...search, status: status === "all" ? undefined : status }),
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [allProperties, searchKey],
   );
@@ -88,10 +89,10 @@ function PropertiesPage() {
       <Header />
       <PageHero
         image={propertiesHero}
-        eyebrow={status === "rent" ? "Rentals across Qatar" : "Homes for sale"}
-        title={`Properties for ${status === "rent" ? "Rent" : "Sale"}`}
+        eyebrow={status === "rent" ? "Rentals across Qatar" : status === "sale" ? "Homes for sale" : "All listings across Qatar"}
+        title={status === "all" ? "All Properties" : `Properties for ${status === "rent" ? "Rent" : "Sale"}`}
         description="Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab."
-        crumbs={[{ label: "Home", to: "/" }, { label: `For ${status === "rent" ? "Rent" : "Sale"}` }]}
+        crumbs={[{ label: "Home", to: "/" }, { label: status === "all" ? "All Properties" : `For ${status === "rent" ? "Rent" : "Sale"}` }]}
       />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -101,7 +102,7 @@ function PropertiesPage() {
             </p>
           </div>
           <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
-            {(["rent", "sale"] as const).map((s) => (
+            {(["all", "rent", "sale"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => update({ status: s })}
@@ -111,11 +112,12 @@ function PropertiesPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                For {s}
+                {s === "all" ? "All" : `For ${s}`}
               </button>
             ))}
           </div>
         </div>
+
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
           {/* Listings column */}
@@ -161,7 +163,7 @@ function PropertiesPage() {
 
 interface SidebarValues {
   q?: string;
-  status?: "rent" | "sale";
+  status?: "rent" | "sale" | "all";
   type?: string;
   location?: string;
   beds?: number;
