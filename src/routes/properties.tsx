@@ -163,7 +163,7 @@ function PropertiesPage() {
 
 interface SidebarValues {
   q?: string;
-  status?: "rent" | "sale";
+  status?: "rent" | "sale" | "all";
   type?: string;
   location?: string;
   beds?: number;
