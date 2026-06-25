@@ -1,16 +1,18 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BadgePercent, ChevronDown, Home, KeyRound, LayoutDashboard, LogOut, Menu, Tag, Users } from "lucide-react";
+import { Home, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteMenus } from "@/hooks/useSiteMenus";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
+  const { header: headerMenu } = useSiteMenus();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -80,12 +82,11 @@ export function Header() {
               : "border-white/15 bg-white/10 text-white/85"
           }`}
         >
-          <NavPill to="/" scrolled={scrolled}>Home</NavPill>
-          <PropertiesDropdown scrolled={scrolled} />
-          
-          <NavPill to="/news" scrolled={scrolled}>News</NavPill>
-          <NavPill to="/about" scrolled={scrolled}>About</NavPill>
-          <NavPill to="/contact" scrolled={scrolled}>Contact</NavPill>
+          {headerMenu.map((item, i) => (
+            <NavPill key={i} to={item.to} search={item.search} scrolled={scrolled}>
+              {item.label}
+            </NavPill>
+          ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthed ? (
@@ -153,18 +154,11 @@ export function Header() {
                 </p>
               </div>
               <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
-                <SheetLink to="/" onSelect={() => setOpen(false)}>Home</SheetLink>
-                <SheetLink to="/properties" search={{ status: "rent" }} onSelect={() => setOpen(false)}>
-                  Properties for Rent
-                </SheetLink>
-                <SheetLink to="/properties" search={{ status: "sale" }} onSelect={() => setOpen(false)}>
-                  Properties for Sale
-                </SheetLink>
-                <SheetLink to="/offers" onSelect={() => setOpen(false)}>Special Offers</SheetLink>
-                <SheetLink to="/agents" onSelect={() => setOpen(false)}>Our Agents</SheetLink>
-                <SheetLink to="/news" onSelect={() => setOpen(false)}>News</SheetLink>
-                <SheetLink to="/about" onSelect={() => setOpen(false)}>About</SheetLink>
-                <SheetLink to="/contact" onSelect={() => setOpen(false)}>Contact</SheetLink>
+                {headerMenu.map((item, i) => (
+                  <SheetLink key={i} to={item.to} search={item.search} onSelect={() => setOpen(false)}>
+                    {item.label}
+                  </SheetLink>
+                ))}
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
                 {isAuthed ? (
@@ -260,88 +254,6 @@ function NavPill({
       activeProps={{ className: activeClass }}
     >
       {children}
-    </Link>
-  );
-}
-
-function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
-  const triggerHover = scrolled
-    ? "hover:text-foreground hover:bg-background/60"
-    : "hover:text-white hover:bg-white/15";
-
-  return (
-    <div className="group relative">
-      <Link
-        to="/properties"
-        search={{ status: "all" } as never}
-        className={`inline-flex items-center gap-1 rounded-full px-4 py-1.5 transition-colors duration-300 ease-out ${triggerHover}`}
-      >
-        Properties
-        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
-      </Link>
-
-
-      {/* bridge to prevent hover gap */}
-      <div className="invisible absolute left-1/2 top-full z-50 w-56 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-background/95 p-2 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl">
-          <DropdownItem
-            to="/properties"
-            search={{ status: "rent" }}
-            icon={<KeyRound className="h-4 w-4" />}
-            label="For Rent"
-            hint="Apartments, villas & more"
-          />
-          <DropdownItem
-            to="/properties"
-            search={{ status: "sale" }}
-            icon={<Tag className="h-4 w-4" />}
-            label="For Sale"
-            hint="Buy your next home"
-          />
-          <DropdownItem
-            to="/offers"
-            icon={<BadgePercent className="h-4 w-4" />}
-            label="Special Offers"
-            hint="Limited-time discounted listings"
-          />
-          <DropdownItem
-            to="/agents"
-            icon={<Users className="h-4 w-4" />}
-            label="Our Agents"
-            hint="Browse properties by agent"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DropdownItem({
-  to,
-  search,
-  icon,
-  label,
-  hint,
-}: {
-  to: string;
-  search?: Record<string, unknown>;
-  icon: React.ReactNode;
-  label: string;
-  hint: string;
-}) {
-  return (
-    <Link
-      to={to as never}
-      search={search as never}
-      className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-secondary"
-    >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary transition group-hover/item:bg-primary group-hover/item:text-primary-foreground">
-        {icon}
-      </span>
-      <span className="flex flex-col leading-tight">
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="text-xs text-muted-foreground">{hint}</span>
-      </span>
     </Link>
   );
 }
