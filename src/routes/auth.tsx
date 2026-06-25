@@ -202,6 +202,11 @@ function AuthPage() {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-6">
+                {settings.auth_signup_heading && (
+                  <h2 className="mb-4 font-display text-lg font-semibold text-foreground">
+                    {settings.auth_signup_heading}
+                  </h2>
+                )}
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label>I want to sign up as</Label>
