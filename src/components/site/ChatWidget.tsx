@@ -154,20 +154,30 @@ export function ChatWidget() {
           {/* Header */}
           <div className="flex items-center justify-between gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
             <div className="flex flex-col leading-tight">
-              <span className="font-display text-sm font-semibold">Chat with our team</span>
+              <span className="font-display text-sm font-semibold">Chat With Our Team</span>
               <span className="text-[11px] opacity-80">
                 {stored ? "We'll reply here" : "Send us a message"}
               </span>
             </div>
-            {stored && (
+            <div className="flex items-center gap-2">
+              {stored && (
+                <button
+                  onClick={handleNewConversation}
+                  className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-medium hover:bg-white/25"
+                >
+                  New
+                </button>
+              )}
               <button
-                onClick={handleNewConversation}
-                className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-medium hover:bg-white/25"
+                onClick={() => setOpen(false)}
+                aria-label="Close chat"
+                className="grid h-7 w-7 place-items-center rounded-full bg-white/15 transition hover:bg-white/25"
               >
-                New
+                <X className="h-4 w-4" />
               </button>
-            )}
+            </div>
           </div>
+
 
           {/* Body */}
           {!stored ? (
