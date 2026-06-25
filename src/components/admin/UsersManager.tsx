@@ -208,10 +208,19 @@ export function UsersManager() {
 
       {creating && <CreateDialog onClose={() => setCreating(false)} />}
       {editing && <EditDialog user={editing} onClose={() => setEditing(null)} />}
+      {viewing && (
+        <ViewDialog
+          user={viewing}
+          onClose={() => setViewing(null)}
+          onEdit={() => { setEditing(viewing); setViewing(null); }}
+          onPassword={() => { setResetting(viewing); setViewing(null); }}
+        />
+      )}
       {resetting && <PasswordDialog user={resetting} onClose={() => setResetting(null)} />}
     </div>
   );
 }
+
 
 function StatCard({
   label,
