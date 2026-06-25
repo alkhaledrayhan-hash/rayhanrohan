@@ -23,6 +23,7 @@ const KEYS = [
   "site_title",
   "site_tagline",
   "site_url",
+  "site_logo_url",
   "admin_email",
   "site_timezone",
   "date_format",
@@ -32,6 +33,10 @@ const KEYS = [
   "site_language",
   "auth_bg_color",
   "auth_bg_image_url",
+  "auth_heading",
+  "auth_subheading",
+  "auth_signin_heading",
+  "auth_signup_heading",
 ] as const;
 
 const CURRENCIES = [
