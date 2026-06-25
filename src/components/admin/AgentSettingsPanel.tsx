@@ -42,15 +42,15 @@ export function AgentSettingsPanel() {
     e.preventDefault();
     if (!user?.id) return;
     if (!fullName.trim()) return toast.error("Please enter your name.");
-    if (username && !/^[a-zA-Z0-9_]{3,30}$/.test(username))
-      return toast.error("Username must be 3–30 chars, letters/numbers/_ only.");
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username.trim()))
+      return toast.error("Username is required — 3–30 chars, letters/numbers/_ only.");
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
       .update({
         full_name: fullName.trim() || null,
         phone: phone.trim() || null,
-        username: username.trim() || null,
+        username: username.trim(),
         avatar_url: avatarUrl.trim() || null,
       })
       .eq("id", user.id);
