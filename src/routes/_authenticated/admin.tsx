@@ -40,13 +40,16 @@ import {
   ChevronRight,
   FileText,
   Home,
+  Info,
   LayoutDashboard,
   LogOut,
   Image,
   Mail,
+  MapPin,
   MessageSquare,
   Newspaper,
   Menu,
+  Phone,
   Plus,
   Search,
   Settings,
@@ -57,6 +60,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard · Ayesha Maison Qatar" }] }),
