@@ -140,7 +140,11 @@ export function UsersManager() {
                 .slice(0, 2)
                 .toUpperCase();
               return (
-                <tr key={u.id} className="border-t border-border">
+                <tr
+                  key={u.id}
+                  onClick={() => setViewing(u)}
+                  className="cursor-pointer border-t border-border transition hover:bg-muted/40"
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -168,8 +172,15 @@ export function UsersManager() {
                       {u.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex justify-end gap-1.5">
+                      <button
+                        onClick={() => setViewing(u)}
+                        title="View"
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                      >
+                        <Eye className="h-3 w-3" /> View
+                      </button>
                       <button
                         onClick={() => setResetting(u)}
                         title="Set new password"
@@ -188,6 +199,7 @@ export function UsersManager() {
                     </div>
                   </td>
                 </tr>
+
               );
             })}
           </tbody>
