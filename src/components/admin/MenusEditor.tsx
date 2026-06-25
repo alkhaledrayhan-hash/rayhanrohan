@@ -12,13 +12,14 @@ import {
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
 
-type Tab = "header" | "footer";
+type Tab = "header" | "cta" | "footer";
 
 export function MenusEditor() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("header");
   const [header, setHeader] = useState<HeaderMenuItem[]>(DEFAULT_HEADER_MENU);
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
+  const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
@@ -26,7 +27,7 @@ export function MenusEditor() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json"]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json"]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
@@ -44,6 +45,10 @@ export function MenusEditor() {
       const f = data.footer_menu_json ? JSON.parse(data.footer_menu_json) : DEFAULT_FOOTER_MENU;
       if (Array.isArray(f)) setFooter(f);
     } catch { /* keep defaults */ }
+    try {
+      const c = data.header_cta_json ? JSON.parse(data.header_cta_json) : DEFAULT_HEADER_CTA;
+      if (c && typeof c === "object") setCta({ ...DEFAULT_HEADER_CTA, ...c });
+    } catch { /* keep defaults */ }
   }, [data]);
 
   const save = useMutation({
@@ -51,6 +56,7 @@ export function MenusEditor() {
       const rows = [
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
+        { key: "header_cta_json", value: JSON.stringify(cta) },
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
@@ -70,26 +76,25 @@ export function MenusEditor() {
       <div>
         <h3 className="font-display text-lg font-semibold">Menu controller</h3>
         <p className="text-sm text-muted-foreground">
-          Add, edit, reorder or remove links shown in the website header and footer.
+          Add, edit, reorder or remove links shown in the website header, the header CTA button, and the footer.
         </p>
       </div>
 
-      <div className="flex items-center gap-2 border-b border-border">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border">
         <TabBtn active={tab === "header"} onClick={() => setTab("header")}>
           <LayoutPanelTop className="h-3.5 w-3.5" /> Header menu
+        </TabBtn>
+        <TabBtn active={tab === "cta"} onClick={() => setTab("cta")}>
+          <MousePointerClick className="h-3.5 w-3.5" /> Header CTA button
         </TabBtn>
         <TabBtn active={tab === "footer"} onClick={() => setTab("footer")}>
           <ListTree className="h-3.5 w-3.5" /> Footer menu
         </TabBtn>
       </div>
 
-      {tab === "header" && (
-        <HeaderEditor items={header} onChange={setHeader} />
-      )}
-
-      {tab === "footer" && (
-        <FooterEditor groups={footer} onChange={setFooter} />
-      )}
+      {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
+      {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
+      {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <button
@@ -98,6 +103,7 @@ export function MenusEditor() {
             if (confirm("Reset to default menus? Unsaved edits will be lost.")) {
               setHeader(DEFAULT_HEADER_MENU);
               setFooter(DEFAULT_FOOTER_MENU);
+              setCta(DEFAULT_HEADER_CTA);
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
@@ -116,6 +122,36 @@ export function MenusEditor() {
     </div>
   );
 }
+
+function CtaEditor({ cta, onChange }: { cta: HeaderCta; onChange: (v: HeaderCta) => void }) {
+  return (
+    <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+      <label className="flex items-center gap-2 text-sm font-medium">
+        <input
+          type="checkbox"
+          checked={cta.enabled}
+          onChange={(e) => onChange({ ...cta, enabled: e.target.checked })}
+          className="h-4 w-4 rounded border-input"
+        />
+        Show CTA button in header
+      </label>
+      <div className="grid gap-2 sm:grid-cols-3">
+        <Input label="Button label" value={cta.label} onChange={(v) => onChange({ ...cta, label: v })} placeholder="Browse Listings" />
+        <Input label="Path (URL)" value={cta.to} onChange={(v) => onChange({ ...cta, to: v })} placeholder="/properties" />
+        <Input
+          label="Search (key=value, optional)"
+          value={searchToString(cta.search)}
+          onChange={(v) => onChange({ ...cta, search: stringToSearch(v) })}
+          placeholder="status=rent"
+        />
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Uncheck the box to hide the button entirely on desktop and mobile.
+      </p>
+    </div>
+  );
+}
+
 
 function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: (v: HeaderMenuItem[]) => void }) {
   const update = (i: number, patch: Partial<HeaderMenuItem>) => {
