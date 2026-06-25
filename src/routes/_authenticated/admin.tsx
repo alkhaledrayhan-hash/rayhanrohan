@@ -361,26 +361,39 @@ function AccountMenu({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpen(false), 150);
+  };
   useEffect(() => {
     if (!open) return;
-    function onDoc(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
-    document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
+  useEffect(() => () => cancelClose(), []);
   return (
-    <div ref={ref} className="relative">
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => { cancelClose(); setOpen(true); }}
+      onMouseLeave={scheduleClose}
+      onFocus={() => { cancelClose(); setOpen(true); }}
+      onBlur={(e) => {
+        if (!ref.current?.contains(e.relatedTarget as Node)) scheduleClose();
+      }}
+    >
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
         className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-2 transition hover:bg-muted sm:pr-3"
@@ -396,6 +409,7 @@ function AccountMenu({
         </span>
         <ChevronDown className={`hidden h-3.5 w-3.5 text-muted-foreground transition-transform sm:block ${open ? "rotate-180" : ""}`} />
       </button>
+
       {open && (
         <div
           role="menu"
