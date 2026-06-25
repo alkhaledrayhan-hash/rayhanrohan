@@ -189,14 +189,16 @@ export function Header() {
                     Sign In
                   </Link>
                 )}
-                <Link
-                  to="/properties"
-                  search={{ status: "rent" }}
-                  onClick={() => setOpen(false)}
-                  className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
-                >
-                  Browse Listings
-                </Link>
+                {cta.enabled && cta.label && cta.to && (
+                  <Link
+                    to={cta.to as never}
+                    search={cta.search as never}
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+                  >
+                    {cta.label}
+                  </Link>
+                )}
               </div>
             </div>
           </SheetContent>
