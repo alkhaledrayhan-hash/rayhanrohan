@@ -44,6 +44,7 @@ const empty: Partial<PropertyRow> = {
 export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<PropertyRow> | null>(null);
+  const [viewing, setViewing] = useState<PropertyRow | null>(null);
   const [search, setSearch] = useState("");
   const [fStatus, setFStatus] = useState<"all" | "rent" | "sale">("all");
   const [fApproval, setFApproval] = useState<"all" | "approved" | "pending" | "rejected">("all");
