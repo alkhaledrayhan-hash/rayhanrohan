@@ -263,13 +263,15 @@ function PropertiesDropdown({ scrolled }: { scrolled: boolean }) {
 
   return (
     <div className="group relative">
-      <button
-        type="button"
+      <Link
+        to="/properties"
+        search={{ status: "all" } as never}
         className={`inline-flex items-center gap-1 rounded-full px-4 py-1.5 transition-colors duration-300 ease-out ${triggerHover}`}
       >
         Properties
         <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
-      </button>
+      </Link>
+
 
       {/* bridge to prevent hover gap */}
       <div className="invisible absolute left-1/2 top-full z-50 w-56 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
