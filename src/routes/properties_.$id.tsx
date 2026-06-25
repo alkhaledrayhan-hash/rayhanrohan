@@ -19,6 +19,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
 import { formatPrice, usePropertyBySlug } from "@/lib/properties";
+import { OfferCountdown } from "@/components/site/OfferCountdown";
 
 export const Route = createFileRoute("/properties_/$id")({
   head: ({ params }) => {
