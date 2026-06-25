@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { KeyRound, Pencil, Plus, Search, ShieldCheck, Trash2, UserCircle2 } from "lucide-react";
+import { Eye, KeyRound, Pencil, Plus, Search, ShieldCheck, Trash2, UserCircle2, X } from "lucide-react";
 import {
   createUser,
   deleteUser,
