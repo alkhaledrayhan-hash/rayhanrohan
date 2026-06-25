@@ -84,8 +84,10 @@ export function SettingsPanel() {
 
   const [form, setForm] = useState<SettingsMap>({});
   const [uploading, setUploading] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
+  const logoFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!data) return;
     const next = { ...data };
