@@ -17,6 +17,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
+import { MenusEditor } from "@/components/admin/MenusEditor";
 
 type SettingsMap = Record<string, string>;
 const KEYS = [
