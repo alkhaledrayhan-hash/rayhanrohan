@@ -12,7 +12,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const settings = useSiteSettings();
-  const { header: headerMenu } = useSiteMenus();
+  const { header: headerMenu, cta } = useSiteMenus();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
