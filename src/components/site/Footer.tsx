@@ -163,6 +163,33 @@ export function Footer() {
         </div>
       </div>
 
+      {footerMenu.length > 0 && (
+        <div className="relative border-t border-white/10">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-center sm:grid-cols-2 sm:px-6 sm:text-left lg:grid-cols-4 lg:px-8">
+            {footerMenu.map((group, gi) => (
+              <div key={gi}>
+                <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
+                  {group.heading}
+                </h4>
+                <ul className="space-y-2 text-sm text-white/75">
+                  {group.items.map((item, ii) => (
+                    <li key={ii}>
+                      <Link
+                        to={item.to as never}
+                        className="transition-colors hover:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
 
 
       <div className="relative border-t border-white/10">
