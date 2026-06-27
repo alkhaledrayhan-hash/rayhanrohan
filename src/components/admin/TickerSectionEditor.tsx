@@ -152,6 +152,29 @@ export function TickerSectionEditor() {
           />
           Show news ticker on the website
         </label>
+        <Field label="Content source">
+          <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs">
+            {(["manual", "random"] as const).map((s) => (
+              <button
+                type="button"
+                key={s}
+                onClick={() => set("source", s)}
+                className={`flex-1 rounded-md px-3 py-1.5 capitalize ${(value.source || "manual") === s ? "bg-white shadow-sm" : "text-muted-foreground"}`}
+              >
+                {s === "manual" ? "Manual items" : "Random news"}
+              </button>
+            ))}
+          </div>
+        </Field>
+        {value.source === "random" && (
+          <Field label={`Random news count — ${value.randomCount || 8}`}>
+            <input
+              type="range" min={1} max={20} value={value.randomCount || 8}
+              onChange={(e) => set("randomCount", Number(e.target.value))}
+              className="w-full accent-primary"
+            />
+          </Field>
+        )}
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label={`Scroll speed — ${speed}s / loop ${speed <= 20 ? "(fast)" : speed >= 60 ? "(slow)" : "(normal)"}`}>
             <input
@@ -172,10 +195,12 @@ export function TickerSectionEditor() {
           </Field>
         </div>
         <p className="text-xs text-muted-foreground">
-          {willScroll
-            ? `Ticker will scroll because there are more than ${threshold} items.`
-            : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
-          {value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
+          {value.source === "random"
+            ? "Random news mode: pulls random published news posts. Manual items below are ignored."
+            : willScroll
+              ? `Ticker will scroll because there are more than ${threshold} items.`
+              : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
+          {value.source !== "random" && value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
         </p>
       </Panel>
 
@@ -234,31 +259,33 @@ export function TickerSectionEditor() {
       </Panel>
 
       {/* Items */}
-      <Panel icon={Plus} title="Ticker items">
-        <div className="space-y-2">
-          {value.items.map((item, i) => (
-            <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
-              <Field label="Title">
-                <input className={inputCls} value={item.title} onChange={(e) => updateItem(i, { title: e.target.value })} placeholder="Breaking headline" />
-              </Field>
-              <Field label="Link (optional)">
-                <input className={inputCls} value={item.link || ""} onChange={(e) => updateItem(i, { link: e.target.value })} placeholder="/news/slug or https://…" />
-              </Field>
-              <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">
-                <IconBtn onClick={() => move(i, -1)} label="Move up"><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn onClick={() => move(i, 1)} label="Move down"><ArrowDown className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn onClick={() => remove(i)} label="Remove" danger><Trash2 className="h-3.5 w-3.5" /></IconBtn>
+      {value.source !== "random" && (
+        <Panel icon={Plus} title="Ticker items">
+          <div className="space-y-2">
+            {value.items.map((item, i) => (
+              <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
+                <Field label="Title">
+                  <input className={inputCls} value={item.title} onChange={(e) => updateItem(i, { title: e.target.value })} placeholder="Breaking headline" />
+                </Field>
+                <Field label="Link (optional)">
+                  <input className={inputCls} value={item.link || ""} onChange={(e) => updateItem(i, { link: e.target.value })} placeholder="/news/slug or https://…" />
+                </Field>
+                <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">
+                  <IconBtn onClick={() => move(i, -1)} label="Move up"><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn onClick={() => move(i, 1)} label="Move down"><ArrowDown className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn onClick={() => remove(i)} label="Remove" danger><Trash2 className="h-3.5 w-3.5" /></IconBtn>
+                </div>
               </div>
-            </div>
-          ))}
-          <button
-            type="button" onClick={add}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <Plus className="h-4 w-4" /> Add ticker item
-          </button>
-        </div>
-      </Panel>
+            ))}
+            <button
+              type="button" onClick={add}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <Plus className="h-4 w-4" /> Add ticker item
+            </button>
+          </div>
+        </Panel>
+      )}
 
       <div className="flex justify-end border-t border-border pt-4">
         <button

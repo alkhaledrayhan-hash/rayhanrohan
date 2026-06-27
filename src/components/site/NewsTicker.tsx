@@ -21,11 +21,13 @@ export function NewsTicker() {
   const config = useTickerConfig();
   const style = config.style;
 
+  const isRandom = config.source === "random";
+
   const { data } = useQuery({
     queryKey: ["public-posts"],
     queryFn: async () => (await listPublishedPosts()) as { posts: any[] },
     staleTime: 60_000,
-    enabled: !config.items.length,
+    enabled: isRandom || !config.items.length,
   });
 
   if (!config.enabled) return null;
@@ -34,13 +36,21 @@ export function NewsTicker() {
     .filter((i) => i?.title?.trim())
     .map((i) => ({ slug: null, href: i.link?.trim() || null, title: i.title }));
 
-  const postItems: TickerItem[] = (data?.posts ?? [])
-    .filter((p: any) => p.type === "news")
+  const newsPosts = (data?.posts ?? []).filter((p: any) => p.type === "news");
+  const postItems: TickerItem[] = newsPosts
     .slice(0, 12)
     .map((p: any) => ({ slug: p.slug, href: null, title: p.title }));
 
-  const source: TickerItem[] =
-    manualItems.length > 0
+  const randomItems: TickerItem[] = isRandom
+    ? [...newsPosts]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.max(1, config.randomCount || 8))
+        .map((p: any) => ({ slug: p.slug, href: null, title: p.title }))
+    : [];
+
+  const source: TickerItem[] = isRandom
+    ? (randomItems.length ? randomItems : FALLBACK_TITLES.map((title) => ({ slug: null, href: null, title })))
+    : manualItems.length > 0
       ? manualItems
       : postItems.length > 0
         ? postItems
