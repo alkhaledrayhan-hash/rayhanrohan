@@ -50,33 +50,32 @@ export function HomeContact() {
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:px-8">
         <div className="flex flex-col justify-center">
           <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-            Talk to a specialist
+            {cfg.eyebrow}
           </p>
           <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-            Have a question? We'd love to hear from you.
+            {cfg.title}
           </h2>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-primary-foreground/80">
-            Whether you're searching for your next home, listing a property, or
-            just exploring the market — our advisors respond within one business hour.
+            {cfg.description}
           </p>
           <div className="mt-8 space-y-4 text-sm">
             <a
-              href="tel:+97440000000"
+              href={`tel:${cfg.phone_e164}`}
               className="flex items-center gap-3 text-primary-foreground/90 transition hover:text-gold"
             >
               <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 backdrop-blur">
                 <Phone className="h-4 w-4" />
               </span>
-              +974 4000 0000
+              {cfg.phone_display}
             </a>
             <a
-              href="mailto:hello@maisonqatar.com"
+              href={`mailto:${cfg.email}`}
               className="flex items-center gap-3 text-primary-foreground/90 transition hover:text-gold"
             >
               <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 backdrop-blur">
                 <Mail className="h-4 w-4" />
               </span>
-              hello@maisonqatar.com
+              {cfg.email}
             </a>
           </div>
         </div>
@@ -104,14 +103,12 @@ export function HomeContact() {
               </label>
               <select
                 name="subject"
-                defaultValue="General enquiry"
+                defaultValue={cfg.subjects[0]}
                 className="h-11 rounded-md border border-white/20 bg-white/10 px-3 text-sm text-primary-foreground backdrop-blur-xl outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30"
               >
-                <option className="text-foreground">General enquiry</option>
-                <option className="text-foreground">Buying a property</option>
-                <option className="text-foreground">Renting a property</option>
-                <option className="text-foreground">List my property</option>
-                <option className="text-foreground">Investment advice</option>
+                {cfg.subjects.map((s) => (
+                  <option key={s} className="text-foreground">{s}</option>
+                ))}
               </select>
             </div>
           </div>
