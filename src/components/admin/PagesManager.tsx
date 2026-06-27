@@ -57,12 +57,31 @@ export function PagesManager({
     },
   });
 
-  const active = sections.find((s) => s.section_key === activeKey) || sections[0];
+  // Virtual sections (not stored in page_sections) that get their own editors.
+  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home }> = [
+    { section_key: "ticker", label: "News ticker", icon: Megaphone },
+  ];
+  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : [];
+
+  const active = sections.find((s) => s.section_key === activeKey)
+    || (virtualForPage.find((v) => v.section_key === activeKey) ? ({ id: `virtual-${activeKey}`, page_slug: activePage, section_key: activeKey!, label: virtualForPage.find((v) => v.section_key === activeKey)!.label, content: null, sort_order: 999 } as Section) : undefined)
+    || sections[0];
 
   useEffect(() => {
-    if (active && active.section_key !== "hero") setDraft(JSON.stringify(active.content, null, 2));
+    if (active && active.section_key !== "hero" && active.section_key !== "ticker" && active.section_key !== "trust") {
+      setDraft(JSON.stringify(active.content, null, 2));
+    }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
   }, [active?.id, sections.length]);
+
+  const SECTION_ICONS: Record<string, typeof Home> = {
+    hero: Home,
+    trust: ShieldCheck,
+    featured: Building2,
+    locations: Newspaper,
+    ticker: Megaphone,
+  };
+
 
   const saveJson = useMutation({
     mutationFn: async () => {
