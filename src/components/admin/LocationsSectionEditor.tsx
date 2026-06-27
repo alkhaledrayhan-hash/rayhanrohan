@@ -15,8 +15,9 @@ export type LocationsConfig = {
 };
 
 const DEFAULT: LocationsConfig = {
-  eyebrow: "Premium Qatar locations",
-  title: "Live in Qatar's most coveted neighbourhoods",
+  eyebrow: "",
+  title: "Properties location",
+
   mode: "auto",
   limit: 5,
   customItems: [],
