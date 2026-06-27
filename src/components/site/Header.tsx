@@ -82,11 +82,15 @@ export function Header() {
               : "border-white/15 bg-white/10 text-white/85"
           }`}
         >
-          {headerMenu.map((item, i) => (
-            <NavPill key={i} to={item.to} search={item.search} scrolled={scrolled}>
-              {item.label}
-            </NavPill>
-          ))}
+          {headerMenu.map((item, i) =>
+            item.children && item.children.length > 0 ? (
+              <NavDropdown key={i} item={item} scrolled={scrolled} />
+            ) : (
+              <NavPill key={i} to={item.to} search={item.search} scrolled={scrolled}>
+                {item.label}
+              </NavPill>
+            )
+          )}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           {isAuthed ? (
