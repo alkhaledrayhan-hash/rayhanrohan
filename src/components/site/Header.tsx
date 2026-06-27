@@ -304,13 +304,13 @@ function NavDropdown({
         <ChevronDown className="h-3 w-3 opacity-70" />
       </Link>
       {open && item.children && item.children.length > 0 && (
-        <div className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-background/95 p-1.5 shadow-xl backdrop-blur-xl">
+        <div className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-white/25 bg-white/10 p-1.5 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150">
           {item.children.map((c, i) => (
             <Link
               key={i}
               to={c.to as never}
               search={c.search as never}
-              className="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary"
+              className={`block rounded-lg px-3 py-2 text-sm transition-colors ${scrolled ? "text-foreground hover:bg-white/40" : "text-white hover:bg-white/20"}`}
               onClick={() => setOpen(false)}
             >
               {c.label}
