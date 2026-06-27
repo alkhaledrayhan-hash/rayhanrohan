@@ -113,6 +113,7 @@ export function MenusEditor() {
       qc.invalidateQueries({ queryKey: ["site-menus"] });
       qc.invalidateQueries({ queryKey: ["site-menus-edit"] });
       qc.invalidateQueries({ queryKey: ["site-settings"] });
+      qc.invalidateQueries({ queryKey: ["site-settings", "ticker_json"] });
     },
     onError: (e: any) => toast.error(e.message || "Failed to save"),
   });
