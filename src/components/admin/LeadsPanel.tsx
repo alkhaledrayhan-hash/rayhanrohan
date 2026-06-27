@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Download, Mail, Trash2, Search } from "lucide-react";
+import { Download, Mail, Trash2, Search, Eye, X, Phone as PhoneIcon, Calendar, Building2, User as UserIcon, Tag } from "lucide-react";
 import { useFormatters } from "@/lib/format";
 
 type Lead = {
