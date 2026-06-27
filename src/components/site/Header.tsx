@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Home, LayoutDashboard, LogOut, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Home, LayoutDashboard, LogOut, Menu, Building2, Key, Tag, Newspaper, FileText, Users, Phone, Info, Sparkles, MapPin, Briefcase, Settings as SettingsIcon, Heart, Calendar, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -308,28 +308,75 @@ function NavDropdown({
           {/* hover bridge so cursor can move from trigger to panel */}
           <div className="absolute left-0 right-0 top-full h-2" />
           <div
-            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border p-1.5 shadow-[0_20px_60px_-12px_color-mix(in_oklab,var(--primary)_35%,transparent)] ring-1"
-            style={{
-              background:
-                "linear-gradient(135deg, color-mix(in oklab, var(--primary) 35%, transparent), color-mix(in oklab, var(--primary) 15%, transparent))",
-              borderColor: "color-mix(in oklab, var(--primary-foreground) 25%, transparent)",
-              backdropFilter: "blur(24px) saturate(160%)",
-            }}
+            className="absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-2xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200"
+            style={{ backgroundColor: "color-mix(in oklab, var(--primary) 18%, rgba(15,15,20,0.55))" }}
           >
-            {item.children.map((c, i) => (
-              <Link
-                key={i}
-                to={c.to as never}
-                search={c.search as never}
-                className="block rounded-lg px-3 py-2 text-sm text-primary-foreground/90 transition-all duration-200 hover:bg-[color-mix(in_oklab,var(--primary-foreground)_15%,transparent)] hover:text-primary-foreground hover:translate-x-0.5"
-                onClick={() => setOpen(false)}
-              >
-                {c.label}
-              </Link>
-            ))}
+            {/* ambient glow */}
+            <div
+              className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full blur-3xl"
+              style={{ background: "color-mix(in oklab, var(--primary) 60%, transparent)" }}
+            />
+            <div className="relative flex flex-col gap-0.5">
+              {item.children.map((c, i) => {
+                const { Icon, tone } = getSubmenuIcon(c.label);
+                return (
+                  <Link
+                    key={i}
+                    to={c.to as never}
+                    search={c.search as never}
+                    className="group/item flex items-center gap-3.5 rounded-2xl p-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span
+                      className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 ${tone.idle} ${tone.hover}`}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[14px] font-semibold text-white/90 group-hover/item:text-white">
+                        {c.label}
+                      </span>
+                    </span>
+                    <ChevronRight className="h-3.5 w-3.5 -translate-x-1 text-white/20 opacity-0 transition-all duration-300 group-hover/item:translate-x-0 group-hover/item:text-white/60 group-hover/item:opacity-100" />
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </>
       )}
     </div>
   );
+}
+
+const SUBMENU_TONES = [
+  { idle: "bg-indigo-500/10 border-indigo-500/20 text-indigo-300", hover: "group-hover/item:bg-indigo-500 group-hover/item:text-white group-hover/item:border-indigo-500" },
+  { idle: "bg-emerald-500/10 border-emerald-500/20 text-emerald-300", hover: "group-hover/item:bg-emerald-500 group-hover/item:text-white group-hover/item:border-emerald-500" },
+  { idle: "bg-amber-500/10 border-amber-500/20 text-amber-300", hover: "group-hover/item:bg-amber-500 group-hover/item:text-white group-hover/item:border-amber-500" },
+  { idle: "bg-rose-500/10 border-rose-500/20 text-rose-300", hover: "group-hover/item:bg-rose-500 group-hover/item:text-white group-hover/item:border-rose-500" },
+  { idle: "bg-sky-500/10 border-sky-500/20 text-sky-300", hover: "group-hover/item:bg-sky-500 group-hover/item:text-white group-hover/item:border-sky-500" },
+  { idle: "bg-violet-500/10 border-violet-500/20 text-violet-300", hover: "group-hover/item:bg-violet-500 group-hover/item:text-white group-hover/item:border-violet-500" },
+] as const;
+
+function getSubmenuIcon(label: string): { Icon: LucideIcon; tone: (typeof SUBMENU_TONES)[number] } {
+  const l = label.toLowerCase();
+  let Icon: LucideIcon = Sparkles;
+  if (/(buy|sale|sell|property|properties)/.test(l)) Icon = Building2;
+  else if (/(rent|lease)/.test(l)) Icon = Key;
+  else if (/(offer|deal|discount)/.test(l)) Icon = Tag;
+  else if (/(news)/.test(l)) Icon = Newspaper;
+  else if (/(blog|article)/.test(l)) Icon = FileText;
+  else if (/(agent|team|people)/.test(l)) Icon = Users;
+  else if (/(contact|call)/.test(l)) Icon = Phone;
+  else if (/(about|info)/.test(l)) Icon = Info;
+  else if (/(location|area|city|map)/.test(l)) Icon = MapPin;
+  else if (/(service|career|job)/.test(l)) Icon = Briefcase;
+  else if (/(setting|manage|admin)/.test(l)) Icon = SettingsIcon;
+  else if (/(favorite|wishlist|saved)/.test(l)) Icon = Heart;
+  else if (/(book|appointment|schedule|event)/.test(l)) Icon = Calendar;
+  // pick a stable tone per label
+  let hash = 0;
+  for (let i = 0; i < label.length; i++) hash = (hash * 31 + label.charCodeAt(i)) >>> 0;
+  const tone = SUBMENU_TONES[hash % SUBMENU_TONES.length];
+  return { Icon, tone };
 }
