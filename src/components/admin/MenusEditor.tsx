@@ -84,6 +84,16 @@ export function MenusEditor() {
     const nextFc = { ...DEFAULT_FOOTER_CONTENT };
     FOOTER_CONTENT_KEYS.forEach((k) => { if (data[k]) nextFc[k] = data[k]; });
     setFooterContent(nextFc);
+    try {
+      if (data.ticker_json) {
+        const t = JSON.parse(data.ticker_json);
+        setTicker({
+          ...DEFAULT_TICKER_CONFIG,
+          ...t,
+          items: Array.isArray(t?.items) ? t.items : [],
+        });
+      }
+    } catch { /* keep defaults */ }
   }, [data]);
 
   const save = useMutation({
