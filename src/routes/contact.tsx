@@ -18,6 +18,8 @@ import { PageHero } from "@/components/site/PageHero";
 
 import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
 import { PhoneInput } from "@/components/site/PhoneInput";
+import { usePageSections } from "@/lib/page-sections";
+import { normalizeContactPage } from "@/components/admin/ContactSectionEditor";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -39,21 +41,18 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const PHONE_DISPLAY = "+974 4444 0123";
-const PHONE_E164 = "+97444440123";
-const WHATSAPP_E164 = "97433330123";
-const EMAIL = "hello@maisonqatar.qa";
-
 function ContactPage() {
+  const { data: sections } = usePageSections("contact");
+  const cfg = normalizeContactPage(sections?.info);
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    subject: "General enquiry",
+    subject: cfg.subjects[0] || "General enquiry",
     message: "",
   });
-  const [dialCode, setDialCode] = useState("+974");
+  const [dialCode, setDialCode] = useState(cfg.default_dial_code);
   const [submitting, setSubmitting] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
