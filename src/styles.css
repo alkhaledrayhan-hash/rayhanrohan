@@ -334,3 +334,15 @@ a[href*="lovable.dev/?via=badge"],
   }
 }
 
+
+/* Native <select> dropdown options — themed (maroon/gold) instead of browser blue */
+select option {
+  background-color: color-mix(in oklab, var(--primary) 28%, #0f0c0e);
+  color: #fff;
+}
+select option:hover,
+select option:focus,
+select option:checked {
+  background: color-mix(in oklab, var(--gold) 35%, color-mix(in oklab, var(--primary) 55%, #0f0c0e)) !important;
+  color: #fff;
+}
