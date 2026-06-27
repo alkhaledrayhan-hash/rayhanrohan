@@ -94,7 +94,7 @@ export function MenusEditor() {
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
         { key: "header_cta_json", value: JSON.stringify(cta) },
-        { key: "ticker_json", value: JSON.stringify(ticker) },
+        
         ...FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: footerContent[k] ?? "" })),
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
