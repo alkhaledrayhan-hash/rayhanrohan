@@ -183,6 +183,14 @@ export function PagesManager({
               </div>
               <PartnersSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
+          ) : active.section_key === "locations" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Locations</h3>
+                <p className="text-xs text-muted-foreground">Heading, source (auto / random / custom), limit, and marquee.</p>
+              </div>
+              <LocationsSectionEditor sectionId={active.id} initial={active.content || {}} />
+            </>
           ) : active.section_key === "contact" ? (
             <>
               <div className="mb-4">
