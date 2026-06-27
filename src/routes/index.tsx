@@ -85,7 +85,29 @@ function Home() {
   const trustItems = trustShouldScroll ? [...trust, ...trust] : trust;
   const trustDuration = Math.max(8, Math.min(180, Number(trustScroll.speed) || 35));
   const featuredHeading = featuredCfg;
-  const locationsHeading = sections.locations ?? { eyebrow: "Premium Qatar locations", title: "Live in Qatar's most coveted neighbourhoods" };
+  const locationsCfg = normalizeLocations(sections.locations);
+  const locationsHeading = { eyebrow: locationsCfg.eyebrow, title: locationsCfg.title };
+
+  type LocItem = { name: string; image_url?: string; link?: string };
+  const locationItems: LocItem[] = (() => {
+    const limit = Math.max(1, locationsCfg.limit || 5);
+    if (locationsCfg.mode === "manual") {
+      return locationsCfg.customItems.slice(0, limit);
+    }
+    const distinct = Array.from(new Set(allProperties.map((p) => p.location).filter(Boolean))) as string[];
+    const pool = distinct.length ? distinct : (LOCATIONS as readonly string[]).slice();
+    const ordered = locationsCfg.mode === "random"
+      ? [...pool].sort(() => Math.random() - 0.5)
+      : [...pool].sort();
+    return ordered.slice(0, limit).map((name) => ({ name }));
+  })();
+
+  const locScroll = locationsCfg.scroll;
+  const locShouldScroll = locScroll.enabled && locationItems.length > locScroll.threshold;
+  const locDuration = Math.max(5, Math.min(180, Number(locScroll.speed) || 28));
+  const locRenderItems = locShouldScroll ? [...locationItems, ...locationItems] : locationItems;
+  const resolveLocImage = (it: LocItem) => it.image_url || LOCATION_IMAGES[it.name] || locDoha;
+  const resolveLocLink = (it: LocItem) => it.link || `/properties?location=${encodeURIComponent(it.name)}`;
 
   return (
     <div className="min-h-screen bg-background">
