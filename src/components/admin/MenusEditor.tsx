@@ -51,6 +51,7 @@ export function MenusEditor() {
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
   const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
   const [footerContent, setFooterContent] = useState<FooterContent>(DEFAULT_FOOTER_CONTENT);
+  const [ticker, setTicker] = useState<TickerConfig>(DEFAULT_TICKER_CONFIG);
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
