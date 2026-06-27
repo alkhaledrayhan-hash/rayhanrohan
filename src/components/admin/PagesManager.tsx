@@ -171,6 +171,14 @@ export function PagesManager({
               </div>
               <FeaturedSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
+          ) : active.section_key === "partners" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Our Partners</h3>
+                <p className="text-xs text-muted-foreground">Logos, heading, and marquee speed.</p>
+              </div>
+              <PartnersSectionEditor sectionId={active.id} initial={active.content || {}} />
+            </>
           ) : (
             <>
               <div className="mb-3 flex items-center justify-between">
