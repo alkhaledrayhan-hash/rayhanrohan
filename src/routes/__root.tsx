@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -161,6 +162,47 @@ function RootComponent() {
       sub?.unsubscribe();
     };
   }, [queryClient, router]);
+
+  // Scroll-reveal: auto-tag sections and observe them
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    const targets = new Set<Element>();
+    const tag = () => {
+      document.querySelectorAll("main > section, main > div > section").forEach((el) => {
+        if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+        targets.add(el);
+      });
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.08 },
+    );
+
+    const observe = () => {
+      tag();
+      targets.forEach((el) => io.observe(el));
+    };
+
+    observe();
+    const mo = new MutationObserver(() => observe());
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
