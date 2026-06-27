@@ -491,6 +491,10 @@ function AccountMenu({
 
 
 function NavGroup({ label }: { label: string }) {
+  const collapsed = useSidebarCollapsed();
+  if (collapsed) {
+    return <div className="my-2 border-t border-border/60" aria-hidden="true" />;
+  }
   return (
     <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/70">
       {label}
@@ -511,19 +515,23 @@ function NavItem({
   onClick: () => void;
   badge?: string;
 }) {
+  const collapsed = useSidebarCollapsed();
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition ${
+      title={collapsed ? label : undefined}
+      className={`relative flex w-full items-center gap-3 rounded-lg py-2 text-sm transition ${
+        collapsed ? "justify-center px-0" : "justify-between px-3"
+      } ${
         active
           ? "bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
-      <span className="flex items-center gap-3">
-        <Icon className="h-4 w-4" /> {label}
+      <span className={`flex items-center gap-3 ${collapsed ? "" : ""}`}>
+        <Icon className="h-4 w-4" /> {!collapsed && label}
       </span>
-      {badge && (
+      {badge && !collapsed && (
         <span
           className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
             active ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
@@ -531,6 +539,9 @@ function NavItem({
         >
           {badge}
         </span>
+      )}
+      {badge && collapsed && (
+        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
       )}
     </button>
   );
@@ -551,8 +562,23 @@ function NavGroupExpandable({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const collapsed = useSidebarCollapsed();
   const [open, setOpen] = useState(!!defaultOpen);
   useEffect(() => { if (defaultOpen) setOpen(true); }, [defaultOpen]);
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        title={label}
+        onClick={() => setOpen((o) => !o)}
+        className={`flex w-full items-center justify-center rounded-lg py-2 text-sm transition ${
+          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        }`}
+      >
+        <Icon className="h-4 w-4" />
+      </button>
+    );
+  }
   return (
     <div>
       <button
@@ -598,6 +624,7 @@ function SubNavItem({
     </button>
   );
 }
+
 
 /* ---------- Overview ---------- */
 
