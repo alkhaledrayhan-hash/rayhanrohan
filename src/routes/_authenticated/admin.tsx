@@ -125,7 +125,17 @@ function AdminDashboard() {
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("admin:sidebar:collapsed") === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("admin:sidebar:collapsed", desktopCollapsed ? "1" : "0");
+    }
+  }, [desktopCollapsed]);
   const closeMobileNav = () => setMobileNavOpen(false);
+
   const { counts: unread, markRead } = useUnreadCounts();
   // Wrap setSection so picking an item on mobile also closes the drawer, and
   // mark the corresponding section read so its badge clears.
