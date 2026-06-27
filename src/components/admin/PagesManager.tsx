@@ -8,6 +8,7 @@ import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
 import { FeaturedSectionEditor } from "./FeaturedSectionEditor";
 import { PartnersSectionEditor } from "./PartnersSectionEditor";
+import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 
 type Section = {
   id: string;
@@ -24,7 +25,7 @@ const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean
   { slug: "agents", label: "Our Agents", icon: Users, editable: false },
   { slug: "about", label: "About", icon: Info, editable: false },
   { slug: "news", label: "News", icon: Newspaper, editable: false },
-  { slug: "contact", label: "Contact", icon: Mail, editable: false },
+  { slug: "contact", label: "Contact", icon: Mail, editable: true },
 ];
 
 export function PagesManager({
