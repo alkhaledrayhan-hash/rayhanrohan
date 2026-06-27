@@ -1,6 +1,6 @@
 -- Demo seed data for self-hosted Supabase deployment
 -- Run AFTER `supabase db push` (schema/policies must exist).
--- Safe to re-run: uses ON CONFLICT DO NOTHING where possible.
+-- Safe to re-run: upserts settings/content and keeps existing auth-dependent data intact.
 BEGIN;
 
 -- site_settings: 30 rows
@@ -69,50 +69,130 @@ Porto Arabia anchors the island with marina-front towers, the broadest rental po
 
 Freehold rules across The Pearl are unusually clear: any nationality may purchase, and ownership confers residency for the buyer and immediate family. Service charges vary meaningfully between districts — a detail many first-time buyers underweight.
 
-Our shortlist for value in 2026 leans toward the smaller marina-view units in Porto Arabia and the back-canal townhouses in Qanat Quartier — both segments where rental demand consistently outpaces supply.','/src/assets/prop-1.jpg',(SELECT id FROM public.post_categories WHERE slug = 'buyer-guides'),'blog','published','2026-06-10T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+Our shortlist for value in 2026 leans toward the smaller marina-view units in Porto Arabia and the back-canal townhouses in Qanat Quartier — both segments where rental demand consistently outpaces supply.','/src/assets/prop-1.jpg',(SELECT id FROM public.post_categories WHERE slug = 'buyer-guides'),'blog','published','2026-06-10T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('3a1b53ec-24e6-4bd5-9013-4fc73de1b08c','rental-yields-q2','Q2 2026 rental yields: West Bay edges past Lusail','Our quarterly index shows West Bay apartments delivering 6.4% gross yields, outpacing Lusail for the first time since 2024.','West Bay reclaimed the top spot in MaisonQatar''s quarterly yield index this quarter, with average gross yields of 6.4% across one- and two-bedroom apartments — a 40 basis-point lead over Lusail.
 
 The shift is driven by two forces: corporate tenant demand near the diplomatic and financial cluster, and softer asking rents on a handful of newer Lusail towers still in lease-up.
 
 Investors evaluating the two markets should weigh more than yield. Capital values in Lusail are still appreciating faster on a 12-month basis, and the long-term pipeline of amenities favours the newer city.
 
-We expect the yield gap to narrow again in Q3 as Lusail occupancy ticks up — but for income-focused buyers, West Bay remains the more efficient entry point this summer.','/src/assets/prop-4.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-06-06T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+We expect the yield gap to narrow again in Q3 as Lusail occupancy ticks up — but for income-focused buyers, West Bay remains the more efficient entry point this summer.','/src/assets/prop-4.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-06-06T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('f762a99a-3757-456e-90dd-02983c190085','interior-trends-2026','Five interior trends defining Doha''s premium residences this year','Warm minimalism, travertine accents, and biophilic layouts are reshaping how Doha lives indoors.','After a decade of glossy white kitchens and chrome-heavy lobbies, Doha''s premium interiors are settling into something quieter. Warm minimalism — driven by oak millwork, plaster walls, and muted earth palettes — leads the brief on most of our 2026 staging projects.
 
 Travertine is the material of the year. We''re seeing it on bathroom slabs, fluted vanities, and even kitchen islands. Buyers respond to its softness against the harder Gulf light.
 
 Biophilic layouts — rooms organised around a central planted court or double-height window wall — are quietly reshaping floor plates in The Pearl and Lusail. The result reads less hotel, more home.
 
-Lighting is doing more work than ever. Layered warm-LED schemes (2700K and below) at multiple heights are now standard in the residences that show best at viewings.','/src/assets/prop-5.jpg',(SELECT id FROM public.post_categories WHERE slug = 'design-trends'),'blog','published','2026-05-30T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+Lighting is doing more work than ever. Layered warm-LED schemes (2700K and below) at multiple heights are now standard in the residences that show best at viewings.','/src/assets/prop-5.jpg',(SELECT id FROM public.post_categories WHERE slug = 'design-trends'),'blog','published','2026-05-30T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('54b2ab20-4b81-499a-b6a6-ada1c2d731b4','freehold-expansion','Government expands freehold zones for foreign investors','Two new districts have been added to the list of areas where non-Qataris can purchase freehold residential property.','A cabinet decision published this week adds two further districts to the country''s freehold map for non-Qatari buyers, bringing the total to eleven designated zones.
 
 The newly opened districts are positioned around emerging mixed-use corridors and are expected to attract both end-users and yield-focused investors over the next 12-18 months.
 
 Existing freehold residency benefits — including renewable residency for the owner and dependents — extend to the new zones under the same conditions.
 
-We expect early pricing in the new districts to settle 8-12% below comparable stock in The Pearl, with room for compression as infrastructure matures.','/src/assets/prop-2.jpg',(SELECT id FROM public.post_categories WHERE slug = 'policy'),'news','published','2026-05-22T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+We expect early pricing in the new districts to settle 8-12% below comparable stock in The Pearl, with room for compression as infrastructure matures.','/src/assets/prop-2.jpg',(SELECT id FROM public.post_categories WHERE slug = 'policy'),'news','published','2026-05-22T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('2ef4def6-2ed1-4a40-8ac8-f8f5b47ceff6','first-time-buyer','First-time buyer in Doha? Here''s what to budget beyond the price','Transfer fees, agency commissions, service charges and snagging — the real cost of ownership, unpacked.','The headline price on a property is rarely the all-in number. For first-time buyers in Doha, a realistic budget should add 4-6% on top of the asking price to cover transfer, legal, and onboarding costs.
 
 Service charges deserve more attention than they usually get. On premium towers, expect QAR 18-32 per square metre per year — a figure that materially affects net yield on rental units.
 
 Snagging is the most under-budgeted line for off-plan buyers. We recommend setting aside 0.5-1% of the unit price for a professional snagging pass and the remediation it surfaces.
 
-Finally: factor in furnishing. A move-in-ready three-bedroom in The Pearl typically takes QAR 250k-450k to outfit to a standard that matches the address.','/src/assets/prop-6.jpg',(SELECT id FROM public.post_categories WHERE slug = 'buyer-guides'),'blog','published','2026-05-18T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+Finally: factor in furnishing. A move-in-ready three-bedroom in The Pearl typically takes QAR 250k-450k to outfit to a standard that matches the address.','/src/assets/prop-6.jpg',(SELECT id FROM public.post_categories WHERE slug = 'buyer-guides'),'blog','published','2026-05-18T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('09309048-529c-41b5-9394-c04630b35d7a','katara-hills-launch','Katara Hills launches its second residential phase','Twelve hillside villas and a clubhouse arrive in Q4, with prices starting from QAR 9.5M.','Katara Hills'' second phase brings twelve hillside villas to market, alongside a private members'' clubhouse and a landscaped wadi walk linking the development to the wider cultural quarter.
 
 Plot sizes range from 720 to 1,150 square metres, with five-bedroom configurations leading the launch. Prices begin at QAR 9.5M for the lower-tier villas and rise above QAR 16M for the wadi-facing plots.
 
 The developer has confirmed that the clubhouse will operate on a residents-only basis, with concierge, spa, and a 25-metre lap pool included in the service-charge package.
 
-Handover is targeted for Q4 2026. MaisonQatar holds preferred-broker status for the launch.','/src/assets/prop-7.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-05-12T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
+Handover is targeted for Q4 2026. MaisonQatar holds preferred-broker status for the launch.','/src/assets/prop-7.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-05-12T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('e16306a5-30ee-4ab0-86e9-faffdc7ab59a','staging-for-sale','Staging your villa for sale: the small moves that lift offers 8%','Lighting, scent, and curated negative space — practical staging notes from our top-performing listings.','Across our 2025-26 sale listings, professionally staged villas closed an average of 7.9% above comparable unstaged stock — and typically 18 days faster.
 
 The single biggest lever is light. Replacing cool-white bulbs with warm 2700K LEDs across the principal rooms transformed how buyers responded to the space at evening viewings.
 
 Scent matters more than most sellers admit. A single neutral diffuser per floor — cedar or fig, never floral — sets the tone without crossing into showroom territory.
 
-Finally: edit ruthlessly. Removing 30-40% of the furniture and personal items from the principal living spaces lets the architecture do the selling. The villa always shows bigger than the listing photos suggest.','/src/assets/prop-2.jpg',(SELECT id FROM public.post_categories WHERE slug = 'design-trends'),'blog','published','2026-05-04T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT DO NOTHING;
-INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('a888b429-60cb-4de0-bb30-4ca8c39ad658','lusail-skyline-2026','Lusail skyline reaches new heights as four towers near completion','Qatar''s flagship master-planned city welcomes four new mixed-use towers, expanding premium inventory in West Lusail.','','/src/assets/prop-3.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-06-14T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-20T18:04:39.480378+00:00',FALSE) ON CONFLICT DO NOTHING;
+Finally: edit ruthlessly. Removing 30-40% of the furniture and personal items from the principal living spaces lets the architecture do the selling. The villa always shows bigger than the listing photos suggest.','/src/assets/prop-2.jpg',(SELECT id FROM public.post_categories WHERE slug = 'design-trends'),'blog','published','2026-05-04T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-19T18:23:44.633709+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
+INSERT INTO public.posts (id,slug,title,excerpt,content,cover_image,category_id,type,status,published_at,author_id,created_at,updated_at,is_featured) VALUES ('a888b429-60cb-4de0-bb30-4ca8c39ad658','lusail-skyline-2026','Lusail skyline reaches new heights as four towers near completion','Qatar''s flagship master-planned city welcomes four new mixed-use towers, expanding premium inventory in West Lusail.','','/src/assets/prop-3.jpg',(SELECT id FROM public.post_categories WHERE slug = 'market-insights'),'news','published','2026-06-14T00:00:00+00:00',NULL,'2026-06-19T18:23:44.633709+00:00','2026-06-20T18:04:39.480378+00:00',FALSE) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  excerpt = EXCLUDED.excerpt,
+  content = EXCLUDED.content,
+  cover_image = EXCLUDED.cover_image,
+  category_id = EXCLUDED.category_id,
+  type = EXCLUDED.type,
+  status = EXCLUDED.status,
+  published_at = EXCLUDED.published_at,
+  updated_at = EXCLUDED.updated_at,
+  is_featured = EXCLUDED.is_featured;
 
 -- post_tag_links: 8 rows
 INSERT INTO public.post_tag_links (post_id, tag_id)
