@@ -12,6 +12,7 @@ import {
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
 import { DEFAULT_TICKER_CONFIG, type TickerConfig } from "@/hooks/useTickerConfig";
+import { MENU_ICON_KEYS, getMenuIcon } from "@/lib/menu-icons";
 
 type Tab = "header" | "cta" | "footer" | "footer-content" | "ticker";
 
