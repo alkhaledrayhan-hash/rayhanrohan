@@ -143,6 +143,7 @@ export function MenusEditor() {
               setHeader(DEFAULT_HEADER_MENU);
               setFooter(DEFAULT_FOOTER_MENU);
               setCta(DEFAULT_HEADER_CTA);
+              setFooterContent(DEFAULT_FOOTER_CONTENT);
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
