@@ -53,6 +53,9 @@ Eta `supabase/migrations/` folder er shob SQL file run korbe — tables, RLS pol
 
 ```bash
 # Option A — Supabase CLI (recommended)
+npm run db:seed
+
+# Option A.2 — Supabase CLI + psql
 psql "$(supabase status -o env | grep DB_URL | cut -d= -f2-)" -f supabase/seed.sql
 
 # Option B — Direct connection string (Supabase Dashboard → Settings → Database → Connection string → URI)
@@ -61,7 +64,7 @@ psql "postgresql://postgres:[YOUR-PASSWORD]@db.<PROJECT_REF>.supabase.co:5432/po
 # Option C — Supabase Dashboard → SQL Editor e supabase/seed.sql er content paste kore Run korun
 ```
 
-Re-run safe — `ON CONFLICT DO NOTHING` use kora ache, duplicate hobe na.
+Re-run safe — seed file e `ON CONFLICT` use kora ache, duplicate hobe na and dynamic settings/menu/footer update hoye jabe.
 
 **Note:** Users, agents, bookings, leads, messages auto-seed hoy na (auth.users dorkar). Step 8 e admin signup korar pore admin dashboard theke manually add korun, ba `UsersManager` er "Demo data" button use korun (password: `Demo1234!`).
 
