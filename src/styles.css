@@ -335,7 +335,18 @@ a[href*="lovable.dev/?via=badge"],
 }
 
 
-/* Native <select> dropdown options — themed (maroon/gold) instead of browser blue */
+/* Native <select> dropdown options — themed (maroon/gold) instead of browser blue.
+   Chromium derives the option hover/selected highlight from `accent-color`
+   when `color-scheme: dark` is set; plain `option:hover` CSS is ignored. */
+select,
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--primary);
+}
+select {
+  color-scheme: dark;
+}
 select option {
   background-color: color-mix(in oklab, var(--primary) 28%, #0f0c0e);
   color: #fff;
@@ -344,5 +355,14 @@ select option:hover,
 select option:focus,
 select option:checked {
   background: color-mix(in oklab, var(--gold) 35%, color-mix(in oklab, var(--primary) 55%, #0f0c0e)) !important;
+  color: #fff;
+}
+/* Themed text selection — replaces the default blue highlight */
+::selection {
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  color: #fff;
+}
+::-moz-selection {
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
   color: #fff;
 }
