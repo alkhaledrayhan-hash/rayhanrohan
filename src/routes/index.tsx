@@ -57,14 +57,14 @@ function Home() {
     tag: property.offerTag || "Special offer",
     ends: property.offerEnds || "",
   }));
-  const trust = sections.trust?.items ?? [
-    { title: "Licensed brokerage", body: "Qatar-registered with verified listings only." },
-    { title: "Hand-curated portfolio", body: "Every residence is personally inspected." },
-    { title: "Frictionless viewings", body: "Book on WhatsApp or schedule in one tap." },
-  ];
+  const trustConfig = normalizeTrust(sections.trust);
+  const trust = trustConfig.items;
+  const trustScroll = trustConfig.scroll;
+  const trustShouldScroll = trustScroll.enabled && trust.length > trustScroll.threshold;
+  const trustItems = trustShouldScroll ? [...trust, ...trust] : trust;
+  const trustDuration = Math.max(8, Math.min(180, Number(trustScroll.speed) || 35));
   const featuredHeading = sections.featured ?? { eyebrow: "Featured residences", title: "A portfolio worthy of the address", link_label: "View all listings", link_href: "/properties" };
   const locationsHeading = sections.locations ?? { eyebrow: "Premium Qatar locations", title: "Live in Qatar's most coveted neighbourhoods" };
-  const trustIcons = [<ShieldCheck className="h-5 w-5" />, <Sparkles className="h-5 w-5" />, <KeyRound className="h-5 w-5" />];
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,12 +77,31 @@ function Home() {
 
         {/* Trust strip */}
         <section className="border-y border-border bg-secondary/40">
-          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
-            {trust.slice(0, 3).map((t: any, i: number) => (
-              <Trust key={i} icon={trustIcons[i] ?? <ShieldCheck className="h-5 w-5" />} title={t.title} body={t.body} />
-            ))}
-          </div>
+          {trustShouldScroll ? (
+            <div className="group relative overflow-hidden py-8">
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
+              <div
+                className="flex w-max items-center gap-10 px-6 group-hover:[animation-play-state:paused]"
+                style={{ animation: `trust-scroll ${trustDuration}s linear infinite` }}
+              >
+                {trustItems.map((t, i) => (
+                  <div key={i} className="flex w-[300px] flex-shrink-0">
+                    <Trust icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
+                  </div>
+                ))}
+              </div>
+              <style>{`@keyframes trust-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+            </div>
+          ) : (
+            <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
+              {trust.slice(0, 3).map((t, i) => (
+                <Trust key={i} icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
+              ))}
+            </div>
+          )}
         </section>
+
 
         {/* Featured */}
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
