@@ -178,10 +178,15 @@ function RootComponent() {
 
     const targets = new Set<Element>();
     const tag = () => {
-      document.querySelectorAll("main > section, main > div > section").forEach((el) => {
-        if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
-        targets.add(el);
-      });
+      // Top-level sections within main
+      document
+        .querySelectorAll(
+          "main section, main > div > section, main article, main [data-animate]",
+        )
+        .forEach((el) => {
+          if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+          targets.add(el);
+        });
     };
 
     const io = new IntersectionObserver(
@@ -193,7 +198,7 @@ function RootComponent() {
           }
         });
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.08 },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
     );
 
     const observe = () => {
@@ -215,10 +220,13 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeApplier />
       <RouteProgress />
-      <Outlet />
+      <div key={pathname} data-page-enter>
+        <Outlet />
+      </div>
       <ChatWidget />
       <BackToTop />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
+
