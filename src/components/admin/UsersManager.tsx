@@ -106,7 +106,7 @@ export function UsersManager() {
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-white">
+      <div className="responsive-table-wrap overflow-x-auto rounded-2xl border border-border bg-white">
         <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>

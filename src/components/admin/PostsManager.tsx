@@ -548,7 +548,7 @@ function TaxonomyManager({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-      <div className="overflow-x-auto rounded-2xl border border-border bg-white shadow-sm">
+      <div className="responsive-table-wrap overflow-x-auto rounded-2xl border border-border bg-white shadow-sm">
         <table className="responsive-table w-full min-w-[820px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
