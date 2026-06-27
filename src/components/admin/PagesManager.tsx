@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
 import { FeaturedSectionEditor } from "./FeaturedSectionEditor";
+import { OffersSectionEditor } from "./OffersSectionEditor";
 import { PartnersSectionEditor } from "./PartnersSectionEditor";
 import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
@@ -73,7 +74,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "partners", "locations", "contact", "info"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -83,6 +84,7 @@ export function PagesManager({
     hero: Home,
     trust: ShieldCheck,
     featured: Building2,
+    offer: BadgePercent,
     locations: MapPin,
     ticker: Megaphone,
     partners: Handshake,
@@ -174,6 +176,14 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">Heading + source: showcase specific, random, or by category.</p>
               </div>
               <FeaturedSectionEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "offer" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Special Offers</h3>
+                <p className="text-xs text-muted-foreground">Promote any property (your own or agents'). Showcase manually or shuffle randomly.</p>
+              </div>
+              <OffersSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : active.section_key === "partners" ? (
             <>
