@@ -146,7 +146,7 @@ function PropertiesPage() {
           </section>
 
           {/* Sidebar filters */}
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 [scrollbar-width:thin]">
             <FilterSidebar
               key={searchKey} // reset local inputs when URL changes
               initial={search}
