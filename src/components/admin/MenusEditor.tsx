@@ -493,3 +493,97 @@ function stringToSearch(s: string): Record<string, string> | undefined {
   });
   return Object.keys(out).length ? out : undefined;
 }
+
+function TickerEditor({ value, onChange }: { value: TickerConfig; onChange: (v: TickerConfig) => void }) {
+  const set = <K extends keyof TickerConfig>(k: K, v: TickerConfig[K]) => onChange({ ...value, [k]: v });
+  const updateItem = (i: number, patch: Partial<{ title: string; link: string }>) => {
+    const items = [...value.items];
+    items[i] = { ...items[i], ...patch };
+    set("items", items);
+  };
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= value.items.length) return;
+    const items = [...value.items];
+    [items[i], items[j]] = [items[j], items[i]];
+    set("items", items);
+  };
+  const remove = (i: number) => set("items", value.items.filter((_, idx) => idx !== i));
+  const add = () => set("items", [...value.items, { title: "", link: "" }]);
+
+  const speed = Number(value.speed) || 40;
+  const threshold = Number(value.scrollThreshold) || 3;
+  const willScroll = value.items.filter((i) => i?.title?.trim()).length > threshold;
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={value.enabled}
+            onChange={(e) => set("enabled", e.target.checked)}
+            className="h-4 w-4 rounded border-input"
+          />
+          Show news ticker on the website
+        </label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span>Scroll speed</span>
+              <span className="text-foreground">{speed}s / loop {speed <= 20 ? "(fast)" : speed >= 60 ? "(slow)" : "(normal)"}</span>
+            </span>
+            <input
+              type="range"
+              min={10}
+              max={120}
+              step={5}
+              value={speed}
+              onChange={(e) => set("speed", Number(e.target.value))}
+              className="w-full accent-primary"
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Scroll only when more than
+            </span>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={threshold}
+                onChange={(e) => set("scrollThreshold", Math.max(1, Number(e.target.value) || 1))}
+                className="w-20 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <span className="text-xs text-muted-foreground">items (default 3)</span>
+            </div>
+          </label>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {willScroll
+            ? `Ticker will scroll because there are more than ${threshold} items.`
+            : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
+          {value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {value.items.map((item, i) => (
+          <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
+            <Input label="Title" value={item.title} onChange={(v) => updateItem(i, { title: v })} placeholder="Breaking headline" />
+            <Input label="Link (optional)" value={item.link || ""} onChange={(v) => updateItem(i, { link: v })} placeholder="/news/slug or https://…" />
+            <RowActions onUp={() => move(i, -1)} onDown={() => move(i, 1)} onRemove={() => remove(i)} />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={add}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Plus className="h-4 w-4" /> Add ticker item
+        </button>
+      </div>
+    </div>
+  );
+}
