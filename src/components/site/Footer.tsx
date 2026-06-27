@@ -115,8 +115,7 @@ export function Footer() {
             </span>
           </Link>
           <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 lg:mx-0">
-            A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
-            tailored for the discerning resident.
+            {settings.footer_about}
           </p>
         </div>
 
@@ -126,14 +125,14 @@ export function Footer() {
             <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gold">
               <span className="h-px w-6 bg-gold/60" />
               <Plane className="h-3 w-3" />
-              <span>Doha → World</span>
+              <span>{settings.footer_center_eyebrow}</span>
               <span className="h-px w-6 bg-gold/60" />
             </div>
             <p className="mt-2 font-display text-xl font-medium text-white">
-              From Qatar, with intent.
+              {settings.footer_center_title}
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/50">
-              25.2854° N · 51.5310° E
+              {settings.footer_center_subtitle}
             </p>
           </div>
         </div>
@@ -143,21 +142,27 @@ export function Footer() {
             <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold lg:justify-start">
 
               <span className="h-px w-5 bg-gold/60" />
-              Contact
+              {settings.footer_contact_heading}
             </h4>
             <ul className="mt-4 space-y-3 text-sm text-white/80">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                West Bay, Doha — Qatar
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                +974 4000 0000
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                hello@maisonqatar.qa
-              </li>
+              {settings.footer_address && (
+                <li className="flex items-start gap-2.5">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_address}
+                </li>
+              )}
+              {settings.footer_phone && (
+                <li className="flex items-start gap-2.5">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_phone}
+                </li>
+              )}
+              {settings.footer_email && (
+                <li className="flex items-start gap-2.5">
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_email}
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -194,13 +199,17 @@ export function Footer() {
 
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 py-5 sm:px-6 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold shadow-[0_0_24px_oklch(0.85_0.14_85/0.18)] backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
-            Licensed real estate brokerage · Qatar
-            <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
-          </span>
+          {settings.footer_badge_text && (
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold shadow-[0_0_24px_oklch(0.85_0.14_85/0.18)] backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
+              {settings.footer_badge_text}
+              <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_oklch(0.85_0.14_85)]" />
+            </span>
+          )}
           <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} {settings.site_title}. All rights reserved.
+            {settings.footer_copyright
+              .replace("{year}", String(new Date().getFullYear()))
+              .replace("{title}", settings.site_title)}
           </p>
         </div>
       </div>

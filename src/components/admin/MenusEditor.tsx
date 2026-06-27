@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText } from "lucide-react";
 import {
   DEFAULT_FOOTER_MENU,
   DEFAULT_HEADER_CTA,
@@ -12,7 +12,36 @@ import {
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
 
-type Tab = "header" | "cta" | "footer";
+type Tab = "header" | "cta" | "footer" | "footer-content";
+
+const FOOTER_CONTENT_KEYS = [
+  "footer_about",
+  "footer_center_eyebrow",
+  "footer_center_title",
+  "footer_center_subtitle",
+  "footer_contact_heading",
+  "footer_address",
+  "footer_phone",
+  "footer_email",
+  "footer_badge_text",
+  "footer_copyright",
+] as const;
+type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
+type FooterContent = Record<FooterContentKey, string>;
+
+const DEFAULT_FOOTER_CONTENT: FooterContent = {
+  footer_about:
+    "A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab — tailored for the discerning resident.",
+  footer_center_eyebrow: "Doha → World",
+  footer_center_title: "From Qatar, with intent.",
+  footer_center_subtitle: "25.2854° N · 51.5310° E",
+  footer_contact_heading: "Contact",
+  footer_address: "West Bay, Doha — Qatar",
+  footer_phone: "+974 4000 0000",
+  footer_email: "hello@maisonqatar.qa",
+  footer_badge_text: "Licensed real estate brokerage · Qatar",
+  footer_copyright: "© {year} {title}. All rights reserved.",
+};
 
 export function MenusEditor() {
   const qc = useQueryClient();
@@ -20,6 +49,7 @@ export function MenusEditor() {
   const [header, setHeader] = useState<HeaderMenuItem[]>(DEFAULT_HEADER_MENU);
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
   const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
+  const [footerContent, setFooterContent] = useState<FooterContent>(DEFAULT_FOOTER_CONTENT);
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
@@ -27,7 +57,7 @@ export function MenusEditor() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json"]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", ...FOOTER_CONTENT_KEYS]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
@@ -49,6 +79,9 @@ export function MenusEditor() {
       const c = data.header_cta_json ? JSON.parse(data.header_cta_json) : DEFAULT_HEADER_CTA;
       if (c && typeof c === "object") setCta({ ...DEFAULT_HEADER_CTA, ...c });
     } catch { /* keep defaults */ }
+    const nextFc = { ...DEFAULT_FOOTER_CONTENT };
+    FOOTER_CONTENT_KEYS.forEach((k) => { if (data[k]) nextFc[k] = data[k]; });
+    setFooterContent(nextFc);
   }, [data]);
 
   const save = useMutation({
@@ -57,6 +90,7 @@ export function MenusEditor() {
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
         { key: "header_cta_json", value: JSON.stringify(cta) },
+        ...FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: footerContent[k] ?? "" })),
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
@@ -65,6 +99,7 @@ export function MenusEditor() {
       toast.success("Menus saved");
       qc.invalidateQueries({ queryKey: ["site-menus"] });
       qc.invalidateQueries({ queryKey: ["site-menus-edit"] });
+      qc.invalidateQueries({ queryKey: ["site-settings"] });
     },
     onError: (e: any) => toast.error(e.message || "Failed to save"),
   });
@@ -90,11 +125,15 @@ export function MenusEditor() {
         <TabBtn active={tab === "footer"} onClick={() => setTab("footer")}>
           <ListTree className="h-3.5 w-3.5" /> Footer menu
         </TabBtn>
+        <TabBtn active={tab === "footer-content"} onClick={() => setTab("footer-content")}>
+          <FileText className="h-3.5 w-3.5" /> Footer content
+        </TabBtn>
       </div>
 
       {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
       {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
       {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
+      {tab === "footer-content" && <FooterContentEditor content={footerContent} onChange={setFooterContent} />}
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <button
@@ -104,6 +143,7 @@ export function MenusEditor() {
               setHeader(DEFAULT_HEADER_MENU);
               setFooter(DEFAULT_FOOTER_MENU);
               setCta(DEFAULT_HEADER_CTA);
+              setFooterContent(DEFAULT_FOOTER_CONTENT);
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
@@ -120,6 +160,65 @@ export function MenusEditor() {
         </button>
       </div>
     </div>
+  );
+}
+
+function FooterContentEditor({ content, onChange }: { content: FooterContent; onChange: (v: FooterContent) => void }) {
+  const set = (k: FooterContentKey, v: string) => onChange({ ...content, [k]: v });
+  return (
+    <div className="space-y-5">
+      <Section title="Left column (under logo)">
+        <Textarea label="About text" value={content.footer_about} onChange={(v) => set("footer_about", v)} />
+      </Section>
+      <Section title="Middle card">
+        <div className="grid gap-2 sm:grid-cols-3">
+          <Input label="Eyebrow" value={content.footer_center_eyebrow} onChange={(v) => set("footer_center_eyebrow", v)} />
+          <Input label="Title" value={content.footer_center_title} onChange={(v) => set("footer_center_title", v)} />
+          <Input label="Subtitle" value={content.footer_center_subtitle} onChange={(v) => set("footer_center_subtitle", v)} />
+        </div>
+      </Section>
+      <Section title="Right card (Contact)">
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Input label="Heading" value={content.footer_contact_heading} onChange={(v) => set("footer_contact_heading", v)} />
+          <Input label="Address" value={content.footer_address} onChange={(v) => set("footer_address", v)} />
+          <Input label="Phone" value={content.footer_phone} onChange={(v) => set("footer_phone", v)} />
+          <Input label="Email" value={content.footer_email} onChange={(v) => set("footer_email", v)} />
+        </div>
+      </Section>
+      <Section title="Bottom bar">
+        <div className="grid gap-2">
+          <Input label="Badge text (leave empty to hide)" value={content.footer_badge_text} onChange={(v) => set("footer_badge_text", v)} />
+          <Input
+            label="Copyright (use {year} and {title} as placeholders)"
+            value={content.footer_copyright}
+            onChange={(v) => set("footer_copyright", v)}
+          />
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</p>
+      {children}
+    </div>
+  );
+}
+
+function Textarea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block space-y-1">
+      <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+        className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+      />
+    </label>
   );
 }
 
