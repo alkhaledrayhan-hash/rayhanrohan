@@ -132,69 +132,113 @@ export function HeroEditor({
 
   return (
     <div className="space-y-5">
-      {/* Live preview */}
-      <div className="relative overflow-hidden rounded-2xl border border-border">
-        {slides.length > 0 ? (
-          <div className="relative h-64 w-full">
-            {slides.map((src, i) => (
+      {/* High-fidelity live preview (mirrors frontend hero) */}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-black/5">
+        <div className="relative aspect-[16/7] w-full">
+          {slides.length > 0 ? (
+            slides.map((src, i) => (
               <img
                 key={src + i}
                 src={src}
                 alt=""
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${previewSlide === i ? "opacity-100" : "opacity-0"}`}
               />
-            ))}
-          </div>
-        ) : (
-          <div className="grid h-64 w-full place-items-center bg-muted text-xs text-muted-foreground">
-            No image — using default hero
-          </div>
-        )}
-        <div className="absolute inset-0" style={{ background: overlayBg }} />
-        <div
-          className={`absolute inset-0 flex flex-col justify-center p-8 ${st.align === "center" ? "items-center text-center" : "items-start"}`}
-        >
-          {content.eyebrow && (
-            <p
-              className="text-[11px] font-medium uppercase tracking-[0.25em]"
-              style={{ color: st.eyebrow_color }}
-            >
-              {content.eyebrow}
-            </p>
-          )}
-          {content.title && (
-            <h2
-              className={`mt-2 font-display font-semibold leading-tight ${titleSize}`}
-              style={{ color: st.title_color }}
-            >
-              {content.title}
-            </h2>
-          )}
-          {content.subtitle && (
-            <p
-              className="mt-2 max-w-xl text-sm"
-              style={{ color: st.subtitle_color }}
-            >
-              {content.subtitle}
-            </p>
-          )}
-          {(content.cta_label || content.cta2_label) && (
-            <div className="mt-4 flex gap-2">
-              {content.cta_label && (
-                <span
-                  className="rounded-lg px-4 py-2 text-xs font-medium"
-                  style={{ background: st.cta_bg, color: st.cta_text }}
-                >
-                  {content.cta_label}
-                </span>
-              )}
-              {content.cta2_label && (
-                <span className="rounded-lg border border-white/40 px-4 py-2 text-xs font-medium text-white">
-                  {content.cta2_label}
-                </span>
-              )}
+            ))
+          ) : (
+            <div className="grid h-full w-full place-items-center bg-muted text-xs text-muted-foreground">
+              No image — using default hero
             </div>
           )}
+          <div className="absolute inset-0" style={{ background: overlayBg }} />
+
+          {/* Slide dots */}
+          {slides.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setPreviewSlide(i)}
+                  className={`h-1.5 rounded-full transition-all ${previewSlide === i ? "w-6 bg-white" : "w-1.5 bg-white/50"}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Hero content */}
+          <div
+            className={`absolute inset-0 flex flex-col justify-center px-6 py-6 sm:px-10 ${st.align === "center" ? "items-center text-center" : "items-start"}`}
+          >
+            <div className={`max-w-xl ${st.align === "center" ? "mx-auto" : ""}`}>
+              {content.eyebrow && (
+                <span
+                  className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/30 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] backdrop-blur"
+                  style={{ color: st.eyebrow_color, borderColor: withAlpha(st.eyebrow_color!, 60) }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: st.eyebrow_color }} />
+                  {content.eyebrow}
+                </span>
+              )}
+              {content.title && (
+                <h2
+                  className={`mt-3 font-display font-semibold leading-[1.05] ${titleSize}`}
+                  style={{ color: st.title_color }}
+                >
+                  {content.title}
+                </h2>
+              )}
+              {content.subtitle && (
+                <p className="mt-2 max-w-md text-xs sm:text-sm" style={{ color: st.subtitle_color }}>
+                  {content.subtitle}
+                </p>
+              )}
+              {(content.cta_label || content.cta2_label) && (
+                <div className={`mt-4 flex flex-wrap gap-2 ${st.align === "center" ? "justify-center" : ""}`}>
+                  {content.cta_label && (
+                    <span
+                      className="inline-flex items-center rounded-lg px-4 py-2 text-xs font-medium shadow"
+                      style={{ background: st.cta_bg, color: st.cta_text }}
+                    >
+                      {content.cta_label}
+                    </span>
+                  )}
+                  {content.cta2_label && (
+                    <span className="inline-flex items-center rounded-lg border border-white/40 px-4 py-2 text-xs font-medium text-white">
+                      {content.cta2_label}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Mock glass search bar (matches HeroSearch look) */}
+              <div className="mt-5 rounded-xl border border-white/20 bg-white/10 p-2 shadow-lg backdrop-blur-xl">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="inline-flex rounded-full bg-white/10 p-0.5 text-[10px] backdrop-blur">
+                    <span className="rounded-full bg-primary px-3 py-1 font-medium text-primary-foreground">For rent</span>
+                    <span className="px-3 py-1 text-white/70">For sale</span>
+                  </div>
+                  <span className="rounded-lg bg-primary px-3 py-1.5 text-[10px] font-medium text-primary-foreground">Search</span>
+                </div>
+                <div className="mt-2 grid grid-cols-3 gap-1.5">
+                  {["Location", "Type", "Price"].map((label) => (
+                    <div
+                      key={label}
+                      className="rounded-md border border-white/15 px-2 py-1 text-left text-[9px] text-white/70 backdrop-blur"
+                      style={{ backgroundColor: "color-mix(in oklab, var(--primary) 14%, rgba(15,12,14,0.35))" }}
+                    >
+                      <p className="uppercase tracking-[0.15em] text-white/60">{label}</p>
+                      <p className="text-[10px] text-white">Any</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2 text-[10px] text-muted-foreground">
+          <span>Live preview — matches the public hero layout (slider, overlay, glass search).</span>
+          <span>{slides.length} slide{slides.length === 1 ? "" : "s"}</span>
         </div>
       </div>
 
