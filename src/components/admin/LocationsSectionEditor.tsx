@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -97,55 +97,89 @@ export function LocationsSectionEditor({ sectionId, initial }: { sectionId: stri
 
   const detectedCount = dbLocations.length;
 
+  const input = "w-full rounded-lg border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+  const labelCls = "block text-xs font-medium text-muted-foreground mb-1";
+
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
-        <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Eyebrow</span>
-          <input className="w-full rounded-md border border-input bg-white px-3 py-2" value={value.eyebrow} onChange={(e) => setValue({ ...value, eyebrow: e.target.value })} />
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>
-          <input className="w-full rounded-md border border-input bg-white px-3 py-2" value={value.title} onChange={(e) => setValue({ ...value, title: e.target.value })} />
-        </label>
+    <div className="space-y-6">
+      {/* Heading content */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className={labelCls}>Eyebrow</label>
+          <input className={input} value={value.eyebrow} onChange={(e) => setValue({ ...value, eyebrow: e.target.value })} />
+        </div>
+        <div>
+          <label className={labelCls}>Title</label>
+          <input className={input} value={value.title} onChange={(e) => setValue({ ...value, title: e.target.value })} />
+        </div>
       </div>
 
-      <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-3">
-        <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Source mode</span>
-          <select className="w-full rounded-md border border-input bg-white px-3 py-2" value={value.mode} onChange={(e) => setValue({ ...value, mode: e.target.value as LocationsConfig["mode"] })}>
-            <option value="auto">Auto (all property locations)</option>
-            <option value="random">Random (pick N at random)</option>
-            <option value="manual">Custom (manage list below)</option>
-          </select>
-          <span className="mt-1 block text-[11px] text-muted-foreground">{detectedCount} distinct locations detected from properties.</span>
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Max items to show</span>
-          <input type="number" min={1} max={50} className="w-full rounded-md border border-input bg-white px-3 py-2" value={value.limit} onChange={(e) => setValue({ ...value, limit: Number(e.target.value) || 1 })} />
-        </label>
-        <div className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Auto-scroll marquee</span>
-          <div className="flex flex-wrap items-center gap-3 rounded-md border border-input bg-white px-3 py-2">
-            <label className="flex items-center gap-2 text-xs">
-              <input type="checkbox" checked={value.scroll.enabled} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, enabled: e.target.checked } })} />
-              Enable
-            </label>
-            <label className="flex items-center gap-1 text-xs">
-              Threshold
-              <input type="number" min={1} max={50} className="w-14 rounded-md border border-input px-1 py-0.5" value={value.scroll.threshold} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, threshold: Number(e.target.value) || 1 } })} />
-            </label>
-            <label className="flex items-center gap-1 text-xs">
-              Speed
-              <input type="number" min={5} max={120} className="w-16 rounded-md border border-input px-1 py-0.5" value={value.scroll.speed} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, speed: Number(e.target.value) || 28 } })} />
-              <span className="text-[10px] text-muted-foreground">(lower = faster)</span>
-            </label>
+      {/* Source mode */}
+      <div className="rounded-xl border border-border bg-muted/20 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold">Location source</p>
+          <span className="text-[11px] text-muted-foreground">{detectedCount} distinct locations detected from properties.</span>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {(["auto", "random", "manual"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => setValue({ ...value, mode: m })}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium capitalize ${value.mode === m ? "bg-primary text-primary-foreground" : "bg-white border border-border hover:bg-muted"}`}
+            >
+              {m === "auto" ? "Auto (alphabetical)" : m === "random" ? "Random" : "Showcase (pick)"}
+            </button>
+          ))}
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Show</span>
+            <input
+              type="number"
+              min={1}
+              max={50}
+              className="w-16 rounded-lg border border-input bg-white px-2 py-1 text-sm"
+              value={value.limit}
+              onChange={(e) => setValue({ ...value, limit: Math.max(1, Math.min(50, Number(e.target.value) || 1)) })}
+            />
+          </div>
+        </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          {value.mode === "auto"
+            ? `Pulls up to ${value.limit} location${value.limit === 1 ? "" : "s"} from live properties, sorted alphabetically.`
+            : value.mode === "random"
+            ? `Picks ${value.limit} location${value.limit === 1 ? "" : "s"} at random from live properties on each load.`
+            : `Show the custom list below (in order).`}
+        </p>
+      </div>
+
+      {/* Marquee */}
+      <div className="rounded-xl border border-border bg-muted/20 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold">Auto-scroll marquee</p>
+          <label className="inline-flex items-center gap-2 text-xs">
+            <input type="checkbox" checked={value.scroll.enabled} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, enabled: e.target.checked } })} />
+            Enable when over threshold
+          </label>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelCls}>Threshold (min items to start scrolling)</label>
+            <input type="number" min={1} max={50} className={input} value={value.scroll.threshold} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, threshold: Number(e.target.value) || 1 } })} />
+          </div>
+          <div>
+            <label className={labelCls}>Speed <span className="text-muted-foreground">(seconds per loop — lower = faster)</span></label>
+            <input type="number" min={5} max={120} className={input} value={value.scroll.speed} onChange={(e) => setValue({ ...value, scroll: { ...value.scroll, speed: Number(e.target.value) || 28 } })} />
           </div>
         </div>
       </div>
 
-      {value.mode === "manual" ? (
+      {/* Manual items */}
+      {value.mode === "manual" && (
         <div className="space-y-2">
+          <p className="text-sm font-semibold">Custom locations</p>
+          {value.customItems.length === 0 && (
+            <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-xs text-muted-foreground">No custom locations yet — add one below.</div>
+          )}
           {value.customItems.map((item, i) => (
             <div key={i} className="grid items-center gap-2 rounded-xl border border-border bg-white p-3 sm:grid-cols-[1fr_1.5fr_1fr_auto]">
               <input className="rounded-md border border-input px-2 py-1.5 text-sm" placeholder="Location name" value={item.name} onChange={(e) => setItem(i, { name: e.target.value })} />
@@ -160,12 +194,6 @@ export function LocationsSectionEditor({ sectionId, initial }: { sectionId: stri
           ))}
           <button onClick={add} className="inline-flex items-center gap-2 rounded-lg border border-input bg-white px-3 py-2 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add location</button>
         </div>
-      ) : (
-        <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-xs text-muted-foreground">
-          {value.mode === "auto"
-            ? `Showing up to ${value.limit} location${value.limit === 1 ? "" : "s"} from your live properties (alphabetical).`
-            : `Showing ${value.limit} location${value.limit === 1 ? "" : "s"} picked randomly from your live properties on each load.`}
-        </div>
       )}
 
       <div className="flex items-center justify-end">
@@ -174,3 +202,4 @@ export function LocationsSectionEditor({ sectionId, initial }: { sectionId: stri
     </div>
   );
 }
+
