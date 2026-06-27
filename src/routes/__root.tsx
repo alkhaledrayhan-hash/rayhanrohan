@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { RouteProgress } from "../components/site/RouteProgress";
 import { ChatWidget } from "../components/site/ChatWidget";
+import { BackToTop } from "../components/site/BackToTop";
 
 function NotFoundComponent() {
   return (
@@ -209,6 +210,7 @@ function RootComponent() {
       <RouteProgress />
       <Outlet />
       <ChatWidget />
+      <BackToTop />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );

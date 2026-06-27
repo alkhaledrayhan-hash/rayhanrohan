@@ -17,6 +17,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 
 import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
+import { PhoneInput } from "@/components/site/PhoneInput";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -44,7 +45,7 @@ const WHATSAPP_E164 = "97433330123";
 const EMAIL = "hello@maisonqatar.qa";
 
 function ContactPage() {
-  
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -52,13 +53,18 @@ function ContactPage() {
     subject: "General enquiry",
     message: "",
   });
+  const [dialCode, setDialCode] = useState("+974");
   const [submitting, setSubmitting] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await submitLead({ ...form, source: "contact_page" });
+      const payload = {
+        ...form,
+        phone: form.phone.trim() ? `${dialCode} ${form.phone.trim()}` : "",
+      };
+      const res = await submitLead({ ...payload, source: "contact_page" });
       toast.success("Message sent", {
         description: `Reference ${res.id}. We'll reply within one business hour.`,
       });
@@ -142,12 +148,13 @@ function ContactPage() {
                 required
                 placeholder="you@example.com"
               />
-              <FormField
+              <PhoneInput
                 label="Phone (optional)"
-                type="tel"
-                value={form.phone}
-                onChange={(v) => setForm({ ...form, phone: v })}
-                placeholder="+974 …"
+                dialCode={dialCode}
+                phone={form.phone}
+                onDialCodeChange={setDialCode}
+                onPhoneChange={(v) => setForm({ ...form, phone: v })}
+                placeholder="Phone number"
               />
               <FormSelect
                 label="Subject"
