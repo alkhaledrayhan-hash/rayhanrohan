@@ -115,8 +115,7 @@ export function Footer() {
             </span>
           </Link>
           <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 lg:mx-0">
-            A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab —
-            tailored for the discerning resident.
+            {settings.footer_about}
           </p>
         </div>
 
@@ -126,14 +125,14 @@ export function Footer() {
             <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.4em] text-gold">
               <span className="h-px w-6 bg-gold/60" />
               <Plane className="h-3 w-3" />
-              <span>Doha → World</span>
+              <span>{settings.footer_center_eyebrow}</span>
               <span className="h-px w-6 bg-gold/60" />
             </div>
             <p className="mt-2 font-display text-xl font-medium text-white">
-              From Qatar, with intent.
+              {settings.footer_center_title}
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/50">
-              25.2854° N · 51.5310° E
+              {settings.footer_center_subtitle}
             </p>
           </div>
         </div>
@@ -143,21 +142,27 @@ export function Footer() {
             <h4 className="flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-gold lg:justify-start">
 
               <span className="h-px w-5 bg-gold/60" />
-              Contact
+              {settings.footer_contact_heading}
             </h4>
             <ul className="mt-4 space-y-3 text-sm text-white/80">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                West Bay, Doha — Qatar
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                +974 4000 0000
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                hello@maisonqatar.qa
-              </li>
+              {settings.footer_address && (
+                <li className="flex items-start gap-2.5">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_address}
+                </li>
+              )}
+              {settings.footer_phone && (
+                <li className="flex items-start gap-2.5">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_phone}
+                </li>
+              )}
+              {settings.footer_email && (
+                <li className="flex items-start gap-2.5">
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  {settings.footer_email}
+                </li>
+              )}
             </ul>
           </div>
         </div>
