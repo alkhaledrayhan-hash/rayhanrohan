@@ -187,10 +187,14 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
               {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
-                <tr key={r.id} className="align-top hover:bg-muted/30">
+                <tr
+                  key={r.id}
+                  onClick={() => setViewing(r)}
+                  className="cursor-pointer align-top hover:bg-muted/30"
+                >
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">{formatDateTime(r.created_at)}</td>
                   <td className="px-4 py-3 font-medium">{r.name}</td>
-                  <td className="px-4 py-3 text-xs">
+                  <td className="px-4 py-3 text-xs" onClick={(e) => e.stopPropagation()}>
                     <a href={`mailto:${r.email}`} className="block text-primary hover:underline">{r.email}</a>
                     {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
                   </td>
@@ -202,11 +206,18 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                     <p className="line-clamp-3 text-xs text-muted-foreground">{r.message}</p>
                   </td>
                   {isAdmin && (
-                    <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => { if (confirm("Delete this lead?")) del.mutate(r.id); }}
-                        className="rounded p-1.5 text-rose-600 hover:bg-rose-50" title="Delete"
-                      ><Trash2 className="h-4 w-4" /></button>
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      <div className="inline-flex items-center gap-1">
+                        <button
+                          onClick={() => setViewing(r)}
+                          className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                          title="View"
+                        ><Eye className="h-4 w-4" /></button>
+                        <button
+                          onClick={() => { if (confirm("Delete this lead?")) del.mutate(r.id); }}
+                          className="rounded p-1.5 text-rose-600 hover:bg-rose-50" title="Delete"
+                        ><Trash2 className="h-4 w-4" /></button>
+                      </div>
                     </td>
                   )}
                 </tr>
