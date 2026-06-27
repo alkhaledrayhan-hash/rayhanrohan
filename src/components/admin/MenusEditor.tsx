@@ -57,7 +57,7 @@ export function MenusEditor() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json"]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", ...FOOTER_CONTENT_KEYS]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
