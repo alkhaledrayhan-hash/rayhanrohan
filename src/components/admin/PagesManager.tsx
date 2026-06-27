@@ -6,6 +6,7 @@ import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, Shi
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
+import { FeaturedSectionEditor } from "./FeaturedSectionEditor";
 
 type Section = {
   id: string;
@@ -68,7 +69,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && active.section_key !== "hero" && active.section_key !== "ticker" && active.section_key !== "trust") {
+    if (active && !["hero", "ticker", "trust", "featured"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -164,6 +165,14 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">{active.page_slug} · trust strip · auto-scrolls when many items</p>
               </div>
               <TrustSectionEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "featured" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Featured Properties</h3>
+                <p className="text-xs text-muted-foreground">Heading + source: showcase specific, random, or by category.</p>
+              </div>
+              <FeaturedSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : (
             <>
