@@ -90,6 +90,7 @@ export function MenusEditor() {
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
         { key: "header_cta_json", value: JSON.stringify(cta) },
+        ...FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: footerContent[k] ?? "" })),
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
@@ -98,6 +99,7 @@ export function MenusEditor() {
       toast.success("Menus saved");
       qc.invalidateQueries({ queryKey: ["site-menus"] });
       qc.invalidateQueries({ queryKey: ["site-menus-edit"] });
+      qc.invalidateQueries({ queryKey: ["site-settings"] });
     },
     onError: (e: any) => toast.error(e.message || "Failed to save"),
   });
