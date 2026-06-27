@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type HeaderSubItem = { label: string; to: string; search?: Record<string, string>; icon?: string };
 export type HeaderMenuItem = {
   label: string;
   to: string;
   search?: Record<string, string>;
-  children?: { label: string; to: string; search?: Record<string, string> }[];
+  icon?: string;
+  children?: HeaderSubItem[];
 };
 
 export type FooterMenuGroup = {

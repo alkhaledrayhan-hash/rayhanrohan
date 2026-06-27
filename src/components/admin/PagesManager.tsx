@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, ChevronRight, Home, Info, Mail, Newspaper, Building2, Users } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
+import { TickerSectionEditor } from "./TickerSectionEditor";
+import { TrustSectionEditor } from "./TrustSectionEditor";
 
 type Section = {
   id: string;
@@ -55,12 +57,31 @@ export function PagesManager({
     },
   });
 
-  const active = sections.find((s) => s.section_key === activeKey) || sections[0];
+  // Virtual sections (not stored in page_sections) that get their own editors.
+  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home }> = [
+    { section_key: "ticker", label: "News ticker", icon: Megaphone },
+  ];
+  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : [];
+
+  const active = sections.find((s) => s.section_key === activeKey)
+    || (virtualForPage.find((v) => v.section_key === activeKey) ? ({ id: `virtual-${activeKey}`, page_slug: activePage, section_key: activeKey!, label: virtualForPage.find((v) => v.section_key === activeKey)!.label, content: null, sort_order: 999 } as Section) : undefined)
+    || sections[0];
 
   useEffect(() => {
-    if (active && active.section_key !== "hero") setDraft(JSON.stringify(active.content, null, 2));
+    if (active && active.section_key !== "hero" && active.section_key !== "ticker" && active.section_key !== "trust") {
+      setDraft(JSON.stringify(active.content, null, 2));
+    }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
   }, [active?.id, sections.length]);
+
+  const SECTION_ICONS: Record<string, typeof Home> = {
+    hero: Home,
+    trust: ShieldCheck,
+    featured: Building2,
+    locations: Newspaper,
+    ticker: Megaphone,
+  };
+
 
   const saveJson = useMutation({
     mutationFn: async () => {
@@ -91,15 +112,30 @@ export function PagesManager({
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
-        {sections.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setActiveKey(s.section_key)}
-            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.id === s.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
-          >
-            <span className="flex items-center gap-2"><FileText className="h-3.5 w-3.5" /> {s.label}</span>
-          </button>
-        ))}
+        {sections.map((s) => {
+          const Icon = SECTION_ICONS[s.section_key] || FileText;
+          return (
+            <button
+              key={s.id}
+              onClick={() => setActiveKey(s.section_key)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === s.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+            >
+              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {s.label}</span>
+            </button>
+          );
+        })}
+        {virtualForPage.map((v) => {
+          const Icon = v.icon;
+          return (
+            <button
+              key={v.section_key}
+              onClick={() => setActiveKey(v.section_key)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === v.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+            >
+              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {v.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Editor */}
@@ -112,6 +148,22 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">{active.page_slug} · live preview below</p>
               </div>
               <HeroEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "ticker" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">News ticker</h3>
+                <p className="text-xs text-muted-foreground">Shown across the site below the hero. Falls back to latest news posts when empty.</p>
+              </div>
+              <TickerSectionEditor />
+            </>
+          ) : active.section_key === "trust" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">{active.page_slug} · trust strip · auto-scrolls when many items</p>
+              </div>
+              <TrustSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : (
             <>
@@ -134,6 +186,7 @@ export function PagesManager({
               <p className="mt-2 text-xs text-muted-foreground">Edit the JSON content for this section. Changes appear instantly on the live site.</p>
             </>
           )
+
         ) : (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
             Select a section to edit.

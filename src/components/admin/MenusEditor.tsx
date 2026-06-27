@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText, Megaphone } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText } from "lucide-react";
 import {
   DEFAULT_FOOTER_MENU,
   DEFAULT_HEADER_CTA,
@@ -12,8 +12,9 @@ import {
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
 import { DEFAULT_TICKER_CONFIG, type TickerConfig } from "@/hooks/useTickerConfig";
+import { MENU_ICON_KEYS, getMenuIcon } from "@/lib/menu-icons";
 
-type Tab = "header" | "cta" | "footer" | "footer-content" | "ticker";
+type Tab = "header" | "cta" | "footer" | "footer-content";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
@@ -51,7 +52,7 @@ export function MenusEditor() {
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
   const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
   const [footerContent, setFooterContent] = useState<FooterContent>(DEFAULT_FOOTER_CONTENT);
-  const [ticker, setTicker] = useState<TickerConfig>(DEFAULT_TICKER_CONFIG);
+  
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
@@ -59,7 +60,7 @@ export function MenusEditor() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", "ticker_json", ...FOOTER_CONTENT_KEYS]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", ...FOOTER_CONTENT_KEYS]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
@@ -84,17 +85,8 @@ export function MenusEditor() {
     const nextFc = { ...DEFAULT_FOOTER_CONTENT };
     FOOTER_CONTENT_KEYS.forEach((k) => { if (data[k]) nextFc[k] = data[k]; });
     setFooterContent(nextFc);
-    try {
-      if (data.ticker_json) {
-        const t = JSON.parse(data.ticker_json);
-        setTicker({
-          ...DEFAULT_TICKER_CONFIG,
-          ...t,
-          items: Array.isArray(t?.items) ? t.items : [],
-        });
-      }
-    } catch { /* keep defaults */ }
   }, [data]);
+
 
   const save = useMutation({
     mutationFn: async () => {
@@ -102,7 +94,7 @@ export function MenusEditor() {
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
         { key: "header_cta_json", value: JSON.stringify(cta) },
-        { key: "ticker_json", value: JSON.stringify(ticker) },
+        
         ...FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: footerContent[k] ?? "" })),
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
@@ -142,16 +134,13 @@ export function MenusEditor() {
         <TabBtn active={tab === "footer-content"} onClick={() => setTab("footer-content")}>
           <FileText className="h-3.5 w-3.5" /> Footer content
         </TabBtn>
-        <TabBtn active={tab === "ticker"} onClick={() => setTab("ticker")}>
-          <Megaphone className="h-3.5 w-3.5" /> News ticker
-        </TabBtn>
       </div>
 
       {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
       {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
       {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
       {tab === "footer-content" && <FooterContentEditor content={footerContent} onChange={setFooterContent} />}
-      {tab === "ticker" && <TickerEditor value={ticker} onChange={setTicker} />}
+
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <button
@@ -162,7 +151,7 @@ export function MenusEditor() {
               setFooter(DEFAULT_FOOTER_MENU);
               setCta(DEFAULT_HEADER_CTA);
               setFooterContent(DEFAULT_FOOTER_CONTENT);
-              setTicker(DEFAULT_TICKER_CONFIG);
+              
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
@@ -287,7 +276,7 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
   const add = () => onChange([...items, { label: "New link", to: "/" }]);
 
-  const updateChild = (i: number, ci: number, patch: Partial<{ label: string; to: string; search?: Record<string, string> }>) => {
+  const updateChild = (i: number, ci: number, patch: Partial<{ label: string; to: string; search?: Record<string, string>; icon?: string }>) => {
     const children = [...(items[i].children || [])];
     children[ci] = { ...children[ci], ...patch };
     update(i, { children });
@@ -321,7 +310,7 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
           <div className="space-y-2 border-l-2 border-primary/20 pl-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Submenu items</p>
             {(item.children || []).map((c, ci) => (
-              <div key={ci} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_1fr_auto]">
+              <div key={ci} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_1fr_130px_auto]">
                 <Input label="Label" value={c.label} onChange={(v) => updateChild(i, ci, { label: v })} />
                 <Input label="Path" value={c.to} onChange={(v) => updateChild(i, ci, { to: v })} placeholder="/properties" />
                 <Input
@@ -330,12 +319,30 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
                   onChange={(v) => updateChild(i, ci, { search: stringToSearch(v) })}
                   placeholder="status=rent"
                 />
+                <label className="block space-y-1">
+                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Icon</span>
+                  <div className="flex items-center gap-1.5">
+                    {(() => {
+                      const Icon = getMenuIcon(c.icon);
+                      return Icon ? <Icon className="h-4 w-4 text-primary" /> : <span className="h-4 w-4" />;
+                    })()}
+                    <select
+                      value={c.icon || ""}
+                      onChange={(e) => updateChild(i, ci, { icon: e.target.value || undefined })}
+                      className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                    >
+                      <option value="">Auto</option>
+                      {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
+                    </select>
+                  </div>
+                </label>
                 <RowActions
                   onUp={() => moveChild(i, ci, -1)}
                   onDown={() => moveChild(i, ci, 1)}
                   onRemove={() => removeChild(i, ci)}
                 />
               </div>
+
             ))}
             <button
               type="button"
