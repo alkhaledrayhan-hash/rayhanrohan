@@ -148,6 +148,20 @@
   animation: fade-in-up 0.5s ease-out both;
 }
 
+/* Scroll-reveal: sections fade/slide in as they enter viewport */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    will-change: opacity, transform;
+  }
+  [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 img {
   transition: opacity 0.3s ease;
 }
