@@ -364,8 +364,13 @@ function AdminDashboard() {
         </main>
       </div>
     </div>
+    </SidebarCollapsedContext.Provider>
   );
 }
+
+const SidebarCollapsedContext = createContext(false);
+const useSidebarCollapsed = () => useContext(SidebarCollapsedContext);
+
 
 function sectionTitle(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
