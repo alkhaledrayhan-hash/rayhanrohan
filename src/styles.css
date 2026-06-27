@@ -105,6 +105,7 @@
     /* Bulletproof horizontal scroll prevention across all breakpoints */
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
   body {
     background-color: var(--color-background);
