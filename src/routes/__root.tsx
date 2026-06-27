@@ -129,12 +129,11 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
-        <div id="app-loading" aria-hidden="true" suppressHydrationWarning />
         {children}
         <script
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
-            __html: `(function(){function h(){var e=document.getElementById('app-loading');if(!e)return;e.classList.add('hide');setTimeout(function(){e&&e.parentNode&&e.parentNode.removeChild(e)},300)}if(document.readyState==='complete')setTimeout(h,50);else window.addEventListener('load',function(){setTimeout(h,50)});setTimeout(h,4000)})();`,
+            __html: `(function(){var e=document.getElementById('app-loading');if(!e)return;function h(){e.classList.add('hide');setTimeout(function(){e&&e.parentNode&&e.parentNode.removeChild(e)},300)}if(document.readyState==='complete')setTimeout(h,50);else window.addEventListener('load',function(){setTimeout(h,50)});setTimeout(h,4000)})();`,
           }}
         />
         <Scripts />
