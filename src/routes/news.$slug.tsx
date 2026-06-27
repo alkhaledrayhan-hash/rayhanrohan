@@ -47,12 +47,15 @@ export const Route = createFileRoute("/news/$slug")({
       <Footer />
     </div>
   ),
-  errorComponent: ({ error }) => (
-    <div className="mx-auto max-w-2xl px-6 py-32 text-center">
-      <p className="font-display text-2xl">Something went wrong loading this article.</p>
-      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    console.error(error);
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-32 text-center">
+        <p className="font-display text-2xl">Something went wrong loading this article.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Please try again later.</p>
+      </div>
+    );
+  },
   component: ArticleDetail,
 });
 

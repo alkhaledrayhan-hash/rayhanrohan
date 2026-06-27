@@ -26,11 +26,14 @@ export const Route = createFileRoute("/agents/$id")({
     return res;
   },
   component: AgentDetailPage,
-  errorComponent: ({ error }) => (
-    <div className="grid min-h-screen place-items-center p-10 text-center text-sm text-rose-600">
-      {error.message}
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    console.error(error);
+    return (
+      <div className="grid min-h-screen place-items-center p-10 text-center text-sm text-rose-600">
+        Something went wrong. Please try again.
+      </div>
+    );
+  },
   notFoundComponent: () => (
     <div className="min-h-screen bg-background">
       <Header />

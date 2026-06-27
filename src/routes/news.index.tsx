@@ -45,12 +45,15 @@ export const Route = createFileRoute("/news/")({
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
-  errorComponent: ({ error }) => (
-    <div className="mx-auto max-w-2xl px-6 py-32 text-center">
-      <p className="font-display text-2xl">Couldn't load articles.</p>
-      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    console.error(error);
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-32 text-center">
+        <p className="font-display text-2xl">Couldn't load articles.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Something went wrong. Please try again.</p>
+      </div>
+    );
+  },
   notFoundComponent: () => <div className="mx-auto max-w-2xl px-6 py-32 text-center">Not found.</div>,
   component: NewsPage,
 });
