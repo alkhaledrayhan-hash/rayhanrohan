@@ -169,19 +169,64 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
   const add = () => onChange([...items, { label: "New link", to: "/" }]);
 
+  const updateChild = (i: number, ci: number, patch: Partial<{ label: string; to: string; search?: Record<string, string> }>) => {
+    const children = [...(items[i].children || [])];
+    children[ci] = { ...children[ci], ...patch };
+    update(i, { children });
+  };
+  const addChild = (i: number) => update(i, { children: [...(items[i].children || []), { label: "New sublink", to: "/" }] });
+  const removeChild = (i: number, ci: number) => update(i, { children: (items[i].children || []).filter((_, idx) => idx !== ci) });
+  const moveChild = (i: number, ci: number, dir: -1 | 1) => {
+    const children = [...(items[i].children || [])];
+    const j = ci + dir;
+    if (j < 0 || j >= children.length) return;
+    [children[ci], children[j]] = [children[j], children[ci]];
+    update(i, { children });
+  };
+
   return (
     <div className="space-y-3">
       {items.map((item, i) => (
-        <div key={i} className="grid gap-2 rounded-xl border border-border bg-muted/20 p-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
-          <Input label="Label" value={item.label} onChange={(v) => update(i, { label: v })} />
-          <Input label="Path (URL)" value={item.to} onChange={(v) => update(i, { to: v })} placeholder="/about" />
-          <Input
-            label="Search (key=value, optional)"
-            value={searchToString(item.search)}
-            onChange={(v) => update(i, { search: stringToSearch(v) })}
-            placeholder="status=rent"
-          />
-          <RowActions onUp={() => move(i, -1)} onDown={() => move(i, 1)} onRemove={() => remove(i)} />
+        <div key={i} className="space-y-3 rounded-xl border border-border bg-muted/20 p-3">
+          <div className="grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
+            <Input label="Label" value={item.label} onChange={(v) => update(i, { label: v })} />
+            <Input label="Path (URL)" value={item.to} onChange={(v) => update(i, { to: v })} placeholder="/about" />
+            <Input
+              label="Search (key=value, optional)"
+              value={searchToString(item.search)}
+              onChange={(v) => update(i, { search: stringToSearch(v) })}
+              placeholder="status=rent"
+            />
+            <RowActions onUp={() => move(i, -1)} onDown={() => move(i, 1)} onRemove={() => remove(i)} />
+          </div>
+
+          <div className="space-y-2 border-l-2 border-primary/20 pl-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Submenu items</p>
+            {(item.children || []).map((c, ci) => (
+              <div key={ci} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_1fr_auto]">
+                <Input label="Label" value={c.label} onChange={(v) => updateChild(i, ci, { label: v })} />
+                <Input label="Path" value={c.to} onChange={(v) => updateChild(i, ci, { to: v })} placeholder="/properties" />
+                <Input
+                  label="Search (optional)"
+                  value={searchToString(c.search)}
+                  onChange={(v) => updateChild(i, ci, { search: stringToSearch(v) })}
+                  placeholder="status=rent"
+                />
+                <RowActions
+                  onUp={() => moveChild(i, ci, -1)}
+                  onDown={() => moveChild(i, ci, 1)}
+                  onRemove={() => removeChild(i, ci)}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => addChild(i)}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add submenu link
+            </button>
+          </div>
         </div>
       ))}
       <button
