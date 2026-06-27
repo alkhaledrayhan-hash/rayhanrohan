@@ -304,19 +304,29 @@ function NavDropdown({
         <ChevronDown className="h-3 w-3 opacity-70" />
       </Link>
       {open && item.children && item.children.length > 0 && (
-        <div className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-white/25 bg-white/10 p-1.5 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150">
-          {item.children.map((c, i) => (
-            <Link
-              key={i}
-              to={c.to as never}
-              search={c.search as never}
-              className={`block rounded-lg px-3 py-2 text-sm transition-colors ${scrolled ? "text-foreground hover:bg-white/40" : "text-white hover:bg-white/20"}`}
-              onClick={() => setOpen(false)}
-            >
-              {c.label}
-            </Link>
-          ))}
-        </div>
+        <>
+          {/* hover bridge so cursor can move from trigger to panel */}
+          <div className="absolute left-0 right-0 top-full h-2" />
+          <div
+            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-white/20 p-1.5 shadow-[0_20px_60px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
+            style={{
+              background: "linear-gradient(135deg, rgba(15,23,42,0.55), rgba(15,23,42,0.35))",
+              backdropFilter: "blur(24px) saturate(160%)",
+            }}
+          >
+            {item.children.map((c, i) => (
+              <Link
+                key={i}
+                to={c.to as never}
+                search={c.search as never}
+                className="block rounded-lg px-3 py-2 text-sm text-white/90 transition-all duration-200 hover:bg-white/15 hover:text-white hover:translate-x-0.5"
+                onClick={() => setOpen(false)}
+              >
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
