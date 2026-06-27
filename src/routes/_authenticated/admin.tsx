@@ -302,6 +302,16 @@ function AdminDashboard() {
           >
             <Menu className="h-4 w-4" />
           </button>
+          <button
+            type="button"
+            onClick={() => setDesktopCollapsed((c) => !c)}
+            aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="hidden h-9 w-9 shrink-0 place-items-center rounded-md border border-border bg-white text-muted-foreground hover:text-foreground md:grid"
+          >
+            {desktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+
           <div className="relative hidden w-full max-w-md md:block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
