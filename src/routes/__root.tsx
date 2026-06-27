@@ -128,12 +128,13 @@ function RootShell({ children }: { children: ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <HeadContent />
       </head>
-      <body>
-        <div id="app-loading" aria-hidden="true" />
+      <body suppressHydrationWarning>
+        <div id="app-loading" aria-hidden="true" suppressHydrationWarning />
         {children}
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
-            __html: `(function(){function h(){var e=document.getElementById('app-loading');if(!e)return;e.classList.add('hide');setTimeout(function(){e&&e.parentNode&&e.parentNode.removeChild(e)},300)}if(document.readyState==='complete')h();else window.addEventListener('load',h);setTimeout(h,4000)})();`,
+            __html: `(function(){function h(){var e=document.getElementById('app-loading');if(!e)return;e.classList.add('hide');setTimeout(function(){e&&e.parentNode&&e.parentNode.removeChild(e)},300)}if(document.readyState==='complete')setTimeout(h,50);else window.addEventListener('load',function(){setTimeout(h,50)});setTimeout(h,4000)})();`,
           }}
         />
         <Scripts />
