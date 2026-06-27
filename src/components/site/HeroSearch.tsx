@@ -337,7 +337,10 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1 rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-left shadow-lg shadow-black/10 backdrop-blur-2xl backdrop-saturate-150 transition hover:bg-white/15">
+    <label
+      className="flex flex-col gap-1 rounded-xl border border-white/15 px-4 py-2.5 text-left shadow-[0_18px_40px_rgba(0,0,0,0.25),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 transition hover:border-white/25"
+      style={{ backgroundColor: "color-mix(in oklab, var(--primary) 14%, rgba(15,12,14,0.35))" }}
+    >
       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
         {label}
       </span>
