@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import prop1 from "@/assets/prop-1.jpg?w=1200&quality=72&format=webp";
+import prop2 from "@/assets/prop-2.jpg?w=1200&quality=72&format=webp";
+import prop3 from "@/assets/prop-3.jpg?w=1200&quality=72&format=webp";
+import prop4 from "@/assets/prop-4.jpg?w=1200&quality=72&format=webp";
+import prop5 from "@/assets/prop-5.jpg?w=1200&quality=72&format=webp";
+import prop6 from "@/assets/prop-6.jpg?w=1200&quality=72&format=webp";
+import prop7 from "@/assets/prop-7.jpg?w=1200&quality=72&format=webp";
 
 export type Status = "rent" | "sale";
 export type PropertyType = "Apartment" | "Villa" | "Studio" | "Penthouse" | "Townhouse";
@@ -31,9 +38,33 @@ export interface Property {
   assignedAgentId?: string | null;
 }
 
+const SEEDED_PROPERTY_IMAGES: Record<string, string> = {
+  "/src/assets/prop-1.jpg": prop1,
+  "/src/assets/prop-2.jpg": prop2,
+  "/src/assets/prop-3.jpg": prop3,
+  "/src/assets/prop-4.jpg": prop4,
+  "/src/assets/prop-5.jpg": prop5,
+  "/src/assets/prop-6.jpg": prop6,
+  "/src/assets/prop-7.jpg": prop7,
+};
+
+const PROPERTY_IMAGE_FALLBACKS = [prop1, prop2, prop3, prop4, prop5, prop6, prop7];
+
+export function resolvePropertyImage(src: string | null | undefined, seed?: string): string {
+  if (src && SEEDED_PROPERTY_IMAGES[src]) return SEEDED_PROPERTY_IMAGES[src];
+  if (src && /^(https?:|data:|blob:)/.test(src)) return src;
+  if (src && src.startsWith("/") && !src.startsWith("/src/")) return src;
+
+  const key = seed || src || "property";
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return PROPERTY_IMAGE_FALLBACKS[h % PROPERTY_IMAGE_FALLBACKS.length];
+}
+
 
 function mapRow(r: any): Property {
-  const gallery = Array.isArray(r.gallery) ? r.gallery : [];
+  const rawGallery = Array.isArray(r.gallery) ? r.gallery : [];
+  const gallery = rawGallery.map((src: string) => resolvePropertyImage(src, r.slug));
   const features = Array.isArray(r.features) ? r.features : [];
   return {
     id: r.slug,
@@ -48,7 +79,7 @@ function mapRow(r: any): Property {
     rooms: r.rooms ?? 0,
     sqft: r.sqft ?? 0,
     yearBuilt: r.year_built ?? 0,
-    image: r.image || gallery[0] || "",
+    image: resolvePropertyImage(r.image || rawGallery[0], r.slug),
     gallery,
     description: r.description || "",
     features,
