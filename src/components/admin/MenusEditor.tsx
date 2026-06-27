@@ -151,7 +151,7 @@ export function MenusEditor() {
               setFooter(DEFAULT_FOOTER_MENU);
               setCta(DEFAULT_HEADER_CTA);
               setFooterContent(DEFAULT_FOOTER_CONTENT);
-              setTicker(DEFAULT_TICKER_CONFIG);
+              
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
