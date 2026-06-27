@@ -213,6 +213,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeApplier />
       <RouteProgress />
       <Outlet />
       <ChatWidget />

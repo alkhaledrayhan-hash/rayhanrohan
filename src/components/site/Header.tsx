@@ -308,8 +308,8 @@ function NavDropdown({
         <>
           <div className="absolute left-0 right-0 top-full h-2" />
           <div
-            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/15 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200"
-            style={{ backgroundColor: "color-mix(in oklab, var(--primary) 14%, rgba(15,12,14,0.35))" }}
+            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/20 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.14)] backdrop-blur-2xl backdrop-saturate-150 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200"
+            style={{ backgroundColor: "color-mix(in oklab, var(--primary) 28%, rgba(15,12,14,0.94))" }}
           >
             <div
               className="pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full blur-3xl"
