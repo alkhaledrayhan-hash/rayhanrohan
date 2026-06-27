@@ -143,10 +143,14 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ThemeApplier() {
+  useApplyTheme();
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  useApplyTheme();
 
   useEffect(() => {
     let active = true;
