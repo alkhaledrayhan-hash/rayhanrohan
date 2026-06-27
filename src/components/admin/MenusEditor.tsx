@@ -163,7 +163,65 @@ export function MenusEditor() {
   );
 }
 
-function CtaEditor({ cta, onChange }: { cta: HeaderCta; onChange: (v: HeaderCta) => void }) {
+function FooterContentEditor({ content, onChange }: { content: FooterContent; onChange: (v: FooterContent) => void }) {
+  const set = (k: FooterContentKey, v: string) => onChange({ ...content, [k]: v });
+  return (
+    <div className="space-y-5">
+      <Section title="Left column (under logo)">
+        <Textarea label="About text" value={content.footer_about} onChange={(v) => set("footer_about", v)} />
+      </Section>
+      <Section title="Middle card">
+        <div className="grid gap-2 sm:grid-cols-3">
+          <Input label="Eyebrow" value={content.footer_center_eyebrow} onChange={(v) => set("footer_center_eyebrow", v)} />
+          <Input label="Title" value={content.footer_center_title} onChange={(v) => set("footer_center_title", v)} />
+          <Input label="Subtitle" value={content.footer_center_subtitle} onChange={(v) => set("footer_center_subtitle", v)} />
+        </div>
+      </Section>
+      <Section title="Right card (Contact)">
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Input label="Heading" value={content.footer_contact_heading} onChange={(v) => set("footer_contact_heading", v)} />
+          <Input label="Address" value={content.footer_address} onChange={(v) => set("footer_address", v)} />
+          <Input label="Phone" value={content.footer_phone} onChange={(v) => set("footer_phone", v)} />
+          <Input label="Email" value={content.footer_email} onChange={(v) => set("footer_email", v)} />
+        </div>
+      </Section>
+      <Section title="Bottom bar">
+        <div className="grid gap-2">
+          <Input label="Badge text (leave empty to hide)" value={content.footer_badge_text} onChange={(v) => set("footer_badge_text", v)} />
+          <Input
+            label="Copyright (use {year} and {title} as placeholders)"
+            value={content.footer_copyright}
+            onChange={(v) => set("footer_copyright", v)}
+          />
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</p>
+      {children}
+    </div>
+  );
+}
+
+function Textarea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block space-y-1">
+      <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+        className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+      />
+    </label>
+  );
+}
+
   return (
     <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
       <label className="flex items-center gap-2 text-sm font-medium">
