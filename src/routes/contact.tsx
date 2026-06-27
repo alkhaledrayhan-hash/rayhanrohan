@@ -17,6 +17,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 
 import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
+import { PhoneInput } from "@/components/site/PhoneInput";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
