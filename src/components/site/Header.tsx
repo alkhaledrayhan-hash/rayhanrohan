@@ -308,9 +308,11 @@ function NavDropdown({
           {/* hover bridge so cursor can move from trigger to panel */}
           <div className="absolute left-0 right-0 top-full h-2" />
           <div
-            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-white/20 p-1.5 shadow-[0_20px_60px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
+            className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border p-1.5 shadow-[0_20px_60px_-12px_color-mix(in_oklab,var(--primary)_35%,transparent)] ring-1"
             style={{
-              background: "linear-gradient(135deg, rgba(15,23,42,0.55), rgba(15,23,42,0.35))",
+              background:
+                "linear-gradient(135deg, color-mix(in oklab, var(--primary) 35%, transparent), color-mix(in oklab, var(--primary) 15%, transparent))",
+              borderColor: "color-mix(in oklab, var(--primary-foreground) 25%, transparent)",
               backdropFilter: "blur(24px) saturate(160%)",
             }}
           >
@@ -319,7 +321,7 @@ function NavDropdown({
                 key={i}
                 to={c.to as never}
                 search={c.search as never}
-                className="block rounded-lg px-3 py-2 text-sm text-white/90 transition-all duration-200 hover:bg-white/15 hover:text-white hover:translate-x-0.5"
+                className="block rounded-lg px-3 py-2 text-sm text-primary-foreground/90 transition-all duration-200 hover:bg-[color-mix(in_oklab,var(--primary-foreground)_15%,transparent)] hover:text-primary-foreground hover:translate-x-0.5"
                 onClick={() => setOpen(false)}
               >
                 {c.label}
