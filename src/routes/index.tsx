@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
 import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
 import { normalizeTrust } from "@/components/admin/TrustSectionEditor";
