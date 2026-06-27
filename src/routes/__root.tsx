@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { RouteProgress } from "../components/site/RouteProgress";
 import { ChatWidget } from "../components/site/ChatWidget";
 import { BackToTop } from "../components/site/BackToTop";
+import { useApplyTheme } from "@/hooks/useThemeTokens";
 
 function NotFoundComponent() {
   return (
@@ -145,6 +146,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  useApplyTheme();
 
   useEffect(() => {
     let active = true;

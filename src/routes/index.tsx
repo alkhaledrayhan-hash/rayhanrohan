@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
 import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
 import { normalizeTrust } from "@/components/admin/TrustSectionEditor";
 import { normalizeFeatured } from "@/components/admin/FeaturedSectionEditor";
+import { normalizeOffers } from "@/components/admin/OffersSectionEditor";
 import { normalizeLocations } from "@/components/admin/LocationsSectionEditor";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -72,7 +73,20 @@ function Home() {
     }
     return allProperties.slice(0, limit);
   })();
-  const offers = offerProperties.slice(0, 9).map((property) => ({
+  const offersCfg = normalizeOffers(sections.offer);
+  const offerSourceList = (() => {
+    const limit = offersCfg.limit || 6;
+    if (offersCfg.mode === "manual" && offersCfg.propertyIds.length) {
+      const map = new Map(allProperties.map((p) => [p.id, p]));
+      return offersCfg.propertyIds.map((id) => map.get(id)).filter(Boolean).slice(0, limit) as typeof allProperties;
+    }
+    // random
+    const pool = offersCfg.only_special
+      ? (offerProperties.length ? offerProperties : allProperties.filter((p) => Number(p.offerDiscount) > 0 || !!p.offerTag))
+      : allProperties;
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, limit);
+  })();
+  const offers = offerSourceList.map((property) => ({
     property,
     discount: property.offerDiscount || 0,
     tag: property.offerTag || "Special offer",
@@ -172,7 +186,18 @@ function Home() {
         <LogoMarquee />
 
         {/* Exclusive offers */}
-        {offers.length > 0 && <OffersSection offers={offers} />}
+        {offers.length > 0 && (
+          <OffersSection
+            offers={offers}
+            heading={{
+              eyebrow: offersCfg.eyebrow,
+              title: offersCfg.title,
+              description: offersCfg.description,
+              ctaLabel: offersCfg.cta_label,
+              ctaHref: offersCfg.cta_href,
+            }}
+          />
+        )}
 
         {/* Locations */}
         <section className="bg-secondary/40 py-20">

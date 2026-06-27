@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 import { MenusEditor } from "@/components/admin/MenusEditor";
+import { ThemeEditor } from "@/components/admin/ThemeEditor";
 
 type SettingsMap = Record<string, string>;
 const KEYS = [
@@ -68,7 +69,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "menus";
+type TabId = "general" | "auth" | "theme" | "menus";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -144,15 +145,18 @@ export function SettingsPanel() {
   const bgImage = form.auth_bg_image_url || "";
 
   return (
-    <div className="max-w-3xl space-y-5">
+    <div className="max-w-4xl space-y-5">
       <div className="flex flex-wrap items-center gap-2 border-b border-border">
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
+        <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
       </div>
 
       {tab === "menus" ? (
         <MenusEditor />
+      ) : tab === "theme" ? (
+        <ThemeEditor />
       ) : (
       <form
         onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
