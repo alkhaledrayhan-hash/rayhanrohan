@@ -183,71 +183,76 @@ function Home() {
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
               {locationsHeading.title}
             </h2>
-            {/* Mobile: auto-scrolling marquee */}
-            <div className="mt-10 -mx-4 overflow-hidden sm:hidden">
-              <div className="flex w-max gap-4 px-4 animate-[locations-marquee_28s_linear_infinite]">
-                {[...LOCATIONS, ...LOCATIONS].map((loc, i) => (
-                  <Link
-                    key={`${loc}-${i}`}
-                    to="/properties"
-                    search={{ location: loc }}
-                    className="group relative isolate w-[68vw] max-w-[280px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card"
-                  >
-                    <img
-                      src={LOCATION_IMAGES[loc]}
-                      alt={loc}
-                      loading="lazy"
-                      decoding="async"
-                      className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
-                    />
-                    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
-                    <div className="relative p-6">
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
-                      <p className="mt-2 font-display text-xl font-semibold text-white">{loc}</p>
-                      <p className="mt-3 inline-flex items-center gap-1 text-sm text-gold">
-                        Explore <ArrowRight className="h-3.5 w-3.5" />
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <style>{`@keyframes locations-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-            </div>
-
-            {/* Tablet/desktop: grid */}
-            <div className="mt-10 hidden gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-5">
-              {LOCATIONS.map((loc) => (
-                <Link
-                  key={loc}
-                  to="/properties"
-                  search={{ location: loc }}
-                  className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
-                >
-                  <img
-                    src={LOCATION_IMAGES[loc]}
-                    alt={loc}
-                    loading="lazy"
-                    decoding="async"
-                    className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
-                  />
+            {locationItems.length > 0 && (
+              locShouldScroll ? (
+                <div className="group relative mt-10 -mx-4 overflow-hidden">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
                   <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  />
-                  <div className="relative p-6">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors duration-500 group-hover:text-white/70">
-                      Qatar
-                    </p>
-                    <p className="mt-2 font-display text-xl font-semibold text-foreground transition-colors duration-500 group-hover:text-white">
-                      {loc}
-                    </p>
-                    <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-all duration-500 group-hover:text-gold group-hover:opacity-100">
-                      Explore <ArrowRight className="h-3.5 w-3.5" />
-                    </p>
+                    className="flex w-max gap-4 px-4 group-hover:[animation-play-state:paused]"
+                    style={{ animation: `locations-marquee ${locDuration}s linear infinite` }}
+                  >
+                    {locRenderItems.map((it, i) => (
+                      <a
+                        key={`${it.name}-${i}`}
+                        href={resolveLocLink(it)}
+                        className="group/card relative isolate w-[68vw] max-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card sm:w-[260px]"
+                      >
+                        <img
+                          src={resolveLocImage(it)}
+                          alt={it.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+                        />
+                        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
+                        <div className="relative p-6">
+                          <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
+                          <p className="mt-2 font-display text-xl font-semibold text-white">{it.name}</p>
+                          <p className="mt-3 inline-flex items-center gap-1 text-sm text-gold">
+                            Explore <ArrowRight className="h-3.5 w-3.5" />
+                          </p>
+                        </div>
+                      </a>
+                    ))}
                   </div>
-                </Link>
-              ))}
-            </div>
+                  <style>{`@keyframes locations-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+                </div>
+              ) : (
+                <div className={`mt-10 grid gap-4 sm:grid-cols-2 ${locationItems.length >= 5 ? "lg:grid-cols-5" : locationItems.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+                  {locationItems.map((it) => (
+                    <a
+                      key={it.name}
+                      href={resolveLocLink(it)}
+                      className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                    >
+                      <img
+                        src={resolveLocImage(it)}
+                        alt={it.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+                      />
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      />
+                      <div className="relative p-6">
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors duration-500 group-hover:text-white/70">
+                          Qatar
+                        </p>
+                        <p className="mt-2 font-display text-xl font-semibold text-foreground transition-colors duration-500 group-hover:text-white">
+                          {it.name}
+                        </p>
+                        <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-all duration-500 group-hover:text-gold group-hover:opacity-100">
+                          Explore <ArrowRight className="h-3.5 w-3.5" />
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )
+            )}
 
           </div>
         </section>
