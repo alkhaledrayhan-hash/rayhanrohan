@@ -163,7 +163,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-white">
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Property</th>
