@@ -210,6 +210,7 @@ function RootComponent() {
       <RouteProgress />
       <Outlet />
       <ChatWidget />
+      <BackToTop />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
