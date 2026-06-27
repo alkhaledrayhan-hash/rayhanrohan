@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText, Megaphone } from "lucide-react";
 import {
   DEFAULT_FOOTER_MENU,
   DEFAULT_HEADER_CTA,
@@ -11,8 +11,9 @@ import {
   type HeaderCta,
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
+import { DEFAULT_TICKER_CONFIG, type TickerConfig } from "@/hooks/useTickerConfig";
 
-type Tab = "header" | "cta" | "footer" | "footer-content";
+type Tab = "header" | "cta" | "footer" | "footer-content" | "ticker";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
