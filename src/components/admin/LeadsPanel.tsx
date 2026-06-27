@@ -170,7 +170,17 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
 
       <div className="responsive-table-wrap overflow-hidden rounded-2xl border border-border bg-white shadow-sm md:overflow-visible">
         <div className="overflow-x-auto">
-          <table className="responsive-table responsive-cards w-full min-w-[720px] text-sm md:min-w-0">
+          <table className="responsive-table responsive-cards w-full min-w-[960px] text-sm md:min-w-0 md:table-fixed">
+            <colgroup className="hidden md:table-column-group">
+              <col style={{ width: "110px" }} />
+              <col style={{ width: "150px" }} />
+              <col style={{ width: "210px" }} />
+              <col style={{ width: "100px" }} />
+              <col style={{ width: "180px" }} />
+              <col style={{ width: "130px" }} />
+              <col />
+              {isAdmin && <col style={{ width: "90px" }} />}
+            </colgroup>
 
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
@@ -193,21 +203,21 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                   onClick={() => setViewing(r)}
                   className="cursor-pointer align-top hover:bg-muted/30"
                 >
-                  <td data-label="When" className="px-4 py-3 text-xs text-muted-foreground">
+                  <td data-label="When" className="px-4 py-3 text-xs text-muted-foreground md:whitespace-nowrap">
                     <div className="font-medium text-foreground/80">{formatDate(r.created_at)}</div>
                     <div className="text-[11px] text-muted-foreground">{formatTime(r.created_at)}</div>
                   </td>
-                  <td data-label="Name" className="px-4 py-3 font-medium">{r.name}</td>
-                  <td data-label="Contact" className="px-4 py-3 text-xs" onClick={(e) => e.stopPropagation()}>
+                  <td data-label="Name" className="px-4 py-3 font-medium md:break-words">{r.name}</td>
+                  <td data-label="Contact" className="px-4 py-3 text-xs md:break-words" onClick={(e) => e.stopPropagation()}>
                     <a href={`mailto:${r.email}`} className="block break-all text-primary hover:underline">{r.email}</a>
                     {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
                   </td>
-                  <td data-label="Source" className="px-4 py-3"><span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
-                  <td data-label="Property" className="px-4 py-3 text-xs text-muted-foreground md:max-w-[200px] md:truncate">{r.property_title || "—"}</td>
-                  <td data-label="Agent" className="px-4 py-3 text-xs">{agentName(r.agent_id)}</td>
-                  <td data-label="Message" className="px-4 py-3 md:max-w-md">
-                    {r.subject && <div className="text-xs font-semibold text-foreground/70">{r.subject}</div>}
-                    <p className="line-clamp-3 text-xs text-muted-foreground">{r.message}</p>
+                  <td data-label="Source" className="px-4 py-3"><span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
+                  <td data-label="Property" className="px-4 py-3 text-xs text-muted-foreground md:truncate" title={r.property_title || undefined}>{r.property_title || "—"}</td>
+                  <td data-label="Agent" className="px-4 py-3 text-xs md:break-words">{agentName(r.agent_id)}</td>
+                  <td data-label="Message" className="px-4 py-3">
+                    {r.subject && <div className="truncate text-xs font-semibold text-foreground/70">{r.subject}</div>}
+                    <p className="line-clamp-2 text-xs text-muted-foreground">{r.message}</p>
                   </td>
                   {isAdmin && (
                     <td data-label="Actions" className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
