@@ -21,7 +21,24 @@ interface Offer {
   ends: string;
 }
 
-export function OffersSection({ offers }: { offers: Offer[] }) {
+interface OffersHeading {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+export function OffersSection({ offers, heading }: { offers: Offer[]; heading?: OffersHeading }) {
+  const h = {
+    eyebrow: heading?.eyebrow ?? "Limited-time offers",
+    title: heading?.title ?? "Exclusive residences, exceptional value",
+    description:
+      heading?.description ??
+      "A short list of premium residences available at preferential pricing this season — reserved for early enquiries only.",
+    ctaLabel: heading?.ctaLabel ?? "See all offers",
+    ctaHref: heading?.ctaHref ?? "/offers",
+  };
   const autoScroll = useRef(
     AutoScroll({ speed: 1, direction: "backward", stopOnInteraction: false, stopOnMouseEnter: true }),
   );
@@ -53,24 +70,21 @@ export function OffersSection({ offers }: { offers: Offer[] }) {
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-[oklch(0.45_0.12_60)]">
               <Flame className="h-3.5 w-3.5" />
-              Limited-time offers
+              {h.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">
-              Exclusive residences,{" "}
-              <span className="italic text-primary">exceptional value</span>
+              {h.title}
             </h2>
             <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-              A short list of premium residences available at preferential pricing this season —
-              reserved for early enquiries only.
+              {h.description}
             </p>
           </div>
-          <Link
-            to="/properties"
-            search={{ status: "rent" }}
+          <a
+            href={h.ctaHref}
             className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-90"
           >
-            See all offers <ArrowRight className="h-4 w-4" />
-          </Link>
+            {h.ctaLabel} <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
 
         <Carousel

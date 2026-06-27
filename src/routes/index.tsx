@@ -186,7 +186,18 @@ function Home() {
         <LogoMarquee />
 
         {/* Exclusive offers */}
-        {offers.length > 0 && <OffersSection offers={offers} />}
+        {offers.length > 0 && (
+          <OffersSection
+            offers={offers}
+            heading={{
+              eyebrow: offersCfg.eyebrow,
+              title: offersCfg.title,
+              description: offersCfg.description,
+              ctaLabel: offersCfg.cta_label,
+              ctaHref: offersCfg.cta_href,
+            }}
+          />
+        )}
 
         {/* Locations */}
         <section className="bg-secondary/40 py-20">
