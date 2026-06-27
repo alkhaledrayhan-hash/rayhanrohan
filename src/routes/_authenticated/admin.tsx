@@ -283,10 +283,12 @@ function AdminDashboard() {
         <div className="border-t border-border p-3">
           <button
             onClick={handleSignOut}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            title="Sign out"
+            className={`flex w-full items-center gap-3 rounded-lg py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground ${desktopCollapsed ? "md:justify-center md:px-0" : "px-3"}`}
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" /> <span className={desktopCollapsed ? "md:hidden" : ""}>Sign out</span>
           </button>
+
         </div>
       </aside>
 
