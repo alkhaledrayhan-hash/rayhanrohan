@@ -148,12 +148,13 @@ function ContactPage() {
                 required
                 placeholder="you@example.com"
               />
-              <FormField
+              <PhoneInput
                 label="Phone (optional)"
-                type="tel"
-                value={form.phone}
-                onChange={(v) => setForm({ ...form, phone: v })}
-                placeholder="+974 …"
+                dialCode={dialCode}
+                phone={form.phone}
+                onDialCodeChange={setDialCode}
+                onPhoneChange={(v) => setForm({ ...form, phone: v })}
+                placeholder="Phone number"
               />
               <FormSelect
                 label="Subject"
