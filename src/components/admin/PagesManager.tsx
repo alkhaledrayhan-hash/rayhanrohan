@@ -112,15 +112,30 @@ export function PagesManager({
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
-        {sections.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setActiveKey(s.section_key)}
-            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.id === s.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
-          >
-            <span className="flex items-center gap-2"><FileText className="h-3.5 w-3.5" /> {s.label}</span>
-          </button>
-        ))}
+        {sections.map((s) => {
+          const Icon = SECTION_ICONS[s.section_key] || FileText;
+          return (
+            <button
+              key={s.id}
+              onClick={() => setActiveKey(s.section_key)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === s.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+            >
+              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {s.label}</span>
+            </button>
+          );
+        })}
+        {virtualForPage.map((v) => {
+          const Icon = v.icon;
+          return (
+            <button
+              key={v.section_key}
+              onClick={() => setActiveKey(v.section_key)}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === v.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+            >
+              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {v.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Editor */}
@@ -133,6 +148,22 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">{active.page_slug} · live preview below</p>
               </div>
               <HeroEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "ticker" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">News ticker</h3>
+                <p className="text-xs text-muted-foreground">Shown across the site below the hero. Falls back to latest news posts when empty.</p>
+              </div>
+              <TickerSectionEditor />
+            </>
+          ) : active.section_key === "trust" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">{active.page_slug} · trust strip · auto-scrolls when many items</p>
+              </div>
+              <TrustSectionEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : (
             <>
@@ -155,6 +186,7 @@ export function PagesManager({
               <p className="mt-2 text-xs text-muted-foreground">Edit the JSON content for this section. Changes appear instantly on the live site.</p>
             </>
           )
+
         ) : (
           <div className="grid h-full place-items-center text-sm text-muted-foreground">
             Select a section to edit.
