@@ -5,6 +5,7 @@ export type HeaderMenuItem = {
   label: string;
   to: string;
   search?: Record<string, string>;
+  children?: { label: string; to: string; search?: Record<string, string> }[];
 };
 
 export type FooterMenuGroup = {
