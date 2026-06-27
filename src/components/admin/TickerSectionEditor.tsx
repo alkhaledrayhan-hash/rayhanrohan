@@ -152,6 +152,29 @@ export function TickerSectionEditor() {
           />
           Show news ticker on the website
         </label>
+        <Field label="Content source">
+          <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs">
+            {(["manual", "random"] as const).map((s) => (
+              <button
+                type="button"
+                key={s}
+                onClick={() => set("source", s)}
+                className={`flex-1 rounded-md px-3 py-1.5 capitalize ${(value.source || "manual") === s ? "bg-white shadow-sm" : "text-muted-foreground"}`}
+              >
+                {s === "manual" ? "Manual items" : "Random news"}
+              </button>
+            ))}
+          </div>
+        </Field>
+        {value.source === "random" && (
+          <Field label={`Random news count — ${value.randomCount || 8}`}>
+            <input
+              type="range" min={1} max={20} value={value.randomCount || 8}
+              onChange={(e) => set("randomCount", Number(e.target.value))}
+              className="w-full accent-primary"
+            />
+          </Field>
+        )}
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label={`Scroll speed — ${speed}s / loop ${speed <= 20 ? "(fast)" : speed >= 60 ? "(slow)" : "(normal)"}`}>
             <input
@@ -172,10 +195,12 @@ export function TickerSectionEditor() {
           </Field>
         </div>
         <p className="text-xs text-muted-foreground">
-          {willScroll
-            ? `Ticker will scroll because there are more than ${threshold} items.`
-            : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
-          {value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
+          {value.source === "random"
+            ? "Random news mode: pulls random published news posts. Manual items below are ignored."
+            : willScroll
+              ? `Ticker will scroll because there are more than ${threshold} items.`
+              : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
+          {value.source !== "random" && value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
         </p>
       </Panel>
 
