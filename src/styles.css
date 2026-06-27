@@ -202,3 +202,51 @@ a[href*="lovable.dev/?via=badge"],
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* Responsive admin tables → stacked cards on mobile */
+@media (max-width: 767px) {
+  .responsive-table {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    border-collapse: separate;
+  }
+  .responsive-table thead {
+    display: none !important;
+  }
+  .responsive-table tbody,
+  .responsive-table tr,
+  .responsive-table td {
+    display: block !important;
+    width: 100% !important;
+  }
+  .responsive-table tr {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    margin: 0 0 0.625rem 0;
+    padding: 0.5rem 0.25rem;
+    background: white;
+  }
+  .responsive-table td {
+    padding: 0.375rem 0.625rem !important;
+    text-align: left !important;
+    border: 0 !important;
+  }
+  .responsive-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+    margin-bottom: 0.15rem;
+  }
+  .responsive-table-wrap {
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
