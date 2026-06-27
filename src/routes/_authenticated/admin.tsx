@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AreaChart,
@@ -49,6 +49,9 @@ import {
   MessageSquare,
   Newspaper,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+
   Phone,
   Plus,
   Search,
@@ -122,7 +125,17 @@ function AdminDashboard() {
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("admin:sidebar:collapsed") === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("admin:sidebar:collapsed", desktopCollapsed ? "1" : "0");
+    }
+  }, [desktopCollapsed]);
   const closeMobileNav = () => setMobileNavOpen(false);
+
   const { counts: unread, markRead } = useUnreadCounts();
   // Wrap setSection so picking an item on mobile also closes the drawer, and
   // mark the corresponding section read so its badge clears.
@@ -167,6 +180,7 @@ function AdminDashboard() {
     .toUpperCase();
 
   return (
+    <SidebarCollapsedContext.Provider value={desktopCollapsed}>
     <div className="flex min-h-screen bg-[#f5f7fa]">
       {/* Mobile overlay */}
       {mobileNavOpen && (
@@ -180,16 +194,16 @@ function AdminDashboard() {
 
       {/* Sidebar — drawer on mobile, static on md+ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-transform duration-200 md:static md:z-auto md:w-64 md:max-w-none md:translate-x-0 ${
-          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-[transform,width] duration-200 md:static md:z-auto md:max-w-none md:translate-x-0 ${
+          desktopCollapsed ? "md:w-16" : "md:w-64"
+        } ${mobileNavOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4 md:px-6 md:py-5">
-          <Link to="/" className="flex items-center gap-2" onClick={closeMobileNav}>
-            <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
+        <div className={`flex items-center border-b border-border py-4 md:py-5 ${desktopCollapsed ? "md:justify-center md:px-2" : "justify-between px-4 md:px-6"}`}>
+          <Link to="/" className="flex items-center gap-2" onClick={closeMobileNav} title="Ayesha Qatar">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
               <Home className="h-4 w-4" />
             </span>
-            <div className="flex flex-col leading-tight">
+            <div className={`flex-col leading-tight ${desktopCollapsed ? "hidden" : "flex"}`}>
               <span className="font-display text-sm font-semibold">
                 Ayesha <span className="text-gold">Qatar</span>
               </span>
@@ -207,6 +221,7 @@ function AdminDashboard() {
             <X className="h-4 w-4" />
           </button>
         </div>
+
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-3 text-sm">
           <NavGroup label="Main" />
@@ -268,10 +283,12 @@ function AdminDashboard() {
         <div className="border-t border-border p-3">
           <button
             onClick={handleSignOut}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            title="Sign out"
+            className={`flex w-full items-center gap-3 rounded-lg py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground ${desktopCollapsed ? "md:justify-center md:px-0" : "px-3"}`}
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" /> <span className={desktopCollapsed ? "md:hidden" : ""}>Sign out</span>
           </button>
+
         </div>
       </aside>
 
@@ -287,6 +304,16 @@ function AdminDashboard() {
           >
             <Menu className="h-4 w-4" />
           </button>
+          <button
+            type="button"
+            onClick={() => setDesktopCollapsed((c) => !c)}
+            aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="hidden h-9 w-9 shrink-0 place-items-center rounded-md border border-border bg-white text-muted-foreground hover:text-foreground md:grid"
+          >
+            {desktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+
           <div className="relative hidden w-full max-w-md md:block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -349,8 +376,13 @@ function AdminDashboard() {
         </main>
       </div>
     </div>
+    </SidebarCollapsedContext.Provider>
   );
 }
+
+const SidebarCollapsedContext = createContext(false);
+const useSidebarCollapsed = () => useContext(SidebarCollapsedContext);
+
 
 function sectionTitle(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -459,6 +491,10 @@ function AccountMenu({
 
 
 function NavGroup({ label }: { label: string }) {
+  const collapsed = useSidebarCollapsed();
+  if (collapsed) {
+    return <div className="my-2 border-t border-border/60" aria-hidden="true" />;
+  }
   return (
     <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/70">
       {label}
@@ -479,19 +515,23 @@ function NavItem({
   onClick: () => void;
   badge?: string;
 }) {
+  const collapsed = useSidebarCollapsed();
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition ${
+      title={collapsed ? label : undefined}
+      className={`relative flex w-full items-center gap-3 rounded-lg py-2 text-sm transition ${
+        collapsed ? "justify-center px-0" : "justify-between px-3"
+      } ${
         active
           ? "bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
-      <span className="flex items-center gap-3">
-        <Icon className="h-4 w-4" /> {label}
+      <span className={`flex items-center gap-3 ${collapsed ? "" : ""}`}>
+        <Icon className="h-4 w-4" /> {!collapsed && label}
       </span>
-      {badge && (
+      {badge && !collapsed && (
         <span
           className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
             active ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
@@ -499,6 +539,9 @@ function NavItem({
         >
           {badge}
         </span>
+      )}
+      {badge && collapsed && (
+        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
       )}
     </button>
   );
@@ -519,8 +562,23 @@ function NavGroupExpandable({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const collapsed = useSidebarCollapsed();
   const [open, setOpen] = useState(!!defaultOpen);
   useEffect(() => { if (defaultOpen) setOpen(true); }, [defaultOpen]);
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        title={label}
+        onClick={() => setOpen((o) => !o)}
+        className={`flex w-full items-center justify-center rounded-lg py-2 text-sm transition ${
+          active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        }`}
+      >
+        <Icon className="h-4 w-4" />
+      </button>
+    );
+  }
   return (
     <div>
       <button
@@ -566,6 +624,7 @@ function SubNavItem({
     </button>
   );
 }
+
 
 /* ---------- Overview ---------- */
 
