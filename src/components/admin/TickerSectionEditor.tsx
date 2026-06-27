@@ -259,31 +259,33 @@ export function TickerSectionEditor() {
       </Panel>
 
       {/* Items */}
-      <Panel icon={Plus} title="Ticker items">
-        <div className="space-y-2">
-          {value.items.map((item, i) => (
-            <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
-              <Field label="Title">
-                <input className={inputCls} value={item.title} onChange={(e) => updateItem(i, { title: e.target.value })} placeholder="Breaking headline" />
-              </Field>
-              <Field label="Link (optional)">
-                <input className={inputCls} value={item.link || ""} onChange={(e) => updateItem(i, { link: e.target.value })} placeholder="/news/slug or https://…" />
-              </Field>
-              <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">
-                <IconBtn onClick={() => move(i, -1)} label="Move up"><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn onClick={() => move(i, 1)} label="Move down"><ArrowDown className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn onClick={() => remove(i)} label="Remove" danger><Trash2 className="h-3.5 w-3.5" /></IconBtn>
+      {value.source !== "random" && (
+        <Panel icon={Plus} title="Ticker items">
+          <div className="space-y-2">
+            {value.items.map((item, i) => (
+              <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
+                <Field label="Title">
+                  <input className={inputCls} value={item.title} onChange={(e) => updateItem(i, { title: e.target.value })} placeholder="Breaking headline" />
+                </Field>
+                <Field label="Link (optional)">
+                  <input className={inputCls} value={item.link || ""} onChange={(e) => updateItem(i, { link: e.target.value })} placeholder="/news/slug or https://…" />
+                </Field>
+                <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">
+                  <IconBtn onClick={() => move(i, -1)} label="Move up"><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn onClick={() => move(i, 1)} label="Move down"><ArrowDown className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn onClick={() => remove(i)} label="Remove" danger><Trash2 className="h-3.5 w-3.5" /></IconBtn>
+                </div>
               </div>
-            </div>
-          ))}
-          <button
-            type="button" onClick={add}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <Plus className="h-4 w-4" /> Add ticker item
-          </button>
-        </div>
-      </Panel>
+            ))}
+            <button
+              type="button" onClick={add}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <Plus className="h-4 w-4" /> Add ticker item
+            </button>
+          </div>
+        </Panel>
+      )}
 
       <div className="flex justify-end border-t border-border pt-4">
         <button
