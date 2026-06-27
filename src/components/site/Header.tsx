@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight, Home, LayoutDashboard, LogOut, Menu, Building2, Key, Tag, Newspaper, FileText, Users, Phone, Info, Sparkles, MapPin, Briefcase, Settings as SettingsIcon, Heart, Calendar, type LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Home, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useSiteMenus } from "@/hooks/useSiteMenus";
+import { useSiteMenus, type HeaderSubItem } from "@/hooks/useSiteMenus";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
