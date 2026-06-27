@@ -1,0 +1,1 @@
+UPDATE public.page_sections SET content = jsonb_set(jsonb_set(COALESCE(content, '{}'::jsonb), '{title}', '"Properties location"'), '{eyebrow}', '""') WHERE section_key = 'locations' OR id::text = 'locations' OR content ? 'customItems';
