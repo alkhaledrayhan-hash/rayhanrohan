@@ -142,12 +142,16 @@ export function MenusEditor() {
         <TabBtn active={tab === "footer-content"} onClick={() => setTab("footer-content")}>
           <FileText className="h-3.5 w-3.5" /> Footer content
         </TabBtn>
+        <TabBtn active={tab === "ticker"} onClick={() => setTab("ticker")}>
+          <Megaphone className="h-3.5 w-3.5" /> News ticker
+        </TabBtn>
       </div>
 
       {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
       {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
       {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
       {tab === "footer-content" && <FooterContentEditor content={footerContent} onChange={setFooterContent} />}
+      {tab === "ticker" && <TickerEditor value={ticker} onChange={setTicker} />}
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <button
