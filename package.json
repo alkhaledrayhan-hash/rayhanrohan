@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "db:seed": "supabase db seed --linked",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
