@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
+import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
+import { normalizeTrust } from "@/components/admin/TrustSectionEditor";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { HeroSearch } from "@/components/site/HeroSearch";
