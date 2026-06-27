@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText, Megaphone } from "lucide-react";
 import {
   DEFAULT_FOOTER_MENU,
   DEFAULT_HEADER_CTA,
@@ -11,8 +11,9 @@ import {
   type HeaderCta,
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
+import { DEFAULT_TICKER_CONFIG, type TickerConfig } from "@/hooks/useTickerConfig";
 
-type Tab = "header" | "cta" | "footer" | "footer-content";
+type Tab = "header" | "cta" | "footer" | "footer-content" | "ticker";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
@@ -50,6 +51,7 @@ export function MenusEditor() {
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
   const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
   const [footerContent, setFooterContent] = useState<FooterContent>(DEFAULT_FOOTER_CONTENT);
+  const [ticker, setTicker] = useState<TickerConfig>(DEFAULT_TICKER_CONFIG);
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
@@ -57,7 +59,7 @@ export function MenusEditor() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", ...FOOTER_CONTENT_KEYS]);
+        .in("key", ["header_menu_json", "footer_menu_json", "header_cta_json", "ticker_json", ...FOOTER_CONTENT_KEYS]);
       if (error) throw error;
       const map: Record<string, string> = {};
       (data || []).forEach((r: any) => { map[r.key] = r.value || ""; });
@@ -82,6 +84,16 @@ export function MenusEditor() {
     const nextFc = { ...DEFAULT_FOOTER_CONTENT };
     FOOTER_CONTENT_KEYS.forEach((k) => { if (data[k]) nextFc[k] = data[k]; });
     setFooterContent(nextFc);
+    try {
+      if (data.ticker_json) {
+        const t = JSON.parse(data.ticker_json);
+        setTicker({
+          ...DEFAULT_TICKER_CONFIG,
+          ...t,
+          items: Array.isArray(t?.items) ? t.items : [],
+        });
+      }
+    } catch { /* keep defaults */ }
   }, [data]);
 
   const save = useMutation({
@@ -90,6 +102,7 @@ export function MenusEditor() {
         { key: "header_menu_json", value: JSON.stringify(header) },
         { key: "footer_menu_json", value: JSON.stringify(footer) },
         { key: "header_cta_json", value: JSON.stringify(cta) },
+        { key: "ticker_json", value: JSON.stringify(ticker) },
         ...FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: footerContent[k] ?? "" })),
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
@@ -100,6 +113,7 @@ export function MenusEditor() {
       qc.invalidateQueries({ queryKey: ["site-menus"] });
       qc.invalidateQueries({ queryKey: ["site-menus-edit"] });
       qc.invalidateQueries({ queryKey: ["site-settings"] });
+      qc.invalidateQueries({ queryKey: ["site-settings", "ticker_json"] });
     },
     onError: (e: any) => toast.error(e.message || "Failed to save"),
   });
@@ -128,12 +142,16 @@ export function MenusEditor() {
         <TabBtn active={tab === "footer-content"} onClick={() => setTab("footer-content")}>
           <FileText className="h-3.5 w-3.5" /> Footer content
         </TabBtn>
+        <TabBtn active={tab === "ticker"} onClick={() => setTab("ticker")}>
+          <Megaphone className="h-3.5 w-3.5" /> News ticker
+        </TabBtn>
       </div>
 
       {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
       {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
       {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
       {tab === "footer-content" && <FooterContentEditor content={footerContent} onChange={setFooterContent} />}
+      {tab === "ticker" && <TickerEditor value={ticker} onChange={setTicker} />}
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
         <button
@@ -144,6 +162,7 @@ export function MenusEditor() {
               setFooter(DEFAULT_FOOTER_MENU);
               setCta(DEFAULT_HEADER_CTA);
               setFooterContent(DEFAULT_FOOTER_CONTENT);
+              setTicker(DEFAULT_TICKER_CONFIG);
             }
           }}
           className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
@@ -473,4 +492,98 @@ function stringToSearch(s: string): Record<string, string> | undefined {
     if (k) out[k.trim()] = (v ?? "").trim();
   });
   return Object.keys(out).length ? out : undefined;
+}
+
+function TickerEditor({ value, onChange }: { value: TickerConfig; onChange: (v: TickerConfig) => void }) {
+  const set = <K extends keyof TickerConfig>(k: K, v: TickerConfig[K]) => onChange({ ...value, [k]: v });
+  const updateItem = (i: number, patch: Partial<{ title: string; link: string }>) => {
+    const items = [...value.items];
+    items[i] = { ...items[i], ...patch };
+    set("items", items);
+  };
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= value.items.length) return;
+    const items = [...value.items];
+    [items[i], items[j]] = [items[j], items[i]];
+    set("items", items);
+  };
+  const remove = (i: number) => set("items", value.items.filter((_, idx) => idx !== i));
+  const add = () => set("items", [...value.items, { title: "", link: "" }]);
+
+  const speed = Number(value.speed) || 40;
+  const threshold = Number(value.scrollThreshold) || 3;
+  const willScroll = value.items.filter((i) => i?.title?.trim()).length > threshold;
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={value.enabled}
+            onChange={(e) => set("enabled", e.target.checked)}
+            className="h-4 w-4 rounded border-input"
+          />
+          Show news ticker on the website
+        </label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block space-y-1">
+            <span className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span>Scroll speed</span>
+              <span className="text-foreground">{speed}s / loop {speed <= 20 ? "(fast)" : speed >= 60 ? "(slow)" : "(normal)"}</span>
+            </span>
+            <input
+              type="range"
+              min={10}
+              max={120}
+              step={5}
+              value={speed}
+              onChange={(e) => set("speed", Number(e.target.value))}
+              className="w-full accent-primary"
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Scroll only when more than
+            </span>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={threshold}
+                onChange={(e) => set("scrollThreshold", Math.max(1, Number(e.target.value) || 1))}
+                className="w-20 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <span className="text-xs text-muted-foreground">items (default 3)</span>
+            </div>
+          </label>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {willScroll
+            ? `Ticker will scroll because there are more than ${threshold} items.`
+            : `Ticker will display statically — add more than ${threshold} items to enable scrolling.`}
+          {value.items.length === 0 && " When empty, the latest published news posts are used automatically."}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {value.items.map((item, i) => (
+          <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_auto]">
+            <Input label="Title" value={item.title} onChange={(v) => updateItem(i, { title: v })} placeholder="Breaking headline" />
+            <Input label="Link (optional)" value={item.link || ""} onChange={(v) => updateItem(i, { link: v })} placeholder="/news/slug or https://…" />
+            <RowActions onUp={() => move(i, -1)} onDown={() => move(i, 1)} onRemove={() => remove(i)} />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={add}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-background px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Plus className="h-4 w-4" /> Add ticker item
+        </button>
+      </div>
+    </div>
+  );
 }
