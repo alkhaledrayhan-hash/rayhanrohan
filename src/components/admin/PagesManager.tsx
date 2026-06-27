@@ -8,6 +8,7 @@ import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
 import { FeaturedSectionEditor } from "./FeaturedSectionEditor";
 import { PartnersSectionEditor } from "./PartnersSectionEditor";
+import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 
 type Section = {
   id: string;
@@ -24,7 +25,7 @@ const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean
   { slug: "agents", label: "Our Agents", icon: Users, editable: false },
   { slug: "about", label: "About", icon: Info, editable: false },
   { slug: "news", label: "News", icon: Newspaper, editable: false },
-  { slug: "contact", label: "Contact", icon: Mail, editable: false },
+  { slug: "contact", label: "Contact", icon: Mail, editable: true },
 ];
 
 export function PagesManager({
@@ -71,7 +72,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "partners"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "partners", "contact", "info"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -84,6 +85,8 @@ export function PagesManager({
     locations: Newspaper,
     ticker: Megaphone,
     partners: Handshake,
+    contact: Mail,
+    info: Mail,
   };
 
 
@@ -178,6 +181,22 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">Logos, heading, and marquee speed.</p>
               </div>
               <PartnersSectionEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "contact" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Contact (homepage)</h3>
+                <p className="text-xs text-muted-foreground">Talk-to-a-specialist section on the home page.</p>
+              </div>
+              <HomeContactEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "info" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Contact page</h3>
+                <p className="text-xs text-muted-foreground">Hero, channels, subjects and office details.</p>
+              </div>
+              <ContactPageEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : (
             <>
