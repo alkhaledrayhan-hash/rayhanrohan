@@ -134,13 +134,12 @@ function Home() {
                 {featuredHeading.title}
               </h2>
             </div>
-            <Link
-              to="/properties"
-              search={{ status: "rent" }}
+            <a
+              href={featuredHeading.link_href || "/properties"}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
               {featuredHeading.link_label} <ArrowRight className="h-4 w-4" />
-            </Link>
+            </a>
           </div>
           <div className="mt-10">
             <PropertyGrid properties={featured} />
