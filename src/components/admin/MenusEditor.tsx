@@ -79,6 +79,9 @@ export function MenusEditor() {
       const c = data.header_cta_json ? JSON.parse(data.header_cta_json) : DEFAULT_HEADER_CTA;
       if (c && typeof c === "object") setCta({ ...DEFAULT_HEADER_CTA, ...c });
     } catch { /* keep defaults */ }
+    const nextFc = { ...DEFAULT_FOOTER_CONTENT };
+    FOOTER_CONTENT_KEYS.forEach((k) => { if (data[k]) nextFc[k] = data[k]; });
+    setFooterContent(nextFc);
   }, [data]);
 
   const save = useMutation({
