@@ -12,7 +12,36 @@ import {
   type HeaderMenuItem,
 } from "@/hooks/useSiteMenus";
 
-type Tab = "header" | "cta" | "footer";
+type Tab = "header" | "cta" | "footer" | "footer-content";
+
+const FOOTER_CONTENT_KEYS = [
+  "footer_about",
+  "footer_center_eyebrow",
+  "footer_center_title",
+  "footer_center_subtitle",
+  "footer_contact_heading",
+  "footer_address",
+  "footer_phone",
+  "footer_email",
+  "footer_badge_text",
+  "footer_copyright",
+] as const;
+type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
+type FooterContent = Record<FooterContentKey, string>;
+
+const DEFAULT_FOOTER_CONTENT: FooterContent = {
+  footer_about:
+    "A curated portfolio of premium residences across Doha, The Pearl, Lusail, West Bay and Al Waab — tailored for the discerning resident.",
+  footer_center_eyebrow: "Doha → World",
+  footer_center_title: "From Qatar, with intent.",
+  footer_center_subtitle: "25.2854° N · 51.5310° E",
+  footer_contact_heading: "Contact",
+  footer_address: "West Bay, Doha — Qatar",
+  footer_phone: "+974 4000 0000",
+  footer_email: "hello@maisonqatar.qa",
+  footer_badge_text: "Licensed real estate brokerage · Qatar",
+  footer_copyright: "© {year} {title}. All rights reserved.",
+};
 
 export function MenusEditor() {
   const qc = useQueryClient();
@@ -20,6 +49,7 @@ export function MenusEditor() {
   const [header, setHeader] = useState<HeaderMenuItem[]>(DEFAULT_HEADER_MENU);
   const [footer, setFooter] = useState<FooterMenuGroup[]>(DEFAULT_FOOTER_MENU);
   const [cta, setCta] = useState<HeaderCta>(DEFAULT_HEADER_CTA);
+  const [footerContent, setFooterContent] = useState<FooterContent>(DEFAULT_FOOTER_CONTENT);
 
   const { data, isLoading } = useQuery({
     queryKey: ["site-menus-edit"],
