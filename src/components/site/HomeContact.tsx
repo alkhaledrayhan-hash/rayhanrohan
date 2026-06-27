@@ -2,11 +2,15 @@ import { useState, type FormEvent } from "react";
 import { Mail, Phone, Send, CheckCircle2 } from "lucide-react";
 import { submitLead } from "@/lib/leads";
 import { PhoneInput } from "@/components/site/PhoneInput";
+import { usePageSections } from "@/lib/page-sections";
+import { normalizeHomeContact } from "@/components/admin/ContactSectionEditor";
 
 export function HomeContact() {
+  const { data: sections } = usePageSections("home");
+  const cfg = normalizeHomeContact(sections?.contact);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [dialCode, setDialCode] = useState("+974");
+  const [dialCode, setDialCode] = useState(cfg.default_dial_code);
   const [phone, setPhone] = useState("");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
