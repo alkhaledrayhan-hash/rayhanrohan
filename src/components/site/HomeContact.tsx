@@ -1,10 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { Mail, Phone, Send, CheckCircle2 } from "lucide-react";
 import { submitLead } from "@/lib/leads";
+import { PhoneInput } from "@/components/site/PhoneInput";
 
 export function HomeContact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [dialCode, setDialCode] = useState("+974");
+  const [phone, setPhone] = useState("");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -12,7 +15,7 @@ export function HomeContact() {
     const data = {
       name: String(fd.get("name") || "").trim(),
       email: String(fd.get("email") || "").trim(),
-      phone: String(fd.get("phone") || "").trim(),
+      phone: phone.trim() ? `${dialCode} ${phone.trim()}` : "",
       subject: String(fd.get("subject") || "General enquiry").trim(),
       message: String(fd.get("message") || "").trim(),
     };
@@ -22,6 +25,7 @@ export function HomeContact() {
       await submitLead({ ...data, source: "home_contact" });
       setStatus("success");
       (e.target as HTMLFormElement).reset();
+      setPhone("");
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -80,7 +84,16 @@ export function HomeContact() {
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name" name="name" required minLength={2} maxLength={100} placeholder="Your name" />
             <Field label="Email" name="email" type="email" required maxLength={200} placeholder="you@email.com" />
-            <Field label="Phone" name="phone" type="tel" maxLength={30} placeholder="+974 …" />
+            <div className="sm:col-span-1">
+              <PhoneInput
+                variant="translucent"
+                dialCode={dialCode}
+                phone={phone}
+                onDialCodeChange={setDialCode}
+                onPhoneChange={setPhone}
+                placeholder="Phone number"
+              />
+            </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary-foreground/70">
                 Topic
