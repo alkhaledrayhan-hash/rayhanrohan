@@ -82,10 +82,10 @@ function ContactPage() {
 
       <PageHero
         image={contactHero}
-        eyebrow="Contact"
-        title="Talk to a Doha property advisor."
-        description="Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week."
-        crumbs={[{ label: "Home", to: "/" }, { label: "Contact" }]}
+        eyebrow={cfg.hero.eyebrow}
+        title={cfg.hero.title}
+        description={cfg.hero.description}
+        crumbs={[{ label: "Home", to: "/" }, { label: cfg.hero.eyebrow || "Contact" }]}
       />
 
       {/* Quick contact tiles */}
@@ -94,26 +94,26 @@ function ContactPage() {
           <ContactTile
             icon={<Phone className="h-4 w-4" />}
             label="Call"
-            value={PHONE_DISPLAY}
-            href={`tel:${PHONE_E164}`}
+            value={cfg.phone_display}
+            href={`tel:${cfg.phone_e164}`}
           />
           <ContactTile
             icon={<MessageCircle className="h-4 w-4" />}
             label="WhatsApp"
             value="Chat now"
-            href={`https://wa.me/${WHATSAPP_E164}`}
+            href={`https://wa.me/${cfg.whatsapp_e164}`}
             external
           />
           <ContactTile
             icon={<Mail className="h-4 w-4" />}
             label="Email"
-            value={EMAIL}
-            href={`mailto:${EMAIL}`}
+            value={cfg.email}
+            href={`mailto:${cfg.email}`}
           />
           <ContactTile
             icon={<Clock className="h-4 w-4" />}
             label="Hours"
-            value="Sat–Thu · 9am–8pm"
+            value={cfg.hours_short}
           />
         </div>
       </section>
@@ -159,13 +159,7 @@ function ContactPage() {
                 label="Subject"
                 value={form.subject}
                 onChange={(v) => setForm({ ...form, subject: v })}
-                options={[
-                  "General enquiry",
-                  "Book a viewing",
-                  "Sell or list a property",
-                  "Property valuation",
-                  "Press & partnerships",
-                ]}
+                options={cfg.subjects}
               />
               <label className="flex flex-col gap-1 sm:col-span-2">
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
@@ -201,38 +195,38 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-primary" />
-                <h3 className="font-display text-xl font-semibold">Head Office</h3>
+                <h3 className="font-display text-xl font-semibold">{cfg.office.name}</h3>
               </div>
               <dl className="mt-4 space-y-3 text-sm">
                 <Row icon={<MapPin className="h-4 w-4" />}>
-                  Tower 2, Level 18, West Bay Business District
-                  <br />
-                  Al Corniche Street, Doha, Qatar
+                  {cfg.office.address.split("\n").map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
                 </Row>
                 <Row icon={<Phone className="h-4 w-4" />}>
-                  <a href={`tel:${PHONE_E164}`} className="hover:text-primary">
-                    {PHONE_DISPLAY}
+                  <a href={`tel:${cfg.phone_e164}`} className="hover:text-primary">
+                    {cfg.phone_display}
                   </a>
                 </Row>
                 <Row icon={<Mail className="h-4 w-4" />}>
-                  <a href={`mailto:${EMAIL}`} className="hover:text-primary">
-                    {EMAIL}
+                  <a href={`mailto:${cfg.email}`} className="hover:text-primary">
+                    {cfg.email}
                   </a>
                 </Row>
                 <Row icon={<Clock className="h-4 w-4" />}>
-                  Sat–Thu · 9:00 AM – 8:00 PM
-                  <br />
-                  Friday · By appointment
+                  {cfg.office.hours.split("\n").map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
                 </Row>
               </dl>
               <div className="mt-5 grid grid-cols-2 gap-2 border-t border-border pt-4 text-[12px] text-muted-foreground">
                 <div>
                   <p className="uppercase tracking-[0.16em]">License</p>
-                  <p className="mt-0.5 font-mono text-foreground">QA-RE-2014-0387</p>
+                  <p className="mt-0.5 font-mono text-foreground">{cfg.office.license}</p>
                 </div>
                 <div>
                   <p className="uppercase tracking-[0.16em]">CR No.</p>
-                  <p className="mt-0.5 font-mono text-foreground">114532</p>
+                  <p className="mt-0.5 font-mono text-foreground">{cfg.office.cr}</p>
                 </div>
               </div>
             </div>
@@ -240,8 +234,8 @@ function ContactPage() {
             {/* Map */}
             <div className="overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)]">
               <iframe
-                title="MaisonQatar head office on the map"
-                src="https://www.google.com/maps?q=West+Bay+Doha+Qatar&output=embed"
+                title="Office location"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(cfg.map_query)}&output=embed`}
                 className="h-64 w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
