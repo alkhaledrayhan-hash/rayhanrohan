@@ -24,7 +24,7 @@ type AgentProfile = { id: string; full_name: string | null; email: string | null
 
 export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const qc = useQueryClient();
-  const { formatDateTime } = useFormatters();
+  const { formatDate, formatTime, formatDateTime } = useFormatters();
   const [q, setQ] = useState("");
   const [src, setSrc] = useState<string>("all");
   const [agentFilter, setAgentFilter] = useState<string>("all");
