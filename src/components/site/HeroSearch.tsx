@@ -341,7 +341,7 @@ function Field({
       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/70">
         {label}
       </span>
-      <span className="flex items-center gap-2 text-white [&_select]:cursor-pointer [&_select]:text-white [&_select_option]:bg-card [&_select_option]:text-foreground">
+      <span className="flex items-center gap-2 text-white [&_select]:cursor-pointer [&_select]:text-white [&_select_option]:text-white [&_select_option]:[background-color:color-mix(in_oklab,var(--primary)_22%,rgb(15_12_14/0.92))]">
         {icon}
         {children}
       </span>
