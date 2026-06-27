@@ -45,7 +45,7 @@ const WHATSAPP_E164 = "97433330123";
 const EMAIL = "hello@maisonqatar.qa";
 
 function ContactPage() {
-  
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -53,13 +53,18 @@ function ContactPage() {
     subject: "General enquiry",
     message: "",
   });
+  const [dialCode, setDialCode] = useState("+974");
   const [submitting, setSubmitting] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await submitLead({ ...form, source: "contact_page" });
+      const payload = {
+        ...form,
+        phone: form.phone.trim() ? `${dialCode} ${form.phone.trim()}` : "",
+      };
+      const res = await submitLead({ ...payload, source: "contact_page" });
       toast.success("Message sent", {
         description: `Reference ${res.id}. We'll reply within one business hour.`,
       });
