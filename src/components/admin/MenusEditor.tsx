@@ -222,6 +222,7 @@ function Textarea({ label, value, onChange }: { label: string; value: string; on
   );
 }
 
+function CtaEditor({ cta, onChange }: { cta: HeaderCta; onChange: (v: HeaderCta) => void }) {
   return (
     <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
       <label className="flex items-center gap-2 text-sm font-medium">
