@@ -59,10 +59,11 @@ export function PagesManager({
   });
 
   // Virtual sections (not stored in page_sections) that get their own editors.
-  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home }> = [
-    { section_key: "ticker", label: "News ticker", icon: Megaphone },
+  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = [
+    { section_key: "ticker", label: "News ticker", icon: Megaphone, sort_order: 2 },
   ];
   const virtualForPage = activePage === "home" ? VIRTUAL_HOME : [];
+
 
   const active = sections.find((s) => s.section_key === activeKey)
     || (virtualForPage.find((v) => v.section_key === activeKey) ? ({ id: `virtual-${activeKey}`, page_slug: activePage, section_key: activeKey!, label: virtualForPage.find((v) => v.section_key === activeKey)!.label, content: null, sort_order: 999 } as Section) : undefined)
@@ -113,30 +114,24 @@ export function PagesManager({
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
-        {sections.map((s) => {
-          const Icon = SECTION_ICONS[s.section_key] || FileText;
-          return (
-            <button
-              key={s.id}
-              onClick={() => setActiveKey(s.section_key)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === s.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
-            >
-              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {s.label}</span>
-            </button>
-          );
-        })}
-        {virtualForPage.map((v) => {
-          const Icon = v.icon;
-          return (
-            <button
-              key={v.section_key}
-              onClick={() => setActiveKey(v.section_key)}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === v.section_key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
-            >
-              <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {v.label}</span>
-            </button>
-          );
-        })}
+        {[
+          ...sections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
+          ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon })),
+        ]
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveKey(item.key)}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === item.key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+              >
+                <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {item.label}</span>
+              </button>
+            );
+          })}
+
       </div>
 
       {/* Editor */}
