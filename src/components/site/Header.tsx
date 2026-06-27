@@ -276,3 +276,48 @@ function NavPill({
     </Link>
   );
 }
+
+function NavDropdown({
+  item,
+  scrolled,
+}: {
+  item: { label: string; to: string; search?: Record<string, unknown>; children?: { label: string; to: string; search?: Record<string, unknown> }[] };
+  scrolled: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  const onEnter = () => { if (closeTimer) clearTimeout(closeTimer); setOpen(true); };
+  const onLeave = () => { closeTimer = setTimeout(() => setOpen(false), 150); };
+
+  const triggerHover = scrolled
+    ? "hover:text-foreground hover:bg-background/60"
+    : "hover:text-white hover:bg-white/15";
+
+  return (
+    <div className="relative" onMouseEnter={onEnter} onMouseLeave={onLeave}>
+      <Link
+        to={item.to as never}
+        search={item.search as never}
+        className={`relative inline-flex items-center gap-1 rounded-full px-4 py-1.5 transition-colors duration-300 ease-out ${triggerHover}`}
+      >
+        {item.label}
+        <ChevronDown className="h-3 w-3 opacity-70" />
+      </Link>
+      {open && item.children && item.children.length > 0 && (
+        <div className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-background/95 p-1.5 shadow-xl backdrop-blur-xl">
+          {item.children.map((c, i) => (
+            <Link
+              key={i}
+              to={c.to as never}
+              search={c.search as never}
+              className="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary"
+              onClick={() => setOpen(false)}
+            >
+              {c.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
