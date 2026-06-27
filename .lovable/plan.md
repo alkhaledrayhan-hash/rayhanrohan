@@ -1,89 +1,54 @@
+## Plan
 
-# Vercel Deploy with Your Own Supabase Project
+### 1. Offer section on Home (admin Pages → Home)
 
-Apni Lovable Cloud er bodole nijer Supabase project use korben Vercel e. Eta full manual setup — Lovable er role thakbe shudhu code edit korar, backend apnar.
+- Add a new `offer` row to `page_sections` for `page='home'`, placed at `sort_order` between Featured and Location (above Location).
+- Schema for `config_json`:
+  - `eyebrow`, `title`, `description`, `cta_label`, `cta_href`
+  - `mode`: `manual` | `random`
+  - `limit`: number (default 6) — used when `random`
+  - `property_ids`: string[] — used when `manual`; admin can pick any property regardless of owner/agent (own + all agents).
+  - `style`: padding, bg color, card style overrides (reuse existing style schema patterns).
+- New `src/components/admin/OffersSectionEditor.tsx`:
+  - Mode toggle.
+  - Manual: searchable multi-select listing ALL properties (with `is_special_offer` flag visible); shows owner/agent name.
+  - Random: select count + filter by "only special offers" toggle.
+  - Live preview card grid.
+- Register editor in `PagesManager.tsx` with a Tag/Percent icon; position the virtual ordering so it appears above Location.
+- Frontend `src/routes/index.tsx`: render `OffersHomeSection` consuming the config. Fetch logic in `src/lib/home-offers.ts`:
+  - manual → fetch the chosen ids
+  - random → fetch shuffled set (optionally filtered to `is_special_offer=true`)
+- Reuse existing `PropertyCard` with offer badge + countdown when offer fields are present.
 
-## Step 1: Notun Supabase Project Banano
+### 2. Hero tab preview improvement
 
-1. https://supabase.com e gie sign up / login korun
-2. **New Project** click korun → name, password, region (Qatar er kache: Mumbai/Singapore) din
-3. Project create howar por **Settings → API** e jaan ebong ei 3ta value copy korun:
-   - **Project URL** → `https://xxxxx.supabase.co`
-   - **anon public key** → publishable key
-   - **service_role key** → secret (ekdom kauke dekhaben na)
+- Refactor preview area inside `HeroSectionEditor.tsx` to render the actual `Hero` component (or a faithful copy) at scaled-down width.
+- Use the same slide markup: full-bleed image, dark gradient overlay, eyebrow/title/description/cta buttons, slide dots, and the integrated `HeroSearch` glass panel — exactly as on the live home.
+- Add toggle: "Mobile / Desktop" preview frame sizes; auto-advance slides.
+- Keep the slide list editor on the left; preview pinned on the right with sticky scroll.
 
-## Step 2: Database Migrations Apply Kora
+### 3. Central Theme & Style settings tab
 
-Apnar local machine e (terminal):
+- New `site_settings` keys under namespace `theme_*`:
+  - `theme_colors` JSON: primary, primary-foreground, secondary, accent, gold, background, foreground, muted, border (oklch or hex).
+  - `theme_typography` JSON: `font_size_sm`, `font_size_base`, `font_size_lg`, `font_size_xl`, `font_size_2xl`, `radius`, `heading_weight`, `body_weight`, font family choices.
+  - `theme_spacing` JSON: section padding scale.
+- New `src/components/admin/ThemeEditor.tsx` (under Settings tab):
+  - Color pickers (with reset-to-default).
+  - Sliders + numeric px inputs for typography sizes.
+  - Live preview chip (button, heading, body sample).
+- New `src/hooks/useThemeTokens.ts` fetches theme settings and injects a `<style id="dynamic-theme">` into `__root.tsx` that overrides CSS vars on `:root` (`--primary`, `--font-size-base`, `--radius`, etc.).
+- `src/styles.css`: add the missing tokens (`--font-size-sm/base/lg/xl/2xl`) and route Tailwind text classes via `@theme inline` so dynamic overrides actually apply.
+- Per-section override: every existing section editor already accepts a `style` block (paddings/colors). Add a "Use theme defaults" checkbox per style field; when checked, omit the value and the frontend falls back to the central theme tokens. When unchecked, the section's own value wins.
 
-```bash
-# Supabase CLI install (Mac)
-brew install supabase/tap/supabase
+### Technical notes
 
-# Login
-supabase login
+- DB: 1 migration adds the `offer` page_section row and any new `site_settings` keys with sensible defaults.
+- No schema columns added — everything lives in JSON `config_json` / `site_settings.value`.
+- Theme override is purely CSS-variable based, so no component refactor required; sections that already read CSS vars (`var(--primary)`, etc.) automatically update.
+- For per-section "custom vs theme", editors get a small `<StyleField>` wrapper that toggles between "Theme default" and a custom value, writing `null` for default.
 
-# Apnar notun project er sathe link
-supabase link --project-ref <NEW_PROJECT_REF>
+### Out of scope (will not change)
 
-# Migrations push (shob table, RLS, policies create hobe)
-supabase db push
-```
-
-Eta `supabase/migrations/` folder er shob SQL file run korbe.
-
-## Step 3: Storage Buckets Banano
-
-Notun Supabase project er **Storage** section e gie manually create korun:
-- `agent-avatars` (private)
-- `media` (private)
-
-## Step 4: Auth Configure Kora
-
-Supabase Dashboard → **Authentication → URL Configuration**:
-- **Site URL**: `https://your-app.vercel.app`
-- **Redirect URLs**: `https://your-app.vercel.app/**`, `http://localhost:8080/**`
-
-Google login chaile → **Authentication → Providers → Google** enable korun (Google Cloud Console e OAuth client banate hobe).
-
-## Step 5: GitHub e Code Push
-
-```bash
-git push origin main
-```
-
-## Step 6: Vercel e Deploy
-
-1. https://vercel.com → **Add New Project** → GitHub repo import
-2. Framework auto-detect hobe (`vercel.json` already ache)
-3. **Environment Variables** section e ei 5ta add korun:
-
-| Name | Value |
-|------|-------|
-| `VITE_SUPABASE_URL` | Step 1 er Project URL |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Step 1 er anon key |
-| `SUPABASE_URL` | Same Project URL |
-| `SUPABASE_PUBLISHABLE_KEY` | Same anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Step 1 er service_role key |
-
-4. **Deploy** click korun
-
-## Step 7: LOVABLE_API_KEY (Optional)
-
-Apnar app e Lovable AI Gateway use hocche kina check korun (chat, AI features). Hole `LOVABLE_API_KEY` o lagbe — Lovable Cloud disconnect korle eta kaaj korbe na, apnake **OpenAI / Anthropic** er nijer API key use korte code modify korte hobe.
-
----
-
-## Important Warnings
-
-- **Data migrate hobe na**: Lovable Cloud er `zavgbuhzvotyaxdrhspi` project er existing data (properties, users, bookings) notun Supabase e auto-copy hobe na. Lagle manually export/import korte hobe (`pg_dump`).
-- **Lovable preview vs Vercel**: Vercel deploy er por Lovable preview o notun Supabase project er sathe connect korte chaile, `.env` file Lovable Cloud override korbe na — preview Lovable Cloud DB e thakbe.
-- **Service role key kokhono frontend e expose korben na** — shudhu Vercel env variable hisebe rakhben.
-
----
-
-## Aamar Kora Lagbe?
-
-Ei plan e Lovable side e **kono code change nei** — pura kaaj apnar Supabase + Vercel dashboard e. Apnar local terminal e migrations push korte hobe.
-
-Confirm korun — plan approve korle ami extra `deploy.md` update kore din-by-din checklist likhe dite pari, ba kichu specific code adjustment lagle (jemon LOVABLE_API_KEY replace) shei kaaj korte pari.
+- Existing Featured / Location / Partners / Contact editors keep their current behavior; only their style-field wrappers get the new "Use theme default" toggle.
+- No changes to property card markup beyond the existing offer badge/countdown.
