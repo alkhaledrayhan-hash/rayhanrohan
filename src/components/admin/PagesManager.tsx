@@ -59,10 +59,11 @@ export function PagesManager({
   });
 
   // Virtual sections (not stored in page_sections) that get their own editors.
-  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home }> = [
-    { section_key: "ticker", label: "News ticker", icon: Megaphone },
+  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = [
+    { section_key: "ticker", label: "News ticker", icon: Megaphone, sort_order: 2 },
   ];
   const virtualForPage = activePage === "home" ? VIRTUAL_HOME : [];
+
 
   const active = sections.find((s) => s.section_key === activeKey)
     || (virtualForPage.find((v) => v.section_key === activeKey) ? ({ id: `virtual-${activeKey}`, page_slug: activePage, section_key: activeKey!, label: virtualForPage.find((v) => v.section_key === activeKey)!.label, content: null, sort_order: 999 } as Section) : undefined)
