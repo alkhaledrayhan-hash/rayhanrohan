@@ -180,6 +180,7 @@ function AdminDashboard() {
     .toUpperCase();
 
   return (
+    <SidebarCollapsedContext.Provider value={desktopCollapsed}>
     <div className="flex min-h-screen bg-[#f5f7fa]">
       {/* Mobile overlay */}
       {mobileNavOpen && (
@@ -193,16 +194,16 @@ function AdminDashboard() {
 
       {/* Sidebar — drawer on mobile, static on md+ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-transform duration-200 md:static md:z-auto md:w-64 md:max-w-none md:translate-x-0 ${
-          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-[transform,width] duration-200 md:static md:z-auto md:max-w-none md:translate-x-0 ${
+          desktopCollapsed ? "md:w-16" : "md:w-64"
+        } ${mobileNavOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4 md:px-6 md:py-5">
-          <Link to="/" className="flex items-center gap-2" onClick={closeMobileNav}>
-            <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
+        <div className={`flex items-center border-b border-border py-4 md:py-5 ${desktopCollapsed ? "md:justify-center md:px-2" : "justify-between px-4 md:px-6"}`}>
+          <Link to="/" className="flex items-center gap-2" onClick={closeMobileNav} title="Ayesha Qatar">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
               <Home className="h-4 w-4" />
             </span>
-            <div className="flex flex-col leading-tight">
+            <div className={`flex-col leading-tight ${desktopCollapsed ? "hidden" : "flex"}`}>
               <span className="font-display text-sm font-semibold">
                 Ayesha <span className="text-gold">Qatar</span>
               </span>
@@ -220,6 +221,7 @@ function AdminDashboard() {
             <X className="h-4 w-4" />
           </button>
         </div>
+
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-3 text-sm">
           <NavGroup label="Main" />
