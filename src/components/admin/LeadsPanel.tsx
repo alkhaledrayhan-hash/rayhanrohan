@@ -226,6 +226,97 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
           </table>
         </div>
       </div>
+
+      {viewing && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          onClick={() => setViewing(null)}
+        >
+          <div
+            className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 border-b border-border bg-gradient-to-br from-primary/5 to-transparent px-5 py-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">{viewing.source}</span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{viewing.status}</span>
+                </div>
+                <h3 className="mt-1.5 truncate font-display text-lg font-semibold">{viewing.name}</h3>
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5"><Calendar className="h-3 w-3" />{formatDateTime(viewing.created_at)}</p>
+              </div>
+              <button
+                onClick={() => setViewing(null)}
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                aria-label="Close"
+              ><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="max-h-[70vh] space-y-4 overflow-y-auto px-5 py-4 text-sm">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <InfoRow icon={<Mail className="h-3.5 w-3.5" />} label="Email">
+                  <a href={`mailto:${viewing.email}`} className="text-primary hover:underline break-all">{viewing.email}</a>
+                </InfoRow>
+                <InfoRow icon={<PhoneIcon className="h-3.5 w-3.5" />} label="Phone">
+                  {viewing.phone ? <a href={`tel:${viewing.phone}`} className="text-primary hover:underline">{viewing.phone}</a> : <span className="text-muted-foreground">—</span>}
+                </InfoRow>
+                <InfoRow icon={<Building2 className="h-3.5 w-3.5" />} label="Property">
+                  <span>{viewing.property_title || "—"}</span>
+                </InfoRow>
+                <InfoRow icon={<UserIcon className="h-3.5 w-3.5" />} label="Assigned agent">
+                  <span>{agentName(viewing.agent_id)}</span>
+                </InfoRow>
+              </div>
+
+              {viewing.subject && (
+                <InfoRow icon={<Tag className="h-3.5 w-3.5" />} label="Subject">
+                  <span className="font-medium">{viewing.subject}</span>
+                </InfoRow>
+              )}
+
+              <div>
+                <div className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Message</div>
+                <div className="whitespace-pre-wrap rounded-lg border border-border bg-muted/30 p-3 text-sm leading-relaxed">{viewing.message}</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-muted/20 px-5 py-3">
+              <a
+                href={`mailto:${viewing.email}`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-xs font-medium hover:bg-muted"
+              ><Mail className="h-3.5 w-3.5" /> Reply</a>
+              {viewing.phone && (
+                <a
+                  href={`tel:${viewing.phone}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                ><PhoneIcon className="h-3.5 w-3.5" /> Call</a>
+              )}
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    if (confirm("Delete this lead?")) {
+                      del.mutate(viewing.id);
+                      setViewing(null);
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700"
+                ><Trash2 className="h-3.5 w-3.5" /> Delete</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InfoRow({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-lg border border-border/60 bg-white p-2.5">
+      <div className="mb-0.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {icon}{label}
+      </div>
+      <div className="text-sm text-foreground">{children}</div>
     </div>
   );
 }
