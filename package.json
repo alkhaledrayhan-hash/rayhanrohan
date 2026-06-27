@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
-    "db:seed": "supabase db seed --linked",
+    "db:seed": "psql \"$DATABASE_URL\" -f supabase/seed.sql",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
