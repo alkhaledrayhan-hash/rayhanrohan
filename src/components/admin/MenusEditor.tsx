@@ -276,7 +276,7 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
   const add = () => onChange([...items, { label: "New link", to: "/" }]);
 
-  const updateChild = (i: number, ci: number, patch: Partial<{ label: string; to: string; search?: Record<string, string> }>) => {
+  const updateChild = (i: number, ci: number, patch: Partial<{ label: string; to: string; search?: Record<string, string>; icon?: string }>) => {
     const children = [...(items[i].children || [])];
     children[ci] = { ...children[ci], ...patch };
     update(i, { children });
