@@ -73,7 +73,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "partners", "contact", "info"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "partners", "locations", "contact", "info"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -83,7 +83,7 @@ export function PagesManager({
     hero: Home,
     trust: ShieldCheck,
     featured: Building2,
-    locations: Newspaper,
+    locations: MapPin,
     ticker: Megaphone,
     partners: Handshake,
     contact: Mail,
