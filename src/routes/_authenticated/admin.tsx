@@ -49,6 +49,9 @@ import {
   MessageSquare,
   Newspaper,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+
   Phone,
   Plus,
   Search,
