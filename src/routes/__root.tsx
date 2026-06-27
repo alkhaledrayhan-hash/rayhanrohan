@@ -117,14 +117,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const CRITICAL_CSS = `html,body{background:#fafaf7;color:#1a1410;margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}#app-loading{position:fixed;inset:0;display:grid;place-items:center;background:#fafaf7;z-index:9999;transition:opacity .25s ease;pointer-events:none}#app-loading.hide{opacity:0}#app-loading::after{content:"";width:36px;height:36px;border-radius:50%;border:3px solid rgba(139,38,53,.15);border-top-color:#8b2635;animation:al-spin .8s linear infinite}@keyframes al-spin{to{transform:rotate(360deg)}}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         <HeadContent />
       </head>
       <body>
+        <div id="app-loading" aria-hidden="true" />
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){function h(){var e=document.getElementById('app-loading');if(!e)return;e.classList.add('hide');setTimeout(function(){e&&e.parentNode&&e.parentNode.removeChild(e)},300)}if(document.readyState==='complete')h();else window.addEventListener('load',h);setTimeout(h,4000)})();`,
+          }}
+        />
         <Scripts />
       </body>
     </html>
