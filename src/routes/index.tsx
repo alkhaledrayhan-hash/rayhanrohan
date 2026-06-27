@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
 import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
 import { normalizeTrust } from "@/components/admin/TrustSectionEditor";
+import { normalizeFeatured } from "@/components/admin/FeaturedSectionEditor";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { HeroSearch } from "@/components/site/HeroSearch";
@@ -50,7 +51,26 @@ function Home() {
   const { data: sections = {} } = usePageSections("home");
   const { data: allProperties = [] } = useProperties();
   const { data: offerProperties = [] } = useOfferProperties();
-  const featured = allProperties.slice(0, 6);
+  const featuredCfg = normalizeFeatured(sections.featured);
+  const featured = (() => {
+    const limit = featuredCfg.limit || 6;
+    if (featuredCfg.mode === "manual" && featuredCfg.propertyIds.length) {
+      const map = new Map(allProperties.map((p) => [p.id, p]));
+      return featuredCfg.propertyIds.map((id) => map.get(id)).filter(Boolean).slice(0, limit) as typeof allProperties;
+    }
+    if (featuredCfg.mode === "category") {
+      const { status, type, location } = featuredCfg.filter;
+      return allProperties.filter((p) =>
+        (!status || p.status === status) &&
+        (!type || p.type === type) &&
+        (!location || p.location === location)
+      ).slice(0, limit);
+    }
+    if (featuredCfg.mode === "random") {
+      return [...allProperties].sort(() => Math.random() - 0.5).slice(0, limit);
+    }
+    return allProperties.slice(0, limit);
+  })();
   const offers = offerProperties.slice(0, 9).map((property) => ({
     property,
     discount: property.offerDiscount || 0,
@@ -63,7 +83,7 @@ function Home() {
   const trustShouldScroll = trustScroll.enabled && trust.length > trustScroll.threshold;
   const trustItems = trustShouldScroll ? [...trust, ...trust] : trust;
   const trustDuration = Math.max(8, Math.min(180, Number(trustScroll.speed) || 35));
-  const featuredHeading = sections.featured ?? { eyebrow: "Featured residences", title: "A portfolio worthy of the address", link_label: "View all listings", link_href: "/properties" };
+  const featuredHeading = featuredCfg;
   const locationsHeading = sections.locations ?? { eyebrow: "Premium Qatar locations", title: "Live in Qatar's most coveted neighbourhoods" };
 
   return (
