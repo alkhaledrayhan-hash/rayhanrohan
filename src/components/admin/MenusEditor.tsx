@@ -310,7 +310,7 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
           <div className="space-y-2 border-l-2 border-primary/20 pl-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Submenu items</p>
             {(item.children || []).map((c, ci) => (
-              <div key={ci} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_1fr_auto]">
+              <div key={ci} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[1fr_1fr_1fr_130px_auto]">
                 <Input label="Label" value={c.label} onChange={(v) => updateChild(i, ci, { label: v })} />
                 <Input label="Path" value={c.to} onChange={(v) => updateChild(i, ci, { to: v })} placeholder="/properties" />
                 <Input
@@ -319,12 +319,30 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
                   onChange={(v) => updateChild(i, ci, { search: stringToSearch(v) })}
                   placeholder="status=rent"
                 />
+                <label className="block space-y-1">
+                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Icon</span>
+                  <div className="flex items-center gap-1.5">
+                    {(() => {
+                      const Icon = getMenuIcon(c.icon);
+                      return Icon ? <Icon className="h-4 w-4 text-primary" /> : <span className="h-4 w-4" />;
+                    })()}
+                    <select
+                      value={c.icon || ""}
+                      onChange={(e) => updateChild(i, ci, { icon: e.target.value || undefined })}
+                      className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                    >
+                      <option value="">Auto</option>
+                      {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
+                    </select>
+                  </div>
+                </label>
                 <RowActions
                   onUp={() => moveChild(i, ci, -1)}
                   onDown={() => moveChild(i, ci, 1)}
                   onRemove={() => removeChild(i, ci)}
                 />
               </div>
+
             ))}
             <button
               type="button"
