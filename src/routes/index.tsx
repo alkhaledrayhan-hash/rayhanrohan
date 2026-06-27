@@ -217,6 +217,12 @@ function Home() {
   );
 }
 
+const TRUST_FALLBACK_ICONS = [ShieldCheck, Sparkles, KeyRound];
+function renderTrustIcon(name: string | undefined, index: number) {
+  const Icon = getMenuIcon(name) ?? TRUST_FALLBACK_ICONS[index % TRUST_FALLBACK_ICONS.length] ?? guessMenuIcon("");
+  return <Icon className="h-5 w-5" />;
+}
+
 function Trust({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
     <div className="flex items-start gap-3">
