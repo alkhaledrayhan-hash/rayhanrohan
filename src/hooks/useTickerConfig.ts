@@ -21,6 +21,8 @@ export type TickerStyle = {
 
 export type TickerConfig = {
   enabled: boolean;
+  source: "manual" | "random";
+  randomCount: number;
   speed: number;
   scrollThreshold: number;
   items: TickerItem[];
@@ -45,6 +47,8 @@ export const DEFAULT_TICKER_STYLE: TickerStyle = {
 
 export const DEFAULT_TICKER_CONFIG: TickerConfig = {
   enabled: true,
+  source: "manual",
+  randomCount: 8,
   speed: 40,
   scrollThreshold: 3,
   items: [],
