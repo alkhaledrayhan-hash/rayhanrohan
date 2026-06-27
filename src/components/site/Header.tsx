@@ -161,9 +161,20 @@ export function Header() {
               </div>
               <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
                 {headerMenu.map((item, i) => (
-                  <SheetLink key={i} to={item.to} search={item.search} onSelect={() => setOpen(false)}>
-                    {item.label}
-                  </SheetLink>
+                  <div key={i}>
+                    <SheetLink to={item.to} search={item.search} onSelect={() => setOpen(false)}>
+                      {item.label}
+                    </SheetLink>
+                    {item.children && item.children.length > 0 && (
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-border/60 pl-3">
+                        {item.children.map((c, ci) => (
+                          <SheetLink key={ci} to={c.to} search={c.search} onSelect={() => setOpen(false)}>
+                            {c.label}
+                          </SheetLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </nav>
               <div className="space-y-2 border-t border-border px-4 py-4">
