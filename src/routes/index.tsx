@@ -183,8 +183,6 @@ function Home() {
           </div>
         </section>
 
-        <LogoMarquee />
-
         {/* Exclusive offers */}
         {offers.length > 0 && (
           <OffersSection
@@ -283,6 +281,8 @@ function Home() {
         </section>
 
         <HomeContact />
+
+        <LogoMarquee />
       </main>
       <Footer />
     </div>
