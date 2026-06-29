@@ -11,6 +11,7 @@ import { OffersSectionEditor } from "./OffersSectionEditor";
 import { PartnersSectionEditor } from "./PartnersSectionEditor";
 import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
+import { PageHeroEditor } from "./PageHeroEditor";
 
 type Section = {
   id: string;
@@ -23,10 +24,10 @@ type Section = {
 
 const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean }[] = [
   { slug: "home", label: "Home", icon: Home, editable: true },
-  { slug: "properties", label: "Properties", icon: Building2, editable: false },
-  { slug: "agents", label: "Our Agents", icon: Users, editable: false },
-  { slug: "about", label: "About", icon: Info, editable: false },
-  { slug: "news", label: "News", icon: Newspaper, editable: false },
+  { slug: "properties", label: "Properties", icon: Building2, editable: true },
+  { slug: "agents", label: "Our Agents", icon: Users, editable: true },
+  { slug: "about", label: "About", icon: Info, editable: true },
+  { slug: "news", label: "News", icon: Newspaper, editable: true },
   { slug: "contact", label: "Contact", icon: Mail, editable: true },
 ];
 
