@@ -78,7 +78,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
