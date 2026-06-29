@@ -4,6 +4,7 @@ import { Building2, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { usePageHero } from "@/hooks/usePageHero";
 import { listPublicAgents } from "@/lib/public-agents.functions";
 
 const agentsQuery = queryOptions({
