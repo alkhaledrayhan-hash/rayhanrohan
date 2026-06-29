@@ -152,7 +152,11 @@ export function PagesManager({
                 <h3 className="font-display text-lg font-semibold">{active.label}</h3>
                 <p className="text-xs text-muted-foreground">{active.page_slug} · live preview below</p>
               </div>
-              <HeroEditor sectionId={active.id} initial={active.content || {}} />
+              {active.page_slug === "home" ? (
+                <HeroEditor sectionId={active.id} initial={active.content || {}} />
+              ) : (
+                <PageHeroEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
+              )}
             </>
           ) : active.section_key === "ticker" ? (
             <>
