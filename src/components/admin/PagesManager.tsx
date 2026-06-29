@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BadgePercent as Tag } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -12,6 +12,7 @@ import { PartnersSectionEditor } from "./PartnersSectionEditor";
 import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 import { PageHeroEditor } from "./PageHeroEditor";
+import { PageLayoutEditor } from "./PageLayoutEditor";
 
 type Section = {
   id: string;
