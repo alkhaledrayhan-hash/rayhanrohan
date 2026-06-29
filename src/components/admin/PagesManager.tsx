@@ -236,6 +236,14 @@ export function PagesManager({
               </div>
               <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
             </>
+          ) : active.section_key === "content" && active.page_slug === "about" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">About content</h3>
+                <p className="text-xs text-muted-foreground">Stats, story, mission, values, team and company details.</p>
+              </div>
+              <AboutContentEditor sectionId={active.id} initial={active.content || {}} />
+            </>
           ) : (
             <>
               <div className="mb-3 flex items-center justify-between">
