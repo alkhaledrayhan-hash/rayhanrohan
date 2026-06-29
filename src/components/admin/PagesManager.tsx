@@ -13,6 +13,7 @@ import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 import { PageHeroEditor } from "./PageHeroEditor";
 import { PageLayoutEditor } from "./PageLayoutEditor";
+import { AboutContentEditor } from "./AboutContentEditor";
 
 type Section = {
   id: string;
