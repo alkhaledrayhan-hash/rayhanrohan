@@ -83,16 +83,19 @@ function NewsPage() {
   const pageStart = (currentPage - 1) * PAGE_SIZE;
   const pageItems = rest.slice(pageStart, pageStart + PAGE_SIZE);
   useEffect(() => { setPage(1); }, [tab, activeCat, activeTag]);
+  const { data: hero } = usePageHero("news");
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
         <PageHero
-          eyebrow="News & Insights"
-          title="Stories from Qatar's premium real estate"
-          description="Market reports, neighbourhood guides, design notes and announcements — written by our editorial desk."
+          eyebrow={hero?.eyebrow ?? "News & Insights"}
+          title={hero?.title ?? "Stories from Qatar's premium real estate"}
+          description={hero?.description ?? "Market reports, neighbourhood guides, design notes and announcements — written by our editorial desk."}
+          image={hero?.image || undefined}
         />
+
 
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           {/* Tabs + filters (single row) */}
