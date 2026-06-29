@@ -27,6 +27,7 @@ const FOOTER_CONTENT_KEYS = [
   "footer_email",
   "footer_badge_text",
   "footer_copyright",
+  "footer_show_plane",
 ] as const;
 type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
 type FooterContent = Record<FooterContentKey, string>;
@@ -43,6 +44,7 @@ const DEFAULT_FOOTER_CONTENT: FooterContent = {
   footer_email: "hello@maisonqatar.qa",
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
+  footer_show_plane: "true",
 };
 
 export function MenusEditor() {
