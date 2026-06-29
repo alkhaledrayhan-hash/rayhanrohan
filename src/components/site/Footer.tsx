@@ -27,6 +27,7 @@ export function Footer() {
       />
 
       {/* Flight path + Qatar Airways plane backdrop */}
+      {settings.footer_show_plane !== "false" && (
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 h-[280px] md:inset-0 md:top-0 md:h-auto">
         <svg
           viewBox="0 0 800 300"
@@ -88,6 +89,8 @@ export function Footer() {
           </image>
         </svg>
       </div>
+      )}
+
 
 
 

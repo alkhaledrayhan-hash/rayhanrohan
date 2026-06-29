@@ -27,6 +27,8 @@ export type SiteSettings = {
   footer_email: string;
   footer_badge_text: string;
   footer_copyright: string;
+  footer_show_plane: string;
+
 };
 
 const DEFAULTS: SiteSettings = {
@@ -56,6 +58,7 @@ const DEFAULTS: SiteSettings = {
   footer_email: "hello@maisonqatar.qa",
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
+  footer_show_plane: "true",
 };
 
 export function useSiteSettings() {
