@@ -89,6 +89,8 @@ export function Footer() {
           </image>
         </svg>
       </div>
+      )}
+
 
 
 
