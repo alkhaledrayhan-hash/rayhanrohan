@@ -62,6 +62,8 @@ function PropertiesPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const status = search.status ?? "rent";
   const { data: allProperties = [] } = useProperties();
+  const layout = usePageLayout("properties");
+  const PAGE_SIZE = layout.pageSize;
   // Stable signature for memo deps — avoids JSON.stringify on every render.
   const searchKey = `${status}|${search.location ?? ""}|${search.type ?? ""}|${search.beds ?? ""}|${search.baths ?? ""}|${search.minPrice ?? ""}|${search.maxPrice ?? ""}|${search.minArea ?? ""}|${search.maxArea ?? ""}|${search.q ?? ""}|${search.sort ?? ""}`;
   const items = useMemo(
@@ -72,11 +74,15 @@ function PropertiesPage() {
   );
 
   const [page, setPage] = useState(1);
+  const [visible, setVisible] = useState(PAGE_SIZE);
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-  useEffect(() => { setPage(1); }, [searchKey]);
+  useEffect(() => { setPage(1); setVisible(PAGE_SIZE); }, [searchKey, PAGE_SIZE]);
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = useMemo(() => items.slice(start, start + PAGE_SIZE), [items, start]);
+  const pageItems = useMemo(() => {
+    if (layout.mode === "loadmore") return items.slice(0, visible);
+    return items.slice(start, start + PAGE_SIZE);
+  }, [items, start, PAGE_SIZE, layout.mode, visible]);
 
   function update(patch: Partial<typeof search>) {
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }), replace: true });
@@ -95,6 +101,15 @@ function PropertiesPage() {
   const heroDescription = hero?.description
     || "Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab.";
 
+  const sidebarNode = (
+    <FilterSidebar
+      key={searchKey}
+      initial={search}
+      onApply={(patch) => update(patch)}
+      onReset={reset}
+    />
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -112,20 +127,38 @@ function PropertiesPage() {
               Showing <span className="text-foreground font-medium">{items.length}</span> result{items.length === 1 ? "" : "s"} in Qatar.
             </p>
           </div>
-          <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
-            {(["all", "rent", "sale"] as const).map((s) => (
-              <button
-                key={s}
-                onClick={() => update({ status: s })}
-                className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
-                  status === s
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {s === "all" ? "All" : `For ${s}`}
-              </button>
-            ))}
+          <div className="flex items-center gap-2">
+            {/* Mobile/tablet: open refine search as a sheet */}
+            <div className="lg:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium shadow-sm">
+                    <SlidersHorizontal className="h-4 w-4" /> Refine
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+                  <SheetHeader>
+                    <SheetTitle>Refine search</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4">{sidebarNode}</div>
+                </SheetContent>
+              </Sheet>
+            </div>
+            <div className="inline-flex rounded-full bg-secondary p-1 text-sm">
+              {(["all", "rent", "sale"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => update({ status: s })}
+                  className={`rounded-full px-5 py-1.5 font-medium capitalize transition ${
+                    status === s
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {s === "all" ? "All" : `For ${s}`}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -137,7 +170,9 @@ function PropertiesPage() {
               <p className="text-sm text-muted-foreground">
                 {items.length === 0
                   ? "No results"
-                  : `Showing ${start + 1}–${start + pageItems.length} of ${items.length} results`}
+                  : layout.mode === "loadmore"
+                    ? `Showing ${pageItems.length} of ${items.length} results`
+                    : `Showing ${start + 1}–${start + pageItems.length} of ${items.length} results`}
               </p>
               <label className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Sort</span>
@@ -152,18 +187,27 @@ function PropertiesPage() {
                 </select>
               </label>
             </div>
-            <PropertyGrid properties={pageItems} />
-            <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+            <PropertyGrid properties={pageItems} columns={layout.columns} variant={layout.cardStyle} />
+            {layout.mode === "loadmore" ? (
+              visible < items.length && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                    className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:opacity-95"
+                  >
+                    {layout.loadMoreLabel}
+                  </button>
+                </div>
+              )
+            ) : (
+              <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+            )}
           </section>
 
-          {/* Sidebar filters */}
-          <aside className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 [scrollbar-width:thin]">
-            <FilterSidebar
-              key={searchKey} // reset local inputs when URL changes
-              initial={search}
-              onApply={(patch) => update(patch)}
-              onReset={reset}
-            />
+          {/* Desktop sticky sidebar */}
+          <aside className="hidden lg:sticky lg:top-24 lg:block lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 [scrollbar-width:thin]">
+            {sidebarNode}
           </aside>
         </div>
       </main>
