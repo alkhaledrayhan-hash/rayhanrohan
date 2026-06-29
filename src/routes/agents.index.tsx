@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Building2, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { Pagination } from "@/components/site/Pagination";
 import { usePageHero } from "@/hooks/usePageHero";
+import { usePageLayout, columnsToGridClass } from "@/hooks/usePageLayout";
 import { listPublicAgents } from "@/lib/public-agents.functions";
 
 const agentsQuery = queryOptions({
@@ -36,6 +39,19 @@ function AgentsPage() {
   const agents = data.agents;
   const router = useRouter();
   const { data: hero } = usePageHero("agents");
+  const layout = usePageLayout("agents");
+  const PAGE_SIZE = layout.pageSize;
+  const [page, setPage] = useState(1);
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  useEffect(() => { setPage(1); setVisible(PAGE_SIZE); }, [PAGE_SIZE]);
+  const totalPages = Math.max(1, Math.ceil(agents.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageAgents = layout.mode === "loadmore"
+    ? agents.slice(0, visible)
+    : agents.slice(start, start + PAGE_SIZE);
+  const gridClass = columnsToGridClass(layout.columns);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,8 +79,9 @@ function AgentsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {agents.map((a) => {
+          <>
+          <div className={`grid gap-5 ${gridClass}`}>
+            {pageAgents.map((a) => {
               const initials = (a.full_name || a.username || "A")
                 .split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
               return (
@@ -97,6 +114,22 @@ function AgentsPage() {
               );
             })}
           </div>
+          {layout.mode === "loadmore" ? (
+            visible < agents.length && (
+              <div className="mt-10 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                  className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:opacity-95"
+                >
+                  {layout.loadMoreLabel}
+                </button>
+              </div>
+            )
+          ) : (
+            <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+          )}
+          </>
         )}
         </section>
       </main>

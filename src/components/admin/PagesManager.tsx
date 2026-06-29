@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BadgePercent as Tag } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -12,6 +12,7 @@ import { PartnersSectionEditor } from "./PartnersSectionEditor";
 import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 import { PageHeroEditor } from "./PageHeroEditor";
+import { PageLayoutEditor } from "./PageLayoutEditor";
 
 type Section = {
   id: string;
@@ -25,6 +26,7 @@ type Section = {
 const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean }[] = [
   { slug: "home", label: "Home", icon: Home, editable: true },
   { slug: "properties", label: "Properties", icon: Building2, editable: true },
+  { slug: "offers", label: "Offers", icon: BadgePercent, editable: true },
   { slug: "agents", label: "Our Agents", icon: Users, editable: true },
   { slug: "about", label: "About", icon: Info, editable: true },
   { slug: "news", label: "News", icon: Newspaper, editable: true },
@@ -75,7 +77,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -91,6 +93,7 @@ export function PagesManager({
     partners: Handshake,
     contact: Mail,
     info: Mail,
+    layout: Layout,
   };
 
 
@@ -221,6 +224,14 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">Hero, channels, subjects and office details.</p>
               </div>
               <ContactPageEditor sectionId={active.id} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "layout" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Layout &amp; Pagination</h3>
+                <p className="text-xs text-muted-foreground">{active.page_slug} · columns, card style and pagination behaviour.</p>
+              </div>
+              <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
             </>
           ) : (
             <>

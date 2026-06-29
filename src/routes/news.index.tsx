@@ -6,12 +6,11 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { usePageHero } from "@/hooks/usePageHero";
+import { usePageLayout, columnsToGridClass } from "@/hooks/usePageLayout";
 import { Pagination } from "@/components/site/Pagination";
 import { listPublishedPosts } from "@/lib/posts.functions";
 import { resolveCover } from "@/lib/post-images";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const PAGE_SIZE = 6;
 
 type PostListItem = {
   id: string;
@@ -61,10 +60,13 @@ export const Route = createFileRoute("/news/")({
 
 function NewsPage() {
   const { data } = useSuspenseQuery(postsQuery);
+  const layout = usePageLayout("news");
+  const PAGE_SIZE = layout.pageSize;
   const [tab, setTab] = useState<"all" | "news" | "blog">("all");
   const [activeCat, setActiveCat] = useState<string>("all");
   const [activeTag, setActiveTag] = useState<string>("all");
   const [page, setPage] = useState(1);
+  const [visible, setVisible] = useState(PAGE_SIZE);
 
   const filtered = useMemo(() => {
     return data.posts.filter((p) => {
@@ -81,9 +83,12 @@ function NewsPage() {
   const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageStart = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = rest.slice(pageStart, pageStart + PAGE_SIZE);
-  useEffect(() => { setPage(1); }, [tab, activeCat, activeTag]);
+  const pageItems = layout.mode === "loadmore"
+    ? rest.slice(0, visible)
+    : rest.slice(pageStart, pageStart + PAGE_SIZE);
+  useEffect(() => { setPage(1); setVisible(PAGE_SIZE); }, [tab, activeCat, activeTag, PAGE_SIZE]);
   const { data: hero } = usePageHero("news");
+  const gridClass = columnsToGridClass(layout.columns);
 
   return (
     <div className="min-h-screen bg-background">
@@ -217,7 +222,7 @@ function NewsPage() {
           {/* Grid */}
           {rest.length > 0 && (
             <>
-              <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className={`mt-12 grid gap-6 ${gridClass}`}>
                 {pageItems.map((a) => (
                   <Link
                     key={a.id}
@@ -261,7 +266,21 @@ function NewsPage() {
                   </Link>
                 ))}
               </div>
-              <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+              {layout.mode === "loadmore" ? (
+                visible < rest.length && (
+                  <div className="mt-10 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                      className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:opacity-95"
+                    >
+                      {layout.loadMoreLabel}
+                    </button>
+                  </div>
+                )
+              ) : (
+                <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+              )}
             </>
           )}
 
