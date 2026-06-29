@@ -95,7 +95,7 @@ export function PagesManager({
     contact: Mail,
     info: Mail,
     layout: Layout,
-  };
+    content: FileText,
 
 
   const saveJson = useMutation({
