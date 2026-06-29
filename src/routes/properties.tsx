@@ -7,6 +7,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { PropertyGrid } from "@/components/site/PropertyGrid";
 import { Pagination } from "@/components/site/Pagination";
+import { usePageHero } from "@/hooks/usePageHero";
 import { filterProperties, LOCATIONS, useProperties, type SortKey } from "@/lib/properties";
 import propertiesHero from "@/assets/qatar-westbay.jpg?w=1600&quality=70&format=webp";
 
