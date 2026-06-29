@@ -4,6 +4,7 @@ import { Building2, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { usePageHero } from "@/hooks/usePageHero";
 import { listPublicAgents } from "@/lib/public-agents.functions";
 
 const agentsQuery = queryOptions({
@@ -34,15 +35,17 @@ function AgentsPage() {
   const { data } = useSuspenseQuery(agentsQuery);
   const agents = data.agents;
   const router = useRouter();
+  const { data: hero } = usePageHero("agents");
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
         <PageHero
-          eyebrow="Our Team"
-          title="Meet our agents"
-          description="Click any agent to view the properties they manage across Qatar."
+          eyebrow={hero?.eyebrow ?? "Our Team"}
+          title={hero?.title ?? "Meet our agents"}
+          description={hero?.description ?? "Click any agent to view the properties they manage across Qatar."}
+          image={hero?.image || undefined}
           crumbs={[{ label: "Home", to: "/" }, { label: "Agents" }]}
         />
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { usePageHero } from "@/hooks/usePageHero";
 import heroImg from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
 import portraitImg from "@/assets/prop-7.jpg?w=900&quality=72&format=webp";
 
@@ -135,6 +136,12 @@ const TEAM = [
 ];
 
 function AboutPage() {
+  const { data: hero } = usePageHero("about");
+  const heroBg = hero?.image || heroImg;
+  const heroEyebrow = hero?.eyebrow ?? "About MaisonQatar";
+  const heroTitle = hero?.title ?? "The quiet standard for premium living in Qatar.";
+  const heroDescription = hero?.description ?? "A Doha-based, licensed brokerage trusted by residents, executives and diplomats for over a decade. Hand-picked homes, principled advice, and a frictionless experience from first viewing to handover.";
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -142,7 +149,7 @@ function AboutPage() {
         {/* Hero */}
         <section className="relative isolate overflow-hidden">
           <img
-            src={heroImg}
+            src={heroBg}
             alt="Doha skyline at sunset"
             width={1920}
             height={1080}
@@ -152,17 +159,17 @@ function AboutPage() {
           <div className="mx-auto max-w-7xl px-4 pb-24 pt-40 sm:px-6 sm:pb-32 sm:pt-48 lg:px-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-gold backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              About MaisonQatar
+              {heroEyebrow}
             </span>
             <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
-              The quiet standard for premium living in Qatar.
+              {heroTitle}
             </h1>
             <p className="mt-4 max-w-2xl text-base text-white/80 sm:text-lg">
-              A Doha-based, licensed brokerage trusted by residents, executives and diplomats for over a decade.
-              Hand-picked homes, principled advice, and a frictionless experience from first viewing to handover.
+              {heroDescription}
             </p>
           </div>
         </section>
+
 
         {/* Stats */}
         <section className="border-b border-border bg-secondary/40">
