@@ -18,6 +18,8 @@ import {
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { usePageHero } from "@/hooks/usePageHero";
+import { usePageSections } from "@/lib/page-sections";
+import { normalizeAbout } from "@/components/admin/AboutContentEditor";
 import heroImg from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
 import portraitImg from "@/assets/prop-7.jpg?w=900&quality=72&format=webp";
 
@@ -42,12 +44,28 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
-const STATS: Array<{ label: string; value: number; suffix?: string; prefix?: string }> = [
-  { label: "Years in Qatar", value: 12, suffix: "+" },
-  { label: "Properties closed", value: 1400, suffix: "+" },
-  { label: "Client retention", value: 94, suffix: "%" },
-  { label: "Premier areas covered", value: 5 },
-];
+const VALUE_ICONS: Record<string, React.ReactNode> = {
+  shield: <ShieldCheck className="h-5 w-5" />,
+  sparkles: <Sparkles className="h-5 w-5" />,
+  handshake: <Handshake className="h-5 w-5" />,
+  globe: <Globe2 className="h-5 w-5" />,
+};
+
+const MISSION_ICONS: Record<string, React.ReactNode> = {
+  Mission: <Target className="h-5 w-5" />,
+  Vision: <Telescope className="h-5 w-5" />,
+};
+
+const DETAIL_ICONS: Record<string, React.ReactNode> = {
+  "Legal name": <Building2 className="h-4 w-4" />,
+  "License number": <Award className="h-4 w-4" />,
+  "Founded": <Compass className="h-4 w-4" />,
+  "Team size": <Users2 className="h-4 w-4" />,
+  "Head office": <MapPin className="h-4 w-4" />,
+  "Languages": <Globe2 className="h-4 w-4" />,
+  "Phone": <Phone className="h-4 w-4" />,
+  "Email": <Mail className="h-4 w-4" />,
+};
 
 function CountUp({ end, duration = 2000, prefix = "", suffix = "" }: { end: number; duration?: number; prefix?: string; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -89,54 +107,11 @@ function CountUp({ end, duration = 2000, prefix = "", suffix = "" }: { end: numb
   );
 }
 
-const VALUES = [
-  {
-    icon: <ShieldCheck className="h-5 w-5" />,
-    title: "Integrity first",
-    body: "Every listing is verified, every figure transparent. Our reputation in Qatar is built on what we don't show as much as what we do.",
-  },
-  {
-    icon: <Sparkles className="h-5 w-5" />,
-    title: "Hand-curated quality",
-    body: "We personally inspect each residence before it joins the portfolio. If we wouldn't live there, we won't list it.",
-  },
-  {
-    icon: <Handshake className="h-5 w-5" />,
-    title: "White-glove service",
-    body: "From first viewing to keys in hand, a dedicated agent handles your search — including bilingual paperwork and Qatari ID coordination.",
-  },
-  {
-    icon: <Globe2 className="h-5 w-5" />,
-    title: "Local + global",
-    body: "Born in Doha, fluent in international expectations. We work with relocations from Europe, the GCC, and South Asia every week.",
-  },
-];
-
-const TEAM = [
-  {
-    name: "Mariam Al-Thani",
-    role: "Founder & Principal Broker",
-    bio: "12 years of luxury real estate experience across Doha and London.",
-  },
-  {
-    name: "Yusuf Rahman",
-    role: "Head of Sales · The Pearl & Lusail",
-    bio: "Specialist in waterfront apartments and penthouse acquisitions.",
-  },
-  {
-    name: "Aisha Karim",
-    role: "Lettings Director · West Bay",
-    bio: "Trusted by relocation teams at major Doha embassies and corporates.",
-  },
-  {
-    name: "Khalid Mansour",
-    role: "Villa Specialist · Al Waab",
-    bio: "Compound villas, family homes and long-tenure leases.",
-  },
-];
-
 function AboutPage() {
   const { data: hero } = usePageHero("about");
+  const { data: sections } = usePageSections("about");
+  const c = normalizeAbout(sections?.content);
+
   const heroBg = hero?.image || heroImg;
   const heroEyebrow = hero?.eyebrow ?? "About MaisonQatar";
   const heroTitle = hero?.title ?? "The quiet standard for premium living in Qatar.";
@@ -170,263 +145,189 @@ function AboutPage() {
           </div>
         </section>
 
-
         {/* Stats */}
-        <section className="border-b border-border bg-secondary/40">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 sm:grid-cols-4 sm:px-6 lg:px-8">
-            {STATS.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
-                  <CountUp end={s.value} prefix={s.prefix} suffix={s.suffix} />
-                </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {c.stats.length > 0 && (
+          <section className="border-b border-border bg-secondary/40">
+            <div className={`mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:px-8 grid-cols-2 sm:grid-cols-${Math.min(c.stats.length, 4)}`}>
+              {c.stats.map((s) => (
+                <div key={s.label} className="text-center">
+                  <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                    <CountUp end={s.value} prefix={s.prefix} suffix={s.suffix} />
+                  </p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Story */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Our story</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                Founded in Doha. Built for residents who expect more.
-              </h2>
-              <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-muted-foreground">
-                <p>
-                  MaisonQatar was founded in 2013 with a simple thesis: Qatar's premium real estate market
-                  deserved a brokerage that behaved like a private office, not a listings catalogue. We started
-                  with a single advisor in West Bay and a notebook of personally inspected addresses.
-                </p>
-                <p>
-                  A decade on, that discipline still defines us. We don't chase volume. We work with a curated
-                  portfolio across The Pearl, Lusail, West Bay, Al Waab and inner Doha, and we stay with each
-                  client from the first viewing through handover, utilities, and — if it's a lease — renewal.
-                </p>
-                <p>
-                  We're proudly licensed in the State of Qatar, fluent in Arabic and English, and trusted by
-                  some of the country's most discerning residents to find them a home worthy of the address.
-                </p>
+        {(c.story.title || c.story.paragraphs.length > 0) && (
+          <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div>
+                {c.story.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.story.eyebrow}</p>}
+                {c.story.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.story.title}</h2>}
+                <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-muted-foreground">
+                  {c.story.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+              </div>
+              <div className="relative">
+                <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
+                  <img
+                    src={c.story.image || portraitImg}
+                    alt="MaisonQatar showroom interior"
+                    width={1280}
+                    height={896}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                </div>
+                {(c.story.badge_title || c.story.badge_subtitle) && (
+                  <div className="absolute -bottom-6 -left-4 hidden rounded-2xl border border-gold/60 bg-card p-5 shadow-[var(--shadow-soft)] sm:block">
+                    {c.story.badge_title && <p className="font-display text-2xl font-semibold text-primary">{c.story.badge_title}</p>}
+                    {c.story.badge_subtitle && <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{c.story.badge_subtitle}</p>}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="relative">
-              <div className="overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-soft)]">
-                <img
-                  src={portraitImg}
-                  alt="MaisonQatar showroom interior"
-                  width={1280}
-                  height={896}
-                  loading="lazy"
-                  className="aspect-[4/3] w-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-4 hidden rounded-2xl border border-gold/60 bg-card p-5 shadow-[var(--shadow-soft)] sm:block">
-                <p className="font-display text-2xl font-semibold text-primary">Est. 2013</p>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">West Bay · Doha</p>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Mission & Vision */}
-        <section className="relative overflow-hidden bg-[#3d0f1d] py-24 text-white">
-          {/* Decorative background */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
-          <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
-          <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
-
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl">
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Purpose</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                Our mission &amp; vision
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-white/70">
-                The principles that shape every introduction, every viewing, and every handover —
-                from The Pearl to Lusail Marina.
-              </p>
+        {c.mission.items.length > 0 && (
+          <section className="relative overflow-hidden bg-[#3d0f1d] py-24 text-white">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
+            <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
+            <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-2xl">
+                {c.mission.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.mission.eyebrow}</p>}
+                {c.mission.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.mission.title}</h2>}
+                {c.mission.description && <p className="mt-4 text-sm leading-relaxed text-white/70">{c.mission.description}</p>}
+              </div>
+              <div className="mt-12 grid gap-6 lg:grid-cols-2">
+                {c.mission.items.map((item) => (
+                  <article key={item.tag} className="group relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:bg-white/[0.09] sm:p-10">
+                    <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl" />
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+                    <div className="relative flex items-center gap-3">
+                      <span className="grid h-11 w-11 place-items-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                        {MISSION_ICONS[item.tag] || <Target className="h-5 w-5" />}
+                      </span>
+                      <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{item.tag}</span>
+                    </div>
+                    <h3 className="relative mt-6 font-display text-2xl font-semibold leading-tight sm:text-[28px]">{item.title}</h3>
+                    <p className="relative mt-4 text-sm leading-relaxed text-white/75">{item.body}</p>
+                    {item.points.length > 0 && (
+                      <ul className="relative mt-6 space-y-2.5 border-t border-white/10 pt-6">
+                        {item.points.map((p) => (
+                          <li key={p} className="flex items-start gap-3 text-sm text-white/85">
+                            <span className="mt-1.5 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
+                            {p}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </article>
+                ))}
+              </div>
             </div>
-
-            <div className="mt-12 grid gap-6 lg:grid-cols-2">
-              {[
-                {
-                  tag: "Mission",
-                  icon: <Target className="h-5 w-5" />,
-                  title: "Make premium living in Qatar effortless.",
-                  body:
-                    "We pair discerning residents and investors with the right address — handling every viewing, contract and key handover with the discretion the brief deserves.",
-                  points: [
-                    "Hand-verified listings only",
-                    "Bilingual, end-to-end concierge",
-                    "Transparent figures, no surprises",
-                  ],
-                },
-                {
-                  tag: "Vision",
-                  icon: <Telescope className="h-5 w-5" />,
-                  title: "Define what luxury real estate looks like in the Gulf.",
-                  body:
-                    "To be the brokerage residents recommend by name — known across Doha, the GCC and beyond for taste, integrity, and an obsessive eye for the right home.",
-                  points: [
-                    "Qatar's most curated portfolio",
-                    "International standard, local soul",
-                    "A name passed between neighbours",
-                  ],
-                },
-              ].map((item) => (
-                <article
-                  key={item.tag}
-                  className="group relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:bg-white/[0.09] sm:p-10"
-                >
-                  {/* Corner ornament */}
-                  <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-
-                  <div className="relative flex items-center gap-3">
-                    <span className="grid h-11 w-11 place-items-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                      {item.icon}
-                    </span>
-                    <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-                      {item.tag}
-                    </span>
-                  </div>
-
-                  <h3 className="relative mt-6 font-display text-2xl font-semibold leading-tight sm:text-[28px]">
-                    {item.title}
-                  </h3>
-                  <p className="relative mt-4 text-sm leading-relaxed text-white/75">{item.body}</p>
-
-                  <ul className="relative mt-6 space-y-2.5 border-t border-white/10 pt-6">
-                    {item.points.map((p) => (
-                      <li key={p} className="flex items-start gap-3 text-sm text-white/85">
-                        <span className="mt-1.5 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
+          </section>
+        )}
 
         {/* Values */}
-        <section className="bg-secondary/40 py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">What we stand for</p>
-            <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Our values</h2>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {VALUES.map((v) => (
-                <div
-                  key={v.title}
-                  className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
-                >
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
-                    {v.icon}
-                  </span>
-                  <p className="mt-4 font-display text-xl font-semibold text-foreground">{v.title}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">{v.body}</p>
-                </div>
-              ))}
+        {c.values.items.length > 0 && (
+          <section className="bg-secondary/40 py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              {c.values.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.values.eyebrow}</p>}
+              {c.values.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.values.title}</h2>}
+              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {c.values.items.map((v) => (
+                  <div key={v.title} className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]">
+                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                      {VALUE_ICONS[v.icon] || <Sparkles className="h-5 w-5" />}
+                    </span>
+                    <p className="mt-4 font-display text-xl font-semibold text-foreground">{v.title}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{v.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Team */}
-        <section className="relative overflow-hidden bg-[#3d0f1d] py-20 text-white">
-          <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
-          <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
-          <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">The people</p>
-                <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Meet the team</h2>
-              </div>
-              <p className="max-w-md text-sm text-white/70">
-                A small, senior team of bilingual advisors — each a specialist in their corner of Qatar.
-              </p>
-            </div>
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {TEAM.map((m) => (
-                <div
-                  key={m.name}
-                  className="group rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:bg-white/15 hover:shadow-2xl"
-                >
-                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/25 transition-all duration-300 group-hover:scale-110 group-hover:bg-gold/30 group-hover:ring-gold/60">
-                    <Users2 className="h-7 w-7 text-white" />
-                  </div>
-                  <p className="mt-4 font-display text-lg font-semibold text-white">{m.name}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-gold">{m.role}</p>
-                  <p className="mt-3 text-sm text-white/75">{m.bio}</p>
+        {c.team.members.length > 0 && (
+          <section className="relative overflow-hidden bg-[#3d0f1d] py-20 text-white">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:60px_60px]" />
+            <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
+            <div className="pointer-events-none absolute -right-32 -bottom-32 h-[28rem] w-[28rem] rounded-full bg-[#8a1f3a]/60 blur-[140px]" />
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  {c.team.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.team.eyebrow}</p>}
+                  {c.team.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.team.title}</h2>}
                 </div>
-              ))}
+                {c.team.description && <p className="max-w-md text-sm text-white/70">{c.team.description}</p>}
+              </div>
+              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {c.team.members.map((m) => (
+                  <div key={m.name} className="group rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:bg-white/15 hover:shadow-2xl">
+                    <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/25 transition-all duration-300 group-hover:scale-110 group-hover:bg-gold/30 group-hover:ring-gold/60">
+                      <Users2 className="h-7 w-7 text-white" />
+                    </div>
+                    <p className="mt-4 font-display text-lg font-semibold text-white">{m.name}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-gold">{m.role}</p>
+                    <p className="mt-3 text-sm text-white/75">{m.bio}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Company details */}
-        <section className="bg-secondary/40 py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">Company details</p>
-                <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                  Licensed. Local. Accountable.
-                </h2>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Full company disclosure for clients, partners and regulators. Reach out any time —
-                  we're happy to share additional documentation.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-                <dl className="grid gap-4 text-sm sm:grid-cols-2">
-                  <Detail icon={<Building2 className="h-4 w-4" />} label="Legal name" value="MaisonQatar Real Estate Brokerage W.L.L." />
-                  <Detail icon={<Award className="h-4 w-4" />} label="License number" value="QA-RE-2013-08842" />
-                  <Detail icon={<Compass className="h-4 w-4" />} label="Founded" value="2013, Doha" />
-                  <Detail icon={<Users2 className="h-4 w-4" />} label="Team size" value="24 specialists" />
-                  <Detail icon={<MapPin className="h-4 w-4" />} label="Head office" value="Tornado Tower, West Bay, Doha" />
-                  <Detail icon={<Globe2 className="h-4 w-4" />} label="Languages" value="Arabic · English · Hindi · French" />
-                  <Detail icon={<Phone className="h-4 w-4" />} label="Phone" value="+974 4000 0000" />
-                  <Detail icon={<Mail className="h-4 w-4" />} label="Email" value="hello@maisonqatar.qa" />
-                </dl>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    to="/properties"
-                    search={{ status: "rent" }}
-                    className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95"
-                  >
-                    Explore listings
-                  </Link>
-                  <a
-                    href="mailto:hello@maisonqatar.qa"
-                    className="inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-medium text-primary transition hover:bg-primary hover:text-primary-foreground"
-                  >
-                    Speak to an advisor
-                  </a>
+        {c.company.details.length > 0 && (
+          <section className="bg-secondary/40 py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
+                <div>
+                  {c.company.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.company.eyebrow}</p>}
+                  {c.company.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.company.title}</h2>}
+                  {c.company.description && <p className="mt-4 text-sm text-muted-foreground">{c.company.description}</p>}
+                </div>
+                <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+                  <dl className="grid gap-4 text-sm sm:grid-cols-2">
+                    {c.company.details.map((d) => (
+                      <div key={d.label}>
+                        <dt className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                          <span className="text-primary">{DETAIL_ICONS[d.label] || <Award className="h-4 w-4" />}</span>
+                          {d.label}
+                        </dt>
+                        <dd className="mt-1 font-medium text-foreground">{d.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {c.company.primary_cta_label && (
+                      <Link to="/properties" search={{ status: "rent" }} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95">
+                        {c.company.primary_cta_label}
+                      </Link>
+                    )}
+                    {c.company.secondary_cta_label && (
+                      <a href={`mailto:${c.company.secondary_cta_email || "hello@maisonqatar.qa"}`} className="inline-flex items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-medium text-primary transition hover:bg-primary hover:text-primary-foreground">
+                        {c.company.secondary_cta_label}
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       <Footer />
-    </div>
-  );
-}
-
-function Detail({
-  icon, label, value,
-}: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div>
-      <dt className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span className="text-primary">{icon}</span>
-        {label}
-      </dt>
-      <dd className="mt-1 font-medium text-foreground">{value}</dd>
     </div>
   );
 }
