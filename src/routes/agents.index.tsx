@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Building2, UserCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { Pagination } from "@/components/site/Pagination";
 import { usePageHero } from "@/hooks/usePageHero";
+import { usePageLayout, columnsToGridClass } from "@/hooks/usePageLayout";
 import { listPublicAgents } from "@/lib/public-agents.functions";
 
 const agentsQuery = queryOptions({
