@@ -60,10 +60,13 @@ export const Route = createFileRoute("/news/")({
 
 function NewsPage() {
   const { data } = useSuspenseQuery(postsQuery);
+  const layout = usePageLayout("news");
+  const PAGE_SIZE = layout.pageSize;
   const [tab, setTab] = useState<"all" | "news" | "blog">("all");
   const [activeCat, setActiveCat] = useState<string>("all");
   const [activeTag, setActiveTag] = useState<string>("all");
   const [page, setPage] = useState(1);
+  const [visible, setVisible] = useState(PAGE_SIZE);
 
   const filtered = useMemo(() => {
     return data.posts.filter((p) => {
@@ -80,9 +83,12 @@ function NewsPage() {
   const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageStart = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = rest.slice(pageStart, pageStart + PAGE_SIZE);
-  useEffect(() => { setPage(1); }, [tab, activeCat, activeTag]);
+  const pageItems = layout.mode === "loadmore"
+    ? rest.slice(0, visible)
+    : rest.slice(pageStart, pageStart + PAGE_SIZE);
+  useEffect(() => { setPage(1); setVisible(PAGE_SIZE); }, [tab, activeCat, activeTag, PAGE_SIZE]);
   const { data: hero } = usePageHero("news");
+  const gridClass = columnsToGridClass(layout.columns);
 
   return (
     <div className="min-h-screen bg-background">
