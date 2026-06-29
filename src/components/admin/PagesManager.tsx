@@ -26,6 +26,7 @@ type Section = {
 const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean }[] = [
   { slug: "home", label: "Home", icon: Home, editable: true },
   { slug: "properties", label: "Properties", icon: Building2, editable: true },
+  { slug: "offers", label: "Offers", icon: BadgePercent, editable: true },
   { slug: "agents", label: "Our Agents", icon: Users, editable: true },
   { slug: "about", label: "About", icon: Info, editable: true },
   { slug: "news", label: "News", icon: Newspaper, editable: true },
