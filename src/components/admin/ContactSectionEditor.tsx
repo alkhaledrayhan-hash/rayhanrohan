@@ -16,7 +16,7 @@ export type HomeContactConfig = {
 };
 
 export type ContactPageConfig = {
-  hero: { eyebrow: string; title: string; description: string };
+  hero: { eyebrow: string; title: string; description: string; image?: string };
   phone_display: string;
   phone_e164: string;
   whatsapp_e164: string;
