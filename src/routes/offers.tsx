@@ -56,7 +56,6 @@ function OffersPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main>
       <PageHero
         image={hero?.image || offersCover}
         eyebrow={hero?.eyebrow || "Limited-time offers"}
