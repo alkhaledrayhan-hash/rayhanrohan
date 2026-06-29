@@ -27,6 +27,8 @@ export type SiteSettings = {
   footer_email: string;
   footer_badge_text: string;
   footer_copyright: string;
+  footer_show_plane: string;
+
 };
 
 const DEFAULTS: SiteSettings = {
