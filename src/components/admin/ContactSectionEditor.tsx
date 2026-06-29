@@ -40,7 +40,7 @@ const HOME_DEFAULT: HomeContactConfig = {
 };
 
 const PAGE_DEFAULT: ContactPageConfig = {
-  hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week." },
+  hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week.", image: "" },
   phone_display: "+974 4444 0123",
   phone_e164: "+97444440123",
   whatsapp_e164: "97433330123",
