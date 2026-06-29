@@ -58,7 +58,6 @@ const DEFAULTS: SiteSettings = {
   footer_email: "hello@maisonqatar.qa",
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
-  footer_copyright: "© {year} {title}. All rights reserved.",
   footer_show_plane: "true",
 };
 
