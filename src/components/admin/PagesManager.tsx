@@ -225,6 +225,14 @@ export function PagesManager({
               </div>
               <ContactPageEditor sectionId={active.id} initial={active.content || {}} />
             </>
+          ) : active.section_key === "layout" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">Layout &amp; Pagination</h3>
+                <p className="text-xs text-muted-foreground">{active.page_slug} · columns, card style and pagination behaviour.</p>
+              </div>
+              <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
+            </>
           ) : (
             <>
               <div className="mb-3 flex items-center justify-between">
