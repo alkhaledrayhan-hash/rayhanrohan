@@ -57,39 +57,18 @@ function OffersPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        {/* Cover hero */}
-        <section className="relative isolate overflow-hidden">
-          <img
-            src={hero?.image || offersCover}
-            alt="Doha luxury waterfront at golden hour"
-            width={1920}
-            height={800}
-            className="absolute inset-0 -z-10 h-full w-full object-cover"
-          />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/40 to-black/75" />
-          <div className="mx-auto max-w-7xl px-4 pt-28 pb-14 sm:px-6 sm:pt-36 sm:pb-20 lg:px-8 lg:pt-44 lg:pb-28">
-            <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-white/80">
-              <Link to="/" className="inline-flex items-center gap-1 hover:text-white">
-                <Home className="h-3.5 w-3.5" /> Home
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              <Link to="/properties" search={{ status: "rent" }} className="hover:text-white">Properties</Link>
-              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              <span className="font-medium text-white">Special Offers</span>
-            </nav>
-
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-white backdrop-blur">
-              <Flame className="h-3.5 w-3.5" />
-              {hero?.eyebrow || "Limited-time offers"}
-            </p>
-            <h1 className="mt-4 font-display text-3xl font-semibold text-white sm:text-5xl lg:text-6xl">
-              {hero?.title || "Exclusive residences, exceptional value"}
-            </h1>
-            <p className="mt-4 max-w-2xl text-base text-white/85">
-              {hero?.description || "A curated list of premium residences available at preferential pricing this season. Reserved for early enquiries only — once they're gone, they're gone."}
-            </p>
-          </div>
-        </section>
+      <PageHero
+        image={hero?.image || offersCover}
+        eyebrow={hero?.eyebrow || "Limited-time offers"}
+        title={hero?.title || "Exclusive residences, exceptional value"}
+        description={hero?.description || "A curated list of premium residences available at preferential pricing this season. Reserved for early enquiries only — once they're gone, they're gone."}
+        crumbs={[
+          { label: "Home", to: "/" },
+          { label: "Properties", to: "/properties", search: { status: "rent" } },
+          { label: "Special Offers" },
+        ]}
+      />
+      <main>
 
         {/* Offers grid */}
         <section className="mx-auto max-w-7xl px-4 pt-12 pb-20 sm:px-6 sm:pt-16 sm:pb-24 lg:px-8">
