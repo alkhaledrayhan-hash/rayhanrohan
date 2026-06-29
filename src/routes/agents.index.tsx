@@ -39,6 +39,19 @@ function AgentsPage() {
   const agents = data.agents;
   const router = useRouter();
   const { data: hero } = usePageHero("agents");
+  const layout = usePageLayout("agents");
+  const PAGE_SIZE = layout.pageSize;
+  const [page, setPage] = useState(1);
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  useEffect(() => { setPage(1); setVisible(PAGE_SIZE); }, [PAGE_SIZE]);
+  const totalPages = Math.max(1, Math.ceil(agents.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageAgents = layout.mode === "loadmore"
+    ? agents.slice(0, visible)
+    : agents.slice(start, start + PAGE_SIZE);
+  const gridClass = columnsToGridClass(layout.columns);
+
 
   return (
     <div className="min-h-screen bg-background">
