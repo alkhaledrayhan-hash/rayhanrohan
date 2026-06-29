@@ -387,14 +387,21 @@ a[href*="lovable.dev/?via=badge"],
    Chromium derives the option hover/selected highlight from `accent-color`
    when `color-scheme: dark` is set; plain `option:hover` CSS is ignored. */
 select,
+input,
+textarea,
 input[type="checkbox"],
 input[type="radio"],
-input[type="range"] {
+input[type="range"],
+input[type="color"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+progress {
   accent-color: var(--primary);
 }
-select {
-  color-scheme: dark;
-}
+select { color-scheme: dark; }
 select option {
   background-color: color-mix(in oklab, var(--primary) 28%, #0f0c0e);
   color: #fff;
@@ -405,7 +412,24 @@ select option:checked {
   background: color-mix(in oklab, var(--gold) 35%, color-mix(in oklab, var(--primary) 55%, #0f0c0e)) !important;
   color: #fff;
 }
-/* Themed text selection — replaces the default blue highlight */
+
+/* Focus ring — replace browser blue with theme primary */
+:focus-visible {
+  outline-color: var(--primary) !important;
+}
+
+/* Autofill — remove default yellow/blue, keep theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 1000px color-mix(in oklab, var(--accent) 60%, var(--background)) inset !important;
+  caret-color: var(--primary);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 ::selection {
   background: color-mix(in oklab, var(--primary) 55%, transparent);
   color: #fff;
@@ -413,4 +437,13 @@ select option:checked {
 ::-moz-selection {
   background: color-mix(in oklab, var(--primary) 55%, transparent);
   color: #fff;
+}
+
+/* Radix / shadcn highlighted items — override any leftover blue accent */
+[data-radix-collection-item][data-highlighted],
+[role="option"][data-highlighted],
+[role="menuitem"][data-highlighted],
+[cmdk-item][data-selected="true"] {
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent) !important;
+  color: var(--primary) !important;
 }
