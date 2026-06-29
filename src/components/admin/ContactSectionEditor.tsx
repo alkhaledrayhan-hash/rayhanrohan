@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Save, Trash2 } from "lucide-react";
+import { Plus, Save, Trash2, Upload, X } from "lucide-react";
+import { fileToDataUrl } from "@/lib/image-upload";
 
 export type HomeContactConfig = {
   eyebrow: string;
@@ -16,7 +17,7 @@ export type HomeContactConfig = {
 };
 
 export type ContactPageConfig = {
-  hero: { eyebrow: string; title: string; description: string };
+  hero: { eyebrow: string; title: string; description: string; image?: string };
   phone_display: string;
   phone_e164: string;
   whatsapp_e164: string;
@@ -40,7 +41,7 @@ const HOME_DEFAULT: HomeContactConfig = {
 };
 
 const PAGE_DEFAULT: ContactPageConfig = {
-  hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week." },
+  hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week.", image: "" },
   phone_display: "+974 4444 0123",
   phone_e164: "+97444440123",
   whatsapp_e164: "97433330123",
@@ -149,8 +150,18 @@ export function HomeContactEditor({ sectionId, initial }: { sectionId: string; i
 
 export function ContactPageEditor({ sectionId, initial }: { sectionId: string; initial: any }) {
   const [v, setV] = useState<ContactPageConfig>(normalizeContactPage(initial));
+  const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => { setV(normalizeContactPage(initial)); }, [sectionId]);
   const save = useSaveSection(sectionId, "Contact page");
+
+  async function uploadHero(file: File) {
+    try {
+      const url = await fileToDataUrl(file, { maxSize: 1600, quality: 0.78 });
+      setV({ ...v, hero: { ...v.hero, image: url } });
+      toast.success("Image set. Click Save to publish.");
+    } catch (e: any) { toast.error(e.message); }
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
@@ -158,6 +169,16 @@ export function ContactPageEditor({ sectionId, initial }: { sectionId: string; i
         <Field label="Eyebrow" value={v.hero.eyebrow} onChange={(x) => setV({ ...v, hero: { ...v.hero, eyebrow: x } })} />
         <Field label="Title" value={v.hero.title} onChange={(x) => setV({ ...v, hero: { ...v.hero, title: x } })} />
         <div className="sm:col-span-2"><Field label="Description" value={v.hero.description} onChange={(x) => setV({ ...v, hero: { ...v.hero, description: x } })} multiline rows={3} /></div>
+        <div className="sm:col-span-2 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground">Hero background image</p>
+          <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { if (e.target.files?.[0]) uploadHero(e.target.files[0]); e.target.value = ""; }} />
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => fileRef.current?.click()} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"><Upload className="h-4 w-4" /> Upload image</button>
+            {v.hero.image && <button type="button" onClick={() => setV({ ...v, hero: { ...v.hero, image: "" } })} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-muted"><X className="h-3 w-3" /> Remove</button>}
+          </div>
+          <Field label="Or paste image URL" value={v.hero.image || ""} onChange={(x) => setV({ ...v, hero: { ...v.hero, image: x } })} />
+          {v.hero.image && <img src={v.hero.image} alt="" className="mt-2 aspect-[16/6] w-full rounded-lg object-cover" />}
+        </div>
       </div>
 
       <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">

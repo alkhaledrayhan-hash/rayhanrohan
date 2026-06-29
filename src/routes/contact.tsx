@@ -81,7 +81,7 @@ function ContactPage() {
       <Header />
 
       <PageHero
-        image={contactHero}
+        image={cfg.hero.image || contactHero}
         eyebrow={cfg.hero.eyebrow}
         title={cfg.hero.title}
         description={cfg.hero.description}

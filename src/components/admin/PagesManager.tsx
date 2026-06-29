@@ -13,6 +13,7 @@ import { LocationsSectionEditor } from "./LocationsSectionEditor";
 import { HomeContactEditor, ContactPageEditor } from "./ContactSectionEditor";
 import { PageHeroEditor } from "./PageHeroEditor";
 import { PageLayoutEditor } from "./PageLayoutEditor";
+import { AboutContentEditor } from "./AboutContentEditor";
 
 type Section = {
   id: string;
@@ -77,7 +78,7 @@ export function PagesManager({
     || sections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key)) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
@@ -94,7 +95,9 @@ export function PagesManager({
     contact: Mail,
     info: Mail,
     layout: Layout,
+    content: FileText,
   };
+
 
 
   const saveJson = useMutation({
@@ -232,6 +235,14 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">{active.page_slug} · columns, card style and pagination behaviour.</p>
               </div>
               <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
+            </>
+          ) : active.section_key === "content" && active.page_slug === "about" ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">About content</h3>
+                <p className="text-xs text-muted-foreground">Stats, story, mission, values, team and company details.</p>
+              </div>
+              <AboutContentEditor sectionId={active.id} initial={active.content || {}} />
             </>
           ) : (
             <>
