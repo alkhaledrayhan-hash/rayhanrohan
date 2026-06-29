@@ -222,7 +222,7 @@ function NewsPage() {
           {/* Grid */}
           {rest.length > 0 && (
             <>
-              <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className={`mt-12 grid gap-6 ${gridClass}`}>
                 {pageItems.map((a) => (
                   <Link
                     key={a.id}
@@ -266,7 +266,21 @@ function NewsPage() {
                   </Link>
                 ))}
               </div>
-              <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+              {layout.mode === "loadmore" ? (
+                visible < rest.length && (
+                  <div className="mt-10 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                      className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:opacity-95"
+                    >
+                      {layout.loadMoreLabel}
+                    </button>
+                  </div>
+                )
+              ) : (
+                <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+              )}
             </>
           )}
 
