@@ -177,6 +177,20 @@ function FooterContentEditor({ content, onChange }: { content: FooterContent; on
   const set = (k: FooterContentKey, v: string) => onChange({ ...content, [k]: v });
   return (
     <div className="space-y-5">
+      <Section title="Decorations">
+        <label className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background px-3 py-2.5">
+          <span>
+            <span className="block text-sm font-medium">Show airplane flight path</span>
+            <span className="block text-xs text-muted-foreground">Animated Qatar Airways plane backdrop in the footer.</span>
+          </span>
+          <input
+            type="checkbox"
+            className="h-5 w-9 cursor-pointer appearance-none rounded-full bg-muted transition-colors checked:bg-primary relative before:absolute before:top-0.5 before:left-0.5 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-transform checked:before:translate-x-4"
+            checked={content.footer_show_plane !== "false"}
+            onChange={(e) => set("footer_show_plane", e.target.checked ? "true" : "false")}
+          />
+        </label>
+      </Section>
       <Section title="Left column (under logo)">
         <Textarea label="About text" value={content.footer_about} onChange={(v) => set("footer_about", v)} />
       </Section>
