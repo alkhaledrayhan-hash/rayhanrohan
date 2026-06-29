@@ -96,6 +96,8 @@ export function PagesManager({
     info: Mail,
     layout: Layout,
     content: FileText,
+  };
+
 
 
   const saveJson = useMutation({
