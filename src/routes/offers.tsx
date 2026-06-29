@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BadgePercent, Bed, Bath, Maximize2, Clock, Flame, ArrowRight, ChevronRight, Home, MapPin } from "lucide-react";
+import { BadgePercent, Bed, Bath, Maximize2, Clock, ArrowRight, MapPin } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Pagination } from "@/components/site/Pagination";
+import { PageHero } from "@/components/site/PageHero";
 import { useOfferProperties, formatPrice, type Property } from "@/lib/properties";
 import { PropertyAgentAvatar } from "@/components/site/PropertyAgentAvatar";
 import { usePageHero } from "@/hooks/usePageHero";
