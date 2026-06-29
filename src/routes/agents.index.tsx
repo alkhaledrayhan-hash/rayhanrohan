@@ -79,8 +79,9 @@ function AgentsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {agents.map((a) => {
+          <>
+          <div className={`grid gap-5 ${gridClass}`}>
+            {pageAgents.map((a) => {
               const initials = (a.full_name || a.username || "A")
                 .split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
               return (
@@ -113,6 +114,22 @@ function AgentsPage() {
               );
             })}
           </div>
+          {layout.mode === "loadmore" ? (
+            visible < agents.length && (
+              <div className="mt-10 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                  className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow hover:opacity-95"
+                >
+                  {layout.loadMoreLabel}
+                </button>
+              </div>
+            )
+          ) : (
+            <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
+          )}
+          </>
         )}
         </section>
       </main>
