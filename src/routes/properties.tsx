@@ -85,14 +85,24 @@ function PropertiesPage() {
     navigate({ search: { status }, replace: true });
   }
 
+  const { data: hero } = usePageHero("properties");
+  const heroEyebrow = (status === "rent" ? hero?.eyebrow_rent : status === "sale" ? hero?.eyebrow_sale : hero?.eyebrow_all)
+    || hero?.eyebrow
+    || (status === "rent" ? "Rentals across Qatar" : status === "sale" ? "Homes for sale" : "All listings across Qatar");
+  const heroTitle = (status === "rent" ? hero?.title_rent : status === "sale" ? hero?.title_sale : hero?.title_all)
+    || hero?.title
+    || (status === "all" ? "All Properties" : `Properties for ${status === "rent" ? "Rent" : "Sale"}`);
+  const heroDescription = hero?.description
+    || "Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab.";
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <PageHero
-        image={propertiesHero}
-        eyebrow={status === "rent" ? "Rentals across Qatar" : status === "sale" ? "Homes for sale" : "All listings across Qatar"}
-        title={status === "all" ? "All Properties" : `Properties for ${status === "rent" ? "Rent" : "Sale"}`}
-        description="Browse curated apartments, villas, studios and penthouses across Doha, The Pearl, Lusail, West Bay and Al Waab."
+        image={hero?.image || propertiesHero}
+        eyebrow={heroEyebrow}
+        title={heroTitle}
+        description={heroDescription}
         crumbs={[{ label: "Home", to: "/" }, { label: status === "all" ? "All Properties" : `For ${status === "rent" ? "Rent" : "Sale"}` }]}
       />
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
