@@ -36,7 +36,12 @@ export type SiteSettings = {
   site_currency: string;
   rent_tax_percent: string;
   sale_tax_percent: string;
+  auth_google_enabled: string;
+  auth_apple_enabled: string;
+  auth_phone_sms_enabled: string;
+  auth_phone_whatsapp_enabled: string;
 };
+
 
 const DEFAULTS: SiteSettings = {
   site_title: "Ayesha Maison Qatar",
@@ -74,7 +79,12 @@ const DEFAULTS: SiteSettings = {
   site_currency: "QAR",
   rent_tax_percent: "0",
   sale_tax_percent: "0",
+  auth_google_enabled: "true",
+  auth_apple_enabled: "false",
+  auth_phone_sms_enabled: "false",
+  auth_phone_whatsapp_enabled: "false",
 };
+
 
 export function useSiteSettings() {
   const { data } = useQuery({
