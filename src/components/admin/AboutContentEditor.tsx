@@ -295,6 +295,7 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.team.title} onChange={(x) => setV({ ...v, team: { ...v.team, title: x } })} />
         </div>
         <Input label="Description" value={v.team.description} onChange={(x) => setV({ ...v, team: { ...v.team, description: x } })} multiline rows={2} />
+        <ColumnsPicker value={v.team.columns} onChange={(c) => setV({ ...v, team: { ...v.team, columns: c } })} />
         {v.team.members.map((m, i) => (
           <Card key={i} title={`Member ${i + 1}`} onRemove={() => setV({ ...v, team: { ...v.team, members: v.team.members.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
