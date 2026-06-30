@@ -6,6 +6,8 @@ import { AtSign, Eye, Mail, Pencil, Phone, Search, Trash2, UserCircle2, UserPlus
 import { ThemedSelect } from "@/components/ui/themed-select";
 import { deleteAgent, listAgents, updateAgent } from "@/lib/agents.functions";
 import { AvatarUploader } from "@/components/admin/AddAgentForm";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 
 type Agent = {
