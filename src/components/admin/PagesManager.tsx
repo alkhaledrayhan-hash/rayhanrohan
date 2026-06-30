@@ -210,6 +210,27 @@ export function PagesManager({
     onError: (e: any) => toast.error(e.message),
   });
 
+  const setVirtualMeta = useMutation({
+    mutationFn: async ({ parent, key, patch }: { parent: Section; key: string; patch: Partial<{ hidden: boolean; sort_order: number }> }) => {
+      const cur = (parent.content as any) || {};
+      const meta = cur._meta || {};
+      const v = meta.virtual || {};
+      const newContent = { ...cur, _meta: { ...meta, virtual: { ...v, [key]: { ...(v[key] || {}), ...patch } } } };
+      const { error } = await supabase.from("page_sections").update({ content: newContent }).eq("id", parent.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["page-sections"] });
+      qc.invalidateQueries({ queryKey: ["home-sections"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const swapVirtualOrder = async (parent: Section, a: { key: string; sort_order: number }, b: { key: string; sort_order: number }) => {
+    await setVirtualMeta.mutateAsync({ parent, key: a.key, patch: { sort_order: b.sort_order } });
+    await setVirtualMeta.mutateAsync({ parent, key: b.key, patch: { sort_order: a.sort_order } });
+  };
+
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
