@@ -85,6 +85,7 @@ export function HeroSearch() {
   const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const { data: sections = {} } = usePageSections("home");
   const hero = (sections.hero || {}) as any;
