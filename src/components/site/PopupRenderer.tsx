@@ -283,31 +283,29 @@ export function PopupRenderer() {
     : "transparent";
 
   return (
-    <div
-      className={`fixed inset-0 z-[100] flex ${positionClass}`}
-      style={{
-        background: overlayBg,
-        backdropFilter: popup.position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${popup.overlay_blur}px)` : undefined,
-      }}
-      onClick={popup.position === "center" ? () => close(true) : undefined}
-      role="dialog"
-      aria-modal="true"
-    >
       <div
         className={`relative overflow-hidden ${animClass} ${isCorner ? "w-full max-w-sm" : isBanner ? "w-full max-w-3xl" : popup.template === "split-image" ? "w-full max-w-2xl" : "w-full max-w-lg"}`}
-        style={{
-          background: popup.template === "gradient-hero"
-            ? `linear-gradient(135deg, ${accent}, ${shiftColor(accent, -40)})`
-            : popup.template === "glass-card"
-              ? `linear-gradient(135deg, ${withAlpha(accent, 0.15)}, ${withAlpha(accent, 0.05)}), ${bg}`
-              : bg,
-          color: text,
-          borderRadius: radius,
-          boxShadow: shadowVal,
-          fontFamily: popup.font_family || undefined,
-          backdropFilter: popup.template === "glass-card" ? "blur(20px) saturate(140%)" : undefined,
-          border: popup.template === "glass-card" ? `1px solid ${withAlpha(accent, 0.25)}` : undefined,
-        }}
+        style={(() => {
+          const gFrom = popup.gradient_from || accent;
+          const gTo = popup.gradient_to || shiftColor(accent, -40);
+          const gAngle = popup.gradient_angle ?? 135;
+          const glassBlur = popup.glass_blur ?? 20;
+          const glassTint = (popup.glass_tint ?? 15) / 100;
+          const glassBorder = (popup.glass_border ?? 25) / 100;
+          return {
+            background: popup.template === "gradient-hero"
+              ? `linear-gradient(${gAngle}deg, ${gFrom}, ${gTo})`
+              : popup.template === "glass-card"
+                ? `linear-gradient(${gAngle}deg, ${withAlpha(gFrom, glassTint)}, ${withAlpha(gTo, Math.max(0.02, glassTint - 0.1))}), ${bg}`
+                : bg,
+            color: text,
+            borderRadius: radius,
+            boxShadow: shadowVal,
+            fontFamily: popup.font_family || undefined,
+            backdropFilter: popup.template === "glass-card" && glassBlur > 0 ? `blur(${glassBlur}px) saturate(140%)` : undefined,
+            border: popup.template === "glass-card" ? `1px solid ${withAlpha(gFrom, glassBorder)}` : undefined,
+          };
+        })()}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -321,8 +319,8 @@ export function PopupRenderer() {
         {/* Decorative blobs for gradient-hero & glass-card */}
         {(popup.template === "gradient-hero" || popup.template === "glass-card") && (
           <>
-            <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: shiftColor(accent, 60) }} />
-            <div className="pointer-events-none absolute -bottom-16 -right-10 h-48 w-48 rounded-full opacity-30 blur-3xl" style={{ background: shiftColor(accent, -30) }} />
+            <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: shiftColor(popup.gradient_from || accent, 60) }} />
+            <div className="pointer-events-none absolute -bottom-16 -right-10 h-48 w-48 rounded-full opacity-30 blur-3xl" style={{ background: shiftColor(popup.gradient_to || accent, -30) }} />
             <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "18px 18px" }} />
           </>
         )}
