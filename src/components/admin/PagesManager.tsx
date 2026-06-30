@@ -22,6 +22,7 @@ type Section = {
   label: string;
   content: any;
   sort_order: number;
+  is_hidden?: boolean;
 };
 
 const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean }[] = [
