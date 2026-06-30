@@ -413,9 +413,14 @@ select option:checked {
   color: #fff;
 }
 
-/* Focus ring — replace browser blue with theme primary */
+/* Focus ring — replace browser blue with theme primary, with offset for clarity */
 :focus-visible {
-  outline-color: var(--primary) !important;
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+body:focus-visible,
+[data-radix-focus-guard]:focus-visible {
+  outline: none !important;
 }
 
 /* Autofill — remove default yellow/blue, keep theme */
@@ -507,3 +512,55 @@ html body[style] {
   padding-right: 0 !important;
   margin-right: 0 !important;
 }
+
+
+
+/* ────────────────────────────────────────────────────────────
+   Global modernization — typography rhythm, tap targets, motion
+   Applies across all pages without changing structure.
+   ──────────────────────────────────────────────────────────── */
+
+/* Fluid heading scale — modern responsive type without per-breakpoint classes */
+@media (min-width: 0px) {
+  h1 { font-size: clamp(2rem, 4.5vw + 0.5rem, 3.75rem); line-height: 1.05; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(1.5rem, 2.4vw + 0.6rem, 2.5rem); line-height: 1.15; letter-spacing: -0.015em; }
+  h3 { font-size: clamp(1.125rem, 1.2vw + 0.7rem, 1.5rem); line-height: 1.25; }
+}
+
+/* Smooth global transitions on common interactive surfaces */
+a, button, [role="button"], summary,
+.shadow, [class*="hover:shadow"], [class*="hover:bg-"], [class*="hover:text-"] {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Mobile tap-target enforcement (WCAG 2.5.5) — primary interactives only */
+@media (max-width: 640px) {
+  a[href], button:not([data-tap-exempt]), [role="button"]:not([data-tap-exempt]) {
+    min-height: 40px;
+  }
+}
+
+/* Card lift utility — opt-in via class for consistent hover treatment */
+@utility lift-on-hover {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px -18px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+}
+
+/* Image rendering quality across the app */
+img { image-rendering: -webkit-optimize-contrast; }
+
+/* Reduced motion respect — pause reveals and transitions */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
+
