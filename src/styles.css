@@ -563,3 +563,8 @@ img { image-rendering: -webkit-optimize-contrast; }
   [data-reveal] { opacity: 1 !important; transform: none !important; }
 }
 
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
