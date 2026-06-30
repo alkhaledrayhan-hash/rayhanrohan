@@ -17,11 +17,17 @@ const FOOTER_CONTENT_KEYS = [
   "footer_copyright",
   "footer_show_plane",
   "footer_bg_color",
+  "footer_bg_from",
+  "footer_bg_to",
+  "footer_bg_angle",
   "footer_overlay_color",
   "footer_overlay_opacity",
 ] as const;
 type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
 type FooterContent = Record<FooterContentKey, string>;
+
+const DEFAULT_GRADIENT =
+  "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)";
 
 const DEFAULTS: FooterContent = {
   footer_about:
@@ -37,6 +43,9 @@ const DEFAULTS: FooterContent = {
   footer_copyright: "© {year} {title}. All rights reserved.",
   footer_show_plane: "true",
   footer_bg_color: "",
+  footer_bg_from: "",
+  footer_bg_to: "",
+  footer_bg_angle: "180",
   footer_overlay_color: "#000000",
   footer_overlay_opacity: "0",
 };
