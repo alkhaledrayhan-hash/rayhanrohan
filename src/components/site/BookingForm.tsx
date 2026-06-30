@@ -174,7 +174,13 @@ export function BookingForm({ property }: { property: Property }) {
         pricing: {
           checkIn: iso(startDate),
           checkOut: endDate ? iso(endDate) : "",
-          nights: isRent ? nights : 0,
+          nights: isRent ? breakdown.nights : 0,
+          // Latest client-calculated values — server re-validates against these.
+          expectedUnitPrice: breakdown.unitPrice,
+          expectedSubtotal: breakdown.subtotal,
+          expectedTaxPercent: breakdown.taxPercent,
+          expectedTaxAmount: breakdown.taxAmount,
+          expectedTotal: breakdown.total,
         },
       };
       const res = auth?.user
