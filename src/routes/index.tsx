@@ -165,6 +165,7 @@ function Home() {
 
 
         {/* Featured */}
+        {!isHidden("featured") && (
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -186,6 +187,7 @@ function Home() {
             <PropertyGrid properties={featured} />
           </div>
         </section>
+        )}
 
         {/* Exclusive offers */}
         {offers.length > 0 && (
