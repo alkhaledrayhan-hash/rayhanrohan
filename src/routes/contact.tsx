@@ -131,7 +131,7 @@ function ContactPage() {
 
       {/* Form + Office details */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+        <div className={`grid gap-8 ${hiddenOffice ? "" : "lg:grid-cols-[1.4fr_1fr]"}`}>
           {/* Form */}
           <form
             onSubmit={onSubmit}
