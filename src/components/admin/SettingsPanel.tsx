@@ -459,20 +459,10 @@ export function SettingsPanel() {
 
 
           <Field icon={Palette} label="Background color">
-            <div className="flex items-center gap-3">
-              <input
-                type="color"
-                value={bgColor}
-                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
-                className="h-10 w-14 cursor-pointer rounded-md border border-input bg-background"
-              />
-              <input
-                value={bgColor}
-                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
-                placeholder="#1a0a0f"
-                className={inputCls}
-              />
-            </div>
+            <ThemedColorInput
+              value={bgColor}
+              onChange={(v) => setForm({ ...form, auth_bg_color: v })}
+            />
           </Field>
 
           <Field icon={ImageIcon} label="Background image" hint="Upload an image or paste a URL. Leave empty to use the gradient.">
