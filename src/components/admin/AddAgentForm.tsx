@@ -80,8 +80,19 @@ export function AddAgentForm({ onBack }: { onBack?: () => void } = {}) {
 
       {/* Fields card */}
       <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h3 className="font-display text-base font-semibold">Add Agent</h3>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Agents
+              </button>
+            )}
+            <h3 className="font-display text-base font-semibold">Add Agent</h3>
+          </div>
           <button
             type="submit"
             disabled={mut.isPending}
