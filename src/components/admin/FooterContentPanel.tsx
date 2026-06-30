@@ -200,11 +200,6 @@ export function FooterContentPanel() {
               style={{
                 backgroundColor: content.footer_overlay_color || "#000000",
                 opacity: parseFloat(content.footer_overlay_opacity || "0") || 0,
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: content.footer_overlay_color || "#000000",
-                opacity: parseFloat(content.footer_overlay_opacity || "0") || 0,
               }}
             />
             <span className="absolute inset-0 grid place-items-center text-xs font-medium text-white/85">
