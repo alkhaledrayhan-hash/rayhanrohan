@@ -131,7 +131,7 @@ function Home() {
     hero: () => <HeroSearch />,
     ticker: () => <NewsTicker />,
     trust: () => (
-      <section className="border-y border-border bg-secondary/40">
+      <section className="bg-secondary/40">
         {trustShouldScroll ? (
           <div className="group relative overflow-hidden py-8">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
