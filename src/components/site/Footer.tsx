@@ -47,8 +47,9 @@ export function Footer() {
         <svg
           viewBox="0 0 800 300"
           preserveAspectRatio="xMidYMin slice"
-          className="h-full w-full"
+          className="h-full w-full overflow-visible"
         >
+
           <defs>
             <linearGradient id="trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
