@@ -110,7 +110,7 @@ function PropertyDetail() {
     );
   }
 
-  const currentImg = activeImg ?? property.gallery[0] ?? property.image;
+  
 
   const waMsg = encodeURIComponent(
     `Hello, I am interested in viewing the property ${property.title} located in ${property.location}. Please let me know your availability.`,
