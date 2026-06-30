@@ -3,9 +3,24 @@ import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { z } from "zod";
 import { ImageIcon, Save, Upload, X } from "lucide-react";
 import { createAgent } from "@/lib/agents.functions";
 import { fileToDataUrl } from "@/lib/image-upload";
+
+const agentSchema = z.object({
+  full_name: z.string().trim().min(2, "Agent name is required (min 2 chars)").max(100),
+  email: z.string().trim().email("Valid email is required").max(255),
+  password: z.string().min(8, "Password must be at least 8 characters").max(72),
+  phone: z.string().trim().max(40).optional().or(z.literal("")),
+  username: z.string().trim().max(30).optional().or(z.literal("")),
+  gender: z.string().max(20).optional().or(z.literal("")),
+  city: z.string().trim().max(80).optional().or(z.literal("")),
+  country: z.string().trim().max(80).optional().or(z.literal("")),
+  address: z.string().trim().max(500).optional().or(z.literal("")),
+  avatar_url: z.string().max(500000).optional().or(z.literal("")),
+});
+
 
 
 const empty = {
