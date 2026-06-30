@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { createManualBooking, listBookings } from "@/lib/bookings.functions";
