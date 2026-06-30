@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ThemedSelect } from "@/components/ui/themed-select";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 import {
   Pencil, Plus, Trash2, Eye, Copy, Sparkles, Megaphone, Newspaper, Home as HomeIcon,
   X, Mail, Cookie, LogOut, ShieldAlert, Video, BarChart3, Palette, Target, Zap, FlaskConical, FileText,
