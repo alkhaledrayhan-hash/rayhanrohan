@@ -288,39 +288,42 @@ export function HeroSearch() {
             <div className="min-h-0 overflow-hidden">
               <div className="grid gap-2 md:grid-cols-3">
                 <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
-                  <select
-                    value={filters.location}
-                    onChange={(e) => set("location", e.target.value)}
-                    className="w-full bg-transparent text-sm outline-none"
-                  >
-                    <option value="all">All Qatar locations</option>
-                    {LOCATIONS.map((l) => (
-                      <option key={l} value={l}>{l}</option>
-                    ))}
-                  </select>
+                  <Select value={filters.location} onValueChange={(v) => set("location", v)}>
+                    <SelectTrigger className="h-auto w-full border-0 bg-transparent px-0 py-0 text-sm text-white shadow-none focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="All Qatar locations" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Qatar locations</SelectItem>
+                      {LOCATIONS.map((l) => (
+                        <SelectItem key={l} value={l}>{l}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
                 <Field label="Property type">
-                  <select
-                    value={filters.type}
-                    onChange={(e) => set("type", e.target.value)}
-                    className="w-full bg-transparent text-sm outline-none"
-                  >
-                    <option value="all">Any type</option>
-                    {TYPES.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+                  <Select value={filters.type} onValueChange={(v) => set("type", v)}>
+                    <SelectTrigger className="h-auto w-full border-0 bg-transparent px-0 py-0 text-sm text-white shadow-none focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Any type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any type</SelectItem>
+                      {TYPES.map((t) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
                 <Field label="Price range">
-                  <select
-                    value={filters.price}
-                    onChange={(e) => set("price", e.target.value)}
-                    className="w-full bg-transparent text-sm outline-none"
-                  >
-                    {PRICE_RANGES.map((p) => (
-                      <option key={p.value} value={p.value}>{p.label}</option>
-                    ))}
-                  </select>
+                  <Select value={filters.price} onValueChange={(v) => set("price", v)}>
+                    <SelectTrigger className="h-auto w-full border-0 bg-transparent px-0 py-0 text-sm text-white shadow-none focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Any price" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRICE_RANGES.map((p) => (
+                        <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
               </div>
               <p className="mt-3 px-1 text-[11px] text-white/70">
