@@ -7,13 +7,16 @@ import { useSiteMenus } from "@/hooks/useSiteMenus";
 export function Footer() {
   const settings = useSiteSettings();
   const { footer: footerMenu } = useSiteMenus();
+  const overlayOpacity = Math.max(0, Math.min(1, parseFloat(settings.footer_overlay_opacity || "0") || 0));
+  const hasCustomBg = !!settings.footer_bg_color;
   return (
     <footer
       id="footer"
       className="relative overflow-hidden text-white/85"
       style={{
-        background:
-          "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
+        background: hasCustomBg
+          ? settings.footer_bg_color
+          : "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
       }}
     >
       {/* Soft radial glow centerpiece */}
@@ -25,6 +28,18 @@ export function Footer() {
             "radial-gradient(60% 80% at 50% 40%, oklch(0.55 0.16 22 / 0.35) 0%, transparent 70%)",
         }}
       />
+
+      {/* Custom overlay tint */}
+      {overlayOpacity > 0 && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundColor: settings.footer_overlay_color || "#000000",
+            opacity: overlayOpacity,
+          }}
+        />
+      )}
 
       {/* Flight path + Qatar Airways plane backdrop */}
       {settings.footer_show_plane !== "false" && (
