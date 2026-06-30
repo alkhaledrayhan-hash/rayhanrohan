@@ -129,9 +129,9 @@ function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <HeroSearch />
+        {!isHidden("hero") && <HeroSearch />}
 
-        <NewsTicker />
+        {!isHidden("ticker") && <NewsTicker />}
 
 
         {/* Trust strip */}
