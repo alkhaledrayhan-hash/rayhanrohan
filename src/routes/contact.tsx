@@ -45,6 +45,12 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { data: sections } = usePageSections("contact");
   const cfg = normalizeContactPage(sections?.info);
+  const virtualMeta: Record<string, { hidden?: boolean }> =
+    ((sections as any)?.info?._meta?.virtual) || {};
+  const hiddenHero = !!virtualMeta["contact-hero"]?.hidden;
+  const hiddenChannels = !!virtualMeta["contact-channels"]?.hidden;
+  const hiddenSubjects = !!virtualMeta["contact-subjects"]?.hidden;
+  const hiddenOffice = !!virtualMeta["contact-office"]?.hidden;
 
   const [form, setForm] = useState({
     name: "",
