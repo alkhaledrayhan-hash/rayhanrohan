@@ -233,7 +233,11 @@ export function HeroSearch() {
 
         <form
           onSubmit={submit}
-          className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 sm:p-4"
+          onMouseEnter={() => setExpanded(true)}
+          onFocus={() => setExpanded(true)}
+          onClick={() => setExpanded(true)}
+          data-expanded={expanded ? "true" : "false"}
+          className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 data-[expanded=true]:border-white/30 data-[expanded=true]:bg-white/15 sm:p-4"
         >
           <div className="flex flex-nowrap items-center justify-between gap-2">
             <div className="inline-flex shrink-0 rounded-full bg-white/10 p-1 text-xs backdrop-blur sm:text-sm">
