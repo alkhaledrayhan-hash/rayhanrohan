@@ -129,7 +129,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let query = supabaseAdmin
       .from("bookings")
-      .select("*, properties:property_id (id, slug, price, location, cover_image_url)")
+      .select("*, properties:property_id (id, slug, price, location, image)")
       .order("scheduled_date", { ascending: false });
     if (email) {
       query = query.or(`customer_user_id.eq.${context.userId},customer_email.ilike.${email}`);
