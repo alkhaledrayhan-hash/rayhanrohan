@@ -147,6 +147,7 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
         notes: data.notes || null,
         source: "website",
         status: "pending",
+        ...pricingPatch(data.pricing),
       })
       .select("id")
       .single();
