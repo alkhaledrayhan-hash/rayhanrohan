@@ -80,35 +80,34 @@ export function MediaPanel() {
   const [preview, setPreview] = useState<WithUrl | null>(null);
 
   const { data: items, isLoading } = useQuery({
-    queryKey: ["media", "list"],
+    queryKey: ["media", "list", "all-buckets"],
     queryFn: async () => {
-      // Recursively list root + known folders so site-assets/ & properties/ show up
-      const prefixes = ["", "site-assets", "properties"];
-      const all: MediaItem[] = [];
-      for (const prefix of prefixes) {
-        const { data, error } = await supabase.storage.from(BUCKET).list(prefix, {
-          limit: 200,
-          sortBy: { column: "created_at", order: "desc" },
-        });
-        if (error) continue;
-        (data ?? [])
-          .filter((f) => f.id !== null) // skip folder entries
-          .forEach((f) => {
-            all.push({ ...(f as MediaItem), name: prefix ? `${prefix}/${f.name}` : f.name });
-          });
+      const all: Array<MediaItem & { bucket: string }> = [];
+      for (const bucket of BUCKETS) {
+        const files = await listAll(bucket);
+        all.push(...files);
       }
       if (all.length === 0) return [] as WithUrl[];
-      const { data: signed } = await supabase.storage
-        .from(BUCKET)
-        .createSignedUrls(
-          all.map((f) => f.name),
-          60 * 60, // 1h
-        );
-      const urlByPath = new Map<string, string>();
-      (signed ?? []).forEach((s) => {
-        if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
-      });
-      return all.map((f) => ({ ...f, url: urlByPath.get(f.name) ?? "" }));
+
+      // Sign URLs per-bucket
+      const urlByKey = new Map<string, string>();
+      const byBucket = new Map<string, string[]>();
+      for (const f of all) {
+        const arr = byBucket.get(f.bucket) ?? [];
+        arr.push(f.name);
+        byBucket.set(f.bucket, arr);
+      }
+      for (const [bucket, paths] of byBucket) {
+        const { data: signed } = await supabase.storage
+          .from(bucket)
+          .createSignedUrls(paths, 60 * 60);
+        (signed ?? []).forEach((s) => {
+          if (s.path && s.signedUrl) urlByKey.set(`${bucket}/${s.path}`, s.signedUrl);
+        });
+      }
+      return all
+        .map((f) => ({ ...f, url: urlByKey.get(`${f.bucket}/${f.name}`) ?? "" }))
+        .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     },
   });
 
@@ -132,7 +131,7 @@ export function MediaPanel() {
       const ts = Date.now();
       const safe = file.name.replace(/[^\w.\-]+/g, "_");
       const path = `${ts}-${safe}`;
-      const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      const { error } = await supabase.storage.from(PRIMARY_BUCKET).upload(path, file, {
         cacheControl: "3600",
         contentType: file.type || undefined,
       });
@@ -144,17 +143,18 @@ export function MediaPanel() {
     setUploading(false);
     if (ok) toast.success(`${ok} file${ok > 1 ? "s" : ""} uploaded`);
     if (fail === 0 && fileInput.current) fileInput.current.value = "";
-    qc.invalidateQueries({ queryKey: ["media", "list"] });
+    qc.invalidateQueries({ queryKey: ["media", "list", "all-buckets"] });
   }
 
-  async function handleDelete(name: string) {
-    if (!confirm(`Delete "${name}"?`)) return;
-    const { error } = await supabase.storage.from(BUCKET).remove([name]);
+  async function handleDelete(item: WithUrl) {
+    if (!confirm(`Delete "${item.name}" from ${item.bucket}?`)) return;
+    const { error } = await supabase.storage.from(item.bucket).remove([item.name]);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
-    qc.invalidateQueries({ queryKey: ["media", "list"] });
-    if (preview?.name === name) setPreview(null);
+    qc.invalidateQueries({ queryKey: ["media", "list", "all-buckets"] });
+    if (preview?.name === item.name) setPreview(null);
   }
+
 
   async function handleCopy(url: string) {
     try {
