@@ -169,10 +169,13 @@ export function SettingsPanel() {
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
         <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
+        <TabButton active={tab === "footer"} onClick={() => setTab("footer")}>Footer content</TabButton>
       </div>
 
       {tab === "menus" ? (
         <MenusEditor />
+      ) : tab === "footer" ? (
+        <div className="rounded-2xl border border-border bg-white p-6 shadow-sm"><FooterContentPanel /></div>
       ) : tab === "theme" ? (
         <ThemeEditor />
       ) : (
