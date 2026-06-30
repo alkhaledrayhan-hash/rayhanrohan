@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
+import { MyBookingsPanel } from "@/components/dashboard/MyBookingsPanel";
 import {
   listMyEmailChangeRequests,
   requestEmailChange,
