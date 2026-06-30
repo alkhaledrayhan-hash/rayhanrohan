@@ -511,6 +511,9 @@ html body[data-scroll-locked],
 html body[style] {
   padding-right: 0 !important;
   margin-right: 0 !important;
+}
+
+
 
 /* ────────────────────────────────────────────────────────────
    Global modernization — typography rhythm, tap targets, motion
