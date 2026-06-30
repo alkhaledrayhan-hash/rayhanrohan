@@ -681,6 +681,111 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
           </Field>
         </div>
       </div>
+
+      {(value.template === "gradient-hero" || value.template === "split-image") && (
+        <div className="md:col-span-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">Gradient design</div>
+            <button
+              type="button"
+              onClick={() => set({ gradient_from: "#7c3aed", gradient_to: "#ec4899", gradient_angle: 135 })}
+              className="text-[10px] text-muted-foreground underline hover:text-foreground"
+            >
+              Reset
+            </button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Field label="From color">
+              <ThemedColorInput
+                value={value.gradient_from || value.accent_color || "#7c3aed"}
+                onChange={(v) => set({ gradient_from: v })}
+              />
+            </Field>
+            <Field label="To color">
+              <ThemedColorInput
+                value={value.gradient_to || "#ec4899"}
+                onChange={(v) => set({ gradient_to: v })}
+              />
+            </Field>
+            <Field label={`Angle ${value.gradient_angle ?? 135}°`}>
+              <input
+                type="range" min={0} max={360}
+                value={value.gradient_angle ?? 135}
+                onChange={(e) => set({ gradient_angle: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+          </div>
+          <div
+            className="h-10 w-full rounded-md border border-border"
+            style={{
+              background: `linear-gradient(${value.gradient_angle ?? 135}deg, ${value.gradient_from || value.accent_color || "#7c3aed"}, ${value.gradient_to || "#ec4899"})`,
+            }}
+          />
+        </div>
+      )}
+
+      {value.template === "glass-card" && (
+        <div className="md:col-span-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">Glass effect</div>
+            <label className="flex items-center gap-2 text-xs">
+              <input
+                type="checkbox"
+                checked={(value.glass_blur ?? 20) > 0}
+                onChange={(e) => set({ glass_blur: e.target.checked ? 20 : 0 })}
+              />
+              Blur on
+            </label>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Tint from color">
+              <ThemedColorInput
+                value={value.gradient_from || value.accent_color || "#0ea5e9"}
+                onChange={(v) => set({ gradient_from: v })}
+              />
+            </Field>
+            <Field label="Tint to color">
+              <ThemedColorInput
+                value={value.gradient_to || "#6366f1"}
+                onChange={(v) => set({ gradient_to: v })}
+              />
+            </Field>
+            <Field label={`Blur ${value.glass_blur ?? 20}px`}>
+              <input
+                type="range" min={0} max={60}
+                value={value.glass_blur ?? 20}
+                onChange={(e) => set({ glass_blur: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Tint strength ${value.glass_tint ?? 15}%`}>
+              <input
+                type="range" min={0} max={80}
+                value={value.glass_tint ?? 15}
+                onChange={(e) => set({ glass_tint: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Border opacity ${value.glass_border ?? 25}%`}>
+              <input
+                type="range" min={0} max={100}
+                value={value.glass_border ?? 25}
+                onChange={(e) => set({ glass_border: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Gradient angle ${value.gradient_angle ?? 135}°`}>
+              <input
+                type="range" min={0} max={360}
+                value={value.gradient_angle ?? 135}
+                onChange={(e) => set({ gradient_angle: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+          </div>
+        </div>
+      )}
     </>
   );
 }
