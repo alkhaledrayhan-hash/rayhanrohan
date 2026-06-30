@@ -238,3 +238,52 @@ function Textarea({ label, value, onChange }: { label: string; value: string; on
     </label>
   );
 }
+
+function ColorField({
+  label,
+  value,
+  onChange,
+  allowEmpty,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  allowEmpty?: boolean;
+}) {
+  const isHex = /^#[0-9a-f]{6}$/i.test(value);
+  return (
+    <label className="block space-y-1">
+      <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2 rounded-md border border-input bg-background p-1.5">
+        <span
+          className="h-7 w-9 shrink-0 rounded border border-border"
+          style={{ background: value || "transparent" }}
+        />
+        <input
+          type="color"
+          value={isHex ? value : "#000000"}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-7 w-7 cursor-pointer rounded border-0 bg-transparent"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={allowEmpty ? "(empty = default)" : "#000000"}
+          className="w-full bg-transparent text-xs outline-none"
+          spellCheck={false}
+        />
+        {allowEmpty && value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
+            title="Clear"
+          >
+            ×
+          </button>
+        )}
+      </div>
+    </label>
+  );
+}
