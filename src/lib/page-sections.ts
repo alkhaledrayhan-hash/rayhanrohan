@@ -41,3 +41,22 @@ export function useHiddenSections(pageSlug: string) {
     staleTime: 60_000,
   });
 }
+
+export function useSectionOrder(pageSlug: string) {
+  return useQuery({
+    queryKey: ["section-order", pageSlug],
+    queryFn: async (): Promise<Record<string, number>> => {
+      const { data, error } = await supabase
+        .from("page_sections")
+        .select("section_key, sort_order")
+        .eq("page_slug", pageSlug);
+      if (error) throw error;
+      const map: Record<string, number> = {};
+      for (const row of (data ?? []) as Array<{ section_key: string; sort_order: number | null }>) {
+        if (row.sort_order != null) map[row.section_key] = row.sort_order;
+      }
+      return map;
+    },
+    staleTime: 60_000,
+  });
+}
