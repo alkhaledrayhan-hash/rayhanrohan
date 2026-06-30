@@ -944,7 +944,7 @@ function ChartCard({
 }
 
 
-function RecentLeads({ leads }: { leads: { name: string; property: string; status: string; time: string }[] }) {
+function RecentLeads({ leads, onSeeAll }: { leads: { id: string; name: string; property: string; status: string; time: string }[]; onSeeAll?: () => void }) {
   if (!leads.length) {
     return (
       <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
@@ -957,11 +957,11 @@ function RecentLeads({ leads }: { leads: { name: string; property: string; statu
     <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-base font-semibold">Recent Leads</h3>
-        <button className="text-xs font-medium text-primary hover:underline">See all</button>
+        <button onClick={onSeeAll} className="text-xs font-medium text-primary hover:underline">See all</button>
       </div>
       <div className="mt-4 divide-y divide-border">
         {leads.map((l) => (
-          <div key={l.name} className="flex items-center justify-between py-3 text-sm">
+          <div key={l.id} className="flex items-center justify-between py-3 text-sm">
             <div className="flex items-center gap-3">
               <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                 {l.name
