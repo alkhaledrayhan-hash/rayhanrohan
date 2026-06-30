@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, CalendarIcon, Clock, Loader2 } from "lucide-react";
-import { format } from "date-fns";
+import { format, differenceInCalendarDays } from "date-fns";
+import type { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -28,8 +29,10 @@ function buildTimeSlots() {
 }
 
 export function BookingForm({ property }: { property: Property }) {
+  const isRent = property.status === "rent";
   const timeSlots = useMemo(buildTimeSlots, []);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
 
   const [time, setTime] = useState("10:00");
   const [name, setName] = useState("");
@@ -41,21 +44,36 @@ export function BookingForm({ property }: { property: Property }) {
   const submitAsUser = useServerFn(createBookingAsUser);
 
   useEffect(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    setDate(d);
-  }, []);
+    const start = new Date();
+    start.setDate(start.getDate() + 1);
+    if (isRent) {
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+      setRange({ from: start, to: end });
+    } else {
+      setDate(start);
+    }
+  }, [isRent]);
 
   const today = useMemo(() => {
-
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
 
+  const nights =
+    isRent && range?.from && range?.to
+      ? Math.max(1, differenceInCalendarDays(range.to, range.from))
+      : 0;
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!date) {
+    if (isRent) {
+      if (!range?.from || !range?.to) {
+        toast.error("Please pick a start and end date.");
+        return;
+      }
+    } else if (!date) {
       toast.error("Please pick a date.");
       return;
     }
@@ -66,18 +84,25 @@ export function BookingForm({ property }: { property: Property }) {
     setSubmitting(true);
     try {
       const { data: auth } = await supabase.auth.getUser();
+      const startDate = isRent ? range!.from! : date!;
+      const endDate = isRent ? range!.to! : null;
+      const iso = (d: Date) => d.toISOString().slice(0, 10);
+      const notes = endDate
+        ? `Rent period: ${iso(startDate)} → ${iso(endDate)} (${nights} night${nights === 1 ? "" : "s"})`
+        : "";
       const payload = {
         propertyId: property.id,
         propertyTitle: property.title,
         name,
         phone,
-        date: date.toISOString().slice(0, 10),
+        date: iso(startDate),
         time,
+        notes,
       };
       const res = auth?.user
         ? await submitAsUser({ data: payload })
         : await submit({ data: payload });
-      toast.success("Viewing requested", {
+      toast.success(isRent ? "Rental requested" : "Viewing requested", {
         description: `Reference ${res.id}. Our agent will confirm by phone shortly.`,
       });
       setName("");
@@ -97,17 +122,21 @@ export function BookingForm({ property }: { property: Property }) {
     <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="flex items-center gap-2">
         <CalendarCheck className="h-5 w-5 text-primary" />
-        <h3 className="font-display text-xl font-semibold">Schedule a viewing</h3>
+        <h3 className="font-display text-xl font-semibold">
+          {isRent ? "Book this rental" : "Schedule a viewing"}
+        </h3>
       </div>
       <p className="mt-1 text-sm text-muted-foreground">
-        No payment, no registration — just pick a slot.
+        {isRent
+          ? "Pick your check-in and check-out dates."
+          : "No payment, no registration — just pick a slot."}
       </p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {/* Date */}
+        {/* Date / Date range */}
         <div className="flex flex-col gap-1">
           <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            Date
+            {isRent ? "Check-in → Check-out" : "Date"}
           </span>
           <Popover open={dateOpen} onOpenChange={setDateOpen}>
             <PopoverTrigger asChild>
@@ -115,35 +144,63 @@ export function BookingForm({ property }: { property: Property }) {
                 type="button"
                 className={cn(
                   "flex items-center justify-between gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-left text-sm outline-none ring-primary/30 focus:ring-2",
-                  !date && "text-muted-foreground",
+                  ((isRent && !range?.from) || (!isRent && !date)) && "text-muted-foreground",
                 )}
               >
                 <span className="flex items-center gap-2 truncate">
                   <CalendarIcon className="h-4 w-4 shrink-0 text-primary" />
-                  {date ? format(date, "EEE, d MMM yyyy") : "Pick a date"}
+                  {isRent
+                    ? range?.from
+                      ? range.to
+                        ? `${format(range.from, "d MMM")} → ${format(range.to, "d MMM yyyy")}`
+                        : `${format(range.from, "d MMM yyyy")} → …`
+                      : "Pick dates"
+                    : date
+                      ? format(date, "EEE, d MMM yyyy")
+                      : "Pick a date"}
                 </span>
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(d) => {
-                  setDate(d);
-                  if (d) setDateOpen(false);
-                }}
-                disabled={(d) => d < today}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-              />
+              {isRent ? (
+                <Calendar
+                  mode="range"
+                  selected={range}
+                  onSelect={(r) => {
+                    setRange(r);
+                    if (r?.from && r?.to) setDateOpen(false);
+                  }}
+                  numberOfMonths={2}
+                  disabled={(d) => d < today}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              ) : (
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(d) => {
+                    setDate(d);
+                    if (d) setDateOpen(false);
+                  }}
+                  disabled={(d) => d < today}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              )}
             </PopoverContent>
           </Popover>
+          {isRent && nights > 0 ? (
+            <span className="text-[11px] text-muted-foreground">
+              {nights} night{nights === 1 ? "" : "s"}
+            </span>
+          ) : null}
         </div>
 
         {/* Time */}
         <div className="flex flex-col gap-1">
           <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            Preferred time
+            {isRent ? "Check-in time" : "Preferred time"}
           </span>
           <Popover open={timeOpen} onOpenChange={setTimeOpen}>
             <PopoverTrigger asChild>
@@ -196,7 +253,7 @@ export function BookingForm({ property }: { property: Property }) {
         className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition hover:opacity-95 disabled:opacity-60"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        Request booking
+        {isRent ? "Request rental booking" : "Request booking"}
       </button>
       <p className="mt-2 text-center text-[11px] text-muted-foreground">
         We confirm within 30 minutes during business hours.
