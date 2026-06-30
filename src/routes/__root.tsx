@@ -195,20 +195,29 @@ function RootComponent() {
         { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
       );
       const tagAndObserve = () => {
+        const vh = window.innerHeight || 800;
         document
           .querySelectorAll(
             "main section, main > div > section, main article, main [data-animate]",
           )
           .forEach((el) => {
-            if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
+            if (el.hasAttribute("data-reveal") || el.classList.contains("is-visible")) return;
+            const rect = (el as HTMLElement).getBoundingClientRect();
+            // Skip elements already in (or above) the viewport — never hide content the user can see.
+            if (rect.top < vh * 0.9) {
+              el.classList.add("is-visible");
+              el.setAttribute("data-reveal", "");
+              return;
+            }
+            el.setAttribute("data-reveal", "");
             io!.observe(el);
           });
       };
       tagAndObserve();
-      // Re-scan once after content settles (queries resolve, images load).
       const t = window.setTimeout(tagAndObserve, 800);
       (window as unknown as { __revealTimer?: number }).__revealTimer = t;
     };
+
 
     const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => number })
       .requestIdleCallback;
