@@ -38,6 +38,7 @@ export function BookingForm({ property }: { property: Property }) {
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
   const submit = useServerFn(createBooking);
+  const submitAsUser = useServerFn(createBookingAsUser);
 
   useEffect(() => {
     const d = new Date();
