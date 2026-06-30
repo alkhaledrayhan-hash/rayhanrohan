@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Palette, Plus, Save, Settings2, Trash2, Type } from "lucide-react";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 import {
   DEFAULT_TICKER_CONFIG,
   DEFAULT_TICKER_STYLE,
