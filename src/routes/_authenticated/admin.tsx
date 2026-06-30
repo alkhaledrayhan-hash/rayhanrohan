@@ -238,10 +238,12 @@ function AdminDashboard() {
               {[
                 { slug: "home", label: "Home", icon: Home },
                 { slug: "properties", label: "Properties", icon: Building2 },
+                { slug: "offers", label: "Offers", icon: BadgePercent },
                 { slug: "agents", label: "Our Agents", icon: Users },
                 { slug: "about", label: "About", icon: Info },
                 { slug: "news", label: "News", icon: Newspaper },
                 { slug: "contact", label: "Contact", icon: Phone },
+
               ].map((p) => (
                 <SubNavItem
                   key={p.slug}
