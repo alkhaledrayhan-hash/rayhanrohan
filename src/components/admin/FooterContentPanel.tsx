@@ -77,7 +77,14 @@ export function FooterContentPanel() {
 
   const save = useMutation({
     mutationFn: async () => {
-      const rows = FOOTER_CONTENT_KEYS.map((k) => ({ key: k, value: content[k] ?? "" }));
+      const from = content.footer_bg_from.trim();
+      const to = content.footer_bg_to.trim();
+      const angle = (content.footer_bg_angle || "180").trim() || "180";
+      const composedBg = from && to ? `linear-gradient(${angle}deg, ${from}, ${to})` : "";
+      const rows = FOOTER_CONTENT_KEYS.map((k) => ({
+        key: k,
+        value: k === "footer_bg_color" ? composedBg : (content[k] ?? ""),
+      }));
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
     },
