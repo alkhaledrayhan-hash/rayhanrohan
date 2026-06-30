@@ -97,6 +97,7 @@ export function normalizeContactPage(raw: any): ContactPageConfig {
     hero: { ...PAGE_DEFAULT.hero, ...(raw.hero || {}) },
     office: { ...PAGE_DEFAULT.office, ...(raw.office || {}) },
     subjects: Array.isArray(raw.subjects) && raw.subjects.length ? raw.subjects.map(String) : PAGE_DEFAULT.subjects,
+    map: { ...DEFAULT_MAP, ...(raw.map || {}), query: raw.map?.query ?? raw.map_query ?? DEFAULT_MAP.query },
   };
 }
 
