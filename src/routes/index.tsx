@@ -126,172 +126,172 @@ function Home() {
   const resolveLocImage = (it: LocItem) => it.image_url || LOCATION_IMAGES[it.name] || locDoha;
   const resolveLocLink = (it: LocItem) => it.link || `/properties?location=${encodeURIComponent(it.name)}`;
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main>
-        {!isHidden("hero") && <HeroSearch />}
-
-        {!isHidden("ticker") && <NewsTicker />}
-
-
-        {/* Trust strip */}
-        {!isHidden("trust") && (
-        <section className="border-y border-border bg-secondary/40">
-          {trustShouldScroll ? (
-            <div className="group relative overflow-hidden py-8">
-              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
-              <div
-                className="flex w-max items-center gap-10 px-6 group-hover:[animation-play-state:paused]"
-                style={{ animation: `trust-scroll ${trustDuration}s linear infinite` }}
-              >
-                {trustItems.map((t, i) => (
-                  <div key={i} className="flex w-[300px] flex-shrink-0">
-                    <Trust icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
-                  </div>
-                ))}
-              </div>
-              <style>{`@keyframes trust-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-            </div>
-          ) : (
-            <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
-              {trust.slice(0, 3).map((t, i) => (
-                <Trust key={i} icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
+  const sectionRenderers: Record<string, () => React.ReactNode> = {
+    hero: () => <HeroSearch />,
+    ticker: () => <NewsTicker />,
+    trust: () => (
+      <section className="border-y border-border bg-secondary/40">
+        {trustShouldScroll ? (
+          <div className="group relative overflow-hidden py-8">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
+            <div
+              className="flex w-max items-center gap-10 px-6 group-hover:[animation-play-state:paused]"
+              style={{ animation: `trust-scroll ${trustDuration}s linear infinite` }}
+            >
+              {trustItems.map((t, i) => (
+                <div key={i} className="flex w-[300px] flex-shrink-0">
+                  <Trust icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
+                </div>
               ))}
             </div>
-          )}
-        </section>
-        )}
-
-
-        {/* Featured */}
-        {!isHidden("featured") && (
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-                {featuredHeading.eyebrow}
-              </p>
-              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                {featuredHeading.title}
-              </h2>
-            </div>
-            <a
-              href={featuredHeading.link_href || "/properties"}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-            >
-              {featuredHeading.link_label} <ArrowRight className="h-4 w-4" />
-            </a>
+            <style>{`@keyframes trust-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
           </div>
-          <div className="mt-10">
-            <PropertyGrid properties={featured} />
+        ) : (
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
+            {trust.slice(0, 3).map((t, i) => (
+              <Trust key={i} icon={renderTrustIcon(t.icon, i)} title={t.title} body={t.body} />
+            ))}
           </div>
-        </section>
         )}
-
-        {/* Exclusive offers */}
-        {!isHidden("offer") && offers.length > 0 && (
-          <OffersSection
-            offers={offers}
-            heading={{
-              eyebrow: offersCfg.eyebrow,
-              title: offersCfg.title,
-              description: offersCfg.description,
-              ctaLabel: offersCfg.cta_label,
-              ctaHref: offersCfg.cta_href,
-            }}
-          />
-        )}
-
-        {/* Locations */}
-        {!isHidden("locations") && (
-        <section className="bg-secondary/40 py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      </section>
+    ),
+    featured: () => (
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
-              {locationsHeading.eyebrow}
+              {featuredHeading.eyebrow}
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              {locationsHeading.title}
+              {featuredHeading.title}
             </h2>
-            {locationItems.length > 0 && (
-              locShouldScroll ? (
-                <div className="group relative mt-10 -mx-4 overflow-hidden">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
-                  <div
-                    className="flex w-max gap-4 px-4 group-hover:[animation-play-state:paused]"
-                    style={{ animation: `locations-marquee ${locDuration}s linear infinite` }}
-                  >
-                    {locRenderItems.map((it, i) => (
-                      <a
-                        key={`${it.name}-${i}`}
-                        href={resolveLocLink(it)}
-                        className="group/card relative isolate w-[68vw] max-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card sm:w-[260px]"
-                      >
-                        <img
-                          src={resolveLocImage(it)}
-                          alt={it.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
-                        />
-                        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
-                        <div className="relative p-6">
-                          <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
-                          <p className="mt-2 font-display text-xl font-semibold text-white">{it.name}</p>
-                          <p className="mt-3 inline-flex items-center gap-1 text-sm text-gold">
-                            Explore <ArrowRight className="h-3.5 w-3.5" />
-                          </p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                  <style>{`@keyframes locations-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-                </div>
-              ) : (
-                <div className={`mt-10 grid gap-4 sm:grid-cols-2 ${locationItems.length >= 5 ? "lg:grid-cols-5" : locationItems.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
-                  {locationItems.map((it) => (
+          </div>
+          <a
+            href={featuredHeading.link_href || "/properties"}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          >
+            {featuredHeading.link_label} <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+        <div className="mt-10">
+          <PropertyGrid properties={featured} />
+        </div>
+      </section>
+    ),
+    offer: () => offers.length > 0 ? (
+      <OffersSection
+        offers={offers}
+        heading={{
+          eyebrow: offersCfg.eyebrow,
+          title: offersCfg.title,
+          description: offersCfg.description,
+          ctaLabel: offersCfg.cta_label,
+          ctaHref: offersCfg.cta_href,
+        }}
+      />
+    ) : null,
+    locations: () => (
+      <section className="bg-secondary/40 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
+            {locationsHeading.eyebrow}
+          </p>
+          <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+            {locationsHeading.title}
+          </h2>
+          {locationItems.length > 0 && (
+            locShouldScroll ? (
+              <div className="group relative mt-10 -mx-4 overflow-hidden">
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-secondary/80 to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-secondary/80 to-transparent" />
+                <div
+                  className="flex w-max gap-4 px-4 group-hover:[animation-play-state:paused]"
+                  style={{ animation: `locations-marquee ${locDuration}s linear infinite` }}
+                >
+                  {locRenderItems.map((it, i) => (
                     <a
-                      key={it.name}
+                      key={`${it.name}-${i}`}
                       href={resolveLocLink(it)}
-                      className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                      className="group/card relative isolate w-[68vw] max-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card sm:w-[260px]"
                     >
                       <img
                         src={resolveLocImage(it)}
                         alt={it.name}
                         loading="lazy"
                         decoding="async"
-                        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+                        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
                       />
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                      />
+                      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
                       <div className="relative p-6">
-                        <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors duration-500 group-hover:text-white/70">
-                          Qatar
-                        </p>
-                        <p className="mt-2 font-display text-xl font-semibold text-foreground transition-colors duration-500 group-hover:text-white">
-                          {it.name}
-                        </p>
-                        <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-all duration-500 group-hover:text-gold group-hover:opacity-100">
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">Qatar</p>
+                        <p className="mt-2 font-display text-xl font-semibold text-white">{it.name}</p>
+                        <p className="mt-3 inline-flex items-center gap-1 text-sm text-gold">
                           Explore <ArrowRight className="h-3.5 w-3.5" />
                         </p>
                       </div>
                     </a>
                   ))}
                 </div>
-              )
-            )}
+                <style>{`@keyframes locations-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+              </div>
+            ) : (
+              <div className={`mt-10 grid gap-4 sm:grid-cols-2 ${locationItems.length >= 5 ? "lg:grid-cols-5" : locationItems.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+                {locationItems.map((it) => (
+                  <a
+                    key={it.name}
+                    href={resolveLocLink(it)}
+                    className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                  >
+                    <img
+                      src={resolveLocImage(it)}
+                      alt={it.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+                    />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    />
+                    <div className="relative p-6">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors duration-500 group-hover:text-white/70">
+                        Qatar
+                      </p>
+                      <p className="mt-2 font-display text-xl font-semibold text-foreground transition-colors duration-500 group-hover:text-white">
+                        {it.name}
+                      </p>
+                      <p className="mt-3 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-all duration-500 group-hover:text-gold group-hover:opacity-100">
+                        Explore <ArrowRight className="h-3.5 w-3.5" />
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+      </section>
+    ),
+    contact: () => <HomeContact />,
+    partners: () => <LogoMarquee />,
+  };
 
-          </div>
-        </section>
-        )}
+  const DEFAULT_ORDER: Record<string, number> = {
+    hero: 1, ticker: 2, trust: 3, featured: 4, offer: 5,
+    locations: 6, contact: 7, partners: 8,
+  };
+  const orderedKeys = Object.keys(sectionRenderers)
+    .filter((k) => !isHidden(k))
+    .sort((a, b) => (orderMap[a] ?? DEFAULT_ORDER[a] ?? 99) - (orderMap[b] ?? DEFAULT_ORDER[b] ?? 99));
 
-        {!isHidden("contact") && <HomeContact />}
-
-        {!isHidden("partners") && <LogoMarquee />}
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        {orderedKeys.map((key) => (
+          <React.Fragment key={key}>{sectionRenderers[key]()}</React.Fragment>
+        ))}
       </main>
       <Footer />
     </div>
