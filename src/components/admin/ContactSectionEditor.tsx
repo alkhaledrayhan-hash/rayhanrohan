@@ -54,6 +54,18 @@ const HOME_DEFAULT: HomeContactConfig = {
   default_dial_code: "+974",
 };
 
+const DEFAULT_MAP: MapConfig = {
+  mode: "query",
+  query: "West Bay Doha Qatar",
+  embed_html: "",
+  lat: "25.3231",
+  lng: "51.5310",
+  zoom: 14,
+  height: 256,
+  template: "classic",
+  grayscale: false,
+};
+
 const PAGE_DEFAULT: ContactPageConfig = {
   hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week.", image: "" },
   phone_display: "+974 4444 0123",
@@ -65,6 +77,7 @@ const PAGE_DEFAULT: ContactPageConfig = {
   default_dial_code: "+974",
   office: { name: "Head Office", address: "Tower 2, Level 18, West Bay Business District\nAl Corniche Street, Doha, Qatar", hours: "Sat–Thu · 9:00 AM – 8:00 PM\nFriday · By appointment", license: "QA-RE-2014-0387", cr: "114532" },
   map_query: "West Bay Doha Qatar",
+  map: DEFAULT_MAP,
 };
 
 export function normalizeHomeContact(raw: any): HomeContactConfig {
