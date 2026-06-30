@@ -319,7 +319,10 @@ function GallerySlider({
   status: string;
 }) {
   const [slides, setSlides] = useState<string[]>(images);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const autoplay = React.useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [autoplay.current]);
   const [selected, setSelected] = useState(0);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
