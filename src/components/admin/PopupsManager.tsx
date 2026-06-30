@@ -51,6 +51,12 @@ type Popup = {
   end_at: string | null;
   is_active: boolean;
   priority: number;
+  gradient_from: string | null;
+  gradient_to: string | null;
+  gradient_angle: number;
+  glass_blur: number;
+  glass_tint: number;
+  glass_border: number;
 };
 
 const TEMPLATES: { id: string; label: string; icon: any; description: string; sample: Partial<Popup> }[] = [
