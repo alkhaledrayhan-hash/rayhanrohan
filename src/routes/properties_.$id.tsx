@@ -12,7 +12,7 @@ import {
   MapPin,
   Maximize2,
   MessageCircle,
-  Share2,
+  
   Star,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
