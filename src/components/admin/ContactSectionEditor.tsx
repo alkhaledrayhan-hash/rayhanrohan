@@ -270,6 +270,80 @@ export function ContactPageEditor({ sectionId, initial, only }: { sectionId: str
         </div>
       )}
 
+      {show("map") && (
+        <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Map embed</p>
+
+          <label className="sm:col-span-2 text-sm">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Source</span>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { id: "query", label: "Place name" },
+                { id: "coords", label: "Coordinates" },
+                { id: "embed", label: "Embed code" },
+              ] as const).map((opt) => (
+                <button key={opt.id} type="button" onClick={() => setV({ ...v, map: { ...v.map, mode: opt.id } })}
+                  className={`rounded-lg border px-3 py-2 text-sm transition ${v.map.mode === opt.id ? "border-primary bg-primary/10 text-foreground" : "border-input bg-white text-muted-foreground hover:bg-muted"}`}>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </label>
+
+          {v.map.mode === "query" && (
+            <div className="sm:col-span-2"><Field label="Place / address query" value={v.map.query} onChange={(x) => setV({ ...v, map: { ...v.map, query: x } })} /></div>
+          )}
+          {v.map.mode === "coords" && (
+            <>
+              <Field label="Latitude" value={v.map.lat} onChange={(x) => setV({ ...v, map: { ...v.map, lat: x } })} />
+              <Field label="Longitude" value={v.map.lng} onChange={(x) => setV({ ...v, map: { ...v.map, lng: x } })} />
+            </>
+          )}
+          {v.map.mode === "embed" && (
+            <div className="sm:col-span-2">
+              <Field label="Paste Google Maps embed <iframe> or src URL" value={v.map.embed_html} onChange={(x) => setV({ ...v, map: { ...v.map, embed_html: x } })} multiline rows={4} />
+              <p className="mt-1 text-[11px] text-muted-foreground">In Google Maps → Share → Embed a map → copy HTML. Only the iframe src is used.</p>
+            </div>
+          )}
+
+          <Field label="Zoom (1–20)" value={String(v.map.zoom)} onChange={(x) => setV({ ...v, map: { ...v.map, zoom: Math.max(1, Math.min(20, Number(x) || 14)) } })} />
+          <Field label="Height (px)" value={String(v.map.height)} onChange={(x) => setV({ ...v, map: { ...v.map, height: Math.max(160, Math.min(800, Number(x) || 256)) } })} />
+
+          <label className="sm:col-span-2 text-sm">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Template / design</span>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {MAP_TEMPLATES.map((t) => (
+                <button key={t.id} type="button" onClick={() => setV({ ...v, map: { ...v.map, template: t.id } })}
+                  className={`rounded-lg border px-3 py-2 text-left transition ${v.map.template === t.id ? "border-primary bg-primary/10" : "border-input bg-white hover:bg-muted"}`}>
+                  <p className="text-sm font-medium">{t.label}</p>
+                  <p className="text-[11px] text-muted-foreground">{t.desc}</p>
+                </button>
+              ))}
+            </div>
+          </label>
+
+          <label className="sm:col-span-2 inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={v.map.grayscale} onChange={(e) => setV({ ...v, map: { ...v.map, grayscale: e.target.checked } })} />
+            Grayscale filter
+          </label>
+
+          <div className="sm:col-span-2">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Live preview</p>
+            <div className={MAP_TEMPLATES.find((t) => t.id === v.map.template)?.wrapper || ""}>
+              <iframe
+                key={`${v.map.mode}-${v.map.template}-${v.map.zoom}`}
+                title="Map preview"
+                src={buildMapSrc(v.map)}
+                style={{ height: v.map.height, filter: v.map.grayscale ? "grayscale(1) contrast(0.95)" : undefined }}
+                className="w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <SaveBar pending={save.isPending} onSave={() => save.mutate(v)} />
     </div>
   );
