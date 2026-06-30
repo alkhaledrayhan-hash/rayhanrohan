@@ -18,6 +18,13 @@ export type AdminNotifsPayload = {
     property_title: string | null;
     scheduled_date: string | null;
     created_at: string;
+    nights: number | null;
+    total_amount: number | null;
+    tax_percent: number | null;
+    tax_amount: number | null;
+    discount_percent: number | null;
+    discount_amount: number | null;
+    currency: string | null;
   }>;
   messages: Array<{
     id: string;
