@@ -22,3 +22,22 @@ export function usePageSections(pageSlug: string) {
     staleTime: 60_000,
   });
 }
+
+export function useHiddenSections(pageSlug: string) {
+  return useQuery({
+    queryKey: ["hidden-sections", pageSlug],
+    queryFn: async (): Promise<Set<string>> => {
+      const { data, error } = await supabase
+        .from("page_sections")
+        .select("section_key, is_hidden")
+        .eq("page_slug", pageSlug);
+      if (error) throw error;
+      const set = new Set<string>();
+      for (const row of (data ?? []) as Array<{ section_key: string; is_hidden?: boolean }>) {
+        if (row.is_hidden) set.add(row.section_key);
+      }
+      return set;
+    },
+    staleTime: 60_000,
+  });
+}
