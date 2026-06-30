@@ -47,6 +47,30 @@ export function ThemeEditor() {
     }
   }, [data]);
 
+  // Live-apply edits site-wide by writing to the same <style id="dynamic-theme">
+  // tag that useApplyTheme manages.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const id = "dynamic-theme";
+    let el = document.getElementById(id) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement("style");
+      el.id = id;
+      document.head.appendChild(el);
+    }
+    el.textContent = buildThemeCss(colors, typo);
+  }, [colors, typo]);
+
+  // On unmount, restore the saved theme.
+  useEffect(() => {
+    return () => {
+      if (typeof document === "undefined") return;
+      const el = document.getElementById("dynamic-theme") as HTMLStyleElement | null;
+      if (el && data) el.textContent = buildThemeCss(data.colors, data.typography);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const save = useMutation({
     mutationFn: async () => {
       const rows = [
@@ -229,6 +253,26 @@ export function ThemeEditor() {
   );
 }
 
+function toHex(value: string): string {
+  if (!value) return "#000000";
+  if (/^#[0-9a-f]{6}$/i.test(value)) return value;
+  if (/^#[0-9a-f]{3}$/i.test(value)) {
+    return "#" + value.slice(1).split("").map((c) => c + c).join("");
+  }
+  if (typeof document === "undefined") return "#000000";
+  // Use the browser to convert any CSS color (oklch/hsl/rgb/named) to rgb, then hex.
+  const probe = document.createElement("div");
+  probe.style.color = value;
+  probe.style.display = "none";
+  document.body.appendChild(probe);
+  const rgb = getComputedStyle(probe).color;
+  document.body.removeChild(probe);
+  const m = rgb.match(/\d+(\.\d+)?/g);
+  if (!m || m.length < 3) return "#000000";
+  const [r, g, b] = m.slice(0, 3).map((n) => Math.max(0, Math.min(255, Math.round(parseFloat(n)))));
+  return "#" + [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("");
+}
+
 function ColorRow({
   label,
   value,
@@ -238,7 +282,7 @@ function ColorRow({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const hex = value.startsWith("#") ? value : "";
+  const hex = toHex(value);
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
@@ -249,14 +293,13 @@ function ColorRow({
           className="h-8 w-10 shrink-0 rounded border border-border"
           style={{ background: value }}
         />
-        {hex ? (
-          <input
-            type="color"
-            value={hex}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-8 w-8 cursor-pointer rounded border-0 bg-transparent"
-          />
-        ) : null}
+        <input
+          type="color"
+          value={hex}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-8 w-8 cursor-pointer rounded border-0 bg-transparent"
+          title="Pick a color"
+        />
         <input
           type="text"
           value={value}
