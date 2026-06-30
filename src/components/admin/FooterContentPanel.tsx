@@ -16,6 +16,9 @@ const FOOTER_CONTENT_KEYS = [
   "footer_badge_text",
   "footer_copyright",
   "footer_show_plane",
+  "footer_bg_color",
+  "footer_overlay_color",
+  "footer_overlay_opacity",
 ] as const;
 type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
 type FooterContent = Record<FooterContentKey, string>;
@@ -33,6 +36,9 @@ const DEFAULTS: FooterContent = {
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
   footer_show_plane: "true",
+  footer_bg_color: "",
+  footer_overlay_color: "#000000",
+  footer_overlay_opacity: "0",
 };
 
 export function FooterContentPanel() {
