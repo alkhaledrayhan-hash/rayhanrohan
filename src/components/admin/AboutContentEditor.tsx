@@ -300,6 +300,10 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Secondary CTA email" value={v.company.secondary_cta_email} onChange={(x) => setV({ ...v, company: { ...v.company, secondary_cta_email: x } })} />
         </div>
       </Group>
+      </>
+      )}
+
+
 
       <div className="sticky bottom-2 flex justify-end">
         <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow disabled:opacity-60">
