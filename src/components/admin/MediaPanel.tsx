@@ -253,6 +253,16 @@ export function MediaPanel() {
             <option key={b} value={b}>{b}</option>
           ))}
         </select>
+
+        <button
+          onClick={() => refetch()}
+          disabled={isFetching}
+          title="Refresh"
+          className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-xs hover:bg-muted disabled:opacity-50"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          Sync
+        </button>
       </div>
 
       {/* Type filter pills */}
