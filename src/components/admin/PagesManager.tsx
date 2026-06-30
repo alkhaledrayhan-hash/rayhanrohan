@@ -117,11 +117,12 @@ export function PagesManager({
     "about-team": "team",
     "about-company": "company",
   };
-  const contactOnlyMap: Record<string, "hero" | "channels" | "subjects" | "office"> = {
+  const contactOnlyMap: Record<string, "hero" | "channels" | "subjects" | "office" | "map"> = {
     "contact-hero": "hero",
     "contact-channels": "channels",
     "contact-subjects": "subjects",
     "contact-office": "office",
+    "contact-map": "map",
   };
 
   const virtualHit = virtualForPage.find((v) => v.section_key === activeKey);
