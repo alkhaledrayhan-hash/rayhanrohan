@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
 import { getMenuIcon, guessMenuIcon } from "@/lib/menu-icons";
