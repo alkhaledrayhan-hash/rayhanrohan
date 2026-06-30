@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Download, Mail, Trash2, Search, Eye, X, Phone as PhoneIcon, Calendar, Building2, User as UserIcon, Tag } from "lucide-react";
 import { useFormatters } from "@/lib/format";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Lead = {
   id: string;
