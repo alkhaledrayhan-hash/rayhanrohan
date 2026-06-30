@@ -413,9 +413,14 @@ select option:checked {
   color: #fff;
 }
 
-/* Focus ring — replace browser blue with theme primary */
+/* Focus ring — replace browser blue with theme primary, with offset for clarity */
 :focus-visible {
-  outline-color: var(--primary) !important;
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+body:focus-visible,
+[data-radix-focus-guard]:focus-visible {
+  outline: none !important;
 }
 
 /* Autofill — remove default yellow/blue, keep theme */
