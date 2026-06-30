@@ -247,11 +247,11 @@ export function PagesManager({
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
-    <div className={`grid gap-4 ${sectionsCollapsed ? "lg:grid-cols-[44px_1fr]" : "lg:grid-cols-[240px_1fr]"}`}>
+    <div className={`grid gap-4 ${sectionsCollapsed ? "lg:grid-cols-[56px_1fr]" : "lg:grid-cols-[240px_1fr]"}`}>
 
       {/* Sections */}
-      <div className="rounded-2xl border border-border bg-white p-3">
-        <div className="flex items-center justify-between gap-2 px-2 pb-2">
+      <div className={`rounded-2xl border border-border bg-white ${sectionsCollapsed ? "p-1.5" : "p-3"}`}>
+        <div className={`flex items-center gap-2 pb-2 ${sectionsCollapsed ? "justify-center px-0" : "justify-between px-2"}`}>
           {!sectionsCollapsed && (
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
           )}
@@ -259,7 +259,7 @@ export function PagesManager({
             type="button"
             onClick={toggleSectionsCollapsed}
             title={sectionsCollapsed ? "Show sections" : "Hide sections"}
-            className="ml-auto grid h-7 w-7 place-items-center rounded-md hover:bg-muted text-muted-foreground"
+            className={`${sectionsCollapsed ? "" : "ml-auto"} grid h-7 w-7 place-items-center rounded-md hover:bg-muted text-muted-foreground`}
           >
             {sectionsCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
