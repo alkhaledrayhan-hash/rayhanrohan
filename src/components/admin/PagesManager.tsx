@@ -53,6 +53,17 @@ export function PagesManager({
   }, [pageSlug]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [draft, setDraft] = useState<string>("");
+  const [sectionsCollapsed, setSectionsCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("pm:sectionsCollapsed") === "1";
+  });
+  const toggleSectionsCollapsed = () => {
+    setSectionsCollapsed((v) => {
+      const nv = !v;
+      try { localStorage.setItem("pm:sectionsCollapsed", nv ? "1" : "0"); } catch {}
+      return nv;
+    });
+  };
 
   const { data: sections = [] } = useQuery({
     queryKey: ["page-sections", activePage],
