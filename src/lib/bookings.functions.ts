@@ -147,29 +147,30 @@ export const createBooking = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Resolve property by UUID or by slug (frontend uses slug as Property.id)
-    let propertyUuid: string | null = null;
-    let agentId: string | null = null;
-    let resolvedTitle: string | null = null;
-    if (data.propertyId) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        data.propertyId,
-      );
-      const q = supabaseAdmin
-        .from("properties")
-        .select("id, title, assigned_agent_id, created_by");
-      const { data: prop } = isUuid
-        ? await q.eq("id", data.propertyId).maybeSingle()
-        : await q.eq("slug", data.propertyId).maybeSingle();
-      if (prop) {
-        propertyUuid = (prop as { id: string }).id;
-        resolvedTitle = (prop as { title: string }).title;
-        agentId =
-          (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
-          (prop as { created_by?: string | null }).created_by ??
-          null;
-      }
-    }
-    if (!propertyUuid) throw new Error("Property not found");
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      data.propertyId,
+    );
+    const q = supabaseAdmin
+      .from("properties")
+      .select("id, title, status, price, offer_discount, offer_ends, assigned_agent_id, created_by");
+    const { data: prop } = isUuid
+      ? await q.eq("id", data.propertyId).maybeSingle()
+      : await q.eq("slug", data.propertyId).maybeSingle();
+    if (!prop) throw new Error("Property not found");
+    const propertyUuid = (prop as { id: string }).id;
+    const resolvedTitle = (prop as { title: string }).title;
+    const agentId =
+      (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
+      (prop as { created_by?: string | null }).created_by ??
+      null;
+
+    const breakdown = await computeBreakdown(
+      supabaseAdmin,
+      prop as { price: number; status: string; offer_discount?: number | null; offer_ends?: string | null },
+      data.pricing,
+    );
+    const computedNotes = breakdownNotes(breakdown, resolvedTitle ?? data.propertyTitle);
+    const finalNotes = data.notes ? `${data.notes}\n\n${computedNotes}` : computedNotes;
 
     const { data: inserted, error } = await supabaseAdmin
       .from("bookings")
@@ -182,15 +183,15 @@ export const createBooking = createServerFn({ method: "POST" })
         customer_email: data.email || null,
         scheduled_date: data.date,
         scheduled_time: data.time,
-        notes: data.notes || null,
+        notes: finalNotes,
         source: "website",
         status: "pending",
-        ...pricingPatch(data.pricing),
+        ...patchFromBreakdown(breakdown),
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
+    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString(), breakdown };
   });
 
 // Authenticated booking creation — links booking to the signed-in user
