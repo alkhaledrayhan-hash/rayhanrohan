@@ -78,11 +78,12 @@ export function BookingForm({ property }: { property: Property }) {
       : 0;
 
   // Pricing — treat property.price as nightly for rent, total for sale.
+  const discount = Number(property.offerDiscount) || 0;
   const offerActive =
-    property.offerDiscount > 0 &&
+    discount > 0 &&
     (!property.offerEnds || new Date(property.offerEnds).getTime() > Date.now());
   const unitPrice = offerActive
-    ? property.price * (1 - property.offerDiscount / 100)
+    ? property.price * (1 - discount / 100)
     : property.price;
   const units = isRent ? nights : 1;
   const subtotal = unitPrice * units;
