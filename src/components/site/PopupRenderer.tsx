@@ -288,8 +288,20 @@ export function PopupRenderer() {
       aria-modal="true"
     >
       <div
-        className={`relative overflow-hidden ${animClass} ${isCorner ? "w-full max-w-sm" : isBanner ? "w-full max-w-3xl" : "w-full max-w-lg"}`}
-        style={{ background: bg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined }}
+        className={`relative overflow-hidden ${animClass} ${isCorner ? "w-full max-w-sm" : isBanner ? "w-full max-w-3xl" : popup.template === "split-image" ? "w-full max-w-2xl" : "w-full max-w-lg"}`}
+        style={{
+          background: popup.template === "gradient-hero"
+            ? `linear-gradient(135deg, ${accent}, ${shiftColor(accent, -40)})`
+            : popup.template === "glass-card"
+              ? `linear-gradient(135deg, ${withAlpha(accent, 0.15)}, ${withAlpha(accent, 0.05)}), ${bg}`
+              : bg,
+          color: text,
+          borderRadius: radius,
+          boxShadow: shadowVal,
+          fontFamily: popup.font_family || undefined,
+          backdropFilter: popup.template === "glass-card" ? "blur(20px) saturate(140%)" : undefined,
+          border: popup.template === "glass-card" ? `1px solid ${withAlpha(accent, 0.25)}` : undefined,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -300,63 +312,49 @@ export function PopupRenderer() {
           <X className="h-4 w-4" />
         </button>
 
-        {popup.template === "video" && body?.startsWith("http") ? (
-          <div className="aspect-video w-full"><iframe src={body} className="h-full w-full" allowFullScreen title="popup-video" /></div>
-        ) : popup.image_url ? (
-          <img src={popup.image_url} alt="" className={`w-full object-cover ${isCorner ? "h-32" : "h-44 sm:h-56"}`} />
-        ) : null}
-
-        {(popup.template === "hot-news" || popup.template === "offer") && (
-          <div className="px-5 pt-5">
-            <span className="inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" style={{ background: accent, color: "#fff" }}>
-              {popup.template === "hot-news" ? "Hot News" : "Special Offer"}
-            </span>
-          </div>
+        {/* Decorative blobs for gradient-hero & glass-card */}
+        {(popup.template === "gradient-hero" || popup.template === "glass-card") && (
+          <>
+            <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: shiftColor(accent, 60) }} />
+            <div className="pointer-events-none absolute -bottom-16 -right-10 h-48 w-48 rounded-full opacity-30 blur-3xl" style={{ background: shiftColor(accent, -30) }} />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "18px 18px" }} />
+          </>
         )}
 
-        <div className="p-5 sm:p-6" style={{ fontSize: popup.body_size ?? 14 }}>
-          {popup.subtitle && (
-            <div className="mb-1 text-xs font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>
-          )}
-          {title && <h3 className="font-display font-semibold" style={{ fontSize: popup.title_size ?? 24 }}>{title}</h3>}
-          {body && popup.template !== "video" && <p className="mt-2 opacity-80 whitespace-pre-line">{body}</p>}
+        {popup.template === "split-image" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2">
+            <div className="relative min-h-[180px] sm:min-h-[260px]">
+              {popup.image_url ? (
+                <img src={popup.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              ) : (
+                <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${accent}, ${shiftColor(accent, -40)})` }} />
+              )}
+            </div>
+            <PopupBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} onCta={onCta} onEmailSubmit={onEmailSubmit} close={close} />
+          </div>
+        ) : popup.template === "video" && body?.startsWith("http") ? (
+          <>
+            <div className="aspect-video w-full"><iframe src={body} className="h-full w-full" allowFullScreen title="popup-video" /></div>
+            <PopupBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} onCta={onCta} onEmailSubmit={onEmailSubmit} close={close} />
+          </>
+        ) : (
+          <>
+            {popup.image_url && popup.template !== "gradient-hero" && popup.template !== "glass-card" ? (
+              <img src={popup.image_url} alt="" className={`w-full object-cover ${isCorner ? "h-32" : "h-44 sm:h-56"}`} />
+            ) : null}
 
-          {popup.collect_email ? (
-            <form className="mt-4 space-y-2" onSubmit={onEmailSubmit}>
-              <input
-                type="email" name="email" required
-                placeholder={popup.email_placeholder || "you@example.com"}
-                className="w-full rounded-md border border-current/20 bg-white/90 px-3 py-2 text-sm text-slate-900"
-              />
-              <div className="flex flex-wrap gap-2">
-                <button type="submit" className="inline-flex flex-1 items-center justify-center rounded-md px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" style={{ background: accent }}>
-                  {ctaLabel || "Subscribe"}
-                </button>
-                {popup.secondary_cta_label && (
-                  <button type="button" onClick={() => close(true)} className="rounded-md border border-current/30 px-4 py-2.5 text-sm font-semibold">
-                    {popup.secondary_cta_label}
-                  </button>
-                )}
+            {(popup.template === "hot-news" || popup.template === "offer") && (
+              <div className="relative px-5 pt-5">
+                <span className="inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide" style={{ background: accent, color: "#fff" }}>
+                  {popup.template === "hot-news" ? "Hot News" : "Special Offer"}
+                </span>
               </div>
-            </form>
-          ) : (
-            (ctaLabel || popup.secondary_cta_label) && (
-              <div className="mt-5 flex flex-wrap gap-2">
-                {ctaLabel && (
-                  <button onClick={() => onCta(popup.cta_url)} className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" style={{ background: accent }}>
-                    {ctaLabel}
-                  </button>
-                )}
-                {popup.secondary_cta_label && (
-                  <button onClick={() => popup.secondary_cta_url ? onCta(popup.secondary_cta_url) : close(true)} className="inline-flex items-center justify-center rounded-md border border-current/30 px-5 py-2.5 text-sm font-semibold">
-                    {popup.secondary_cta_label}
-                  </button>
-                )}
-              </div>
-            )
-          )}
-        </div>
+            )}
+            <PopupBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} onCta={onCta} onEmailSubmit={onEmailSubmit} close={close} />
+          </>
+        )}
       </div>
+
 
       <style>{`
         @keyframes popup-fade-kf { from { opacity: 0 } to { opacity: 1 } }
