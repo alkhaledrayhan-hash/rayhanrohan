@@ -46,7 +46,12 @@ const KEYS = [
   "auth_signup_heading",
   "rent_tax_percent",
   "sale_tax_percent",
+  "auth_google_enabled",
+  "auth_apple_enabled",
+  "auth_phone_sms_enabled",
+  "auth_phone_whatsapp_enabled",
 ] as const;
+
 
 const CURRENCIES = [
   { code: "QAR", label: "Qatari Riyal (QAR ر.ق)" },
@@ -76,7 +81,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "theme" | "menus" | "footer";
+type TabId = "general" | "auth" | "providers" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -171,6 +176,8 @@ export function SettingsPanel() {
       <div className="flex flex-wrap items-center gap-2 border-b border-border">
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
+        <TabButton active={tab === "providers"} onClick={() => setTab("providers")}>Sign-in providers</TabButton>
+
         <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
         <TabButton active={tab === "footer"} onClick={() => setTab("footer")}>Footer content</TabButton>
