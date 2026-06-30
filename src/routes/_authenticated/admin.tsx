@@ -263,9 +263,6 @@ function AdminDashboard() {
             <NavItem icon={Users} label="Agents" active={section === "agents"} onClick={() => goSection("agents")} />
           )}
           {isAdmin && (
-            <NavItem icon={UserPlus} label="Add Agent" active={section === "add-agent"} onClick={() => goSection("add-agent")} />
-          )}
-          {isAdmin && (
             <NavItem icon={ShieldCheck} label="Users" active={section === "users"} onClick={() => goSection("users")} />
           )}
 
