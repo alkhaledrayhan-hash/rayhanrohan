@@ -205,6 +205,7 @@ function Dashboard() {
           {active === "overview" && <Overview user={user} profile={profile} isAdmin={!!isAdmin} />}
           {active === "profile" && <ProfileSection userId={user?.id} profile={profile} />}
           {active === "saved" && <PlaceholderPanel icon={Heart} title="Saved Properties" desc="Properties you save will appear here." />}
+          {active === "bookings" && <MyBookingsPanel />}
           {active === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {active === "admin" && isAdmin && <AdminPanel />}
         </div>
