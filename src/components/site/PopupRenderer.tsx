@@ -283,6 +283,16 @@ export function PopupRenderer() {
     : "transparent";
 
   return (
+    <div
+      className={`fixed inset-0 z-[100] flex ${positionClass}`}
+      style={{
+        background: overlayBg,
+        backdropFilter: popup.position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${popup.overlay_blur}px)` : undefined,
+      }}
+      onClick={popup.position === "center" ? () => close(true) : undefined}
+      role="dialog"
+      aria-modal="true"
+    >
       <div
         className={`relative overflow-hidden ${animClass} ${isCorner ? "w-full max-w-sm" : isBanner ? "w-full max-w-3xl" : popup.template === "split-image" ? "w-full max-w-2xl" : "w-full max-w-lg"}`}
         style={(() => {
