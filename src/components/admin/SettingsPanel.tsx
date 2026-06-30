@@ -259,7 +259,58 @@ export function SettingsPanel() {
             </div>
           </Field>
 
+          <Field icon={ImageIcon} label="Favicon" hint="Browser tab icon. PNG or ICO, square (e.g. 32×32 or 64×64).">
+            <div className="space-y-3">
+              <input
+                value={(form.site_favicon_url || "").startsWith("data:") ? "" : (form.site_favicon_url || "")}
+                onChange={(e) => setForm({ ...form, site_favicon_url: e.target.value })}
+                placeholder="https://example.com/favicon.png"
+                className={inputCls}
+                disabled={(form.site_favicon_url || "").startsWith("data:")}
+              />
+              <div className="flex flex-wrap items-center gap-3">
+                {form.site_favicon_url && (
+                  <img
+                    src={form.site_favicon_url}
+                    alt="Favicon preview"
+                    className="h-10 w-10 rounded-md border border-input object-contain bg-white"
+                  />
+                )}
+                <input
+                  ref={faviconFileRef}
+                  type="file"
+                  accept="image/png,image/x-icon,image/vnd.microsoft.icon,image/svg+xml,image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleFaviconFile(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => faviconFileRef.current?.click()}
+                  disabled={uploadingFavicon}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploadingFavicon ? "Processing…" : "Upload favicon"}
+                </button>
+                {form.site_favicon_url && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, site_favicon_url: "" })}
+                    className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    <X className="h-4 w-4" /> Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </Field>
+
           <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
+
             <div className="flex gap-2">
               <input
                 type="url"
