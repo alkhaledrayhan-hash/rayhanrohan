@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AtSign, Eye, Mail, Pencil, Phone, Trash2, UserCircle2, UserPlus, X } from "lucide-react";
+import { AtSign, Eye, Mail, Pencil, Phone, Search, Trash2, UserCircle2, UserPlus, X } from "lucide-react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { deleteAgent, listAgents, updateAgent } from "@/lib/agents.functions";
 import { AvatarUploader } from "@/components/admin/AddAgentForm";
+
 
 type Agent = {
   id: string;
