@@ -563,13 +563,13 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
           ]} />
       </Field>
       <Field label="Background color">
-        <input type="color" className="input h-10" value={value.bg_color || "#ffffff"} onChange={(e) => set({ bg_color: e.target.value })} />
+        <ThemedColorInput value={value.bg_color || "#ffffff"} onChange={(v) => set({ bg_color: v })} />
       </Field>
       <Field label="Text color">
-        <input type="color" className="input h-10" value={value.text_color || "#0f172a"} onChange={(e) => set({ text_color: e.target.value })} />
+        <ThemedColorInput value={value.text_color || "#0f172a"} onChange={(v) => set({ text_color: v })} />
       </Field>
       <Field label="Accent / CTA color">
-        <input type="color" className="input h-10" value={value.accent_color || "#16a34a"} onChange={(e) => set({ accent_color: e.target.value })} />
+        <ThemedColorInput value={value.accent_color || "#16a34a"} onChange={(v) => set({ accent_color: v })} />
       </Field>
       <Field label="Border radius (px)">
         <input type="number" min={0} max={48} className="input" value={value.border_radius ?? 16} onChange={(e) => set({ border_radius: Number(e.target.value) })} />
