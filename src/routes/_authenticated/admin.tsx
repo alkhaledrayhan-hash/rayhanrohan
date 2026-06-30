@@ -319,12 +319,8 @@ function AdminDashboard() {
             {desktopCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
 
-          <div className="relative hidden w-full max-w-md md:block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              placeholder="Search properties, agents, leads…"
-              className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
+          <div className="hidden w-full max-w-md md:block">
+            <AdminSearch onJump={(s) => goSection(s)} />
           </div>
           <div className="ml-auto flex items-center gap-2 md:gap-3">
             <Link
