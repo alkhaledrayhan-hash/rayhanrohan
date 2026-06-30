@@ -598,7 +598,7 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Backdrop overlay</div>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Overlay color">
-            <input type="color" className="input h-10" value={value.overlay_color || "#000000"} onChange={(e) => set({ overlay_color: e.target.value })} />
+            <ThemedColorInput value={value.overlay_color || "#000000"} onChange={(v) => set({ overlay_color: v })} />
           </Field>
           <Field label={`Opacity ${value.overlay_opacity ?? 50}%`}>
             <input type="range" min={0} max={100} value={value.overlay_opacity ?? 50} onChange={(e) => set({ overlay_opacity: Number(e.target.value) })} className="w-full" />
