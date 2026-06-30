@@ -745,6 +745,7 @@ function useAdminAnalytics() {
         valueDelta: pct(lastBucket, prevBucket),
         topLocations,
         recentLeads: (recent.data ?? []).map((l: any) => ({
+          id: l.id as string,
           name: l.name || "Anonymous",
           property: l.property_title || "—",
           status: l.status || "New",
