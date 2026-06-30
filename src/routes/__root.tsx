@@ -151,28 +151,62 @@ function ThemeApplier() {
 }
 
 function FaviconApplier() {
-  const { site_favicon_url, site_title } = useSiteSettings();
+  const { site_favicon_url, site_title, site_tagline } = useSiteSettings();
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const href = (site_favicon_url || "").trim();
-    if (!href) return;
     const head = document.head;
-    const existing = head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
-    existing.forEach((n) => n.parentNode?.removeChild(n));
-    const link = document.createElement("link");
-    link.rel = "icon";
-    link.href = href;
-    if (href.startsWith("data:image/png") || href.endsWith(".png")) link.type = "image/png";
-    else if (href.endsWith(".svg")) link.type = "image/svg+xml";
-    else if (href.endsWith(".ico")) link.type = "image/x-icon";
-    head.appendChild(link);
-    const apple = document.createElement("link");
-    apple.rel = "apple-touch-icon";
-    apple.href = href;
-    head.appendChild(apple);
-  }, [site_favicon_url, site_title]);
+
+    // Favicon
+    const href = (site_favicon_url || "").trim();
+    if (href) {
+      const existing = head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
+      existing.forEach((n) => n.parentNode?.removeChild(n));
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.href = href;
+      if (href.startsWith("data:image/png") || href.endsWith(".png")) link.type = "image/png";
+      else if (href.endsWith(".svg")) link.type = "image/svg+xml";
+      else if (href.endsWith(".ico")) link.type = "image/x-icon";
+      head.appendChild(link);
+      const apple = document.createElement("link");
+      apple.rel = "apple-touch-icon";
+      apple.href = href;
+      head.appendChild(apple);
+    }
+
+    // Title + tagline
+    const title = (site_title || "").trim();
+    const tagline = (site_tagline || "").trim();
+    const fullTitle = title && tagline ? `${title} — ${tagline}` : title || tagline;
+    if (fullTitle) document.title = fullTitle;
+
+    const upsertMeta = (selector: string, attr: "name" | "property", key: string, content: string) => {
+      if (!content) return;
+      let el = head.querySelector<HTMLMetaElement>(selector);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, key);
+        head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    if (fullTitle) {
+      upsertMeta('meta[property="og:title"]', "property", "og:title", fullTitle);
+      upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", fullTitle);
+    }
+    if (tagline) {
+      upsertMeta('meta[name="description"]', "name", "description", tagline);
+      upsertMeta('meta[property="og:description"]', "property", "og:description", tagline);
+      upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", tagline);
+    }
+    if (title) {
+      upsertMeta('meta[property="og:site_name"]', "property", "og:site_name", title);
+    }
+  }, [site_favicon_url, site_title, site_tagline]);
   return null;
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
