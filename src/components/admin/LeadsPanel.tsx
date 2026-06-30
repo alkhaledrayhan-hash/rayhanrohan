@@ -148,12 +148,12 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
             className="w-full rounded-lg border border-input bg-white py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <ThemedSelect value={src} onChange={(e) => setSrc(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+        <ThemedSelect value={src} onChange={(v: string) => setSrc(v)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
           <option value="all">All sources</option>
           {sources.map((s) => <option key={s} value={s}>{s}</option>)}
         </ThemedSelect>
         {isAdmin && (
-          <ThemedSelect value={agentFilter} onChange={(e) => setAgentFilter(e.target.value)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+          <ThemedSelect value={agentFilter} onChange={(v: string) => setAgentFilter(v)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
             <option value="all">All agents</option>
             <option value="unassigned">Unassigned</option>
             {agents.map((a) => (

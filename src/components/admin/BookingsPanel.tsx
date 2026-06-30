@@ -151,7 +151,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
         </div>
         <ThemedSelect
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as Status | "all")}
+          onChange={(v: string) => setStatusFilter(v as Status | "all")}
           className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
         >
           <option value="all">All status</option>
@@ -217,7 +217,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <ThemedSelect
                       value={b.status}
-                      onChange={(e) => setStatus.mutate({ id: b.id, status: e.target.value as Status })}
+                      onChange={(v: string) => setStatus.mutate({ id: b.id, status: v as Status })}
                       className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${statusClass[b.status as Status] ?? "bg-muted"}`}
                     >
                       {STATUSES.map((s) => (
@@ -389,7 +389,7 @@ function BookingDetailDialog({
                       onChange={(e) => setScheduledTime(e.target.value)} className="input" />
                   </Field>
                   <Field label="Status">
-                    <ThemedSelect value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
+                    <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </ThemedSelect>
                   </Field>
@@ -523,7 +523,7 @@ function CreateBookingDialog({
 
         <div className="mt-4 grid gap-3">
           <Field label="Property">
-            <ThemedSelect required value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="input">
+            <ThemedSelect required value={propertyId} onChange={(v: string) => setPropertyId(v)} className="input">
               {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
             </ThemedSelect>
           </Field>
@@ -546,7 +546,7 @@ function CreateBookingDialog({
               <input required type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="input" />
             </Field>
             <Field label="Status">
-              <ThemedSelect value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
+              <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </ThemedSelect>
             </Field>

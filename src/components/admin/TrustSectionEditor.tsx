@@ -120,7 +120,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             <Field label="Icon">
               <ThemedSelect
                 value={item.icon || ""}
-                onChange={(e) => setItem(i, { icon: e.target.value || undefined })}
+                onChange={(v: string) => setItem(i, { icon: v || undefined })}
                 className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
               >
                 <option value="">Auto</option>

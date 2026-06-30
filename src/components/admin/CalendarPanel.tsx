@@ -305,7 +305,7 @@ export function CalendarPanel() {
               <Field label="Property">
                 <ThemedSelect
                   value={form.propertyId}
-                  onChange={(e) => setForm((f) => ({ ...f, propertyId: e.target.value }))}
+                  onChange={(v: string) => setForm((f) => ({ ...f, propertyId: v }))}
                   className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                 >
                   <option value="">— Select a property —</option>
@@ -325,7 +325,7 @@ export function CalendarPanel() {
                 <Field label="Status">
                   <ThemedSelect
                     value={form.status}
-                    onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as typeof form.status }))}
+                    onChange={(v: string) => setForm((f) => ({ ...f, status: v as typeof form.status }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="pending">Pending</option>
@@ -366,7 +366,7 @@ export function CalendarPanel() {
                 <Field label="Assign agent (optional)">
                   <ThemedSelect
                     value={form.agentId}
-                    onChange={(e) => setForm((f) => ({ ...f, agentId: e.target.value }))}
+                    onChange={(v: string) => setForm((f) => ({ ...f, agentId: v }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="">— Use property's assigned agent —</option>

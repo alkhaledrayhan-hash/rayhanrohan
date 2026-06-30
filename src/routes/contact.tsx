@@ -331,7 +331,7 @@ function FormSelect({
       </span>
       <ThemedSelect
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(v: string) => onChange(v)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
         {options.map((o) => (

@@ -168,14 +168,14 @@ export function PostsManager() {
                 className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm"
               />
             </div>
-            <ThemedSelect value={fStatus} onChange={(e) => setFStatus(e.target.value as "all" | "draft" | "published")} className={inputCls}>
+            <ThemedSelect value={fStatus} onChange={(v: string) => setFStatus(v as "all" | "draft" | "published")} className={inputCls}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
             </ThemedSelect>
             <ThemedSelect
               value={fCategory}
-              onChange={(e) => setFCategory(e.target.value)}
+              onChange={(v: string) => setFCategory(v)}
               className={`${inputCls} lg:col-span-4`}
             >
               <option value="all">All categories</option>
@@ -383,7 +383,7 @@ function PostEditor({
           <Field label="Type">
             <ThemedSelect
               value={value.type || "blog"}
-              onChange={(e) => onChange({ ...value, type: e.target.value as any })}
+              onChange={(v: string) => onChange({ ...value, type: v as any })}
               className={inputCls}
             >
               <option value="blog">Blog</option>
@@ -393,7 +393,7 @@ function PostEditor({
           <Field label="Category">
             <ThemedSelect
               value={value.category_id || ""}
-              onChange={(e) => onChange({ ...value, category_id: e.target.value || null })}
+              onChange={(v: string) => onChange({ ...value, category_id: v || null })}
               className={inputCls}
             >
               <option value="">— None —</option>
@@ -405,7 +405,7 @@ function PostEditor({
           <Field label="Status">
             <ThemedSelect
               value={value.status || "draft"}
-              onChange={(e) => onChange({ ...value, status: e.target.value as any })}
+              onChange={(v: string) => onChange({ ...value, status: v as any })}
               className={inputCls}
             >
               <option value="draft">Draft</option>

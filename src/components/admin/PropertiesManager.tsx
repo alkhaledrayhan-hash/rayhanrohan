@@ -202,18 +202,18 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           placeholder="Search title, location, address…"
           className="rounded-md border border-input bg-background px-3 py-2 text-sm lg:col-span-2"
         />
-        <ThemedSelect value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fStatus} onChange={(v: string) => setFStatus(v as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All status</option>
           <option value="rent">For rent</option>
           <option value="sale">For sale</option>
         </ThemedSelect>
-        <ThemedSelect value={fApproval} onChange={(e) => setFApproval(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fApproval} onChange={(v: string) => setFApproval(v as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All approval</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
           <option value="rejected">Rejected</option>
         </ThemedSelect>
-        <ThemedSelect value={fType} onChange={(e) => setFType(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fType} onChange={(v: string) => setFType(v)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All types</option>
           {types.map((t) => <option key={t} value={t}>{t}</option>)}
         </ThemedSelect>
@@ -264,7 +264,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     {isAdmin ? (
                       <ThemedSelect
                         value={r.assigned_agent_id || ""}
-                        onChange={(e) => assignAgent.mutate({ id: r.id, agentId: e.target.value || null })}
+                        onChange={(v: string) => assignAgent.mutate({ id: r.id, agentId: v || null })}
                         className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
                       >
                         <option value="">— Unassigned —</option>
@@ -280,7 +280,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     {isAdmin ? (
                       <ThemedSelect
                         value={r.listing_status}
-                        onChange={(e) => setStatus.mutate({ id: r.id, status: e.target.value as any })}
+                        onChange={(v: string) => setStatus.mutate({ id: r.id, status: v as any })}
                         className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                           r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
                           : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
@@ -437,7 +437,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Address"><input required value={editing.address || ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} className={inputCls} /></Field>
               <Field label="Type"><input required value={editing.type || ""} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className={inputCls} /></Field>
               <Field label="Rent / Sale">
-                <ThemedSelect value={editing.status || "rent"} onChange={(e) => setEditing({ ...editing, status: e.target.value as any })} className={inputCls}>
+                <ThemedSelect value={editing.status || "rent"} onChange={(v: string) => setEditing({ ...editing, status: v as any })} className={inputCls}>
                   <option value="rent">Rent</option><option value="sale">Sale</option>
                 </ThemedSelect>
               </Field>
@@ -450,7 +450,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <Field label="Assigned agent" className="col-span-2">
                   <ThemedSelect
                     value={editing.assigned_agent_id || ""}
-                    onChange={(e) => setEditing({ ...editing, assigned_agent_id: e.target.value || null })}
+                    onChange={(v: string) => setEditing({ ...editing, assigned_agent_id: v || null })}
                     className={inputCls}
                   >
                     <option value="">— Unassigned —</option>

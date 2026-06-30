@@ -91,7 +91,7 @@ export function UsersManager() {
         </div>
         <ThemedSelect
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value as any)}
+          onChange={(v: string) => setRoleFilter(v as any)}
           className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
         >
           <option value="all">All roles</option>
@@ -331,7 +331,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
         <Field label="Role *">
           <ThemedSelect
             value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
+            onChange={(v: string) => setForm({ ...form, role: v as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>
@@ -416,7 +416,7 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
         <Field label="Role *">
           <ThemedSelect
             value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
+            onChange={(v: string) => setForm({ ...form, role: v as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>

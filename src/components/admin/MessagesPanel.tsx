@@ -143,8 +143,8 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
           {isAdmin && (
             <ThemedSelect
               value={agentFilter}
-              onChange={(e) => {
-                setAgentFilter(e.target.value);
+              onChange={(v: string) => {
+                setAgentFilter(v);
                 setSelectedId(null);
               }}
               className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"

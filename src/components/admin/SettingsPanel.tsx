@@ -271,7 +271,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Website time zone" hint="Used to display dates and times across the dashboard.">
             <ThemedSelect
               value={form.site_timezone || "Asia/Qatar"}
-              onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_timezone: v })}
               className={inputCls}
             >
               {Array.from(new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES])).map((tz) => (
@@ -283,7 +283,7 @@ export function SettingsPanel() {
           <Field icon={Calendar} label="Date format">
             <ThemedSelect
               value={form.date_format || "MMMM d, yyyy"}
-              onChange={(e) => setForm({ ...form, date_format: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, date_format: v })}
               className={inputCls}
             >
               <option value="MMMM d, yyyy">November 6, 2025</option>
@@ -297,7 +297,7 @@ export function SettingsPanel() {
           <Field icon={Clock} label="Time format">
             <ThemedSelect
               value={form.time_format || "h:mm a"}
-              onChange={(e) => setForm({ ...form, time_format: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, time_format: v })}
               className={inputCls}
             >
               <option value="h:mm a">12-hour (3:45 PM)</option>
@@ -308,7 +308,7 @@ export function SettingsPanel() {
           <Field icon={CalendarDays} label="Week starts on">
             <ThemedSelect
               value={form.week_starts_on || "monday"}
-              onChange={(e) => setForm({ ...form, week_starts_on: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, week_starts_on: v })}
               className={inputCls}
             >
               <option value="sunday">Sunday</option>
@@ -320,7 +320,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
             <ThemedSelect
               value={form.site_currency || "QAR"}
-              onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_currency: v })}
               className={inputCls}
             >
               {CURRENCIES.map((c) => (
@@ -332,7 +332,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
             <ThemedSelect
               value={form.site_language || "en"}
-              onChange={(e) => setForm({ ...form, site_language: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_language: v })}
               className={inputCls}
             >
               {LANGUAGES.map((l) => (
