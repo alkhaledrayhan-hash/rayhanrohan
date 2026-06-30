@@ -203,7 +203,7 @@ function ContactPage() {
             </p>
           </form>
 
-          {/* Office */}
+          {!hiddenOffice && (
           <aside className="space-y-6">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-2">
@@ -255,6 +255,7 @@ function ContactPage() {
               />
             </div>
           </aside>
+          )}
         </div>
       </section>
 
