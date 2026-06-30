@@ -462,21 +462,28 @@ function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device
   const isGradient = popup.template === "gradient-hero";
   const isGlass = popup.template === "glass-card";
 
+  const gFrom = popup.gradient_from || accent;
+  const gTo = popup.gradient_to || shiftHex(accent, -40);
+  const gAngle = popup.gradient_angle ?? 135;
+  const glassBlur = popup.glass_blur ?? 20;
+  const glassTint = popup.glass_tint ?? 15;
+  const glassBorder = popup.glass_border ?? 25;
+
   const cardBg = isGradient
-    ? `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})`
+    ? `linear-gradient(${gAngle}deg, ${gFrom}, ${gTo})`
     : isGlass
-      ? `linear-gradient(135deg, ${hexAlpha(accent, 15)}, ${hexAlpha(accent, 5)}), ${bg}`
+      ? `linear-gradient(${gAngle}deg, ${hexAlpha(gFrom, glassTint)}, ${hexAlpha(gTo, Math.max(2, glassTint - 10))}), ${bg}`
       : bg;
 
   return (
     <div className="mx-auto overflow-hidden rounded-xl border border-border bg-[linear-gradient(135deg,#f8fafc,#e2e8f0)] shadow-inner" style={{ width: stageW, height: stageH, maxWidth: "100%" }}>
       <div className={`relative h-full w-full flex ${align}`} style={{ background: overlayBg, backdropFilter: position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${Math.min(popup.overlay_blur ?? 0, 12)}px)` : undefined }}>
-        <div className="relative overflow-hidden" style={{ width: isSplit ? Math.min(Number(cardW) + 80, device === "mobile" ? 250 : 360) : cardW, background: cardBg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%", border: isGlass ? `1px solid ${hexAlpha(accent, 25)}` : undefined }}>
+        <div className="relative overflow-hidden" style={{ width: isSplit ? Math.min(Number(cardW) + 80, device === "mobile" ? 250 : 360) : cardW, background: cardBg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%", border: isGlass ? `1px solid ${hexAlpha(gFrom, glassBorder)}` : undefined, backdropFilter: isGlass && glassBlur > 0 ? `blur(${Math.min(glassBlur, 24)}px) saturate(140%)` : undefined }}>
           <div className="absolute right-2 top-2 z-10 rounded-full bg-black/10 p-1"><X className="h-3 w-3" /></div>
           {(isGradient || isGlass) && (
             <>
-              <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full opacity-40 blur-2xl" style={{ background: shiftHex(accent, 60) }} />
-              <div className="pointer-events-none absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-30 blur-2xl" style={{ background: shiftHex(accent, -30) }} />
+              <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full opacity-40 blur-2xl" style={{ background: shiftHex(gFrom, 60) }} />
+              <div className="pointer-events-none absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-30 blur-2xl" style={{ background: shiftHex(gTo, -30) }} />
             </>
           )}
           {isSplit ? (
@@ -485,7 +492,7 @@ function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device
                 {popup.image_url ? (
                   <img src={popup.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
-                  <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})` }} />
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(${gAngle}deg, ${gFrom}, ${gTo})` }} />
                 )}
               </div>
               <PreviewBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} />
