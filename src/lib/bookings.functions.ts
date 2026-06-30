@@ -8,14 +8,6 @@ const PricingSchema = z.object({
   checkIn: z.string().optional().or(z.literal("")),
   checkOut: z.string().optional().or(z.literal("")),
   nights: z.number().int().min(0).optional(),
-  unitPrice: z.number().min(0).optional(),
-  subtotal: z.number().min(0).optional(),
-  discountPercent: z.number().min(0).max(100).optional(),
-  discountAmount: z.number().min(0).optional(),
-  taxPercent: z.number().min(0).max(100).optional(),
-  taxAmount: z.number().min(0).optional(),
-  totalAmount: z.number().min(0).optional(),
-  currency: z.string().max(10).optional(),
 }).partial();
 
 const BookingSchema = z.object({
@@ -30,21 +22,112 @@ const BookingSchema = z.object({
   pricing: PricingSchema.optional(),
 });
 
-function pricingPatch(p?: z.infer<typeof PricingSchema>) {
-  if (!p) return {};
+type Breakdown = {
+  checkIn: string | null;
+  checkOut: string | null;
+  nights: number;
+  unitPrice: number;
+  units: number;
+  baseSubtotal: number;
+  discountPercent: number;
+  discountAmount: number;
+  subtotal: number;
+  taxPercent: number;
+  taxAmount: number;
+  totalAmount: number;
+  currency: string;
+  isRent: boolean;
+};
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+async function loadSettings(admin: ReturnType<typeof import("@supabase/supabase-js")["createClient"]>) {
+  const { data } = await admin.from("site_settings").select("key, value");
+  const map = new Map<string, string>();
+  for (const r of (data ?? []) as { key: string; value: string }[]) map.set(r.key, r.value);
+  return map;
+}
+
+async function computeBreakdown(
+  admin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server")>>["supabaseAdmin"],
+  property: {
+    price: number;
+    status: string;
+    offer_discount?: number | null;
+    offer_ends?: string | null;
+  },
+  pricing: z.infer<typeof PricingSchema> | undefined,
+): Promise<Breakdown> {
+  const isRent = property.status === "rent";
+  const settings = await loadSettings(admin as never);
+  const currency = (settings.get("site_currency") || "QAR").trim() || "QAR";
+  const taxPct = Math.max(
+    0,
+    Number(settings.get(isRent ? "rent_tax_percent" : "sale_tax_percent")) || 0,
+  );
+  const nights = isRent ? Math.max(0, Number(pricing?.nights) || 0) : 0;
+  const discount = Math.max(0, Math.min(100, Number(property.offer_discount) || 0));
+  const offerActive =
+    discount > 0 &&
+    (!property.offer_ends || new Date(property.offer_ends).getTime() > Date.now());
+  const effDiscount = offerActive ? discount : 0;
+  const basePrice = Number(property.price) || 0;
+  const unitPrice = round2(basePrice * (1 - effDiscount / 100));
+  const units = isRent ? nights : 1;
+  const baseSubtotal = round2(basePrice * units);
+  const subtotal = round2(unitPrice * units);
+  const discountAmount = round2(baseSubtotal - subtotal);
+  const taxAmount = round2(subtotal * (taxPct / 100));
+  const totalAmount = round2(subtotal + taxAmount);
   return {
-    check_in: p.checkIn || null,
-    check_out: p.checkOut || null,
-    nights: p.nights ?? null,
-    unit_price: p.unitPrice ?? null,
-    subtotal: p.subtotal ?? null,
-    discount_percent: p.discountPercent ?? null,
-    discount_amount: p.discountAmount ?? null,
-    tax_percent: p.taxPercent ?? null,
-    tax_amount: p.taxAmount ?? null,
-    total_amount: p.totalAmount ?? null,
-    currency: p.currency || null,
+    checkIn: pricing?.checkIn || null,
+    checkOut: pricing?.checkOut || null,
+    nights,
+    unitPrice,
+    units,
+    baseSubtotal,
+    discountPercent: effDiscount,
+    discountAmount,
+    subtotal,
+    taxPercent: taxPct,
+    taxAmount,
+    totalAmount,
+    currency,
+    isRent,
   };
+}
+
+function patchFromBreakdown(b: Breakdown) {
+  return {
+    check_in: b.checkIn,
+    check_out: b.checkOut,
+    nights: b.nights,
+    unit_price: b.unitPrice,
+    subtotal: b.subtotal,
+    discount_percent: b.discountPercent,
+    discount_amount: b.discountAmount,
+    tax_percent: b.taxPercent,
+    tax_amount: b.taxAmount,
+    total_amount: b.totalAmount,
+    currency: b.currency,
+  };
+}
+
+function breakdownNotes(b: Breakdown, title: string) {
+  const money = (n: number) => `${b.currency} ${n.toFixed(2)}`;
+  const lines: string[] = [`Property: ${title}`];
+  if (b.isRent && b.checkIn && b.checkOut) {
+    lines.push(`Rent period: ${b.checkIn} → ${b.checkOut} (${b.nights} night${b.nights === 1 ? "" : "s"})`);
+    lines.push(`Rate: ${money(b.unitPrice)} / night${b.discountPercent ? ` (${b.discountPercent}% offer)` : ""}`);
+    lines.push(`Subtotal: ${money(b.unitPrice)} × ${b.nights} = ${money(b.subtotal)}`);
+  } else {
+    lines.push(`Price: ${money(b.unitPrice)}${b.discountPercent ? ` (${b.discountPercent}% offer)` : ""}`);
+    lines.push(`Subtotal: ${money(b.subtotal)}`);
+  }
+  if (b.discountAmount > 0) lines.push(`Offer discount: − ${money(b.discountAmount)}`);
+  if (b.taxPercent > 0) lines.push(`VAT (${b.taxPercent}%): ${money(b.taxAmount)}`);
+  lines.push(`Total: ${money(b.totalAmount)}`);
+  return lines.join("\n");
 }
 
 export type BookingInput = z.infer<typeof BookingSchema>;
