@@ -444,40 +444,91 @@ function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device
 
   const cardW = isCorner ? 200 : isBanner ? "94%" : device === "mobile" ? 230 : 300;
 
+  const isSplit = popup.template === "split-image";
+  const isGradient = popup.template === "gradient-hero";
+  const isGlass = popup.template === "glass-card";
+
+  const cardBg = isGradient
+    ? `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})`
+    : isGlass
+      ? `linear-gradient(135deg, ${hexAlpha(accent, 15)}, ${hexAlpha(accent, 5)}), ${bg}`
+      : bg;
+
   return (
     <div className="mx-auto overflow-hidden rounded-xl border border-border bg-[linear-gradient(135deg,#f8fafc,#e2e8f0)] shadow-inner" style={{ width: stageW, height: stageH, maxWidth: "100%" }}>
       <div className={`relative h-full w-full flex ${align}`} style={{ background: overlayBg, backdropFilter: position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${Math.min(popup.overlay_blur ?? 0, 12)}px)` : undefined }}>
-        <div className="relative overflow-hidden" style={{ width: cardW, background: bg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%" }}>
-          <div className="absolute right-2 top-2 rounded-full bg-black/10 p-1"><X className="h-3 w-3" /></div>
-          {popup.template === "video" && body?.startsWith("http") ? (
-            <div className="flex aspect-video w-full items-center justify-center bg-black/80 text-[10px] text-white">Video embed</div>
-          ) : popup.image_url ? (
-            <img src={popup.image_url} alt="" className={`w-full object-cover ${isCorner ? "h-16" : "h-20"}`} />
-          ) : null}
-          {(popup.template === "hot-news" || popup.template === "offer") && (
-            <div className="px-3 pt-3">
-              <span className="inline-block rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white" style={{ background: accent }}>
-                {popup.template === "hot-news" ? "Hot News" : "Special Offer"}
-              </span>
-            </div>
+        <div className="relative overflow-hidden" style={{ width: isSplit ? Math.min(Number(cardW) + 80, device === "mobile" ? 250 : 360) : cardW, background: cardBg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%", border: isGlass ? `1px solid ${hexAlpha(accent, 25)}` : undefined }}>
+          <div className="absolute right-2 top-2 z-10 rounded-full bg-black/10 p-1"><X className="h-3 w-3" /></div>
+          {(isGradient || isGlass) && (
+            <>
+              <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full opacity-40 blur-2xl" style={{ background: shiftHex(accent, 60) }} />
+              <div className="pointer-events-none absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-30 blur-2xl" style={{ background: shiftHex(accent, -30) }} />
+            </>
           )}
-          <div className="p-3" style={{ fontSize: Math.max(10, Math.min((popup.body_size ?? 14) * 0.78, 13)) }}>
-            {popup.subtitle && <div className="mb-0.5 text-[9px] font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>}
-            {title && <div className="font-display font-semibold leading-tight" style={{ fontSize: Math.max(12, Math.min((popup.title_size ?? 24) * 0.6, 18)) }}>{title}</div>}
-            {body && popup.template !== "video" && <p className="mt-1 line-clamp-3 opacity-80">{body}</p>}
-            {popup.collect_email && (
-              <div className="mt-2 rounded border border-current/20 bg-white/90 px-2 py-1 text-[10px] text-slate-500">{popup.email_placeholder || "you@example.com"}</div>
-            )}
-            <div className="mt-2 flex flex-wrap gap-1">
-              {ctaLabel && <span className="rounded px-2 py-1 text-[10px] font-semibold text-white" style={{ background: accent }}>{ctaLabel}</span>}
-              {popup.secondary_cta_label && <span className="rounded border border-current/40 px-2 py-1 text-[10px] font-semibold">{popup.secondary_cta_label}</span>}
+          {isSplit ? (
+            <div className="grid grid-cols-2">
+              <div className="relative" style={{ minHeight: 120 }}>
+                {popup.image_url ? (
+                  <img src={popup.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})` }} />
+                )}
+              </div>
+              <PreviewBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} />
             </div>
-          </div>
+          ) : (
+            <>
+              {popup.template === "video" && body?.startsWith("http") ? (
+                <div className="flex aspect-video w-full items-center justify-center bg-black/80 text-[10px] text-white">Video embed</div>
+              ) : popup.image_url && !isGradient && !isGlass ? (
+                <img src={popup.image_url} alt="" className={`w-full object-cover ${isCorner ? "h-16" : "h-20"}`} />
+              ) : null}
+              {(popup.template === "hot-news" || popup.template === "offer") && (
+                <div className="relative px-3 pt-3">
+                  <span className="inline-block rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white" style={{ background: accent }}>
+                    {popup.template === "hot-news" ? "Hot News" : "Special Offer"}
+                  </span>
+                </div>
+              )}
+              <PreviewBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} />
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+function PreviewBody({ popup, title, body, ctaLabel, accent }: { popup: Partial<Popup>; title?: string | null; body?: string | null; ctaLabel?: string | null; accent: string }) {
+  return (
+    <div className="relative p-3" style={{ fontSize: Math.max(10, Math.min((popup.body_size ?? 14) * 0.78, 13)) }}>
+      {popup.subtitle && <div className="mb-0.5 text-[9px] font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>}
+      {title && <div className="font-display font-semibold leading-tight" style={{ fontSize: Math.max(12, Math.min((popup.title_size ?? 24) * 0.6, 18)) }}>{title}</div>}
+      {body && popup.template !== "video" && <p className="mt-1 line-clamp-3 opacity-80">{body}</p>}
+      {popup.collect_email && (
+        <div className="mt-2 rounded border border-current/20 bg-white/90 px-2 py-1 text-[10px] text-slate-500">{popup.email_placeholder || "you@example.com"}</div>
+      )}
+      <div className="mt-2 flex flex-wrap gap-1">
+        {ctaLabel && <span className="rounded px-2 py-1 text-[10px] font-semibold text-white" style={{ background: accent }}>{ctaLabel}</span>}
+        {popup.secondary_cta_label && <span className="rounded border border-current/40 px-2 py-1 text-[10px] font-semibold">{popup.secondary_cta_label}</span>}
+      </div>
+    </div>
+  );
+}
+
+function shiftHex(color: string, amount: number) {
+  if (!color || !color.startsWith("#")) return color || "#000000";
+  const clean = color.replace("#", "");
+  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return color;
+  const s = (v: number) => Math.max(0, Math.min(255, v + amount));
+  const hex = (n: number) => s(n).toString(16).padStart(2, "0");
+  return `#${hex(r)}${hex(g)}${hex(b)}`;
+}
+
 
 function TargetingSummary({ popup }: { popup: Partial<Popup> }) {
   const chips: string[] = [];
