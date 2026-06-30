@@ -247,15 +247,38 @@ export function PagesManager({
         {(() => {
           const items = [
             ...visibleSections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText, hidden: !!s.is_hidden, row: s })),
-            ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon, hidden: false, row: null as Section | null })),
+            ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon, hidden: !!(v as any).hidden, row: null as Section | null })),
           ].sort((a, b) => a.sort_order - b.sort_order);
-          // Reordering only swaps among real DB sections.
           const dbItems = items.filter((i) => i.kind === "db");
+          const virtualItems = items.filter((i) => i.kind === "virtual");
+          const pending = swapOrder.isPending || setVirtualMeta.isPending;
           return items.map((item) => {
             const Icon = item.icon;
-            const dbIdx = item.kind === "db" ? dbItems.findIndex((d) => d.id === item.id) : -1;
-            const canUp = item.kind === "db" && dbIdx > 0;
-            const canDown = item.kind === "db" && dbIdx >= 0 && dbIdx < dbItems.length - 1;
+            const isVirtual = item.kind === "virtual";
+            const dbIdx = !isVirtual ? dbItems.findIndex((d) => d.id === item.id) : -1;
+            const vIdx = isVirtual ? virtualItems.findIndex((d) => d.id === item.id) : -1;
+            const canUp = isVirtual ? vIdx > 0 : dbIdx > 0;
+            const canDown = isVirtual ? vIdx >= 0 && vIdx < virtualItems.length - 1 : dbIdx >= 0 && dbIdx < dbItems.length - 1;
+            const onMove = (dir: -1 | 1) => {
+              if (isVirtual) {
+                if (!parentVirtualRow) return;
+                const other = virtualItems[vIdx + dir];
+                if (!other) return;
+                swapVirtualOrder(parentVirtualRow, { key: item.key, sort_order: item.sort_order }, { key: other.key, sort_order: other.sort_order });
+              } else {
+                const other = dbItems[dbIdx + dir];
+                if (!other) return;
+                swapOrder.mutate({ a: item.row as Section, b: other.row as Section });
+              }
+            };
+            const onToggleHide = () => {
+              if (isVirtual) {
+                if (!parentVirtualRow) return;
+                setVirtualMeta.mutate({ parent: parentVirtualRow, key: item.key, patch: { hidden: !item.hidden } });
+              } else {
+                toggleHidden.mutate({ id: item.id, value: !item.hidden });
+              }
+            };
             return (
               <div
                 key={item.id}
@@ -269,36 +292,34 @@ export function PagesManager({
                   <span className="truncate">{item.label}</span>
                   {item.hidden && <span className="ml-1 rounded bg-muted-foreground/10 px-1 text-[9px] uppercase tracking-wide text-muted-foreground">hidden</span>}
                 </button>
-                {item.kind === "db" && (
-                  <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button
-                      type="button"
-                      title="Move up"
-                      disabled={!canUp || swapOrder.isPending}
-                      onClick={(e) => { e.stopPropagation(); if (canUp) swapOrder.mutate({ a: item.row as Section, b: dbItems[dbIdx - 1].row as Section }); }}
-                      className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
-                    >
-                      <ArrowUp className="h-3 w-3" />
-                    </button>
-                    <button
-                      type="button"
-                      title="Move down"
-                      disabled={!canDown || swapOrder.isPending}
-                      onClick={(e) => { e.stopPropagation(); if (canDown) swapOrder.mutate({ a: item.row as Section, b: dbItems[dbIdx + 1].row as Section }); }}
-                      className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
-                    >
-                      <ArrowDown className="h-3 w-3" />
-                    </button>
-                    <button
-                      type="button"
-                      title={item.hidden ? "Show on site" : "Hide from site"}
-                      onClick={(e) => { e.stopPropagation(); toggleHidden.mutate({ id: item.id, value: !item.hidden }); }}
-                      className="grid h-6 w-6 place-items-center rounded hover:bg-background"
-                    >
-                      {item.hidden ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </button>
-                  </div>
-                )}
+                <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button
+                    type="button"
+                    title="Move up"
+                    disabled={!canUp || pending}
+                    onClick={(e) => { e.stopPropagation(); if (canUp) onMove(-1); }}
+                    className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
+                  >
+                    <ArrowUp className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    title="Move down"
+                    disabled={!canDown || pending}
+                    onClick={(e) => { e.stopPropagation(); if (canDown) onMove(1); }}
+                    className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
+                  >
+                    <ArrowDown className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    title={item.hidden ? "Show on site" : "Hide from site"}
+                    onClick={(e) => { e.stopPropagation(); onToggleHide(); }}
+                    className="grid h-6 w-6 place-items-center rounded hover:bg-background"
+                  >
+                    {item.hidden ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                  </button>
+                </div>
               </div>
             );
           });
