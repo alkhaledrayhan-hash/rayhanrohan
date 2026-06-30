@@ -8,6 +8,11 @@ const PricingSchema = z.object({
   checkIn: z.string().optional().or(z.literal("")),
   checkOut: z.string().optional().or(z.literal("")),
   nights: z.number().int().min(0).optional(),
+  expectedUnitPrice: z.number().nonnegative().optional(),
+  expectedSubtotal: z.number().nonnegative().optional(),
+  expectedTaxPercent: z.number().nonnegative().optional(),
+  expectedTaxAmount: z.number().nonnegative().optional(),
+  expectedTotal: z.number().nonnegative().optional(),
 }).partial();
 
 const BookingSchema = z.object({

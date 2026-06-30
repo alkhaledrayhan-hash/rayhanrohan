@@ -72,23 +72,52 @@ export function BookingForm({ property }: { property: Property }) {
     return d;
   }, []);
 
-  const nights =
-    isRent && range?.from && range?.to
-      ? Math.max(1, differenceInCalendarDays(range.to, range.from))
-      : 0;
-
   // Pricing — treat property.price as nightly for rent, total for sale.
-  const discount = Number(property.offerDiscount) || 0;
-  const offerActive =
-    discount > 0 &&
-    (!property.offerEnds || new Date(property.offerEnds).getTime() > Date.now());
-  const unitPrice = offerActive
-    ? property.price * (1 - discount / 100)
-    : property.price;
-  const units = isRent ? nights : 1;
-  const subtotal = unitPrice * units;
-  const taxAmount = subtotal * (taxPct / 100);
-  const total = subtotal + taxAmount;
+  // Recomputes on every render whenever date range, price, or VAT % changes,
+  // so the displayed total always reflects the latest values.
+  const breakdown = useMemo(() => {
+    const nights =
+      isRent && range?.from && range?.to
+        ? Math.max(1, differenceInCalendarDays(range.to, range.from))
+        : 0;
+    const discount = Number(property.offerDiscount) || 0;
+    const offerActive =
+      discount > 0 &&
+      (!property.offerEnds || new Date(property.offerEnds).getTime() > Date.now());
+    const unitPrice = offerActive
+      ? property.price * (1 - discount / 100)
+      : property.price;
+    const units = isRent ? nights : 1;
+    const baseSubtotal = property.price * units;
+    const subtotal = unitPrice * units;
+    const discountAmount = baseSubtotal - subtotal;
+    const taxAmount = subtotal * (taxPct / 100);
+    const total = subtotal + taxAmount;
+    const round2 = (n: number) => Math.round(n * 100) / 100;
+    return {
+      nights,
+      offerActive,
+      discountPercent: offerActive ? discount : 0,
+      unitPrice: round2(unitPrice),
+      units,
+      baseSubtotal: round2(baseSubtotal),
+      discountAmount: round2(discountAmount),
+      subtotal: round2(subtotal),
+      taxPercent: taxPct,
+      taxAmount: round2(taxAmount),
+      total: round2(total),
+    };
+  }, [isRent, range, property.price, property.offerDiscount, property.offerEnds, taxPct]);
+
+  const {
+    nights,
+    offerActive,
+    discountPercent: discount,
+    units,
+    subtotal,
+    taxAmount,
+    total,
+  } = breakdown;
   const money = (n: number) => `${currency} ${fmt.format(Math.round(n * 100) / 100)}`;
 
   async function onSubmit(e: React.FormEvent) {
@@ -145,7 +174,13 @@ export function BookingForm({ property }: { property: Property }) {
         pricing: {
           checkIn: iso(startDate),
           checkOut: endDate ? iso(endDate) : "",
-          nights: isRent ? nights : 0,
+          nights: isRent ? breakdown.nights : 0,
+          // Latest client-calculated values — server re-validates against these.
+          expectedUnitPrice: breakdown.unitPrice,
+          expectedSubtotal: breakdown.subtotal,
+          expectedTaxPercent: breakdown.taxPercent,
+          expectedTaxAmount: breakdown.taxAmount,
+          expectedTotal: breakdown.total,
         },
       };
       const res = auth?.user
