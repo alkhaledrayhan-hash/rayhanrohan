@@ -46,6 +46,25 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     },
   });
 
+  // Open a lead detail when notifications (or anywhere) dispatch the event.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const id = (e as CustomEvent<{ id: string }>).detail?.id;
+      if (id) setPendingOpenId(id);
+    };
+    window.addEventListener("admin:open-lead", onOpen as EventListener);
+    return () => window.removeEventListener("admin:open-lead", onOpen as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (!pendingOpenId || !rows.length) return;
+    const found = rows.find((r) => r.id === pendingOpenId);
+    if (found) {
+      setViewing(found);
+      setPendingOpenId(null);
+    }
+  }, [pendingOpenId, rows]);
+
   const { data: adminEmail } = useQuery({
     queryKey: ["site-settings", "admin_email"],
     queryFn: async () => {
