@@ -182,7 +182,7 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
 }
 
 
-function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void; onEdit: () => void }) {
+function AgentCard({ agent, onView, onEdit, selected, onToggleSelect }: { agent: Agent; onView: () => void; onEdit: () => void; selected?: boolean; onToggleSelect?: () => void }) {
   const delFn = useServerFn(deleteAgent);
   const qc = useQueryClient();
   const mut = useMutation({
@@ -202,7 +202,12 @@ function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void
     .toUpperCase();
 
   return (
-    <div className="group rounded-2xl border border-border bg-white p-5 text-center shadow-sm transition hover:border-primary/40 hover:shadow-md">
+    <div className={`group relative rounded-2xl border bg-white p-5 text-center shadow-sm transition hover:border-primary/40 hover:shadow-md ${selected ? "border-primary ring-2 ring-primary/30" : "border-border"}`}>
+      {onToggleSelect && (
+        <div className="absolute left-3 top-3 z-10" onClick={(e) => e.stopPropagation()}>
+          <SelectCheckbox checked={!!selected} onChange={onToggleSelect} ariaLabel="Select agent" />
+        </div>
+      )}
       <button
         type="button"
         onClick={onView}
