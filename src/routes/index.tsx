@@ -204,6 +204,7 @@ function Home() {
         )}
 
         {/* Locations */}
+        {!isHidden("locations") && (
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
@@ -285,10 +286,11 @@ function Home() {
 
           </div>
         </section>
+        )}
 
-        <HomeContact />
+        {!isHidden("contact") && <HomeContact />}
 
-        <LogoMarquee />
+        {!isHidden("partners") && <LogoMarquee />}
       </main>
       <Footer />
     </div>
