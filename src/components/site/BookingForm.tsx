@@ -134,9 +134,17 @@ export function BookingForm({ property }: { property: Property }) {
       const startDate = isRent ? range!.from! : date!;
       const endDate = isRent ? range!.to! : null;
       const iso = (d: Date) => d.toISOString().slice(0, 10);
-      const notes = endDate
-        ? `Rent period: ${iso(startDate)} → ${iso(endDate)} (${nights} night${nights === 1 ? "" : "s"})`
-        : "";
+      const lines: string[] = [];
+      if (endDate) lines.push(`Rent period: ${iso(startDate)} → ${iso(endDate)} (${nights} night${nights === 1 ? "" : "s"})`);
+      if (isRent) {
+        lines.push(`Rate: ${money(unitPrice)} / night${offerActive ? ` (${discount}% offer applied)` : ""}`);
+        lines.push(`Subtotal: ${money(unitPrice)} × ${nights} = ${money(subtotal)}`);
+      } else {
+        lines.push(`Price: ${money(unitPrice)}${offerActive ? ` (${discount}% offer applied)` : ""}`);
+      }
+      if (taxPct > 0) lines.push(`VAT (${taxPct}%): ${money(taxAmount)}`);
+      lines.push(`Total: ${money(total)}`);
+      const notes = lines.join("\n");
       const payload = {
         propertyId: property.id,
         propertyTitle: property.title,
