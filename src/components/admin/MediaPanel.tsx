@@ -87,7 +87,7 @@ export function MediaPanel() {
   const [preview, setPreview] = useState<WithUrl | null>(null);
   const [assignItem, setAssignItem] = useState<WithUrl | null>(null);
 
-  const { data: items, isLoading } = useQuery({
+  const { data: items, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["media", "list", "all-buckets"],
     queryFn: async () => {
       const all: Array<MediaItem & { bucket: string }> = [];
@@ -116,7 +116,19 @@ export function MediaPanel() {
         .map((f) => ({ ...f, url: urlByKey.get(`${f.bucket}/${f.name}`) ?? "" }))
         .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     },
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
   });
+
+  // Listen for cross-component upload events so any uploader in the app refreshes the gallery.
+  useEffect(() => {
+    const onChanged = () => qc.invalidateQueries({ queryKey: ["media", "list", "all-buckets"] });
+    window.addEventListener("media:changed", onChanged);
+    return () => window.removeEventListener("media:changed", onChanged);
+  }, [qc]);
+
 
   const filtered = useMemo(() => {
     if (!items) return [];
