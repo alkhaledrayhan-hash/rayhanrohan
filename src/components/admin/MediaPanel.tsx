@@ -15,6 +15,7 @@ import {
   X,
   Link as LinkIcon,
   Home,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -86,7 +87,7 @@ export function MediaPanel() {
   const [preview, setPreview] = useState<WithUrl | null>(null);
   const [assignItem, setAssignItem] = useState<WithUrl | null>(null);
 
-  const { data: items, isLoading } = useQuery({
+  const { data: items, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["media", "list", "all-buckets"],
     queryFn: async () => {
       const all: Array<MediaItem & { bucket: string }> = [];
@@ -115,7 +116,19 @@ export function MediaPanel() {
         .map((f) => ({ ...f, url: urlByKey.get(`${f.bucket}/${f.name}`) ?? "" }))
         .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
     },
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always",
   });
+
+  // Listen for cross-component upload events so any uploader in the app refreshes the gallery.
+  useEffect(() => {
+    const onChanged = () => qc.invalidateQueries({ queryKey: ["media", "list", "all-buckets"] });
+    window.addEventListener("media:changed", onChanged);
+    return () => window.removeEventListener("media:changed", onChanged);
+  }, [qc]);
+
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -240,6 +253,16 @@ export function MediaPanel() {
             <option key={b} value={b}>{b}</option>
           ))}
         </select>
+
+        <button
+          onClick={() => refetch()}
+          disabled={isFetching}
+          title="Refresh"
+          className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-xs hover:bg-muted disabled:opacity-50"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          Sync
+        </button>
       </div>
 
       {/* Type filter pills */}
