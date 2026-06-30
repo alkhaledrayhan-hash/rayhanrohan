@@ -31,6 +31,16 @@ function buildTimeSlots() {
 
 export function BookingForm({ property }: { property: Property }) {
   const isRent = property.status === "rent";
+  const settings = useSiteSettings();
+  const currency = settings.site_currency || "QAR";
+  const taxPct = Math.max(
+    0,
+    Number(isRent ? settings.rent_tax_percent : settings.sale_tax_percent) || 0,
+  );
+  const fmt = useMemo(
+    () => new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }),
+    [],
+  );
   const timeSlots = useMemo(buildTimeSlots, []);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [range, setRange] = useState<DateRange | undefined>(undefined);
@@ -49,7 +59,7 @@ export function BookingForm({ property }: { property: Property }) {
     start.setDate(start.getDate() + 1);
     if (isRent) {
       const end = new Date(start);
-      end.setMonth(end.getMonth() + 1);
+      end.setDate(end.getDate() + 2);
       setRange({ from: start, to: end });
     } else {
       setDate(start);
@@ -66,6 +76,19 @@ export function BookingForm({ property }: { property: Property }) {
     isRent && range?.from && range?.to
       ? Math.max(1, differenceInCalendarDays(range.to, range.from))
       : 0;
+
+  // Pricing — treat property.price as nightly for rent, total for sale.
+  const offerActive =
+    property.offerDiscount > 0 &&
+    (!property.offerEnds || new Date(property.offerEnds).getTime() > Date.now());
+  const unitPrice = offerActive
+    ? property.price * (1 - property.offerDiscount / 100)
+    : property.price;
+  const units = isRent ? nights : 1;
+  const subtotal = unitPrice * units;
+  const taxAmount = subtotal * (taxPct / 100);
+  const total = subtotal + taxAmount;
+  const money = (n: number) => `${currency} ${fmt.format(Math.round(n * 100) / 100)}`;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
