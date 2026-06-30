@@ -65,16 +65,18 @@ export function BookingForm({ property }: { property: Property }) {
     }
     setSubmitting(true);
     try {
-      const res = await submit({
-        data: {
-          propertyId: property.id,
-          propertyTitle: property.title,
-          name,
-          phone,
-          date: date.toISOString().slice(0, 10),
-          time,
-        },
-      });
+      const { data: auth } = await supabase.auth.getUser();
+      const payload = {
+        propertyId: property.id,
+        propertyTitle: property.title,
+        name,
+        phone,
+        date: date.toISOString().slice(0, 10),
+        time,
+      };
+      const res = auth?.user
+        ? await submitAsUser({ data: payload })
+        : await submit({ data: payload });
       toast.success("Viewing requested", {
         description: `Reference ${res.id}. Our agent will confirm by phone shortly.`,
       });
