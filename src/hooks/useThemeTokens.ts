@@ -13,6 +13,7 @@ export type ThemeColors = {
   muted?: string;
   accent?: string;
   border?: string;
+  scrollbar?: string;
 };
 
 export type ThemeTypography = {
@@ -37,6 +38,7 @@ export const DEFAULT_COLORS: ThemeColors = {
   muted: "oklch(0.96 0.005 80)",
   accent: "oklch(0.96 0.02 85)",
   border: "oklch(0.92 0.005 80)",
+  scrollbar: "#f97316",
 };
 
 export const DEFAULT_TYPOGRAPHY: ThemeTypography = {
