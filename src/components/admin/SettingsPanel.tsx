@@ -44,6 +44,8 @@ const KEYS = [
   "auth_subheading",
   "auth_signin_heading",
   "auth_signup_heading",
+  "rent_tax_percent",
+  "sale_tax_percent",
 ] as const;
 
 const CURRENCIES = [
