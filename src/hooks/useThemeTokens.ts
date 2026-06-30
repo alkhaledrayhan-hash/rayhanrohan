@@ -95,6 +95,7 @@ export function buildThemeCss(colors: ThemeColors, t: ThemeTypography): string {
     --input:${c.border};
     --ring:${c.primary};
     --radius:${(ty.radius || 8) / 16}rem;
+    --scrollbar-color:${c.scrollbar};
   }
   html{font-size:${ty.font_size_base}px}
   .text-sm{font-size:${ty.font_size_sm}px}
