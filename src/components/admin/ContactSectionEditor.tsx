@@ -16,6 +16,19 @@ export type HomeContactConfig = {
   default_dial_code: string;
 };
 
+export type MapTemplate = "classic" | "rounded" | "framed" | "dark" | "minimal";
+export type MapConfig = {
+  mode: "query" | "embed" | "coords";
+  query: string;
+  embed_html: string;
+  lat: string;
+  lng: string;
+  zoom: number;
+  height: number;
+  template: MapTemplate;
+  grayscale: boolean;
+};
+
 export type ContactPageConfig = {
   hero: { eyebrow: string; title: string; description: string; image?: string };
   phone_display: string;
@@ -27,6 +40,7 @@ export type ContactPageConfig = {
   default_dial_code: string;
   office: { name: string; address: string; hours: string; license: string; cr: string };
   map_query: string;
+  map: MapConfig;
 };
 
 const HOME_DEFAULT: HomeContactConfig = {
@@ -40,6 +54,18 @@ const HOME_DEFAULT: HomeContactConfig = {
   default_dial_code: "+974",
 };
 
+const DEFAULT_MAP: MapConfig = {
+  mode: "query",
+  query: "West Bay Doha Qatar",
+  embed_html: "",
+  lat: "25.3231",
+  lng: "51.5310",
+  zoom: 14,
+  height: 256,
+  template: "classic",
+  grayscale: false,
+};
+
 const PAGE_DEFAULT: ContactPageConfig = {
   hero: { eyebrow: "Contact", title: "Talk to a Doha property advisor.", description: "Viewings, valuations, off-market opportunities or listing your property — our team replies within one business hour, seven days a week.", image: "" },
   phone_display: "+974 4444 0123",
@@ -51,6 +77,7 @@ const PAGE_DEFAULT: ContactPageConfig = {
   default_dial_code: "+974",
   office: { name: "Head Office", address: "Tower 2, Level 18, West Bay Business District\nAl Corniche Street, Doha, Qatar", hours: "Sat–Thu · 9:00 AM – 8:00 PM\nFriday · By appointment", license: "QA-RE-2014-0387", cr: "114532" },
   map_query: "West Bay Doha Qatar",
+  map: DEFAULT_MAP,
 };
 
 export function normalizeHomeContact(raw: any): HomeContactConfig {
@@ -70,6 +97,7 @@ export function normalizeContactPage(raw: any): ContactPageConfig {
     hero: { ...PAGE_DEFAULT.hero, ...(raw.hero || {}) },
     office: { ...PAGE_DEFAULT.office, ...(raw.office || {}) },
     subjects: Array.isArray(raw.subjects) && raw.subjects.length ? raw.subjects.map(String) : PAGE_DEFAULT.subjects,
+    map: { ...DEFAULT_MAP, ...(raw.map || {}), query: raw.map?.query ?? raw.map_query ?? DEFAULT_MAP.query },
   };
 }
 
@@ -148,7 +176,34 @@ export function HomeContactEditor({ sectionId, initial }: { sectionId: string; i
   );
 }
 
-export type ContactSectionKey = "hero" | "channels" | "subjects" | "office";
+export type ContactSectionKey = "hero" | "channels" | "subjects" | "office" | "map";
+
+export function extractIframeSrc(html: string): string {
+  if (!html) return "";
+  const trimmed = html.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const m = trimmed.match(/src=["']([^"']+)["']/i);
+  return m ? m[1] : "";
+}
+
+export function buildMapSrc(map: MapConfig): string {
+  if (map.mode === "embed") {
+    const src = extractIframeSrc(map.embed_html);
+    if (src) return src;
+  }
+  if (map.mode === "coords" && map.lat && map.lng) {
+    return `https://www.google.com/maps?q=${encodeURIComponent(map.lat + "," + map.lng)}&z=${map.zoom || 14}&output=embed`;
+  }
+  return `https://www.google.com/maps?q=${encodeURIComponent(map.query || "")}&z=${map.zoom || 14}&output=embed`;
+}
+
+export const MAP_TEMPLATES: { id: MapTemplate; label: string; desc: string; wrapper: string }[] = [
+  { id: "classic", label: "Classic", desc: "Soft border + card shadow", wrapper: "overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)]" },
+  { id: "rounded", label: "Pill", desc: "Extra-rounded corners", wrapper: "overflow-hidden rounded-[2rem] border border-border shadow-lg" },
+  { id: "framed", label: "Framed", desc: "Thick frame with padding", wrapper: "overflow-hidden rounded-2xl border-[6px] border-primary/20 bg-background p-1 shadow-lg" },
+  { id: "dark", label: "Dark", desc: "Dark inverted frame", wrapper: "overflow-hidden rounded-2xl border border-foreground/80 bg-foreground p-1 shadow-xl" },
+  { id: "minimal", label: "Minimal", desc: "No border, flat", wrapper: "overflow-hidden rounded-md" },
+];
 
 export function ContactPageEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: ContactSectionKey }) {
   const [v, setV] = useState<ContactPageConfig>(normalizeContactPage(initial));
@@ -212,6 +267,80 @@ export function ContactPageEditor({ sectionId, initial, only }: { sectionId: str
           <Field label="Map query (used by Google Maps embed)" value={v.map_query} onChange={(x) => setV({ ...v, map_query: x })} />
           <div className="sm:col-span-2"><Field label="Address (multi-line)" value={v.office.address} onChange={(x) => setV({ ...v, office: { ...v.office, address: x } })} multiline rows={3} /></div>
           <div className="sm:col-span-2"><Field label="Hours (multi-line)" value={v.office.hours} onChange={(x) => setV({ ...v, office: { ...v.office, hours: x } })} multiline rows={3} /></div>
+        </div>
+      )}
+
+      {show("map") && (
+        <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Map embed</p>
+
+          <label className="sm:col-span-2 text-sm">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Source</span>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { id: "query", label: "Place name" },
+                { id: "coords", label: "Coordinates" },
+                { id: "embed", label: "Embed code" },
+              ] as const).map((opt) => (
+                <button key={opt.id} type="button" onClick={() => setV({ ...v, map: { ...v.map, mode: opt.id } })}
+                  className={`rounded-lg border px-3 py-2 text-sm transition ${v.map.mode === opt.id ? "border-primary bg-primary/10 text-foreground" : "border-input bg-white text-muted-foreground hover:bg-muted"}`}>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </label>
+
+          {v.map.mode === "query" && (
+            <div className="sm:col-span-2"><Field label="Place / address query" value={v.map.query} onChange={(x) => setV({ ...v, map: { ...v.map, query: x } })} /></div>
+          )}
+          {v.map.mode === "coords" && (
+            <>
+              <Field label="Latitude" value={v.map.lat} onChange={(x) => setV({ ...v, map: { ...v.map, lat: x } })} />
+              <Field label="Longitude" value={v.map.lng} onChange={(x) => setV({ ...v, map: { ...v.map, lng: x } })} />
+            </>
+          )}
+          {v.map.mode === "embed" && (
+            <div className="sm:col-span-2">
+              <Field label="Paste Google Maps embed <iframe> or src URL" value={v.map.embed_html} onChange={(x) => setV({ ...v, map: { ...v.map, embed_html: x } })} multiline rows={4} />
+              <p className="mt-1 text-[11px] text-muted-foreground">In Google Maps → Share → Embed a map → copy HTML. Only the iframe src is used.</p>
+            </div>
+          )}
+
+          <Field label="Zoom (1–20)" value={String(v.map.zoom)} onChange={(x) => setV({ ...v, map: { ...v.map, zoom: Math.max(1, Math.min(20, Number(x) || 14)) } })} />
+          <Field label="Height (px)" value={String(v.map.height)} onChange={(x) => setV({ ...v, map: { ...v.map, height: Math.max(160, Math.min(800, Number(x) || 256)) } })} />
+
+          <label className="sm:col-span-2 text-sm">
+            <span className="mb-1 block text-xs font-medium text-muted-foreground">Template / design</span>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {MAP_TEMPLATES.map((t) => (
+                <button key={t.id} type="button" onClick={() => setV({ ...v, map: { ...v.map, template: t.id } })}
+                  className={`rounded-lg border px-3 py-2 text-left transition ${v.map.template === t.id ? "border-primary bg-primary/10" : "border-input bg-white hover:bg-muted"}`}>
+                  <p className="text-sm font-medium">{t.label}</p>
+                  <p className="text-[11px] text-muted-foreground">{t.desc}</p>
+                </button>
+              ))}
+            </div>
+          </label>
+
+          <label className="sm:col-span-2 inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={v.map.grayscale} onChange={(e) => setV({ ...v, map: { ...v.map, grayscale: e.target.checked } })} />
+            Grayscale filter
+          </label>
+
+          <div className="sm:col-span-2">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Live preview</p>
+            <div className={MAP_TEMPLATES.find((t) => t.id === v.map.template)?.wrapper || ""}>
+              <iframe
+                key={`${v.map.mode}-${v.map.template}-${v.map.zoom}`}
+                title="Map preview"
+                src={buildMapSrc(v.map)}
+                style={{ height: v.map.height, filter: v.map.grayscale ? "grayscale(1) contrast(0.95)" : undefined }}
+                className="w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
         </div>
       )}
 
