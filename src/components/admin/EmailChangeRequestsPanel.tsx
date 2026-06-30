@@ -64,6 +64,24 @@ export function EmailChangeRequestsPanel() {
     (r) => filter === "all" || r.status === filter,
   );
 
+  const bulk = useBulkSelection(rows);
+  const bulkRun = async (action: "approve" | "reject") => {
+    const items = bulk.selectedItems.filter((r) => r.status === "pending");
+    if (!items.length) { toast.info("No pending items selected"); return; }
+    let ok = 0;
+    for (const r of items) {
+      try {
+        if (action === "approve") await approveFn({ data: { id: r.id, admin_note: "" } });
+        else await rejectFn({ data: { id: r.id, admin_note: "" } });
+        ok++;
+      } catch (e: any) { toast.error(e.message); }
+    }
+    if (ok) toast.success(`${action === "approve" ? "Approved" : "Rejected"} ${ok}`);
+    qc.invalidateQueries({ queryKey: ["email-change-requests"] });
+    qc.invalidateQueries({ queryKey: ["all-users"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
