@@ -41,7 +41,8 @@ type Breakdown = {
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-async function loadSettings(admin: ReturnType<typeof import("@supabase/supabase-js")["createClient"]>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadSettings(admin: any) {
   const { data } = await admin.from("site_settings").select("key, value");
   const map = new Map<string, string>();
   for (const r of (data ?? []) as { key: string; value: string }[]) map.set(r.key, r.value);
@@ -49,7 +50,8 @@ async function loadSettings(admin: ReturnType<typeof import("@supabase/supabase-
 }
 
 async function computeBreakdown(
-  admin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server")>>["supabaseAdmin"],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  admin: any,
   property: {
     price: number;
     status: string;
