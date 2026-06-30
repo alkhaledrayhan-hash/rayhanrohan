@@ -941,7 +941,7 @@ function ChartCard({
   );
 }
 
-function RecentLeads() {
+
 function RecentLeads({ leads }: { leads: { name: string; property: string; status: string; time: string }[] }) {
   if (!leads.length) {
     return (
