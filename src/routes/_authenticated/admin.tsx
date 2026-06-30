@@ -378,6 +378,7 @@ function AdminDashboard() {
           {section === "calendar" && <CalendarPanel />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
           {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
+          {section === "popups" && (isAdmin ? <PopupsManager /> : <PlaceholderCard icon={Sparkles} title="Popup Maker" desc="Only admins can manage popups." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <AgentSettingsPanel />)}
         </main>
       </div>
