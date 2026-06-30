@@ -930,11 +930,12 @@ function ChartCard({
             {headline} <span className={`ml-1 text-xs font-semibold ${trendColor}`}>{delta}</span>
           </p>
         </div>
-        <ThemedSelect className="rounded-md border border-input bg-white px-2 py-1 text-xs text-muted-foreground">
+        <ThemedSelect className="h-6 rounded-md border border-input bg-white px-1.5 py-0 text-[10px] leading-none text-muted-foreground">
           <option>Today</option>
-          <option>This week</option>
-          <option>This month</option>
+          <option>Week</option>
+          <option>Month</option>
         </ThemedSelect>
+
       </div>
       <div className="mt-4">{children}</div>
     </div>
