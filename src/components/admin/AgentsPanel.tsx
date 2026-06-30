@@ -26,22 +26,75 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
 
   const [editing, setEditing] = useState<Agent | null>(null);
   const [viewing, setViewing] = useState<Agent | null>(null);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<"all" | "complete" | "incomplete">("all");
 
-  const header = onAddAgent ? (
-    <div className="flex items-center justify-between gap-3">
+  const agents = (data?.agents ?? []) as Agent[];
+
+  const isComplete = (a: Agent) =>
+    !!(a.full_name && a.email && a.phone && a.avatar_url);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return agents.filter((a) => {
+      if (status === "complete" && !isComplete(a)) return false;
+      if (status === "incomplete" && isComplete(a)) return false;
+      if (!q) return true;
+      return (
+        (a.full_name ?? "").toLowerCase().includes(q) ||
+        (a.email ?? "").toLowerCase().includes(q) ||
+        (a.username ?? "").toLowerCase().includes(q)
+      );
+    });
+  }, [agents, search, status]);
+
+  const headerBar = (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 className="font-display text-lg font-semibold">Agents</h2>
         <p className="text-xs text-muted-foreground">Manage agent accounts and details.</p>
       </div>
-      <button
-        type="button"
-        onClick={onAddAgent}
-        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
-      >
-        <UserPlus className="h-4 w-4" /> Add Agent
-      </button>
+      {onAddAgent && (
+        <button
+          type="button"
+          onClick={onAddAgent}
+          className="inline-flex items-center gap-2 self-start rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 sm:self-auto"
+        >
+          <UserPlus className="h-4 w-4" /> Add Agent
+        </button>
+      )}
     </div>
-  ) : null;
+  );
+
+  const toolbar = (
+    <div className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="relative flex-1">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name, email, or username…"
+          className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+      </div>
+      <ThemedSelect
+        value={status}
+        onChange={(v) => setStatus(v as typeof status)}
+        className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-56"
+      >
+        <option value="all">All status</option>
+        <option value="complete">Complete profile</option>
+        <option value="incomplete">Incomplete profile</option>
+      </ThemedSelect>
+    </div>
+  );
+
+  const header = (
+    <>
+      {headerBar}
+      {!isLoading && agents.length > 0 && toolbar}
+    </>
+  );
 
   if (isLoading) {
     return (
@@ -51,8 +104,6 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
       </div>
     );
   }
-
-  const agents = (data?.agents ?? []) as Agent[];
 
   if (!agents.length) {
     return (
@@ -72,16 +123,22 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
   return (
     <div className="space-y-4">
       {header}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {agents.map((a) => (
-          <AgentCard
-            key={a.id}
-            agent={a}
-            onView={() => setViewing(a)}
-            onEdit={() => setEditing(a)}
-          />
-        ))}
-      </div>
+      {filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border bg-white p-10 text-center text-sm text-muted-foreground">
+          No agents match your filters.
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((a) => (
+            <AgentCard
+              key={a.id}
+              agent={a}
+              onView={() => setViewing(a)}
+              onEdit={() => setEditing(a)}
+            />
+          ))}
+        </div>
+      )}
       {viewing && (
         <ViewAgentDialog
           agent={viewing}
@@ -93,6 +150,7 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
     </div>
   );
 }
+
 
 function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void; onEdit: () => void }) {
   const delFn = useServerFn(deleteAgent);
