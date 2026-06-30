@@ -104,6 +104,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         status: p.status, price: Number(p.price) || 0,
         bedrooms: Number(p.bedrooms) || 0, bathrooms: Number(p.bathrooms) || 0,
         rooms: Number(p.rooms) || 0, sqft: Number(p.sqft) || 0,
+        year_built: p.year_built ? Number(p.year_built) : null,
         image: p.image || null, description: p.description || null,
         features: Array.isArray(p.features) ? p.features : [],
         gallery: Array.isArray(p.gallery) ? p.gallery : [],
