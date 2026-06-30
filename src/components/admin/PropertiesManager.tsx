@@ -435,8 +435,24 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               className="mt-4 grid max-h-[70vh] grid-cols-2 gap-3 overflow-y-auto text-sm"
             >
               <Field label="Title" className="col-span-2"><input required value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className={inputCls} /></Field>
-              <Field label="Location"><input required value={editing.location || ""} onChange={(e) => setEditing({ ...editing, location: e.target.value })} className={inputCls} /></Field>
-              <Field label="Address"><input required value={editing.address || ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} className={inputCls} /></Field>
+              <Field label="Location (city / area)">
+                <LocationAutocomplete
+                  value={editing.location || ""}
+                  onChange={(v) => setEditing({ ...editing, location: v })}
+                  onPick={(d) => setEditing((cur) => ({ ...(cur || {}), location: d.value, address: cur?.address || d.fullAddress }))}
+                  placeholder="e.g. The Pearl, West Bay…"
+                  mode="location"
+                />
+              </Field>
+              <Field label="Full address (Google-style suggestions)">
+                <LocationAutocomplete
+                  value={editing.address || ""}
+                  onChange={(v) => setEditing({ ...editing, address: v })}
+                  onPick={(d) => setEditing((cur) => ({ ...(cur || {}), address: d.fullAddress, location: cur?.location || d.value }))}
+                  placeholder="Street, district, city"
+                  mode="address"
+                />
+              </Field>
               <Field label="Type"><input required value={editing.type || ""} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className={inputCls} /></Field>
               <Field label="Rent / Sale">
                 <ThemedSelect value={editing.status || "rent"} onChange={(v: string) => setEditing({ ...editing, status: v as any })} className={inputCls}>
@@ -448,6 +464,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
               <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Year built"><input type="number" placeholder="e.g. 2022" value={editing.year_built ?? ""} onChange={(e) => setEditing({ ...editing, year_built: e.target.value ? Number(e.target.value) : null })} className={inputCls} /></Field>
               {isAdmin && (
                 <Field label="Assigned agent" className="col-span-2">
                   <ThemedSelect
