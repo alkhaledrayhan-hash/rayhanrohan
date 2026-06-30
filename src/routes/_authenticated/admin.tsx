@@ -1020,3 +1020,117 @@ function PlaceholderCard({
     </div>
   );
 }
+
+type AdminSection =
+  | "overview" | "properties" | "pages" | "agents" | "add-agent" | "users"
+  | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts"
+  | "calendar" | "settings";
+
+type SearchHit = {
+  id: string;
+  label: string;
+  sub?: string;
+  section: AdminSection;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+function AdminSearch({ onJump }: { onJump: (s: AdminSection) => void }) {
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState(false);
+  const [hits, setHits] = useState<SearchHit[]>([]);
+  const [loading, setLoading] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 2) {
+      setHits([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const ctrl = { cancelled: false };
+    const t = setTimeout(async () => {
+      try {
+        const like = `%${term}%`;
+        const [props, agents, leads, posts] = await Promise.all([
+          supabase.from("properties").select("id,title,location").or(`title.ilike.${like},location.ilike.${like}`).limit(5),
+          supabase.from("profiles").select("id,full_name,email").or(`full_name.ilike.${like},email.ilike.${like}`).limit(5),
+          supabase.from("leads").select("id,name,email,phone").or(`name.ilike.${like},email.ilike.${like},phone.ilike.${like}`).limit(5),
+          supabase.from("posts").select("id,title,slug").ilike("title", like).limit(5),
+        ]);
+        if (ctrl.cancelled) return;
+        const out: SearchHit[] = [];
+        (props.data ?? []).forEach((r: any) => out.push({ id: `p-${r.id}`, label: r.title, sub: r.location ?? "Property", section: "properties", icon: Building2 }));
+        (agents.data ?? []).forEach((r: any) => out.push({ id: `a-${r.id}`, label: r.full_name || r.email, sub: r.email ?? "User", section: "agents", icon: Users }));
+        (leads.data ?? []).forEach((r: any) => out.push({ id: `l-${r.id}`, label: r.name || r.email || r.phone, sub: r.email || r.phone || "Lead", section: "leads", icon: Mail }));
+        (posts.data ?? []).forEach((r: any) => out.push({ id: `n-${r.id}`, label: r.title, sub: "News / Blog", section: "posts", icon: Newspaper }));
+        setHits(out);
+        setOpen(true);
+      } finally {
+        if (!ctrl.cancelled) setLoading(false);
+      }
+    }, 250);
+    return () => {
+      ctrl.cancelled = true;
+      clearTimeout(t);
+    };
+  }, [q]);
+
+  return (
+    <div ref={wrapRef} className="relative w-full">
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onFocus={() => { if (hits.length) setOpen(true); }}
+        placeholder="Search properties, agents, leads…"
+        className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+      />
+      {open && (loading || hits.length > 0 || q.trim().length >= 2) && (
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-auto rounded-xl border border-border bg-white shadow-lg">
+          {loading && <div className="px-4 py-3 text-xs text-muted-foreground">Searching…</div>}
+          {!loading && hits.length === 0 && (
+            <div className="px-4 py-3 text-xs text-muted-foreground">No results for "{q}"</div>
+          )}
+          {!loading && hits.map((h) => {
+            const Icon = h.icon;
+            return (
+              <button
+                key={h.id}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onJump(h.section);
+                  setOpen(false);
+                  setQ("");
+                }}
+                className="flex w-full items-center gap-3 border-b border-border/60 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-muted/60"
+              >
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-medium text-foreground">{h.label}</span>
+                  {h.sub && <span className="block truncate text-xs text-muted-foreground">{h.sub}</span>}
+                </span>
+                <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                  {h.section}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
