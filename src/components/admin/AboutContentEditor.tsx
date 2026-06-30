@@ -112,6 +112,33 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
+function ColumnsPicker({ value, onChange }: { value: 1 | 2 | 3 | 4; onChange: (v: 1 | 2 | 3 | 4) => void }) {
+  return (
+    <div>
+      <span className="mb-2 block text-xs font-medium text-muted-foreground">Columns per row</span>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {([1, 2, 3, 4] as const).map((c) => {
+          const Icon = c === 1 ? Rows3 : c === 2 ? Columns2 : c === 3 ? Columns3 : Columns4;
+          const active = value === c;
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => onChange(c)}
+              className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-medium transition ${
+                active ? "border-primary bg-primary/10 text-primary" : "border-border bg-white hover:border-primary/40"
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              {c} column{c > 1 ? "s" : ""}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export type AboutSectionKey = "stats" | "story" | "mission" | "values" | "team" | "company";
 
 export function AboutContentEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: AboutSectionKey }) {
