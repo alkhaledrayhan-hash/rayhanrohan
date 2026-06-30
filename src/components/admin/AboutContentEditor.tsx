@@ -270,6 +270,8 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Eyebrow" value={v.values.eyebrow} onChange={(x) => setV({ ...v, values: { ...v.values, eyebrow: x } })} />
           <Input label="Title" value={v.values.title} onChange={(x) => setV({ ...v, values: { ...v.values, title: x } })} />
         </div>
+        <ColumnsPicker value={v.values.columns} onChange={(c) => setV({ ...v, values: { ...v.values, columns: c } })} />
+        <div className="hidden">
         {v.values.items.map((it, i) => (
           <Card key={i} title={`Value ${i + 1}`} onRemove={() => setV({ ...v, values: { ...v.values, items: v.values.items.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
