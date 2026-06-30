@@ -148,7 +148,7 @@ function AboutPage() {
         {/* Stats */}
         {c.stats.length > 0 && (
           <section className="border-b border-border bg-secondary/40">
-            <div className={`mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:px-8 grid-cols-2 sm:grid-cols-${Math.min(c.stats.length, 4)}`}>
+            <div className={`mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:px-8 grid-cols-2 ${({1:"sm:grid-cols-1",2:"sm:grid-cols-2",3:"sm:grid-cols-3",4:"sm:grid-cols-4"} as Record<number,string>)[Math.min(c.stats.length, 4)] || "sm:grid-cols-4"}`}>
               {c.stats.map((s) => (
                 <div key={s.label} className="text-center">
                   <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
