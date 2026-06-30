@@ -65,6 +65,7 @@ import {
   Users,
   X,
   BadgePercent,
+  Sparkles,
 } from "lucide-react";
 
 
