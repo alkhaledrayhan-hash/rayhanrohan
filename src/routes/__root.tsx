@@ -170,49 +170,65 @@ function RootComponent() {
     };
   }, [queryClient, router]);
 
-  // Scroll-reveal: auto-tag sections and observe them
+  // Scroll-reveal: tag and observe sections after hydration completes.
+  // Deferred via rAF + idle callback so it never interferes with hydration
+  // (previously caused hydration mismatches + slow first paint).
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
 
-    const targets = new Set<Element>();
-    const tag = () => {
-      // Top-level sections within main
-      document
-        .querySelectorAll(
-          "main section, main > div > section, main article, main [data-animate]",
-        )
-        .forEach((el) => {
-          if (!el.hasAttribute("data-reveal")) el.setAttribute("data-reveal", "");
-          targets.add(el);
-        });
-    };
+    let io: IntersectionObserver | null = null;
+    let cancelled = false;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-visible");
-            io.unobserve(e.target);
+    const run = () => {
+      if (cancelled) return;
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-visible");
+              io!.unobserve(e.target);
+            }
           }
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
-    );
-
-    const observe = () => {
-      tag();
-      targets.forEach((el) => io.observe(el));
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
+      );
+      const tagAndObserve = () => {
+        const vh = window.innerHeight || 800;
+        document
+          .querySelectorAll(
+            "main section, main > div > section, main article, main [data-animate]",
+          )
+          .forEach((el) => {
+            if (el.hasAttribute("data-reveal") || el.classList.contains("is-visible")) return;
+            const rect = (el as HTMLElement).getBoundingClientRect();
+            // Skip elements already in (or above) the viewport — never hide content the user can see.
+            if (rect.top < vh * 0.9) {
+              el.classList.add("is-visible");
+              el.setAttribute("data-reveal", "");
+              return;
+            }
+            el.setAttribute("data-reveal", "");
+            io!.observe(el);
+          });
+      };
+      tagAndObserve();
+      const t = window.setTimeout(tagAndObserve, 800);
+      (window as unknown as { __revealTimer?: number }).__revealTimer = t;
     };
 
-    observe();
-    const mo = new MutationObserver(() => observe());
-    mo.observe(document.body, { childList: true, subtree: true });
+
+    const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => number })
+      .requestIdleCallback;
+    const handle = idle ? idle(run) : window.setTimeout(run, 100);
 
     return () => {
-      io.disconnect();
-      mo.disconnect();
+      cancelled = true;
+      io?.disconnect();
+      const t = (window as unknown as { __revealTimer?: number }).__revealTimer;
+      if (t) window.clearTimeout(t);
+      if (!idle) window.clearTimeout(handle as number);
     };
   }, [pathname]);
 
@@ -220,13 +236,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeApplier />
       <RouteProgress />
-      <div key={pathname} data-page-enter>
-        <Outlet />
-      </div>
+      <Outlet />
       <ChatWidget />
       <BackToTop />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
+
 
