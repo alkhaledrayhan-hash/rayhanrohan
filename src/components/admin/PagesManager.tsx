@@ -299,6 +299,14 @@ export function PagesManager({
               </div>
               <AboutContentEditor sectionId={active.id} initial={active.content || {}} only={aboutOnlyMap[active.section_key]} />
             </>
+          ) : active.page_slug === "contact" && active.section_key.startsWith("contact-") ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">Contact page · edit this section and click save.</p>
+              </div>
+              <ContactPageEditor sectionId={active.id} initial={active.content || {}} only={contactOnlyMap[active.section_key]} />
+            </>
           ) : active.section_key === "content" && active.page_slug === "about" ? (
             <>
               <div className="mb-4">
