@@ -721,7 +721,7 @@ function ABTestTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
             <textarea className="input min-h-[80px]" value={variant.body || ""} onChange={(e) => setV({ body: e.target.value })} />
           </Field>
           <Field label="Variant B accent color">
-            <input type="color" className="input h-10" value={variant.accent_color || value.accent_color || "#16a34a"} onChange={(e) => setV({ accent_color: e.target.value })} />
+            <ThemedColorInput value={variant.accent_color || value.accent_color || "#16a34a"} onChange={(v) => setV({ accent_color: v })} />
           </Field>
         </>
       )}
