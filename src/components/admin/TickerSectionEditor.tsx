@@ -324,10 +324,7 @@ function RangeField({ label, value, min, max, onChange, unit = "" }: { label: st
 function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <Field label={label}>
-      <div className="flex items-center gap-2 rounded-lg border border-input bg-background p-1.5">
-        <input type="color" value={value.slice(0, 7)} onChange={(e) => onChange(e.target.value)} className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent" />
-        <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-transparent text-xs uppercase tracking-wide outline-none" />
-      </div>
+      <ThemedColorInput value={value} onChange={onChange} />
     </Field>
   );
 }
