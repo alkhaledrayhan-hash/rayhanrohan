@@ -249,9 +249,14 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
         ))}
         <button onClick={() => setV({ ...v, values: { ...v.values, items: [...v.values.items, { icon: "sparkles", title: "", body: "" }] } })} className="inline-flex items-center gap-2 rounded-md border border-input bg-white px-3 py-1.5 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add value</button>
       </Group>
+      </>
+      )}
 
+      {show("team") && (
+      <>
       {/* Team */}
       <Group title="Team">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.team.eyebrow} onChange={(x) => setV({ ...v, team: { ...v.team, eyebrow: x } })} />
           <Input label="Title" value={v.team.title} onChange={(x) => setV({ ...v, team: { ...v.team, title: x } })} />
