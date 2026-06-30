@@ -125,6 +125,24 @@ export function PostsManager() {
     });
   }, [posts, search, currentType, fStatus, fCategory]);
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: typeof filtered) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("posts").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} post(s)`);
+    qc.invalidateQueries({ queryKey: ["admin-posts"] });
+  };
+  const bulkUpdate = async (patch: any, label: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("posts") as any).update(patch).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${label}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin-posts"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-border">
