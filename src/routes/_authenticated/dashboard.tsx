@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
+import { AccountMenu } from "@/components/account-menu";
 import { MyBookingsPanel } from "@/components/dashboard/MyBookingsPanel";
 import {
   listMyEmailChangeRequests,
@@ -190,14 +191,21 @@ function Dashboard() {
                 <ShieldCheck className="h-4 w-4" /> <span className="hidden sm:inline">{isAdmin ? "Admin Panel" : "Agent Panel"}</span>
               </Link>
             )}
-            {(isAdmin || isAgent) && (
-              <span className="hidden rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-primary sm:inline">
-                {isAdmin ? "Admin" : "Agent"}
-              </span>
-            )}
-            <div className="grid h-9 w-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground sm:h-10 sm:w-10">
-              {initials}
-            </div>
+            <AccountMenu
+              initials={initials}
+              fullName={profile?.full_name || "My Account"}
+              roleLabel={isAdmin ? "Admin" : isAgent ? "Agent" : "Member"}
+              email={profile?.email || user?.email || undefined}
+              avatarUrl={profile?.avatar_url || undefined}
+              extraLink={canAccessAdmin ? {
+                label: isAdmin ? "Admin Panel" : "Agent Panel",
+                to: "/admin",
+                icon: ShieldCheck,
+              } : undefined}
+              onProfile={() => setActive("profile")}
+              onSettings={() => setActive("profile")}
+              onSignOut={handleSignOut}
+            />
           </div>
         </header>
 
