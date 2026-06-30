@@ -773,7 +773,7 @@ function fmtCurrency(n: number) {
   return `QAR ${n.toLocaleString()}`;
 }
 
-function Overview({ name, role }: { name: string | undefined; role: string }) {
+function Overview({ name, role, onJump }: { name: string | undefined; role: string; onJump: (s: string) => void }) {
   const { data, isLoading } = useAdminAnalytics();
   const a = data;
   const trendOf = (n: number): "up" | "down" => (n >= 0 ? "up" : "down");
