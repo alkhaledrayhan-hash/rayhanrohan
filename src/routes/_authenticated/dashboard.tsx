@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
+import { MyBookingsPanel } from "@/components/dashboard/MyBookingsPanel";
 import {
   listMyEmailChangeRequests,
   requestEmailChange,
@@ -104,9 +105,9 @@ function Dashboard() {
   const isAdmin = !!roles?.isAdmin;
   const isAgent = !!roles?.isAgent;
   const canAccessAdmin = isAdmin || isAgent;
-  const [active, setActive] = useState<"overview" | "profile" | "saved" | "messages" | "admin">(
-    "overview",
-  );
+  const [active, setActive] = useState<
+    "overview" | "profile" | "saved" | "bookings" | "messages" | "admin"
+  >("overview");
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -140,6 +141,7 @@ function Dashboard() {
           <SideItem icon={LayoutDashboard} label="Overview" active={active === "overview"} onClick={() => setActive("overview")} />
           <SideItem icon={User} label="My Profile" active={active === "profile"} onClick={() => setActive("profile")} />
           <SideItem icon={Heart} label="Saved Properties" active={active === "saved"} onClick={() => setActive("saved")} />
+          <SideItem icon={CalendarCheck} label="My Bookings" active={active === "bookings"} onClick={() => setActive("bookings")} />
           <SideItem icon={Mail} label="Messages" active={active === "messages"} onClick={() => setActive("messages")} />
           {canAccessAdmin && (
             <Link
@@ -203,6 +205,7 @@ function Dashboard() {
           {active === "overview" && <Overview user={user} profile={profile} isAdmin={!!isAdmin} />}
           {active === "profile" && <ProfileSection userId={user?.id} profile={profile} />}
           {active === "saved" && <PlaceholderPanel icon={Heart} title="Saved Properties" desc="Properties you save will appear here." />}
+          {active === "bookings" && <MyBookingsPanel />}
           {active === "messages" && <MessagesPanel isAdmin={!!isAdmin} />}
           {active === "admin" && isAdmin && <AdminPanel />}
         </div>

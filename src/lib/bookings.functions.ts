@@ -75,6 +75,72 @@ export const createBooking = createServerFn({ method: "POST" })
     return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
   });
 
+// Authenticated booking creation — links booking to the signed-in user
+// so it shows up in their personal dashboard. Same shape as createBooking.
+export const createBookingAsUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => BookingSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      data.propertyId,
+    );
+    const q = supabaseAdmin
+      .from("properties")
+      .select("id, title, assigned_agent_id, created_by");
+    const { data: prop } = isUuid
+      ? await q.eq("id", data.propertyId).maybeSingle()
+      : await q.eq("slug", data.propertyId).maybeSingle();
+    if (!prop) throw new Error("Property not found");
+    const propertyUuid = (prop as { id: string }).id;
+    const agentId =
+      (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
+      (prop as { created_by?: string | null }).created_by ??
+      null;
+    const email =
+      (context.claims as { email?: string } | undefined)?.email || data.email || null;
+    const { data: inserted, error } = await supabaseAdmin
+      .from("bookings")
+      .insert({
+        property_id: propertyUuid,
+        property_title: (prop as { title: string }).title ?? data.propertyTitle,
+        agent_id: agentId,
+        customer_user_id: context.userId,
+        customer_name: data.name,
+        customer_phone: data.phone,
+        customer_email: email,
+        scheduled_date: data.date,
+        scheduled_time: data.time,
+        notes: data.notes || null,
+        source: "website",
+        status: "pending",
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
+  });
+
+export const listMyBookings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const email =
+      (context.claims as { email?: string } | undefined)?.email?.toLowerCase() || "";
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let query = supabaseAdmin
+      .from("bookings")
+      .select("*, properties:property_id (id, slug, price, location, image)")
+      .order("scheduled_date", { ascending: false });
+    if (email) {
+      query = query.or(`customer_user_id.eq.${context.userId},customer_email.ilike.${email}`);
+    } else {
+      query = query.eq("customer_user_id", context.userId);
+    }
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
 export const listBookings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

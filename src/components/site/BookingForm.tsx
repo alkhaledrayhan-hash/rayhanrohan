@@ -7,7 +7,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { createBooking } from "@/lib/bookings.functions";
+import { createBooking, createBookingAsUser } from "@/lib/bookings.functions";
+import { supabase } from "@/integrations/supabase/client";
 import type { Property } from "@/lib/properties";
 
 // 24-hour day, every 30 minutes
@@ -37,6 +38,7 @@ export function BookingForm({ property }: { property: Property }) {
   const [dateOpen, setDateOpen] = useState(false);
   const [timeOpen, setTimeOpen] = useState(false);
   const submit = useServerFn(createBooking);
+  const submitAsUser = useServerFn(createBookingAsUser);
 
   useEffect(() => {
     const d = new Date();
@@ -63,16 +65,18 @@ export function BookingForm({ property }: { property: Property }) {
     }
     setSubmitting(true);
     try {
-      const res = await submit({
-        data: {
-          propertyId: property.id,
-          propertyTitle: property.title,
-          name,
-          phone,
-          date: date.toISOString().slice(0, 10),
-          time,
-        },
-      });
+      const { data: auth } = await supabase.auth.getUser();
+      const payload = {
+        propertyId: property.id,
+        propertyTitle: property.title,
+        name,
+        phone,
+        date: date.toISOString().slice(0, 10),
+        time,
+      };
+      const res = auth?.user
+        ? await submitAsUser({ data: payload })
+        : await submit({ data: payload });
       toast.success("Viewing requested", {
         description: `Reference ${res.id}. Our agent will confirm by phone shortly.`,
       });
