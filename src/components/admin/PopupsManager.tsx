@@ -311,11 +311,15 @@ function EditorModal({
   saving: boolean;
 }) {
   const [tab, setTab] = useState<Tab>("content");
+  const [previewVariant, setPreviewVariant] = useState<"a" | "b">("a");
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">(
+    value.device_target === "mobile" ? "mobile" : "desktop"
+  );
   const set = (patch: Partial<Popup>) => onChange({ ...value, ...patch });
 
   return (
     <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:p-8">
-      <div className="w-full max-w-4xl rounded-2xl bg-card shadow-2xl">
+      <div className="w-full max-w-6xl rounded-2xl bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border p-4">
           <h3 className="font-display text-lg font-semibold">{value.id ? "Edit popup" : "New popup"}</h3>
           <button onClick={onClose} className="rounded-md p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
@@ -338,13 +342,36 @@ function EditorModal({
           })}
         </div>
 
-        <div className="grid gap-4 p-4 sm:p-5 md:grid-cols-2">
-          {tab === "content" && <ContentTab value={value} set={set} />}
-          {tab === "design" && <DesignTab value={value} set={set} />}
-          {tab === "targeting" && <TargetingTab value={value} set={set} />}
-          {tab === "triggers" && <TriggersTab value={value} set={set} />}
-          {tab === "schedule" && <ScheduleTab value={value} set={set} />}
-          {tab === "abtest" && <ABTestTab value={value} set={set} />}
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
+          <div className="grid gap-4 p-4 sm:p-5 md:grid-cols-2 content-start">
+            {tab === "content" && <ContentTab value={value} set={set} />}
+            {tab === "design" && <DesignTab value={value} set={set} />}
+            {tab === "targeting" && <TargetingTab value={value} set={set} />}
+            {tab === "triggers" && <TriggersTab value={value} set={set} />}
+            {tab === "schedule" && <ScheduleTab value={value} set={set} />}
+            {tab === "abtest" && <ABTestTab value={value} set={set} />}
+          </div>
+
+          {/* Live preview */}
+          <div className="border-t border-border bg-muted/20 p-4 lg:border-l lg:border-t-0">
+            <div className="space-y-3 lg:sticky lg:top-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Live preview</div>
+                <div className="flex gap-1">
+                  <button onClick={() => setPreviewDevice("desktop")} className={`rounded-md px-2 py-1 text-[11px] ${previewDevice === "desktop" ? "bg-primary text-primary-foreground" : "border border-border"}`}>Desktop</button>
+                  <button onClick={() => setPreviewDevice("mobile")} className={`rounded-md px-2 py-1 text-[11px] ${previewDevice === "mobile" ? "bg-primary text-primary-foreground" : "border border-border"}`}>Mobile</button>
+                </div>
+              </div>
+              {(value.ab_split ?? 0) > 0 && (
+                <div className="flex gap-1">
+                  <button onClick={() => setPreviewVariant("a")} className={`flex-1 rounded-md px-2 py-1 text-[11px] ${previewVariant === "a" ? "bg-primary text-primary-foreground" : "border border-border"}`}>Variant A</button>
+                  <button onClick={() => setPreviewVariant("b")} className={`flex-1 rounded-md px-2 py-1 text-[11px] ${previewVariant === "b" ? "bg-primary text-primary-foreground" : "border border-border"}`}>Variant B</button>
+                </div>
+              )}
+              <LivePreview popup={value} device={previewDevice} variant={previewVariant} />
+              <TargetingSummary popup={value} />
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border p-4">
@@ -356,6 +383,109 @@ function EditorModal({
       </div>
 
       <style>{`.input { width:100%; border:1px solid hsl(var(--border)); background: hsl(var(--background)); border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem; }`}</style>
+    </div>
+  );
+}
+
+const SHADOW_MAP: Record<string, string> = {
+  none: "none",
+  sm: "0 1px 2px rgba(0,0,0,.08)",
+  md: "0 4px 12px rgba(0,0,0,.1)",
+  lg: "0 10px 25px rgba(0,0,0,.15)",
+  xl: "0 25px 50px -12px rgba(0,0,0,.25)",
+  "2xl": "0 35px 60px -15px rgba(0,0,0,.35)",
+};
+
+function hexAlpha(hex: string, opacity: number) {
+  const clean = (hex || "#000000").replace("#", "");
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return `rgba(0,0,0,${opacity / 100})`;
+  return `rgba(${r},${g},${b},${opacity / 100})`;
+}
+
+function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device: "desktop" | "mobile"; variant: "a" | "b" }) {
+  const vb = variant === "b" && popup.variant_b ? popup.variant_b : {};
+  const title = vb.title ?? popup.title;
+  const body = vb.body ?? popup.body;
+  const ctaLabel = vb.cta_label ?? popup.cta_label;
+  const accent = vb.accent_color || popup.accent_color || "#16a34a";
+  const bg = popup.bg_color || "#ffffff";
+  const text = popup.text_color || "#0f172a";
+  const radius = popup.border_radius ?? 16;
+  const shadowVal = SHADOW_MAP[popup.shadow || "xl"] ?? SHADOW_MAP.xl;
+  const position = popup.position || "center";
+
+  const stageH = device === "mobile" ? 520 : 360;
+  const stageW = device === "mobile" ? 270 : "100%";
+
+  const isCorner = position === "bottom-right";
+  const isBanner = position === "bottom" || position === "top";
+
+  const align =
+    position === "bottom-right" ? "items-end justify-end p-3"
+      : position === "bottom" ? "items-end justify-center pb-3"
+        : position === "top" ? "items-start justify-center pt-4"
+          : "items-center justify-center p-3";
+
+  const overlayBg = position === "center"
+    ? hexAlpha(popup.overlay_color || "#000000", popup.overlay_opacity ?? 50)
+    : "transparent";
+
+  const cardW = isCorner ? 200 : isBanner ? "94%" : device === "mobile" ? 230 : 300;
+
+  return (
+    <div className="mx-auto overflow-hidden rounded-xl border border-border bg-[linear-gradient(135deg,#f8fafc,#e2e8f0)] shadow-inner" style={{ width: stageW, height: stageH, maxWidth: "100%" }}>
+      <div className={`relative h-full w-full flex ${align}`} style={{ background: overlayBg, backdropFilter: position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${Math.min(popup.overlay_blur ?? 0, 12)}px)` : undefined }}>
+        <div className="relative overflow-hidden" style={{ width: cardW, background: bg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%" }}>
+          <div className="absolute right-2 top-2 rounded-full bg-black/10 p-1"><X className="h-3 w-3" /></div>
+          {popup.template === "video" && body?.startsWith("http") ? (
+            <div className="flex aspect-video w-full items-center justify-center bg-black/80 text-[10px] text-white">Video embed</div>
+          ) : popup.image_url ? (
+            <img src={popup.image_url} alt="" className={`w-full object-cover ${isCorner ? "h-16" : "h-20"}`} />
+          ) : null}
+          {(popup.template === "hot-news" || popup.template === "offer") && (
+            <div className="px-3 pt-3">
+              <span className="inline-block rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white" style={{ background: accent }}>
+                {popup.template === "hot-news" ? "Hot News" : "Special Offer"}
+              </span>
+            </div>
+          )}
+          <div className="p-3" style={{ fontSize: Math.max(10, Math.min((popup.body_size ?? 14) * 0.78, 13)) }}>
+            {popup.subtitle && <div className="mb-0.5 text-[9px] font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>}
+            {title && <div className="font-display font-semibold leading-tight" style={{ fontSize: Math.max(12, Math.min((popup.title_size ?? 24) * 0.6, 18)) }}>{title}</div>}
+            {body && popup.template !== "video" && <p className="mt-1 line-clamp-3 opacity-80">{body}</p>}
+            {popup.collect_email && (
+              <div className="mt-2 rounded border border-current/20 bg-white/90 px-2 py-1 text-[10px] text-slate-500">{popup.email_placeholder || "you@example.com"}</div>
+            )}
+            <div className="mt-2 flex flex-wrap gap-1">
+              {ctaLabel && <span className="rounded px-2 py-1 text-[10px] font-semibold text-white" style={{ background: accent }}>{ctaLabel}</span>}
+              {popup.secondary_cta_label && <span className="rounded border border-current/40 px-2 py-1 text-[10px] font-semibold">{popup.secondary_cta_label}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TargetingSummary({ popup }: { popup: Partial<Popup> }) {
+  const chips: string[] = [];
+  chips.push(popup.target_type === "all" ? "Entire site" : `${popup.target_type}: ${popup.target_value || "—"}`);
+  const trig = popup.trigger_type || "time";
+  chips.push(
+    `Trigger: ${trig}${trig === "time" || trig === "time_and_scroll" ? ` · ${popup.delay_seconds ?? 0}s` : ""}${trig === "scroll" || trig === "time_and_scroll" ? ` · ${popup.scroll_threshold ?? 50}%` : ""}`
+  );
+  chips.push(`Device: ${popup.device_target || "all"}`);
+  chips.push(`Visitors: ${popup.visitor_target || "all"}`);
+  chips.push(`Freq: ${popup.frequency || "session"}`);
+  if ((popup.ab_split ?? 0) > 0) chips.push(`A/B ${popup.ab_split}%`);
+  return (
+    <div className="flex flex-wrap gap-1">
+      {chips.map((c, i) => (
+        <span key={i} className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] text-muted-foreground">{c}</span>
+      ))}
     </div>
   );
 }
