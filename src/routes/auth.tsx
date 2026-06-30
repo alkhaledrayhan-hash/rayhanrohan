@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Home, Loader2, MessageCircle, Smartphone } from "lucide-react";
 import { AuthBackground } from "@/components/site/AuthBackground";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useServerFn } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { sendPhoneOtp, verifyPhoneOtp } from "@/lib/phone-otp.functions";
 
 
