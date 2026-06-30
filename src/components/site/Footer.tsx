@@ -100,7 +100,7 @@ export function Footer() {
               dur="9s"
               repeatCount="indefinite"
               rotate="auto"
-              path="M60,250 Q200,140 360,170 T740,80"
+              path="M60,250 Q200,140 360,170 T740,80 L960,-40"
             />
           </image>
         </svg>
