@@ -122,9 +122,35 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
     );
   }
 
+  const qc = useQueryClient();
+  const bulkDelFn = useServerFn(deleteAgent);
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Agent[]) => {
+    let ok = 0;
+    for (const a of items) {
+      try { await bulkDelFn({ data: { id: a.id } }); ok++; } catch (e: any) { toast.error(`${a.email}: ${e.message}`); }
+    }
+    if (ok) toast.success(`Removed ${ok} agent(s)`);
+    qc.invalidateQueries({ queryKey: ["agents"] });
+  };
+
   return (
     <div className="space-y-4">
       {header}
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="agent"
+        exportFilename="agents"
+        exportColumns={[
+          { key: "full_name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "username", label: "Username" },
+        ]}
+      />
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-white p-10 text-center text-sm text-muted-foreground">
           No agents match your filters.
@@ -135,6 +161,8 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
             <AgentCard
               key={a.id}
               agent={a}
+              selected={bulk.isSelected(a.id)}
+              onToggleSelect={() => bulk.toggle(a.id)}
               onView={() => setViewing(a)}
               onEdit={() => setEditing(a)}
             />
