@@ -194,7 +194,7 @@ export function PopupsManager() {
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
             <h2 className="font-display text-lg font-semibold">Start from a template</h2>
-            <p className="text-xs text-muted-foreground">9 templates · pick one, then customize.</p>
+            <p className="text-xs text-muted-foreground">{TEMPLATES.length} templates · pick one, then customize.</p>
           </div>
           <button
             onClick={() => setEditing(emptyPopup())}
