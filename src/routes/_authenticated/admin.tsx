@@ -31,6 +31,7 @@ import { PostsManager } from "@/components/admin/PostsManager";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
+import { PopupsManager } from "@/components/admin/PopupsManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import { NotificationsBell } from "@/components/admin/NotificationsBell";
 import { useUnreadCounts, type UnreadSection } from "@/hooks/use-unread-counts";
