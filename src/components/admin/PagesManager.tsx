@@ -171,6 +171,36 @@ export function PagesManager({
     onError: (e: any) => toast.error(e.message),
   });
 
+  const toggleHidden = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase.from("page_sections").update({ is_hidden: value } as any).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["page-sections"] });
+      qc.invalidateQueries({ queryKey: ["home-sections"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const swapOrder = useMutation({
+    mutationFn: async ({ a, b }: { a: Section; b: Section }) => {
+      // Two-step swap to avoid unique conflicts if any
+      const tmp = -Math.abs(a.sort_order) - 1000 - Math.floor(Math.random() * 1000);
+      const r1 = await supabase.from("page_sections").update({ sort_order: tmp }).eq("id", a.id);
+      if (r1.error) throw r1.error;
+      const r2 = await supabase.from("page_sections").update({ sort_order: a.sort_order }).eq("id", b.id);
+      if (r2.error) throw r2.error;
+      const r3 = await supabase.from("page_sections").update({ sort_order: b.sort_order }).eq("id", a.id);
+      if (r3.error) throw r3.error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["page-sections"] });
+      qc.invalidateQueries({ queryKey: ["home-sections"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
