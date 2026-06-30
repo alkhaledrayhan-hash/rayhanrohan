@@ -16,6 +16,19 @@ export type HomeContactConfig = {
   default_dial_code: string;
 };
 
+export type MapTemplate = "classic" | "rounded" | "framed" | "dark" | "minimal";
+export type MapConfig = {
+  mode: "query" | "embed" | "coords";
+  query: string;
+  embed_html: string;
+  lat: string;
+  lng: string;
+  zoom: number;
+  height: number;
+  template: MapTemplate;
+  grayscale: boolean;
+};
+
 export type ContactPageConfig = {
   hero: { eyebrow: string; title: string; description: string; image?: string };
   phone_display: string;
@@ -27,6 +40,7 @@ export type ContactPageConfig = {
   default_dial_code: string;
   office: { name: string; address: string; hours: string; license: string; cr: string };
   map_query: string;
+  map: MapConfig;
 };
 
 const HOME_DEFAULT: HomeContactConfig = {
