@@ -240,6 +240,7 @@ export function PopupsManager() {
       {/* List */}
       <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
         <h2 className="font-display text-lg font-semibold">All popups</h2>
+        <PopupBulk popups={popups ?? []} qc={qc} />
         {isLoading ? (
           <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
         ) : !popups || popups.length === 0 ? (
@@ -249,7 +250,8 @@ export function PopupsManager() {
             {popups.map((p) => (
               <div key={p.id} className="rounded-xl border border-border bg-background p-3 sm:p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <PopupCheckbox id={p.id} />
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="font-semibold">{p.name}</div>
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide">{p.template}</span>
