@@ -44,6 +44,8 @@ const KEYS = [
   "auth_subheading",
   "auth_signin_heading",
   "auth_signup_heading",
+  "rent_tax_percent",
+  "sale_tax_percent",
 ] as const;
 
 const CURRENCIES = [
@@ -443,6 +445,37 @@ export function SettingsPanel() {
               ))}
             </ThemedSelect>
           </Field>
+
+          <div className="rounded-xl border border-border bg-secondary/30 p-4 space-y-4">
+            <div>
+              <h4 className="font-display text-base font-semibold">Booking tax / VAT</h4>
+              <p className="text-xs text-muted-foreground">Applied automatically to every property booking. Set 0 to disable.</p>
+            </div>
+            <Field icon={Globe} label="Rent VAT %" hint="Charged on rental bookings (price × nights).">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                value={form.rent_tax_percent ?? ""}
+                onChange={(e) => setForm({ ...form, rent_tax_percent: e.target.value })}
+                placeholder="e.g. 5"
+                className={inputCls}
+              />
+            </Field>
+            <Field icon={Globe} label="Sale VAT %" hint="Charged on purchase / sale bookings.">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                value={form.sale_tax_percent ?? ""}
+                onChange={(e) => setForm({ ...form, sale_tax_percent: e.target.value })}
+                placeholder="e.g. 0"
+                className={inputCls}
+              />
+            </Field>
+          </div>
         </div>
       )}
 
