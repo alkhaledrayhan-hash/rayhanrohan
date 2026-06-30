@@ -304,6 +304,87 @@ export type Database = {
         }
         Relationships: []
       }
+      popups: {
+        Row: {
+          accent_color: string | null
+          bg_color: string | null
+          body: string | null
+          created_at: string
+          created_by: string | null
+          cta_label: string | null
+          cta_url: string | null
+          delay_seconds: number
+          end_at: string | null
+          frequency: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          position: string
+          priority: number
+          start_at: string | null
+          subtitle: string | null
+          target_type: string
+          target_value: string | null
+          template: string
+          text_color: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          bg_color?: string | null
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          delay_seconds?: number
+          end_at?: string | null
+          frequency?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          position?: string
+          priority?: number
+          start_at?: string | null
+          subtitle?: string | null
+          target_type?: string
+          target_value?: string | null
+          template?: string
+          text_color?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          bg_color?: string | null
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          delay_seconds?: number
+          end_at?: string | null
+          frequency?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          position?: string
+          priority?: number
+          start_at?: string | null
+          subtitle?: string | null
+          target_type?: string
+          target_value?: string | null
+          template?: string
+          text_color?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       post_categories: {
         Row: {
           created_at: string

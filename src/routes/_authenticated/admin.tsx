@@ -31,6 +31,7 @@ import { PostsManager } from "@/components/admin/PostsManager";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
 import { CalendarPanel } from "@/components/admin/CalendarPanel";
 import { UsersManager } from "@/components/admin/UsersManager";
+import { PopupsManager } from "@/components/admin/PopupsManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import { NotificationsBell } from "@/components/admin/NotificationsBell";
 import { useUnreadCounts, type UnreadSection } from "@/hooks/use-unread-counts";
@@ -64,6 +65,7 @@ import {
   Users,
   X,
   BadgePercent,
+  Sparkles,
 } from "lucide-react";
 
 
@@ -124,7 +126,7 @@ function AdminDashboard() {
   const { data: roleData, isLoading } = useRoles();
   const { data: profile } = useProfile(roleData?.user?.id);
   const [section, setSection] = useState<
-    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "settings"
+    "overview" | "properties" | "pages" | "agents" | "add-agent" | "users" | "email-requests" | "leads" | "bookings" | "messages" | "media" | "posts" | "calendar" | "popups" | "settings"
   >("overview");
   const [pageSlug, setPageSlug] = useState<string>("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -280,6 +282,9 @@ function AdminDashboard() {
           <NavGroup label="Content" />
           <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => goSection("media")} />
           <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => goSection("posts")} />
+          {isAdmin && (
+            <NavItem icon={Sparkles} label="Popup Maker" active={section === "popups"} onClick={() => goSection("popups")} />
+          )}
 
           <NavGroup label="System" />
           <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => goSection("settings")} />
@@ -373,6 +378,7 @@ function AdminDashboard() {
           {section === "calendar" && <CalendarPanel />}
           {section === "media" && (isAdmin ? <MediaPanel /> : <PlaceholderCard icon={Image} title="Media" desc="Only admins can manage media." />)}
           {section === "posts" && (isAdmin ? <PostsManager /> : <PlaceholderCard icon={Newspaper} title="News & Blogs" desc="Only admins can manage articles." />)}
+          {section === "popups" && (isAdmin ? <PopupsManager /> : <PlaceholderCard icon={Sparkles} title="Popup Maker" desc="Only admins can manage popups." />)}
           {section === "settings" && (isAdmin ? <SettingsPanel /> : <AgentSettingsPanel />)}
         </main>
       </div>

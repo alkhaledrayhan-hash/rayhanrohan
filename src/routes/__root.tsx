@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { RouteProgress } from "../components/site/RouteProgress";
 import { ChatWidget } from "../components/site/ChatWidget";
 import { BackToTop } from "../components/site/BackToTop";
+import { PopupRenderer } from "../components/site/PopupRenderer";
 import { useApplyTheme } from "@/hooks/useThemeTokens";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -265,6 +266,7 @@ function RootComponent() {
       <Outlet />
       <ChatWidget />
       <BackToTop />
+      <PopupRenderer />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
