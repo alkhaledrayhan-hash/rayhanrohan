@@ -13,6 +13,8 @@ import {
   Search,
   Download,
   X,
+  Link as LinkIcon,
+  Home,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,8 +29,11 @@ type MediaItem = {
 
 type WithUrl = MediaItem & { url: string; bucket: string };
 
+type SortKey = "newest" | "oldest" | "name" | "size";
+
 const BUCKETS = ["media", "agent-avatars"] as const;
 const PRIMARY_BUCKET = "media";
+const LONG_EXPIRY = 60 * 60 * 24 * 365; // 1 year — used when assigning to a property
 
 async function listAll(bucket: string, prefix = "", depth = 0): Promise<Array<MediaItem & { bucket: string }>> {
   if (depth > 4) return [];
@@ -41,7 +46,6 @@ async function listAll(bucket: string, prefix = "", depth = 0): Promise<Array<Me
   for (const entry of data) {
     const fullPath = prefix ? `${prefix}/${entry.name}` : entry.name;
     if (entry.id === null) {
-      // folder — recurse
       const nested = await listAll(bucket, fullPath, depth + 1);
       out.push(...nested);
     } else {
@@ -77,7 +81,10 @@ export function MediaPanel() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "image" | "video" | "audio" | "file">("all");
+  const [bucketFilter, setBucketFilter] = useState<"all" | (typeof BUCKETS)[number]>("all");
+  const [sort, setSort] = useState<SortKey>("newest");
   const [preview, setPreview] = useState<WithUrl | null>(null);
+  const [assignItem, setAssignItem] = useState<WithUrl | null>(null);
 
   const { data: items, isLoading } = useQuery({
     queryKey: ["media", "list", "all-buckets"],
@@ -89,7 +96,6 @@ export function MediaPanel() {
       }
       if (all.length === 0) return [] as WithUrl[];
 
-      // Sign URLs per-bucket
       const urlByKey = new Map<string, string>();
       const byBucket = new Map<string, string[]>();
       for (const f of all) {
@@ -114,13 +120,32 @@ export function MediaPanel() {
   const filtered = useMemo(() => {
     if (!items) return [];
     const s = search.trim().toLowerCase();
-    return items.filter((it) => {
+    const arr = items.filter((it) => {
       const kind = categorize(it.metadata?.mimetype);
       if (filter !== "all" && kind !== filter) return false;
+      if (bucketFilter !== "all" && it.bucket !== bucketFilter) return false;
       if (s && !it.name.toLowerCase().includes(s)) return false;
       return true;
     });
-  }, [items, search, filter]);
+    const sorted = [...arr];
+    sorted.sort((a, b) => {
+      if (sort === "newest") return (b.created_at ?? "").localeCompare(a.created_at ?? "");
+      if (sort === "oldest") return (a.created_at ?? "").localeCompare(b.created_at ?? "");
+      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "size") return (b.metadata?.size ?? 0) - (a.metadata?.size ?? 0);
+      return 0;
+    });
+    return sorted;
+  }, [items, search, filter, bucketFilter, sort]);
+
+  const counts = useMemo(() => {
+    const c = { all: 0, image: 0, video: 0, audio: 0, file: 0 } as Record<string, number>;
+    (items ?? []).forEach((it) => {
+      c.all++;
+      c[categorize(it.metadata?.mimetype)]++;
+    });
+    return c;
+  }, [items]);
 
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -154,7 +179,6 @@ export function MediaPanel() {
     qc.invalidateQueries({ queryKey: ["media", "list", "all-buckets"] });
     if (preview?.name === item.name) setPreview(null);
   }
-
 
   async function handleCopy(url: string) {
     try {
@@ -195,21 +219,47 @@ export function MediaPanel() {
           />
         </div>
 
-        <div className="flex items-center gap-1 rounded-full border border-border p-1 text-xs">
-          {(["all", "image", "video", "audio", "file"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`rounded-full px-3 py-1 capitalize transition ${
-                filter === f
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f}
-            </button>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value as SortKey)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-xs"
+        >
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="size">Size (largest)</option>
+        </select>
+
+        <select
+          value={bucketFilter}
+          onChange={(e) => setBucketFilter(e.target.value as any)}
+          className="rounded-md border border-input bg-background px-3 py-2 text-xs"
+        >
+          <option value="all">All buckets</option>
+          {BUCKETS.map((b) => (
+            <option key={b} value={b}>{b}</option>
           ))}
-        </div>
+        </select>
+      </div>
+
+      {/* Type filter pills */}
+      <div className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-background p-1 text-xs">
+        {(["all", "image", "video", "audio", "file"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`rounded-full px-3 py-1 capitalize transition ${
+              filter === f
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {f}
+            <span className="ml-1.5 rounded-full bg-black/10 px-1.5 py-px text-[10px] tabular-nums">
+              {counts[f] ?? 0}
+            </span>
+          </button>
+        ))}
       </div>
 
       {/* Gallery */}
@@ -243,11 +293,12 @@ export function MediaPanel() {
         >
           {filtered.map((it) => (
             <MediaTile
-              key={it.id}
+              key={`${it.bucket}/${it.id}`}
               item={it}
               onOpen={() => setPreview(it)}
               onCopy={() => handleCopy(it.url)}
               onDelete={() => handleDelete(it)}
+              onAssign={() => setAssignItem(it)}
             />
           ))}
         </div>
@@ -259,7 +310,15 @@ export function MediaPanel() {
           onClose={() => setPreview(null)}
           onCopy={() => handleCopy(preview.url)}
           onDelete={() => handleDelete(preview)}
+          onAssign={() => {
+            setAssignItem(preview);
+            setPreview(null);
+          }}
         />
+      )}
+
+      {assignItem && (
+        <AssignToPropertyDialog item={assignItem} onClose={() => setAssignItem(null)} />
       )}
     </div>
   );
@@ -270,11 +329,13 @@ function MediaTile({
   onOpen,
   onCopy,
   onDelete,
+  onAssign,
 }: {
   item: WithUrl;
   onOpen: () => void;
   onCopy: () => void;
   onDelete: () => void;
+  onAssign: () => void;
 }) {
   const kind = categorize(item.metadata?.mimetype);
   return (
@@ -299,11 +360,23 @@ function MediaTile({
           </div>
         )}
       </button>
+      <span className="pointer-events-none absolute left-1.5 top-1.5 rounded-full bg-black/55 px-1.5 py-px text-[9px] font-medium uppercase tracking-wide text-white">
+        {item.bucket}
+      </span>
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-black/70 to-transparent px-2 py-2 opacity-0 transition group-hover:opacity-100">
         <span className="truncate text-[10px] text-white" title={item.name}>
           {item.name.replace(/^\d+-/, "")}
         </span>
         <div className="flex items-center gap-1">
+          {kind === "image" && (
+            <button
+              onClick={onAssign}
+              title="Assign to property"
+              className="grid h-6 w-6 place-items-center rounded bg-white/20 text-white hover:bg-white/30"
+            >
+              <Home className="h-3 w-3" />
+            </button>
+          )}
           <button
             onClick={onCopy}
             title="Copy URL"
@@ -329,11 +402,13 @@ function PreviewModal({
   onClose,
   onCopy,
   onDelete,
+  onAssign,
 }: {
   item: WithUrl;
   onClose: () => void;
   onCopy: () => void;
   onDelete: () => void;
+  onAssign: () => void;
 }) {
   const kind = categorize(item.metadata?.mimetype);
   useEffect(() => {
@@ -357,7 +432,7 @@ function PreviewModal({
               {item.name.replace(/^\d+-/, "")}
             </h3>
             <p className="text-xs text-muted-foreground">
-              {item.metadata?.mimetype || "unknown"} · {humanSize(item.metadata?.size)}
+              {item.bucket} · {item.metadata?.mimetype || "unknown"} · {humanSize(item.metadata?.size)}
             </p>
           </div>
           <button
@@ -391,6 +466,14 @@ function PreviewModal({
             className="flex-1 min-w-[200px] truncate rounded-md border border-input bg-muted/40 px-3 py-1.5 text-xs"
           />
           <div className="flex items-center gap-2">
+            {kind === "image" && (
+              <button
+                onClick={onAssign}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+              >
+                <Home className="h-3.5 w-3.5" /> Assign to property
+              </button>
+            )}
             <a
               href={item.url}
               download={item.name}
@@ -411,6 +494,186 @@ function PreviewModal({
               <Trash2 className="h-3.5 w-3.5" /> Delete
             </button>
           </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function AssignToPropertyDialog({
+  item,
+  onClose,
+}: {
+  item: WithUrl;
+  onClose: () => void;
+}) {
+  const [properties, setProperties] = useState<Array<{ id: string; title: string; image: string | null; gallery: string[] }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [propertyId, setPropertyId] = useState<string>("");
+  const [target, setTarget] = useState<"cover" | "gallery">("cover");
+  const [saving, setSaving] = useState(false);
+  const [q, setQ] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("properties")
+        .select("id, title, image, gallery")
+        .order("updated_at", { ascending: false })
+        .limit(500);
+      if (cancelled) return;
+      if (error) toast.error(error.message);
+      const rows = (data ?? []).map((r: any) => ({
+        id: r.id,
+        title: r.title,
+        image: r.image,
+        gallery: Array.isArray(r.gallery) ? r.gallery : [],
+      }));
+      setProperties(rows);
+      if (rows[0]) setPropertyId(rows[0].id);
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return properties;
+    return properties.filter((p) => p.title.toLowerCase().includes(s));
+  }, [properties, q]);
+
+  async function assign() {
+    if (!propertyId) return;
+    setSaving(true);
+    // Generate a long-lived signed URL so the property keeps working.
+    const { data: signed, error: signErr } = await supabase.storage
+      .from(item.bucket)
+      .createSignedUrl(item.name, LONG_EXPIRY);
+    if (signErr || !signed?.signedUrl) {
+      setSaving(false);
+      return toast.error(signErr?.message || "Could not create persistent URL");
+    }
+    const url = signed.signedUrl;
+    const prop = properties.find((p) => p.id === propertyId);
+    if (!prop) {
+      setSaving(false);
+      return toast.error("Property not found");
+    }
+    const patch: { image?: string; gallery?: string[] } = {};
+    if (target === "cover") patch.image = url;
+    else patch.gallery = [...prop.gallery, url];
+
+    const { error } = await supabase.from("properties").update(patch).eq("id", propertyId);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success(target === "cover" ? "Set as cover image" : "Added to gallery");
+    onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] grid place-items-center bg-black/70 p-4" onClick={onClose}>
+      <div
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className="flex items-center justify-between border-b border-border px-5 py-3">
+          <div className="flex items-center gap-2">
+            <LinkIcon className="h-4 w-4 text-primary" />
+            <h3 className="font-display text-base font-semibold">Assign to property</h3>
+          </div>
+          <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
+        </header>
+
+        <div className="space-y-4 p-5">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-2">
+            {categorize(item.metadata?.mimetype) === "image" ? (
+              <img src={item.url} alt="" className="h-14 w-14 rounded object-cover" />
+            ) : (
+              <div className="grid h-14 w-14 place-items-center rounded bg-muted text-muted-foreground">
+                <FileText className="h-6 w-6" />
+              </div>
+            )}
+            <div className="min-w-0 text-xs">
+              <div className="truncate font-medium">{item.name.replace(/^\d+-/, "")}</div>
+              <div className="text-muted-foreground">{item.bucket}</div>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Property</label>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search properties…"
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+            <select
+              value={propertyId}
+              onChange={(e) => setPropertyId(e.target.value)}
+              size={6}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              {loading ? (
+                <option>Loading…</option>
+              ) : filtered.length === 0 ? (
+                <option value="">No properties found</option>
+              ) : (
+                filtered.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Assign as</label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setTarget("cover")}
+                className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
+                  target === "cover"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:bg-muted"
+                }`}
+              >
+                Cover image
+              </button>
+              <button
+                onClick={() => setTarget("gallery")}
+                className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
+                  target === "gallery"
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border hover:bg-muted"
+                }`}
+              >
+                Add to gallery
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+          <button
+            onClick={onClose}
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={assign}
+            disabled={!propertyId || saving}
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
+            {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            Assign
+          </button>
         </footer>
       </div>
     </div>
