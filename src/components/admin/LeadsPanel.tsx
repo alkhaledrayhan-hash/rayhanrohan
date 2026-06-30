@@ -104,6 +104,24 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Lead[]) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("leads").delete().in("id", ids);
+    if (error) throw error;
+    toast.success(`${ids.length} lead(s) deleted`);
+    qc.invalidateQueries({ queryKey: ["admin-leads"] });
+  };
+  const bulkStatus = async (status: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await supabase.from("leads").update({ status }).in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`Marked ${ids.length} as ${status}`);
+    qc.invalidateQueries({ queryKey: ["admin-leads"] });
+    bulk.clear();
+  };
+
   const exportCsv = () => {
     if (!filtered.length) { toast.error("No leads to export"); return; }
     const header = ["Date", "Name", "Email", "Phone", "Source", "Subject", "Message", "Status"];
