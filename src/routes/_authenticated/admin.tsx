@@ -629,39 +629,159 @@ function SubNavItem({
 
 /* ---------- Overview ---------- */
 
-const salesData = [
-  { m: "Jan", sales: 4200, exp: 1800 },
-  { m: "Feb", sales: 6800, exp: 2400 },
-  { m: "Mar", sales: 5200, exp: 2100 },
-  { m: "Apr", sales: 8900, exp: 3200 },
-  { m: "May", sales: 7400, exp: 2800 },
-  { m: "Jun", sales: 9800, exp: 3400 },
-  { m: "Jul", sales: 11200, exp: 3900 },
-  { m: "Aug", sales: 10400, exp: 3600 },
-  { m: "Sep", sales: 12100, exp: 4100 },
-  { m: "Oct", sales: 11800, exp: 4000 },
-  { m: "Nov", sales: 13500, exp: 4400 },
-  { m: "Dec", sales: 15200, exp: 4800 },
-];
+const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-const revenueData = [
-  { m: "Jan", revenue: 38, expenses: 12, profit: 18 },
-  { m: "Feb", revenue: 28, expenses: 18, profit: 16 },
-  { m: "Mar", revenue: 30, expenses: 14, profit: 16 },
-  { m: "Apr", revenue: 26, expenses: 36, profit: 22 },
-  { m: "May", revenue: 12, expenses: 12, profit: 12 },
-  { m: "Jun", revenue: 8, expenses: 38, profit: 18 },
-  { m: "Jul", revenue: 22, expenses: 28, profit: 10 },
-  { m: "Aug", revenue: 24, expenses: 30, profit: 12 },
-  { m: "Sep", revenue: 28, expenses: 14, profit: 18 },
-];
+function useAdminAnalytics() {
+  return useQuery({
+    queryKey: ["admin-analytics"],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const since = new Date();
+      since.setMonth(since.getMonth() - 11);
+      since.setDate(1);
+      since.setHours(0, 0, 0, 0);
+      const sinceIso = since.toISOString();
+      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      const prevWeek = new Date(Date.now() - 14 * 86400000).toISOString();
+
+      const [props, leads, bookings, agents, clients, recent] = await Promise.all([
+        supabase.from("properties").select("id, price, status, location, created_at, listing_status"),
+        supabase.from("leads").select("id, name, property_title, status, created_at").gte("created_at", sinceIso),
+        supabase.from("bookings").select("id, status, created_at, property_title").gte("created_at", sinceIso),
+        supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "agent"),
+        supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "user"),
+        supabase.from("leads").select("id, name, property_title, status, created_at").order("created_at", { ascending: false }).limit(5),
+      ]);
+
+      const properties = props.data ?? [];
+      const leadRows = leads.data ?? [];
+      const bookingRows = bookings.data ?? [];
+
+      // monthly aggregate of leads vs bookings (last 12 months)
+      const buckets: { m: string; key: string; leads: number; bookings: number }[] = [];
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(since);
+        d.setMonth(since.getMonth() + i);
+        buckets.push({
+          m: MONTH_LABELS[d.getMonth()],
+          key: `${d.getFullYear()}-${d.getMonth()}`,
+          leads: 0,
+          bookings: 0,
+        });
+      }
+      const bucketByKey = new Map(buckets.map((b) => [b.key, b]));
+      for (const r of leadRows) {
+        const d = new Date(r.created_at as string);
+        const b = bucketByKey.get(`${d.getFullYear()}-${d.getMonth()}`);
+        if (b) b.leads += 1;
+      }
+      for (const r of bookingRows) {
+        const d = new Date(r.created_at as string);
+        const b = bucketByKey.get(`${d.getFullYear()}-${d.getMonth()}`);
+        if (b) b.bookings += 1;
+      }
+
+      // monthly property listed value
+      const valueBuckets = buckets.map((b) => ({ m: b.m, key: b.key, value: 0, count: 0 }));
+      const valueByKey = new Map(valueBuckets.map((b) => [b.key, b]));
+      for (const p of properties) {
+        const d = new Date(p.created_at as string);
+        const v = valueByKey.get(`${d.getFullYear()}-${d.getMonth()}`);
+        if (v) {
+          v.value += Number(p.price ?? 0);
+          v.count += 1;
+        }
+      }
+
+      // top locations
+      const locCount = new Map<string, number>();
+      for (const p of properties) {
+        const loc = (p.location ?? "Unknown").toString();
+        locCount.set(loc, (locCount.get(loc) ?? 0) + 1);
+      }
+      const palette = ["#7c1d2f", "#c2410c", "#0f766e", "#a16207", "#1d4ed8", "#7e22ce"];
+      const totalLoc = Array.from(locCount.values()).reduce((a, b) => a + b, 0) || 1;
+      const topLocations = Array.from(locCount.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([name, count], i) => ({ name, value: Math.round((count / totalLoc) * 100), color: palette[i % palette.length] }));
+
+      // KPIs and weekly delta
+      const newPropsThisWeek = properties.filter((p) => (p.created_at as string) >= weekAgo).length;
+      const newPropsPrevWeek = properties.filter(
+        (p) => (p.created_at as string) >= prevWeek && (p.created_at as string) < weekAgo,
+      ).length;
+      const newLeadsThisWeek = leadRows.filter((l) => (l.created_at as string) >= weekAgo).length;
+      const newLeadsPrevWeek = leadRows.filter(
+        (l) => (l.created_at as string) >= prevWeek && (l.created_at as string) < weekAgo,
+      ).length;
+
+      const pct = (now: number, prev: number) => {
+        if (prev === 0) return now > 0 ? 100 : 0;
+        return Math.round(((now - prev) / prev) * 100);
+      };
+
+      const soldOrRented = properties.filter((p) => {
+        const s = String(p.listing_status ?? "").toLowerCase();
+        return s === "sold" || s === "rented" || s === "closed";
+      }).length;
+
+      const totalValue = valueBuckets.reduce((s, b) => s + b.value, 0);
+      const lastBucket = valueBuckets[valueBuckets.length - 1]?.value ?? 0;
+      const prevBucket = valueBuckets[valueBuckets.length - 2]?.value ?? 0;
+
+      return {
+        totalProperties: properties.length,
+        soldOrRented,
+        totalClients: clients.count ?? 0,
+        totalAgents: agents.count ?? 0,
+        totalLeads: leadRows.length,
+        newLeadsThisWeek,
+        leadsDelta: pct(newLeadsThisWeek, newLeadsPrevWeek),
+        propsDelta: pct(newPropsThisWeek, newPropsPrevWeek),
+        monthly: buckets.map((b) => ({ m: b.m, leads: b.leads, bookings: b.bookings })),
+        monthlyValue: valueBuckets.map((b) => ({ m: b.m, value: b.value, count: b.count })),
+        totalValue,
+        valueDelta: pct(lastBucket, prevBucket),
+        topLocations,
+        recentLeads: (recent.data ?? []).map((l: any) => ({
+          name: l.name || "Anonymous",
+          property: l.property_title || "—",
+          status: l.status || "New",
+          time: relTime(l.created_at as string),
+        })),
+      };
+    },
+  });
+}
+
+function relTime(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "now";
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  return `${d}d`;
+}
+
+function fmtCurrency(n: number) {
+  if (n >= 1_000_000) return `QAR ${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000) return `QAR ${(n / 1_000).toFixed(1)}K`;
+  return `QAR ${n.toLocaleString()}`;
+}
 
 function Overview({ name, role }: { name: string | undefined; role: string }) {
+  const { data, isLoading } = useAdminAnalytics();
+  const a = data;
+  const trendOf = (n: number): "up" | "down" => (n >= 0 ? "up" : "down");
+  const fmtDelta = (n: number) => `${n >= 0 ? "+" : ""}${n}%`;
+
   return (
     <div className="space-y-5">
       {/* Hero + stats */}
       <div className="grid gap-5 lg:grid-cols-3">
-        {/* Hero */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-[#4a0f1d] p-7 text-white shadow-sm lg:col-span-1">
           <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-gold/30 blur-2xl" />
           <div className="relative">
@@ -670,56 +790,49 @@ function Overview({ name, role }: { name: string | undefined; role: string }) {
               Track property performance, availability & leads at a glance.
             </h2>
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <MiniStat label="Total Properties" value="1,245" delta="+8%" />
-              <MiniStat label="Sold Properties" value="324" delta="+2.3%" />
+              <MiniStat label="Total Properties" value={isLoading ? "…" : String(a?.totalProperties ?? 0)} delta={fmtDelta(a?.propsDelta ?? 0)} />
+              <MiniStat label="Sold / Rented" value={isLoading ? "…" : String(a?.soldOrRented ?? 0)} delta={`${a?.totalProperties ? Math.round(((a?.soldOrRented ?? 0) / a.totalProperties) * 100) : 0}%`} />
             </div>
           </div>
         </div>
 
-        {/* KPI cards */}
         <div className="grid grid-cols-2 gap-4 lg:col-span-2">
-          <KPI label="Total Clients" value="1,175" delta="+8%" trend="up" color="#0d9488" />
-          <KPI label="Total Leads" value="1,024" delta="+5%" trend="up" color="#ea580c" />
-          <KPI label="Active Agents" value="42" delta="-5%" trend="down" color="#0ea5e9" />
-          <KPI label="New This Week" value="86" delta="-2.1%" trend="down" color="#a855f7" />
+          <KPI label="Total Clients" value={String(a?.totalClients ?? 0)} delta={fmtDelta(0)} trend="up" color="#0d9488" />
+          <KPI label="Total Leads" value={String(a?.totalLeads ?? 0)} delta={fmtDelta(a?.leadsDelta ?? 0)} trend={trendOf(a?.leadsDelta ?? 0)} color="#ea580c" />
+          <KPI label="Active Agents" value={String(a?.totalAgents ?? 0)} delta={fmtDelta(0)} trend="up" color="#0ea5e9" />
+          <KPI label="New Leads / wk" value={String(a?.newLeadsThisWeek ?? 0)} delta={fmtDelta(a?.leadsDelta ?? 0)} trend={trendOf(a?.leadsDelta ?? 0)} color="#a855f7" />
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid gap-5 lg:grid-cols-2">
-        <ChartCard title="Property Sales" headline="$345,783" delta="+12.34%" trend="up">
+        <ChartCard title="Listing Value (12 mo)" headline={fmtCurrency(a?.totalValue ?? 0)} delta={fmtDelta(a?.valueDelta ?? 0)} trend={trendOf(a?.valueDelta ?? 0)}>
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={salesData}>
+            <AreaChart data={a?.monthlyValue ?? []}>
               <defs>
                 <linearGradient id="s1" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
                   <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="s2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ea580c" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#ea580c" stopOpacity={0} />
-                </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
               <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
               <YAxis tickLine={false} axisLine={false} fontSize={11} />
-              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-              <Area type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#s1)" />
-              <Area type="monotone" dataKey="exp" stroke="#ea580c" strokeWidth={2} fill="url(#s2)" />
+              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: any, k) => k === "value" ? fmtCurrency(Number(v)) : v} />
+              <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#s1)" />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Revenue Overview" headline="$236,423" delta="-10.34%" trend="down">
+        <ChartCard title="Leads vs Bookings" headline={String((a?.totalLeads ?? 0) + (a?.monthly?.reduce((s, m) => s + m.bookings, 0) ?? 0))} delta={fmtDelta(a?.leadsDelta ?? 0)} trend={trendOf(a?.leadsDelta ?? 0)}>
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={revenueData}>
+            <BarChart data={a?.monthly ?? []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
               <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
               <YAxis tickLine={false} axisLine={false} fontSize={11} />
               <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-              <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="expenses" fill="#ea580c" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="profit" fill="#0f172a" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="leads" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="bookings" fill="#ea580c" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -727,12 +840,13 @@ function Overview({ name, role }: { name: string | undefined; role: string }) {
 
       {/* Bottom row */}
       <div className="grid gap-5 lg:grid-cols-3">
-        <RecentLeads />
-        <TopLocations />
+        <RecentLeads leads={a?.recentLeads ?? []} />
+        <TopLocations data={a?.topLocations ?? []} />
       </div>
     </div>
   );
 }
+
 
 function MiniStat({ label, value, delta }: { label: string; value: string; delta: string }) {
   return (
