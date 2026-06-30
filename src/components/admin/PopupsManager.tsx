@@ -103,6 +103,8 @@ function emptyPopup(): Partial<Popup> {
     font_family: "", title_size: 24, body_size: 14,
     variant_b: null, ab_split: 0,
     is_active: true, priority: 0,
+    gradient_from: "#7c3aed", gradient_to: "#ec4899", gradient_angle: 135,
+    glass_blur: 20, glass_tint: 15, glass_border: 25,
   };
 }
 
