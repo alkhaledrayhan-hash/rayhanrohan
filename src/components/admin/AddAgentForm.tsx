@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ImageIcon, Save, Upload, X } from "lucide-react";
+import { ArrowLeft, ImageIcon, Save, Upload, X } from "lucide-react";
 import { createAgent } from "@/lib/agents.functions";
 import { fileToDataUrl } from "@/lib/image-upload";
 
