@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fileToDataUrl } from "@/lib/image-upload";
 import { toast } from "sonner";
 import { Image as ImageIcon, Palette, Plus, Type, Upload, X } from "lucide-react";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 
 export type HeroContent = {
   eyebrow?: string;
