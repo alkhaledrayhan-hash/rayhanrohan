@@ -114,6 +114,19 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
   const [showCreate, setShowCreate] = useState(false);
   const [selected, setSelected] = useState<Booking | null>(null);
 
+  // Open a booking detail when CalendarPanel (or anywhere) dispatches the event
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const id = (e as CustomEvent<{ id: string }>).detail?.id;
+      if (!id) return;
+      const found = bookings.find((b) => b.id === id);
+      if (found) setSelected(found);
+    };
+    window.addEventListener("admin:open-booking", onOpen as EventListener);
+    return () => window.removeEventListener("admin:open-booking", onOpen as EventListener);
+  }, [bookings]);
+
+
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     return bookings.filter((b) => {
