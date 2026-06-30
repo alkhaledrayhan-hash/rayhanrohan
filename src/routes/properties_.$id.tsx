@@ -72,6 +72,8 @@ export const Route = createFileRoute("/properties_/$id")({
 function PropertyDetail() {
   const { id } = Route.useParams();
   const { data: property, isLoading } = usePropertyBySlug(id);
+  const settings = useSiteSettings();
+  
   
 
   if (isLoading) {
