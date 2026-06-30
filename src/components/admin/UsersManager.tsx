@@ -143,6 +143,9 @@ export function UsersManager() {
         <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 w-10">
+                <SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all users" />
+              </th>
               <th className="px-4 py-3">User</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Phone</th>
@@ -153,14 +156,14 @@ export function UsersManager() {
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   Loading users…
                 </td>
               </tr>
             )}
             {!isLoading && !filtered.length && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   <UserCircle2 className="mx-auto mb-2 h-8 w-8" /> No users match your filters.
                 </td>
               </tr>
@@ -178,6 +181,9 @@ export function UsersManager() {
                   onClick={() => setViewing(u)}
                   className="cursor-pointer border-t border-border transition hover:bg-muted/40"
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <SelectCheckbox checked={bulk.isSelected(u.id)} onChange={() => bulk.toggle(u.id)} ariaLabel="Select user" />
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
