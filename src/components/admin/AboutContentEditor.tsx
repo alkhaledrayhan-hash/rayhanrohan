@@ -109,7 +109,9 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-export function AboutContentEditor({ sectionId, initial }: { sectionId: string; initial: any }) {
+export type AboutSectionKey = "stats" | "story" | "mission" | "values" | "team" | "company";
+
+export function AboutContentEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: AboutSectionKey }) {
   const qc = useQueryClient();
   const [v, setV] = useState<AboutContent>(normalizeAbout(initial));
   const fileRef = useRef<HTMLInputElement>(null);
@@ -136,8 +138,11 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
     } catch (e: any) { toast.error(e.message); }
   }
 
+  const show = (k: AboutSectionKey) => !only || only === k;
+
   return (
     <div className="space-y-4">
+
       {/* Stats */}
       <Group title="Stats strip">
         {v.stats.map((s, i) => (
