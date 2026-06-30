@@ -34,6 +34,7 @@ import { UsersManager } from "@/components/admin/UsersManager";
 import { PopupsManager } from "@/components/admin/PopupsManager";
 import { EmailChangeRequestsPanel } from "@/components/admin/EmailChangeRequestsPanel";
 import { NotificationsBell } from "@/components/admin/NotificationsBell";
+import { AccountMenu } from "@/components/account-menu";
 import { useUnreadCounts, type UnreadSection } from "@/hooks/use-unread-counts";
 import {
   Building2,
