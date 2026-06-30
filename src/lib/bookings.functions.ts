@@ -8,14 +8,6 @@ const PricingSchema = z.object({
   checkIn: z.string().optional().or(z.literal("")),
   checkOut: z.string().optional().or(z.literal("")),
   nights: z.number().int().min(0).optional(),
-  unitPrice: z.number().min(0).optional(),
-  subtotal: z.number().min(0).optional(),
-  discountPercent: z.number().min(0).max(100).optional(),
-  discountAmount: z.number().min(0).optional(),
-  taxPercent: z.number().min(0).max(100).optional(),
-  taxAmount: z.number().min(0).optional(),
-  totalAmount: z.number().min(0).optional(),
-  currency: z.string().max(10).optional(),
 }).partial();
 
 const BookingSchema = z.object({
@@ -30,21 +22,114 @@ const BookingSchema = z.object({
   pricing: PricingSchema.optional(),
 });
 
-function pricingPatch(p?: z.infer<typeof PricingSchema>) {
-  if (!p) return {};
+type Breakdown = {
+  checkIn: string | null;
+  checkOut: string | null;
+  nights: number;
+  unitPrice: number;
+  units: number;
+  baseSubtotal: number;
+  discountPercent: number;
+  discountAmount: number;
+  subtotal: number;
+  taxPercent: number;
+  taxAmount: number;
+  totalAmount: number;
+  currency: string;
+  isRent: boolean;
+};
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadSettings(admin: any) {
+  const { data } = await admin.from("site_settings").select("key, value");
+  const map = new Map<string, string>();
+  for (const r of (data ?? []) as { key: string; value: string }[]) map.set(r.key, r.value);
+  return map;
+}
+
+async function computeBreakdown(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  admin: any,
+  property: {
+    price: number;
+    status: string;
+    offer_discount?: number | null;
+    offer_ends?: string | null;
+  },
+  pricing: z.infer<typeof PricingSchema> | undefined,
+): Promise<Breakdown> {
+  const isRent = property.status === "rent";
+  const settings = await loadSettings(admin as never);
+  const currency = (settings.get("site_currency") || "QAR").trim() || "QAR";
+  const taxPct = Math.max(
+    0,
+    Number(settings.get(isRent ? "rent_tax_percent" : "sale_tax_percent")) || 0,
+  );
+  const nights = isRent ? Math.max(0, Number(pricing?.nights) || 0) : 0;
+  const discount = Math.max(0, Math.min(100, Number(property.offer_discount) || 0));
+  const offerActive =
+    discount > 0 &&
+    (!property.offer_ends || new Date(property.offer_ends).getTime() > Date.now());
+  const effDiscount = offerActive ? discount : 0;
+  const basePrice = Number(property.price) || 0;
+  const unitPrice = round2(basePrice * (1 - effDiscount / 100));
+  const units = isRent ? nights : 1;
+  const baseSubtotal = round2(basePrice * units);
+  const subtotal = round2(unitPrice * units);
+  const discountAmount = round2(baseSubtotal - subtotal);
+  const taxAmount = round2(subtotal * (taxPct / 100));
+  const totalAmount = round2(subtotal + taxAmount);
   return {
-    check_in: p.checkIn || null,
-    check_out: p.checkOut || null,
-    nights: p.nights ?? null,
-    unit_price: p.unitPrice ?? null,
-    subtotal: p.subtotal ?? null,
-    discount_percent: p.discountPercent ?? null,
-    discount_amount: p.discountAmount ?? null,
-    tax_percent: p.taxPercent ?? null,
-    tax_amount: p.taxAmount ?? null,
-    total_amount: p.totalAmount ?? null,
-    currency: p.currency || null,
+    checkIn: pricing?.checkIn || null,
+    checkOut: pricing?.checkOut || null,
+    nights,
+    unitPrice,
+    units,
+    baseSubtotal,
+    discountPercent: effDiscount,
+    discountAmount,
+    subtotal,
+    taxPercent: taxPct,
+    taxAmount,
+    totalAmount,
+    currency,
+    isRent,
   };
+}
+
+function patchFromBreakdown(b: Breakdown) {
+  return {
+    check_in: b.checkIn,
+    check_out: b.checkOut,
+    nights: b.nights,
+    unit_price: b.unitPrice,
+    subtotal: b.subtotal,
+    discount_percent: b.discountPercent,
+    discount_amount: b.discountAmount,
+    tax_percent: b.taxPercent,
+    tax_amount: b.taxAmount,
+    total_amount: b.totalAmount,
+    currency: b.currency,
+  };
+}
+
+function breakdownNotes(b: Breakdown, title: string) {
+  const money = (n: number) => `${b.currency} ${n.toFixed(2)}`;
+  const lines: string[] = [`Property: ${title}`];
+  if (b.isRent && b.checkIn && b.checkOut) {
+    lines.push(`Rent period: ${b.checkIn} → ${b.checkOut} (${b.nights} night${b.nights === 1 ? "" : "s"})`);
+    lines.push(`Rate: ${money(b.unitPrice)} / night${b.discountPercent ? ` (${b.discountPercent}% offer)` : ""}`);
+    lines.push(`Subtotal: ${money(b.unitPrice)} × ${b.nights} = ${money(b.subtotal)}`);
+  } else {
+    lines.push(`Price: ${money(b.unitPrice)}${b.discountPercent ? ` (${b.discountPercent}% offer)` : ""}`);
+    lines.push(`Subtotal: ${money(b.subtotal)}`);
+  }
+  if (b.discountAmount > 0) lines.push(`Offer discount: − ${money(b.discountAmount)}`);
+  if (b.taxPercent > 0) lines.push(`VAT (${b.taxPercent}%): ${money(b.taxAmount)}`);
+  lines.push(`Total: ${money(b.totalAmount)}`);
+  return lines.join("\n");
 }
 
 export type BookingInput = z.infer<typeof BookingSchema>;
@@ -62,29 +147,30 @@ export const createBooking = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Resolve property by UUID or by slug (frontend uses slug as Property.id)
-    let propertyUuid: string | null = null;
-    let agentId: string | null = null;
-    let resolvedTitle: string | null = null;
-    if (data.propertyId) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        data.propertyId,
-      );
-      const q = supabaseAdmin
-        .from("properties")
-        .select("id, title, assigned_agent_id, created_by");
-      const { data: prop } = isUuid
-        ? await q.eq("id", data.propertyId).maybeSingle()
-        : await q.eq("slug", data.propertyId).maybeSingle();
-      if (prop) {
-        propertyUuid = (prop as { id: string }).id;
-        resolvedTitle = (prop as { title: string }).title;
-        agentId =
-          (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
-          (prop as { created_by?: string | null }).created_by ??
-          null;
-      }
-    }
-    if (!propertyUuid) throw new Error("Property not found");
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      data.propertyId,
+    );
+    const q = supabaseAdmin
+      .from("properties")
+      .select("id, title, status, price, offer_discount, offer_ends, assigned_agent_id, created_by");
+    const { data: prop } = isUuid
+      ? await q.eq("id", data.propertyId).maybeSingle()
+      : await q.eq("slug", data.propertyId).maybeSingle();
+    if (!prop) throw new Error("Property not found");
+    const propertyUuid = (prop as { id: string }).id;
+    const resolvedTitle = (prop as { title: string }).title;
+    const agentId =
+      (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
+      (prop as { created_by?: string | null }).created_by ??
+      null;
+
+    const breakdown = await computeBreakdown(
+      supabaseAdmin,
+      prop as { price: number; status: string; offer_discount?: number | null; offer_ends?: string | null },
+      data.pricing,
+    );
+    const computedNotes = breakdownNotes(breakdown, resolvedTitle ?? data.propertyTitle);
+    const finalNotes = data.notes ? `${data.notes}\n\n${computedNotes}` : computedNotes;
 
     const { data: inserted, error } = await supabaseAdmin
       .from("bookings")
@@ -97,15 +183,15 @@ export const createBooking = createServerFn({ method: "POST" })
         customer_email: data.email || null,
         scheduled_date: data.date,
         scheduled_time: data.time,
-        notes: data.notes || null,
+        notes: finalNotes,
         source: "website",
         status: "pending",
-        ...pricingPatch(data.pricing),
+        ...patchFromBreakdown(breakdown),
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
+    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString(), breakdown };
   });
 
 // Authenticated booking creation — links booking to the signed-in user
@@ -120,23 +206,33 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
     );
     const q = supabaseAdmin
       .from("properties")
-      .select("id, title, assigned_agent_id, created_by");
+      .select("id, title, status, price, offer_discount, offer_ends, assigned_agent_id, created_by");
     const { data: prop } = isUuid
       ? await q.eq("id", data.propertyId).maybeSingle()
       : await q.eq("slug", data.propertyId).maybeSingle();
     if (!prop) throw new Error("Property not found");
     const propertyUuid = (prop as { id: string }).id;
+    const resolvedTitle = (prop as { title: string }).title;
     const agentId =
       (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
       (prop as { created_by?: string | null }).created_by ??
       null;
     const email =
       (context.claims as { email?: string } | undefined)?.email || data.email || null;
+
+    const breakdown = await computeBreakdown(
+      supabaseAdmin,
+      prop as { price: number; status: string; offer_discount?: number | null; offer_ends?: string | null },
+      data.pricing,
+    );
+    const computedNotes = breakdownNotes(breakdown, resolvedTitle ?? data.propertyTitle);
+    const finalNotes = data.notes ? `${data.notes}\n\n${computedNotes}` : computedNotes;
+
     const { data: inserted, error } = await supabaseAdmin
       .from("bookings")
       .insert({
         property_id: propertyUuid,
-        property_title: (prop as { title: string }).title ?? data.propertyTitle,
+        property_title: resolvedTitle ?? data.propertyTitle,
         agent_id: agentId,
         customer_user_id: context.userId,
         customer_name: data.name,
@@ -144,15 +240,15 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
         customer_email: email,
         scheduled_date: data.date,
         scheduled_time: data.time,
-        notes: data.notes || null,
+        notes: finalNotes,
         source: "website",
         status: "pending",
-        ...pricingPatch(data.pricing),
+        ...patchFromBreakdown(breakdown),
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
+    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString(), breakdown };
   });
 
 export const listMyBookings = createServerFn({ method: "GET" })

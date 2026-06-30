@@ -23,6 +23,7 @@ import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
 import { formatPrice, usePropertyBySlug } from "@/lib/properties";
 import { OfferCountdown } from "@/components/site/OfferCountdown";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/properties_/$id")({
   head: ({ params }) => {
@@ -71,6 +72,8 @@ export const Route = createFileRoute("/properties_/$id")({
 function PropertyDetail() {
   const { id } = Route.useParams();
   const { data: property, isLoading } = usePropertyBySlug(id);
+  const settings = useSiteSettings();
+  
   
 
   if (isLoading) {
@@ -113,9 +116,40 @@ function PropertyDetail() {
 
   
 
-  const waMsg = encodeURIComponent(
-    `Hello, I am interested in viewing the property ${property.title} located in ${property.location}. Please let me know your availability.`,
+  // Pre-filled WhatsApp message with the same pricing breakdown the form computes.
+  // Rent assumes 1 night as a starting point; sale uses the full property price.
+  const isRent = property.status === "rent";
+  const currency = settings.site_currency || "QAR";
+  const taxPct = Math.max(
+    0,
+    Number(isRent ? settings.rent_tax_percent : settings.sale_tax_percent) || 0,
   );
+  const discountPct = Number(property.offerDiscount) || 0;
+  const offerActive =
+    discountPct > 0 &&
+    (!property.offerEnds || new Date(property.offerEnds).getTime() > Date.now());
+  const units = isRent ? 1 : 1;
+  const baseSubtotal = property.price * units;
+  const subtotal = offerActive ? baseSubtotal * (1 - discountPct / 100) : baseSubtotal;
+  const discountAmount = baseSubtotal - subtotal;
+  const taxAmount = subtotal * (taxPct / 100);
+  const total = subtotal + taxAmount;
+  const money = (n: number) => `${currency} ${(Math.round(n * 100) / 100).toFixed(2)}`;
+  const waLines = [
+    `Hello, I am interested in ${isRent ? "renting" : "buying"} "${property.title}" in ${property.location}.`,
+    "",
+    "Estimated price breakdown:",
+    isRent
+      ? `• Rate: ${money(property.price)} / night (1 night sample)`
+      : `• Price: ${money(property.price)}`,
+    `• Subtotal: ${money(subtotal)}${offerActive ? ` (after ${discountPct}% offer)` : ""}`,
+    ...(offerActive ? [`• Offer discount: − ${money(discountAmount)} (${discountPct}%)`] : []),
+    ...(taxPct > 0 ? [`• VAT (${taxPct}%): ${money(taxAmount)}`] : []),
+    `• Total: ${money(total)}`,
+    "",
+    "Please confirm availability and final pricing.",
+  ];
+  const waMsg = encodeURIComponent(waLines.join("\n"));
   const waLink = `https://wa.me/97440000000?text=${waMsg}`;
   const propertyId = property.id.slice(-6).toUpperCase();
 
