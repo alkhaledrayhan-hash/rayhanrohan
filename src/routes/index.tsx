@@ -135,6 +135,7 @@ function Home() {
 
 
         {/* Trust strip */}
+        {!isHidden("trust") && (
         <section className="border-y border-border bg-secondary/40">
           {trustShouldScroll ? (
             <div className="group relative overflow-hidden py-8">
@@ -160,6 +161,7 @@ function Home() {
             </div>
           )}
         </section>
+        )}
 
 
         {/* Featured */}
