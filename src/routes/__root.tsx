@@ -266,6 +266,7 @@ function RootComponent() {
       <Outlet />
       <ChatWidget />
       <BackToTop />
+      <PopupRenderer />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
