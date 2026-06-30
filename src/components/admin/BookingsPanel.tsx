@@ -24,6 +24,8 @@ import {
 } from "@/lib/bookings.functions";
 import { printBookingInvoice } from "@/lib/invoice";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"] as const;
 type Status = (typeof STATUSES)[number];
