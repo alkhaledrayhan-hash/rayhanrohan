@@ -35,47 +35,34 @@ export function AccountMenu({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const cancelClose = () => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-  };
-  const scheduleClose = () => {
-    cancelClose();
-    closeTimer.current = setTimeout(() => setOpen(false), 150);
-  };
 
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
+    function onPointerDown(e: PointerEvent) {
+      if (!ref.current) return;
+      if (!ref.current.contains(e.target as Node)) setOpen(false);
+    }
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown, true);
+    };
   }, [open]);
-  useEffect(() => () => cancelClose(), []);
 
   const ProfileIcon = profileLink?.icon ?? User;
   const ExtraIcon = extraLink?.icon ?? ShieldCheck;
 
   return (
-    <div
-      ref={ref}
-      className="relative"
-      onMouseEnter={() => { cancelClose(); setOpen(true); }}
-      onMouseLeave={scheduleClose}
-      onFocus={() => { cancelClose(); setOpen(true); }}
-      onBlur={(e) => {
-        if (!ref.current?.contains(e.relatedTarget as Node)) scheduleClose();
-      }}
-    >
+    <div ref={ref} className="relative">
       <button
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 rounded-full border border-border bg-white py-1 pl-1 pr-2 transition hover:bg-muted sm:pr-3"
       >
         <span className="grid h-7 w-7 place-items-center overflow-hidden rounded-full bg-primary text-xs font-semibold text-primary-foreground">
@@ -95,10 +82,19 @@ export function AccountMenu({
       </button>
 
       {open && (
-        <div
-          role="menu"
-          className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-xl border border-border bg-white p-1 shadow-lg"
-        >
+        <>
+          {/* Mobile backdrop for tap-outside-to-close */}
+          <button
+            type="button"
+            aria-label="Close menu"
+            tabIndex={-1}
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-40 cursor-default bg-transparent sm:hidden"
+          />
+          <div
+            role="menu"
+            className="absolute right-0 z-50 mt-2 w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-border bg-white p-1 shadow-lg"
+          >
           <div className="border-b border-border px-3 py-2.5">
             <p className="truncate text-sm font-semibold">{fullName}</p>
             {email && (
@@ -150,7 +146,8 @@ export function AccountMenu({
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
