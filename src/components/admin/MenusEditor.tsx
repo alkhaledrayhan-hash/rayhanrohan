@@ -3,7 +3,7 @@ import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick, FileText } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, ListTree, LayoutPanelTop, MousePointerClick } from "lucide-react";
 import {
   DEFAULT_FOOTER_MENU,
   DEFAULT_HEADER_CTA,
@@ -15,7 +15,7 @@ import {
 import { DEFAULT_TICKER_CONFIG, type TickerConfig } from "@/hooks/useTickerConfig";
 import { MENU_ICON_KEYS, getMenuIcon } from "@/lib/menu-icons";
 
-type Tab = "header" | "cta" | "footer" | "footer-content";
+type Tab = "header" | "cta" | "footer";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
@@ -134,15 +134,11 @@ export function MenusEditor() {
         <TabBtn active={tab === "footer"} onClick={() => setTab("footer")}>
           <ListTree className="h-3.5 w-3.5" /> Footer menu
         </TabBtn>
-        <TabBtn active={tab === "footer-content"} onClick={() => setTab("footer-content")}>
-          <FileText className="h-3.5 w-3.5" /> Footer content
-        </TabBtn>
       </div>
 
       {tab === "header" && <HeaderEditor items={header} onChange={setHeader} />}
       {tab === "cta" && <CtaEditor cta={cta} onChange={setCta} />}
       {tab === "footer" && <FooterEditor groups={footer} onChange={setFooter} />}
-      {tab === "footer-content" && <FooterContentEditor content={footerContent} onChange={setFooterContent} />}
 
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">

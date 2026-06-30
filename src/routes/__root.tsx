@@ -17,6 +17,7 @@ import { RouteProgress } from "../components/site/RouteProgress";
 import { ChatWidget } from "../components/site/ChatWidget";
 import { BackToTop } from "../components/site/BackToTop";
 import { useApplyTheme } from "@/hooks/useThemeTokens";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 function NotFoundComponent() {
   return (
@@ -148,6 +149,30 @@ function ThemeApplier() {
   return null;
 }
 
+function FaviconApplier() {
+  const { site_favicon_url, site_title } = useSiteSettings();
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const href = (site_favicon_url || "").trim();
+    if (!href) return;
+    const head = document.head;
+    const existing = head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
+    existing.forEach((n) => n.parentNode?.removeChild(n));
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.href = href;
+    if (href.startsWith("data:image/png") || href.endsWith(".png")) link.type = "image/png";
+    else if (href.endsWith(".svg")) link.type = "image/svg+xml";
+    else if (href.endsWith(".ico")) link.type = "image/x-icon";
+    head.appendChild(link);
+    const apple = document.createElement("link");
+    apple.rel = "apple-touch-icon";
+    apple.href = href;
+    head.appendChild(apple);
+  }, [site_favicon_url, site_title]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
@@ -235,6 +260,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeApplier />
+      <FaviconApplier />
       <RouteProgress />
       <Outlet />
       <ChatWidget />

@@ -20,6 +20,7 @@ import {
 import { fileToDataUrl } from "@/lib/image-upload";
 import { MenusEditor } from "@/components/admin/MenusEditor";
 import { ThemeEditor } from "@/components/admin/ThemeEditor";
+import { FooterContentPanel } from "@/components/admin/FooterContentPanel";
 
 type SettingsMap = Record<string, string>;
 const KEYS = [
@@ -27,6 +28,7 @@ const KEYS = [
   "site_tagline",
   "site_url",
   "site_logo_url",
+  "site_favicon_url",
   "admin_email",
   "site_timezone",
   "date_format",
@@ -70,7 +72,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "theme" | "menus";
+type TabId = "general" | "auth" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -88,9 +90,11 @@ export function SettingsPanel() {
   const [form, setForm] = useState<SettingsMap>({});
   const [uploading, setUploading] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [tab, setTab] = useState<TabId>("general");
   const fileRef = useRef<HTMLInputElement>(null);
   const logoFileRef = useRef<HTMLInputElement>(null);
+  const faviconFileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!data) return;
     const next = { ...data };
@@ -140,6 +144,19 @@ export function SettingsPanel() {
     }
   }
 
+  async function handleFaviconFile(file: File) {
+    try {
+      setUploadingFavicon(true);
+      const dataUrl = await fileToDataUrl(file, { maxSize: 128, quality: 0.9, mime: "image/png" });
+      setForm((f) => ({ ...f, site_favicon_url: dataUrl }));
+      toast.success("Favicon ready — click Save to apply.");
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+    } finally {
+      setUploadingFavicon(false);
+    }
+  }
+
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   const bgColor = form.auth_bg_color || "#1a0a0f";
@@ -152,10 +169,13 @@ export function SettingsPanel() {
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
         <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
+        <TabButton active={tab === "footer"} onClick={() => setTab("footer")}>Footer content</TabButton>
       </div>
 
       {tab === "menus" ? (
         <MenusEditor />
+      ) : tab === "footer" ? (
+        <div className="rounded-2xl border border-border bg-white p-6 shadow-sm"><FooterContentPanel /></div>
       ) : tab === "theme" ? (
         <ThemeEditor />
       ) : (
@@ -239,7 +259,58 @@ export function SettingsPanel() {
             </div>
           </Field>
 
+          <Field icon={ImageIcon} label="Favicon" hint="Browser tab icon. PNG or ICO, square (e.g. 32×32 or 64×64).">
+            <div className="space-y-3">
+              <input
+                value={(form.site_favicon_url || "").startsWith("data:") ? "" : (form.site_favicon_url || "")}
+                onChange={(e) => setForm({ ...form, site_favicon_url: e.target.value })}
+                placeholder="https://example.com/favicon.png"
+                className={inputCls}
+                disabled={(form.site_favicon_url || "").startsWith("data:")}
+              />
+              <div className="flex flex-wrap items-center gap-3">
+                {form.site_favicon_url && (
+                  <img
+                    src={form.site_favicon_url}
+                    alt="Favicon preview"
+                    className="h-10 w-10 rounded-md border border-input object-contain bg-white"
+                  />
+                )}
+                <input
+                  ref={faviconFileRef}
+                  type="file"
+                  accept="image/png,image/x-icon,image/vnd.microsoft.icon,image/svg+xml,image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleFaviconFile(f);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => faviconFileRef.current?.click()}
+                  disabled={uploadingFavicon}
+                  className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary disabled:opacity-60"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploadingFavicon ? "Processing…" : "Upload favicon"}
+                </button>
+                {form.site_favicon_url && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, site_favicon_url: "" })}
+                    className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    <X className="h-4 w-4" /> Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </Field>
+
           <Field icon={LinkIcon} label="Website address (URL)" hint="Public address of this site. Auto-detected from the current browser if empty.">
+
             <div className="flex gap-2">
               <input
                 type="url"

@@ -6,6 +6,7 @@ export type SiteSettings = {
   site_tagline: string;
   site_url: string;
   site_logo_url: string;
+  site_favicon_url: string;
   admin_email: string;
   site_timezone: string;
   date_format: string;
@@ -36,6 +37,7 @@ const DEFAULTS: SiteSettings = {
   site_tagline: "Premium Living",
   site_url: "",
   site_logo_url: "",
+  site_favicon_url: "",
   admin_email: "",
   site_timezone: "Asia/Qatar",
   date_format: "MMMM d, yyyy",
