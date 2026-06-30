@@ -127,6 +127,24 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
     });
   }, [bookings, q, statusFilter]);
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: typeof filtered) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("bookings").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} booking(s)`);
+    qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+  };
+  const bulkStatus = async (status: Status) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("bookings") as any).update({ status }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Marked ${ids.length} as ${status}`);
+    qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
