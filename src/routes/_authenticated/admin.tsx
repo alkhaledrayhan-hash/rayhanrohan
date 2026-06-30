@@ -1001,13 +1001,15 @@ function statusColor(s: string) {
   }
 }
 
-function TopLocations() {
-  const data = [
-    { name: "The Pearl", value: 38, color: "#7c1d2f" },
-    { name: "Lusail", value: 28, color: "#c2410c" },
-    { name: "West Bay", value: 18, color: "#0f766e" },
-    { name: "Al Waab", value: 16, color: "#a16207" },
-  ];
+function TopLocations({ data }: { data: { name: string; value: number; color: string }[] }) {
+  if (!data.length) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+        <h3 className="font-display text-base font-semibold">Top Locations</h3>
+        <p className="mt-3 text-sm text-muted-foreground">No properties yet.</p>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
       <h3 className="font-display text-base font-semibold">Top Locations</h3>
