@@ -36,7 +36,7 @@ const empty = {
   avatar_url: "",
 };
 
-export function AddAgentForm() {
+export function AddAgentForm({ onBack }: { onBack?: () => void } = {}) {
   const [form, setForm] = useState(empty);
   const fn = useServerFn(createAgent);
   const qc = useQueryClient();
