@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ThemedSelect } from "@/components/ui/themed-select";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 import {
   Pencil, Plus, Trash2, Eye, Copy, Sparkles, Megaphone, Newspaper, Home as HomeIcon,
   X, Mail, Cookie, LogOut, ShieldAlert, Video, BarChart3, Palette, Target, Zap, FlaskConical, FileText,
@@ -562,13 +563,13 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
           ]} />
       </Field>
       <Field label="Background color">
-        <input type="color" className="input h-10" value={value.bg_color || "#ffffff"} onChange={(e) => set({ bg_color: e.target.value })} />
+        <ThemedColorInput value={value.bg_color || "#ffffff"} onChange={(v) => set({ bg_color: v })} />
       </Field>
       <Field label="Text color">
-        <input type="color" className="input h-10" value={value.text_color || "#0f172a"} onChange={(e) => set({ text_color: e.target.value })} />
+        <ThemedColorInput value={value.text_color || "#0f172a"} onChange={(v) => set({ text_color: v })} />
       </Field>
       <Field label="Accent / CTA color">
-        <input type="color" className="input h-10" value={value.accent_color || "#16a34a"} onChange={(e) => set({ accent_color: e.target.value })} />
+        <ThemedColorInput value={value.accent_color || "#16a34a"} onChange={(v) => set({ accent_color: v })} />
       </Field>
       <Field label="Border radius (px)">
         <input type="number" min={0} max={48} className="input" value={value.border_radius ?? 16} onChange={(e) => set({ border_radius: Number(e.target.value) })} />
@@ -597,7 +598,7 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Backdrop overlay</div>
         <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Overlay color">
-            <input type="color" className="input h-10" value={value.overlay_color || "#000000"} onChange={(e) => set({ overlay_color: e.target.value })} />
+            <ThemedColorInput value={value.overlay_color || "#000000"} onChange={(v) => set({ overlay_color: v })} />
           </Field>
           <Field label={`Opacity ${value.overlay_opacity ?? 50}%`}>
             <input type="range" min={0} max={100} value={value.overlay_opacity ?? 50} onChange={(e) => set({ overlay_opacity: Number(e.target.value) })} className="w-full" />
@@ -720,7 +721,7 @@ function ABTestTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
             <textarea className="input min-h-[80px]" value={variant.body || ""} onChange={(e) => setV({ body: e.target.value })} />
           </Field>
           <Field label="Variant B accent color">
-            <input type="color" className="input h-10" value={variant.accent_color || value.accent_color || "#16a34a"} onChange={(e) => setV({ accent_color: e.target.value })} />
+            <ThemedColorInput value={variant.accent_color || value.accent_color || "#16a34a"} onChange={(v) => setV({ accent_color: v })} />
           </Field>
         </>
       )}

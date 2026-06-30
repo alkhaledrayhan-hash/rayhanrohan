@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
@@ -303,40 +304,19 @@ function ColorField({
   onChange: (v: string) => void;
   allowEmpty?: boolean;
 }) {
-  const isHex = /^#[0-9a-f]{6}$/i.test(value);
   return (
     <label className="block space-y-1">
       <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-      <div className="flex items-center gap-2 rounded-md border border-input bg-background p-1.5">
-        <span
-          className="h-7 w-9 shrink-0 rounded border border-border"
-          style={{ background: value || "transparent" }}
-        />
-        <input
-          type="color"
-          value={isHex ? value : "#000000"}
-          onChange={(e) => onChange(e.target.value)}
-          className="h-7 w-7 cursor-pointer rounded border-0 bg-transparent"
-        />
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={allowEmpty ? "(empty = default)" : "#000000"}
-          className="w-full bg-transparent text-xs outline-none"
-          spellCheck={false}
-        />
-        {allowEmpty && value && (
-          <button
-            type="button"
-            onClick={() => onChange("")}
-            className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
-            title="Clear"
-          >
-            ×
-          </button>
-        )}
-      </div>
+      <ThemedColorInput value={value} onChange={onChange} />
+      {allowEmpty && value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="mt-1 text-[10px] text-muted-foreground hover:text-foreground underline"
+        >
+          Clear (use default)
+        </button>
+      )}
     </label>
   );
 }
