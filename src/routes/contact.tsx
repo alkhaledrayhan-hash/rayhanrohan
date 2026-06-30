@@ -87,15 +87,18 @@ function ContactPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <PageHero
-        image={cfg.hero.image || contactHero}
-        eyebrow={cfg.hero.eyebrow}
-        title={cfg.hero.title}
-        description={cfg.hero.description}
-        crumbs={[{ label: "Home", to: "/" }, { label: cfg.hero.eyebrow || "Contact" }]}
-      />
+      {!hiddenHero && (
+        <PageHero
+          image={cfg.hero.image || contactHero}
+          eyebrow={cfg.hero.eyebrow}
+          title={cfg.hero.title}
+          description={cfg.hero.description}
+          crumbs={[{ label: "Home", to: "/" }, { label: cfg.hero.eyebrow || "Contact" }]}
+        />
+      )}
 
       {/* Quick contact tiles */}
+      {!hiddenChannels && (
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <ContactTile
