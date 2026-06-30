@@ -150,41 +150,64 @@ export function Header() {
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[88vw] max-w-sm p-0">
+          <SheetContent
+            side="right"
+            className="w-[90vw] max-w-sm border-l border-border/60 bg-gradient-to-b from-background via-background to-secondary/30 p-0"
+          >
             <div className="flex h-full flex-col">
-              <div className="border-b border-border px-6 py-5">
-                <p className="font-display text-lg font-semibold text-foreground">
-                  {settings.site_title}
-                </p>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-gold">
-                  {settings.site_tagline}
-                </p>
-              </div>
-              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 text-sm font-medium">
-                {headerMenu.map((item, i) => (
-                  <div key={i}>
-                    <SheetLink to={item.to} search={item.search} onSelect={() => setOpen(false)}>
-                      {item.label}
-                    </SheetLink>
-                    {item.children && item.children.length > 0 && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-border/60 pl-3">
-                        {item.children.map((c, ci) => (
-                          <SheetLink key={ci} to={c.to} search={c.search} onSelect={() => setOpen(false)}>
-                            {c.label}
-                          </SheetLink>
-                        ))}
-                      </div>
+              {/* Brand header */}
+              <div className="relative overflow-hidden border-b border-border/60 px-6 pb-6 pt-7">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/25 via-gold/15 to-transparent blur-2xl"
+                />
+                <div className="relative flex items-center gap-3">
+                  {settings.site_logo_url ? (
+                    <img
+                      src={settings.site_logo_url}
+                      alt=""
+                      className="h-10 w-10 rounded-xl object-cover ring-1 ring-border/60"
+                    />
+                  ) : (
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-gold text-primary-foreground shadow-[var(--shadow-soft)]">
+                      <Home className="h-5 w-5" />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate font-display text-lg font-semibold text-foreground">
+                      {settings.site_title}
+                    </p>
+                    {settings.site_tagline && (
+                      <p className="truncate text-[10px] uppercase tracking-[0.22em] text-gold">
+                        {settings.site_tagline}
+                      </p>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <nav className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-3 py-4 text-sm font-medium">
+                <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
+                  Menu
+                </p>
+                {headerMenu.map((item, i) => (
+                  <MobileMenuItem
+                    key={i}
+                    item={item}
+                    onSelect={() => setOpen(false)}
+                  />
                 ))}
               </nav>
-              <div className="space-y-2 border-t border-border px-4 py-4">
+
+              {/* Footer actions */}
+              <div className="space-y-2 border-t border-border/60 bg-background/80 px-4 py-4 backdrop-blur">
                 {isAuthed ? (
                   <>
                     <Link
                       to="/dashboard"
                       onClick={() => setOpen(false)}
-                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                      className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-secondary/40 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
                     >
                       <LayoutDashboard className="h-4 w-4" /> Dashboard
                     </Link>
@@ -200,7 +223,7 @@ export function Header() {
                   <Link
                     to="/auth"
                     onClick={() => setOpen(false)}
-                    className="flex w-full items-center justify-center rounded-full border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    className="flex w-full items-center justify-center rounded-full border border-border bg-secondary/40 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
                   >
                     Sign In
                   </Link>
@@ -210,7 +233,7 @@ export function Header() {
                     to={cta.to as never}
                     search={cta.search as never}
                     onClick={() => setOpen(false)}
-                    className="flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-opacity hover:opacity-90"
+                    className="flex w-full items-center justify-center rounded-full bg-gradient-to-r from-primary to-gold px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition-transform hover:scale-[1.02]"
                   >
                     {cta.label}
                   </Link>
@@ -224,29 +247,75 @@ export function Header() {
   );
 }
 
-function SheetLink({
-  to,
-  search,
+function MobileMenuItem({
+  item,
   onSelect,
-  children,
 }: {
-  to: string;
-  search?: Record<string, unknown>;
+  item: { label: string; to: string; search?: Record<string, unknown>; icon?: string | null; children?: HeaderSubItem[] };
   onSelect: () => void;
-  children: React.ReactNode;
 }) {
+  const hasChildren = !!(item.children && item.children.length > 0);
+  const [expanded, setExpanded] = useState(false);
+  const Icon = getMenuIcon(item.icon) ?? guessMenuIcon(item.label);
+
   return (
-    <Link
-      to={to as never}
-      search={search as never}
-      onClick={onSelect}
-      className="rounded-xl px-4 py-3 text-foreground transition-colors hover:bg-secondary"
-      activeProps={{ className: "bg-secondary text-foreground" }}
-    >
-      {children}
-    </Link>
+    <div className="rounded-2xl border border-transparent transition-colors hover:border-border/60 hover:bg-secondary/40">
+      <div className="flex items-stretch">
+        <Link
+          to={item.to as never}
+          search={item.search as never}
+          onClick={onSelect}
+          className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-foreground"
+          activeProps={{ className: "text-primary" }}
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary/70 text-foreground/80 ring-1 ring-border/40">
+            {Icon ? <Icon className="h-4 w-4" /> : <span className="h-1.5 w-1.5 rounded-full bg-gold" />}
+          </span>
+          <span className="truncate text-[15px] font-medium">{item.label}</span>
+        </Link>
+        {hasChildren && (
+          <button
+            type="button"
+            aria-label={expanded ? "Collapse" : "Expand"}
+            aria-expanded={expanded}
+            onClick={() => setExpanded((v) => !v)}
+            className="grid w-11 shrink-0 place-items-center rounded-r-2xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <ChevronDown
+              className={`h-4 w-4 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+            />
+          </button>
+        )}
+      </div>
+      {hasChildren && (
+        <div
+          className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out ${
+            expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className="min-h-0">
+            <div className="mb-2 ml-6 mr-3 flex flex-col gap-0.5 border-l border-border/60 pl-3 pt-1">
+              {item.children!.map((c, ci) => (
+                <Link
+                  key={ci}
+                  to={c.to as never}
+                  search={c.search as never}
+                  onClick={onSelect}
+                  className="group flex items-center gap-2 rounded-lg px-3 py-2 text-[13.5px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  activeProps={{ className: "bg-secondary text-foreground" }}
+                >
+                  <ChevronRight className="h-3 w-3 text-gold/70 transition-transform group-hover:translate-x-0.5" />
+                  <span className="truncate">{c.label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
+
 
 function NavPill({
   to,
