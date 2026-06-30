@@ -27,7 +27,29 @@ type MediaItem = {
 
 type WithUrl = MediaItem & { url: string };
 
-const BUCKET = "media";
+const BUCKETS = ["media", "agent-avatars"] as const;
+const PRIMARY_BUCKET = "media";
+
+async function listAll(bucket: string, prefix = "", depth = 0): Promise<Array<MediaItem & { bucket: string }>> {
+  if (depth > 4) return [];
+  const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+    limit: 1000,
+    sortBy: { column: "created_at", order: "desc" },
+  });
+  if (error || !data) return [];
+  const out: Array<MediaItem & { bucket: string }> = [];
+  for (const entry of data) {
+    const fullPath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.id === null) {
+      // folder — recurse
+      const nested = await listAll(bucket, fullPath, depth + 1);
+      out.push(...nested);
+    } else {
+      out.push({ ...(entry as MediaItem), name: fullPath, bucket });
+    }
+  }
+  return out;
+}
 
 function categorize(mime?: string) {
   if (!mime) return "file";
