@@ -194,15 +194,15 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
   const bulkDelete = async (items: typeof filtered) => {
     const ids = items.map((i) => i.id);
     const { error } = await supabase.from("properties").delete().in("id", ids);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Deleted ${ids.length} propert${ids.length === 1 ? "y" : "ies"}`);
     qc.invalidateQueries({ queryKey: ["admin-properties"] });
   };
-  const bulkUpdate = async (patch: Record<string, any>, label: string) => {
+  const bulkUpdate = async (patch: any, label: string) => {
     const ids = bulk.selectedIds;
     if (!ids.length) return;
-    const { error } = await supabase.from("properties").update(patch).in("id", ids);
-    if (error) return toast.error(error.message);
+    const { error } = await (supabase.from("properties") as any).update(patch).in("id", ids);
+    if (error) { toast.error(error.message); return; }
     toast.success(`${label}: ${ids.length}`);
     qc.invalidateQueries({ queryKey: ["admin-properties"] });
     bulk.clear();
