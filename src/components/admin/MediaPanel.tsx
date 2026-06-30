@@ -25,7 +25,7 @@ type MediaItem = {
   metadata: { size?: number; mimetype?: string } | null;
 };
 
-type WithUrl = MediaItem & { url: string };
+type WithUrl = MediaItem & { url: string; bucket: string };
 
 const BUCKETS = ["media", "agent-avatars"] as const;
 const PRIMARY_BUCKET = "media";
