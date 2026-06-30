@@ -463,6 +463,10 @@ function BookingDetailDialog({
               <>
                 <button onClick={onClose}
                   className="rounded-lg border border-border bg-white px-3 py-2 text-sm">Close</button>
+                <button onClick={handlePrint}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium hover:bg-muted">
+                  <Printer className="h-4 w-4" /> Print invoice
+                </button>
                 {isAdmin && (
                   <button onClick={() => setEditing(true)}
                     className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">
