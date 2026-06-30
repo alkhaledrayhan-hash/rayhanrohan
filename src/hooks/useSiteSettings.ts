@@ -29,7 +29,9 @@ export type SiteSettings = {
   footer_badge_text: string;
   footer_copyright: string;
   footer_show_plane: string;
-
+  footer_bg_color: string;
+  footer_overlay_color: string;
+  footer_overlay_opacity: string;
 };
 
 const DEFAULTS: SiteSettings = {
