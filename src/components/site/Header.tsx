@@ -177,27 +177,40 @@ export function Header() {
                   className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/25 via-gold/15 to-transparent blur-2xl"
                 />
                 <div className="relative flex items-center gap-3">
-                  {settings.site_logo_url ? (
-                    <img
-                      src={settings.site_logo_url}
-                      alt=""
-                      className="h-10 w-10 rounded-xl object-cover ring-1 ring-border/60"
-                    />
-                  ) : (
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-gold text-primary-foreground shadow-[var(--shadow-soft)]">
-                      <Home className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate font-display text-lg font-semibold text-foreground">
-                      {settings.site_title}
-                    </p>
-                    {settings.site_tagline && (
-                      <p className="truncate text-[10px] uppercase tracking-[0.22em] text-gold">
-                        {settings.site_tagline}
-                      </p>
-                    )}
-                  </div>
+                  {(() => {
+                    const mode = settings.brand_display_mode || "full";
+                    const showLogo = mode !== "text";
+                    const showText = mode !== "logo" || !settings.site_logo_url;
+                    return (
+                      <>
+                        {showLogo && (
+                          settings.site_logo_url ? (
+                            <img
+                              src={settings.site_logo_url}
+                              alt=""
+                              className={mode === "logo" ? "h-11 w-auto max-w-[170px] object-contain" : "h-10 w-10 rounded-xl object-cover ring-1 ring-border/60"}
+                            />
+                          ) : (
+                            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-gold text-primary-foreground shadow-[var(--shadow-soft)]">
+                              <Home className="h-5 w-5" />
+                            </div>
+                          )
+                        )}
+                        {showText && (
+                          <div className="min-w-0">
+                            <p className="truncate font-display text-lg font-semibold text-foreground">
+                              {settings.site_title}
+                            </p>
+                            {settings.site_tagline && (
+                              <p className="truncate text-[10px] uppercase tracking-[0.22em] text-gold">
+                                {settings.site_tagline}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
 
