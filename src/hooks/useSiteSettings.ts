@@ -7,6 +7,7 @@ export type SiteSettings = {
   site_url: string;
   site_logo_url: string;
   site_favicon_url: string;
+  brand_display_mode: string;
   admin_email: string;
   site_timezone: string;
   date_format: string;
@@ -40,6 +41,7 @@ const DEFAULTS: SiteSettings = {
   site_url: "",
   site_logo_url: "",
   site_favicon_url: "",
+  brand_display_mode: "full",
   admin_email: "",
   site_timezone: "Asia/Qatar",
   date_format: "MMMM d, yyyy",
