@@ -16,6 +16,9 @@ const FOOTER_CONTENT_KEYS = [
   "footer_badge_text",
   "footer_copyright",
   "footer_show_plane",
+  "footer_bg_color",
+  "footer_overlay_color",
+  "footer_overlay_opacity",
 ] as const;
 type FooterContentKey = (typeof FOOTER_CONTENT_KEYS)[number];
 type FooterContent = Record<FooterContentKey, string>;
@@ -33,6 +36,9 @@ const DEFAULTS: FooterContent = {
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
   footer_show_plane: "true",
+  footer_bg_color: "",
+  footer_overlay_color: "#000000",
+  footer_overlay_opacity: "0",
 };
 
 export function FooterContentPanel() {
@@ -96,6 +102,58 @@ export function FooterContentPanel() {
             onChange={(e) => set("footer_show_plane", e.target.checked ? "true" : "false")}
           />
         </label>
+      </Section>
+
+      <Section title="Background & overlay">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <ColorField
+            label="Background color (leave empty for default gradient)"
+            value={content.footer_bg_color}
+            onChange={(v) => set("footer_bg_color", v)}
+            allowEmpty
+          />
+          <ColorField
+            label="Overlay color"
+            value={content.footer_overlay_color || "#000000"}
+            onChange={(v) => set("footer_overlay_color", v)}
+          />
+          <label className="block space-y-1 sm:col-span-2">
+            <span className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span>Overlay opacity</span>
+              <span className="rounded bg-muted px-1.5 py-0.5 font-mono">
+                {Math.round((parseFloat(content.footer_overlay_opacity || "0") || 0) * 100)}%
+              </span>
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={parseFloat(content.footer_overlay_opacity || "0") || 0}
+              onChange={(e) => set("footer_overlay_opacity", e.target.value)}
+              className="w-full"
+            />
+          </label>
+          <div
+            className="sm:col-span-2 h-20 rounded-lg border border-border relative overflow-hidden"
+            style={{
+              background:
+                content.footer_bg_color ||
+                "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
+            }}
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: content.footer_overlay_color || "#000000",
+                opacity: parseFloat(content.footer_overlay_opacity || "0") || 0,
+              }}
+            />
+            <span className="absolute inset-0 grid place-items-center text-xs font-medium text-white/85">
+              Footer preview
+            </span>
+          </div>
+        </div>
       </Section>
 
       <Section title="Left column (under logo)">
@@ -177,6 +235,55 @@ function Textarea({ label, value, onChange }: { label: string; value: string; on
         rows={3}
         className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
+    </label>
+  );
+}
+
+function ColorField({
+  label,
+  value,
+  onChange,
+  allowEmpty,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  allowEmpty?: boolean;
+}) {
+  const isHex = /^#[0-9a-f]{6}$/i.test(value);
+  return (
+    <label className="block space-y-1">
+      <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2 rounded-md border border-input bg-background p-1.5">
+        <span
+          className="h-7 w-9 shrink-0 rounded border border-border"
+          style={{ background: value || "transparent" }}
+        />
+        <input
+          type="color"
+          value={isHex ? value : "#000000"}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-7 w-7 cursor-pointer rounded border-0 bg-transparent"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={allowEmpty ? "(empty = default)" : "#000000"}
+          className="w-full bg-transparent text-xs outline-none"
+          spellCheck={false}
+        />
+        {allowEmpty && value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:bg-muted"
+            title="Clear"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </label>
   );
 }
