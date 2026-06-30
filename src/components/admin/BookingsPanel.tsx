@@ -9,6 +9,7 @@ import {
   Mail,
   Phone,
   Plus,
+  Printer,
   Search,
   Trash2,
   User as UserIcon,
@@ -21,6 +22,8 @@ import {
   listBookings,
   updateBooking,
 } from "@/lib/bookings.functions";
+import { printBookingInvoice } from "@/lib/invoice";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"] as const;
 type Status = (typeof STATUSES)[number];
