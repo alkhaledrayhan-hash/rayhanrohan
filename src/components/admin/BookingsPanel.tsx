@@ -186,10 +186,32 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
         </ThemedSelect>
       </div>
 
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="booking"
+        exportFilename="bookings"
+        exportColumns={[
+          { key: "property_title", label: "Property" },
+          { key: "customer_name", label: "Customer" },
+          { key: "customer_phone", label: "Phone" },
+          { key: "booking_date", label: "Date" },
+          { key: "status", label: "Status" },
+          { key: "source", label: "Source" },
+        ]}
+      >
+        {STATUSES.map((s) => (
+          <button key={s} onClick={() => bulkStatus(s)} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">{s}</button>
+        ))}
+      </BulkActionsBar>
+
       <div className="responsive-table-wrap overflow-x-auto rounded-xl border border-border bg-white">
         <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
               <th className="px-4 py-3">Property</th>
               <th className="px-4 py-3">Customer</th>
               <th className="px-4 py-3">Agent</th>
@@ -201,10 +223,10 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr><td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">No bookings yet.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">No bookings yet.</td></tr>
             )}
             {filtered.map((b) => {
               const agent = agentForBooking(b);
@@ -214,6 +236,9 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   onClick={() => setSelected(b)}
                   className="cursor-pointer border-t border-border transition hover:bg-muted/40"
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <SelectCheckbox checked={bulk.isSelected(b.id)} onChange={() => bulk.toggle(b.id)} ariaLabel="Select booking" />
+                  </td>
                   <td className="px-4 py-3 font-medium">{b.property_title}</td>
                   <td className="px-4 py-3">
                     <div>{b.customer_name}</div>
