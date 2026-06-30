@@ -41,6 +41,12 @@ type Popup = {
   variant_b: any;
   ab_split: number;
   priority: number;
+  gradient_from: string | null;
+  gradient_to: string | null;
+  gradient_angle: number;
+  glass_blur: number;
+  glass_tint: number;
+  glass_border: number;
 };
 
 const RETURNING_KEY = "lovable:hasVisited";
