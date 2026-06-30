@@ -44,12 +44,23 @@ export function AddAgentForm() {
   const mut = useMutation({
     mutationFn: () => fn({ data: form }),
     onSuccess: () => {
-      toast.success("Agent created");
+      toast.success("Agent created successfully");
       setForm(empty);
       qc.invalidateQueries({ queryKey: ["agents"] });
     },
-    onError: (e: any) => toast.error(e.message || "Failed to create agent"),
+    onError: (e: any) => toast.error(e?.message || "Failed to create agent"),
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = agentSchema.safeParse(form);
+    if (!result.success) {
+      toast.error(result.error.issues[0]?.message || "Please check the form");
+      return;
+    }
+    mut.mutate();
+  };
+
 
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
