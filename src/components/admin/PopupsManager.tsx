@@ -319,8 +319,9 @@ function EditorModal({
   const set = (patch: Partial<Popup>) => onChange({ ...value, ...patch });
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:p-8">
+    <div className="popup-editor fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:p-8">
       <div className="w-full max-w-6xl rounded-2xl bg-card shadow-2xl">
+
         <div className="flex items-center justify-between border-b border-border p-4">
           <h3 className="font-display text-lg font-semibold">{value.id ? "Edit popup" : "New popup"}</h3>
           <button onClick={onClose} className="rounded-md p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
