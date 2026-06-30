@@ -573,6 +573,23 @@ a, button, [role="button"], summary,
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
+/* Popup editor: lighter primary-tinted borders on fields */
+.popup-editor .input,
+.popup-editor input[type="text"],
+.popup-editor input[type="number"],
+.popup-editor input[type="email"],
+.popup-editor input[type="url"],
+.popup-editor textarea,
+.popup-editor select {
+  border-color: color-mix(in oklab, hsl(var(--primary)) 28%, hsl(var(--border)));
+  background-color: color-mix(in oklab, hsl(var(--primary)) 4%, hsl(var(--background)));
+}
+.popup-editor .input:hover,
+.popup-editor textarea:hover,
+.popup-editor select:hover {
+  border-color: color-mix(in oklab, hsl(var(--primary)) 45%, hsl(var(--border)));
+}
+
 /* Image rendering quality across the app */
 img { image-rendering: -webkit-optimize-contrast; }
 
