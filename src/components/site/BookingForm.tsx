@@ -134,21 +134,6 @@ export function BookingForm({ property }: { property: Property }) {
       const startDate = isRent ? range!.from! : date!;
       const endDate = isRent ? range!.to! : null;
       const iso = (d: Date) => d.toISOString().slice(0, 10);
-      const lines: string[] = [];
-      if (endDate) lines.push(`Rent period: ${iso(startDate)} → ${iso(endDate)} (${nights} night${nights === 1 ? "" : "s"})`);
-      if (isRent) {
-        lines.push(`Rate: ${money(unitPrice)} / night${offerActive ? ` (${discount}% offer applied)` : ""}`);
-        lines.push(`Subtotal: ${money(unitPrice)} × ${nights} = ${money(subtotal)}`);
-      } else {
-        lines.push(`Price: ${money(unitPrice)}${offerActive ? ` (${discount}% offer applied)` : ""}`);
-      }
-      if (taxPct > 0) lines.push(`VAT (${taxPct}%): ${money(taxAmount)}`);
-      lines.push(`Total: ${money(total)}`);
-      const notes = lines.join("\n");
-      const round2 = (n: number) => Math.round(n * 100) / 100;
-      const discountAmount = offerActive
-        ? round2(property.price * units * (discount / 100))
-        : 0;
       const payload = {
         propertyId: property.id,
         propertyTitle: property.title,
@@ -156,26 +141,24 @@ export function BookingForm({ property }: { property: Property }) {
         phone,
         date: iso(startDate),
         time,
-        notes,
+        notes: "",
         pricing: {
           checkIn: iso(startDate),
           checkOut: endDate ? iso(endDate) : "",
           nights: isRent ? nights : 0,
-          unitPrice: round2(unitPrice),
-          subtotal: round2(subtotal),
-          discountPercent: offerActive ? discount : 0,
-          discountAmount,
-          taxPercent: taxPct,
-          taxAmount: round2(taxAmount),
-          totalAmount: round2(total),
-          currency,
         },
       };
       const res = auth?.user
         ? await submitAsUser({ data: payload })
         : await submit({ data: payload });
+      const b = res.breakdown;
+      const serverTotal = b
+        ? `${b.currency} ${b.totalAmount.toFixed(2)}`
+        : null;
       toast.success(isRent ? "Rental requested" : "Viewing requested", {
-        description: `Reference ${res.id}. Our agent will confirm by phone shortly.`,
+        description: serverTotal
+          ? `Reference ${res.id} · Confirmed total ${serverTotal}. Our agent will call shortly.`
+          : `Reference ${res.id}. Our agent will confirm by phone shortly.`,
       });
       setName("");
       setPhone("");
