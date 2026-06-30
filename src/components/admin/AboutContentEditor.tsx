@@ -206,6 +206,19 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
         </div>
         <Input label="Description" value={v.mission.description} onChange={(x) => setV({ ...v, mission: { ...v.mission, description: x } })} multiline rows={2} />
+        <label className="text-sm">
+          <span className="mb-1 block text-xs font-medium text-muted-foreground">Columns (desktop)</span>
+          <select
+            className={inputCls}
+            value={String(v.mission.columns)}
+            onChange={(e) => setV({ ...v, mission: { ...v.mission, columns: Number(e.target.value) as 1|2|3|4 } })}
+          >
+            <option value="1">1 column</option>
+            <option value="2">2 columns</option>
+            <option value="3">3 columns</option>
+            <option value="4">4 columns</option>
+          </select>
+        </label>
         {v.mission.items.map((it, i) => (
           <Card key={i} title={`Item ${i + 1}`} onRemove={() => setV({ ...v, mission: { ...v.mission, items: v.mission.items.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
