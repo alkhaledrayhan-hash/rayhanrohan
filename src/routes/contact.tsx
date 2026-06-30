@@ -20,7 +20,7 @@ import { PageHero } from "@/components/site/PageHero";
 import contactHero from "@/assets/qatar-corniche.jpg?w=1600&quality=70&format=webp";
 import { PhoneInput } from "@/components/site/PhoneInput";
 import { usePageSections } from "@/lib/page-sections";
-import { normalizeContactPage } from "@/components/admin/ContactSectionEditor";
+import { normalizeContactPage, buildMapSrc, MAP_TEMPLATES } from "@/components/admin/ContactSectionEditor";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
