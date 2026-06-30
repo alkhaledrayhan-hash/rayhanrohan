@@ -25,12 +25,14 @@ export type AboutContent = {
   values: {
     eyebrow: string;
     title: string;
+    columns: 1 | 2 | 3 | 4;
     items: Array<{ icon: string; title: string; body: string }>;
   };
   team: {
     eyebrow: string;
     title: string;
     description: string;
+    columns: 1 | 2 | 3 | 4;
     members: Array<{ name: string; role: string; bio: string }>;
   };
   company: {
@@ -48,8 +50,8 @@ const DEFAULT: AboutContent = {
   stats: [],
   story: { eyebrow: "", title: "", paragraphs: [], image: "", badge_title: "", badge_subtitle: "" },
   mission: { eyebrow: "", title: "", description: "", columns: 2, items: [] },
-  values: { eyebrow: "", title: "", items: [] },
-  team: { eyebrow: "", title: "", description: "", members: [] },
+  values: { eyebrow: "", title: "", columns: 4, items: [] },
+  team: { eyebrow: "", title: "", description: "", columns: 4, members: [] },
   company: { eyebrow: "", title: "", description: "", details: [], primary_cta_label: "", secondary_cta_label: "", secondary_cta_email: "" },
 };
 
@@ -59,8 +61,8 @@ export function normalizeAbout(raw: any): AboutContent {
     stats: Array.isArray(raw.stats) ? raw.stats : DEFAULT.stats,
     story: { ...DEFAULT.story, ...(raw.story || {}), paragraphs: Array.isArray(raw.story?.paragraphs) ? raw.story.paragraphs : [] },
     mission: { ...DEFAULT.mission, ...(raw.mission || {}), columns: ([1,2,3,4].includes(Number(raw.mission?.columns)) ? Number(raw.mission.columns) : 2) as 1|2|3|4, items: Array.isArray(raw.mission?.items) ? raw.mission.items : [] },
-    values: { ...DEFAULT.values, ...(raw.values || {}), items: Array.isArray(raw.values?.items) ? raw.values.items : [] },
-    team: { ...DEFAULT.team, ...(raw.team || {}), members: Array.isArray(raw.team?.members) ? raw.team.members : [] },
+    values: { ...DEFAULT.values, ...(raw.values || {}), columns: ([1,2,3,4].includes(Number(raw.values?.columns)) ? Number(raw.values.columns) : 4) as 1|2|3|4, items: Array.isArray(raw.values?.items) ? raw.values.items : [] },
+    team: { ...DEFAULT.team, ...(raw.team || {}), columns: ([1,2,3,4].includes(Number(raw.team?.columns)) ? Number(raw.team.columns) : 4) as 1|2|3|4, members: Array.isArray(raw.team?.members) ? raw.team.members : [] },
     company: { ...DEFAULT.company, ...(raw.company || {}), details: Array.isArray(raw.company?.details) ? raw.company.details : [] },
   };
 }
@@ -106,6 +108,33 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
     <div className="rounded-xl border border-border bg-white">
       <div className="rounded-t-xl px-4 py-3 text-sm font-semibold">{title}</div>
       <div className="space-y-3 border-t border-border p-4">{children}</div>
+    </div>
+  );
+}
+
+function ColumnsPicker({ value, onChange }: { value: 1 | 2 | 3 | 4; onChange: (v: 1 | 2 | 3 | 4) => void }) {
+  return (
+    <div>
+      <span className="mb-2 block text-xs font-medium text-muted-foreground">Columns per row</span>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {([1, 2, 3, 4] as const).map((c) => {
+          const Icon = c === 1 ? Rows3 : c === 2 ? Columns2 : c === 3 ? Columns3 : Columns4;
+          const active = value === c;
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => onChange(c)}
+              className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-medium transition ${
+                active ? "border-primary bg-primary/10 text-primary" : "border-border bg-white hover:border-primary/40"
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              {c} column{c > 1 ? "s" : ""}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -206,28 +235,7 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
         </div>
         <Input label="Description" value={v.mission.description} onChange={(x) => setV({ ...v, mission: { ...v.mission, description: x } })} multiline rows={2} />
-        <div>
-          <span className="mb-2 block text-xs font-medium text-muted-foreground">Columns per row</span>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {([1, 2, 3, 4] as const).map((c) => {
-              const Icon = c === 1 ? Rows3 : c === 2 ? Columns2 : c === 3 ? Columns3 : Columns4;
-              const active = v.mission.columns === c;
-              return (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setV({ ...v, mission: { ...v.mission, columns: c } })}
-                  className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-medium transition ${
-                    active ? "border-primary bg-primary/10 text-primary" : "border-border bg-white hover:border-primary/40"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {c} column{c > 1 ? "s" : ""}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <ColumnsPicker value={v.mission.columns} onChange={(c) => setV({ ...v, mission: { ...v.mission, columns: c } })} />
 
         {v.mission.items.map((it, i) => (
           <Card key={i} title={`Item ${i + 1}`} onRemove={() => setV({ ...v, mission: { ...v.mission, items: v.mission.items.filter((_, j) => j !== i) } })}>
@@ -262,6 +270,7 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Eyebrow" value={v.values.eyebrow} onChange={(x) => setV({ ...v, values: { ...v.values, eyebrow: x } })} />
           <Input label="Title" value={v.values.title} onChange={(x) => setV({ ...v, values: { ...v.values, title: x } })} />
         </div>
+        <ColumnsPicker value={v.values.columns} onChange={(c) => setV({ ...v, values: { ...v.values, columns: c } })} />
         {v.values.items.map((it, i) => (
           <Card key={i} title={`Value ${i + 1}`} onRemove={() => setV({ ...v, values: { ...v.values, items: v.values.items.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -286,6 +295,7 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.team.title} onChange={(x) => setV({ ...v, team: { ...v.team, title: x } })} />
         </div>
         <Input label="Description" value={v.team.description} onChange={(x) => setV({ ...v, team: { ...v.team, description: x } })} multiline rows={2} />
+        <ColumnsPicker value={v.team.columns} onChange={(c) => setV({ ...v, team: { ...v.team, columns: c } })} />
         {v.team.members.map((m, i) => (
           <Card key={i} title={`Member ${i + 1}`} onRemove={() => setV({ ...v, team: { ...v.team, members: v.team.members.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
