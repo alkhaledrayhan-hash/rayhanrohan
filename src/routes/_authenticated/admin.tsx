@@ -942,13 +942,15 @@ function ChartCard({
 }
 
 function RecentLeads() {
-  const leads = [
-    { name: "Ethan Brown", property: "Lusail Marina Penthouse", status: "New", time: "2m" },
-    { name: "Aisha Khan", property: "Pearl Qanat Quartier 2BR", status: "Contacted", time: "1h" },
-    { name: "Omar Saeed", property: "West Bay Tower 3BR", status: "Viewing", time: "3h" },
-    { name: "Sara Al-Mansoori", property: "Al Waab Villa", status: "Negotiating", time: "1d" },
-    { name: "Mohammed N.", property: "Katara Hills Townhouse", status: "New", time: "1d" },
-  ];
+function RecentLeads({ leads }: { leads: { name: string; property: string; status: string; time: string }[] }) {
+  if (!leads.length) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
+        <h3 className="font-display text-base font-semibold">Recent Leads</h3>
+        <p className="mt-3 text-sm text-muted-foreground">No leads yet.</p>
+      </div>
+    );
+  }
   return (
     <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
