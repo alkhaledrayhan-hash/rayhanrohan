@@ -18,6 +18,13 @@ export type AdminNotifsPayload = {
     property_title: string | null;
     scheduled_date: string | null;
     created_at: string;
+    nights: number | null;
+    total_amount: number | null;
+    tax_percent: number | null;
+    tax_amount: number | null;
+    discount_percent: number | null;
+    discount_amount: number | null;
+    currency: string | null;
   }>;
   messages: Array<{
     id: string;
@@ -44,7 +51,7 @@ export const adminNotifsQuery = queryOptions({
         .limit(25),
       supabase
         .from("bookings")
-        .select("id, customer_name, property_title, scheduled_date, created_at")
+        .select("id, customer_name, property_title, scheduled_date, created_at, nights, total_amount, tax_percent, tax_amount, discount_percent, discount_amount, currency")
         .order("created_at", { ascending: false })
         .limit(25),
       supabase

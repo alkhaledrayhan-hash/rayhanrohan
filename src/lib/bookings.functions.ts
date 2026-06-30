@@ -4,6 +4,20 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
+const PricingSchema = z.object({
+  checkIn: z.string().optional().or(z.literal("")),
+  checkOut: z.string().optional().or(z.literal("")),
+  nights: z.number().int().min(0).optional(),
+  unitPrice: z.number().min(0).optional(),
+  subtotal: z.number().min(0).optional(),
+  discountPercent: z.number().min(0).max(100).optional(),
+  discountAmount: z.number().min(0).optional(),
+  taxPercent: z.number().min(0).max(100).optional(),
+  taxAmount: z.number().min(0).optional(),
+  totalAmount: z.number().min(0).optional(),
+  currency: z.string().max(10).optional(),
+}).partial();
+
 const BookingSchema = z.object({
   propertyId: z.string().min(1),
   propertyTitle: z.string().min(1).max(200),
@@ -13,7 +27,25 @@ const BookingSchema = z.object({
   date: z.string().min(1).max(40),
   time: z.string().min(1).max(20),
   notes: z.string().trim().max(1000).optional().or(z.literal("")),
+  pricing: PricingSchema.optional(),
 });
+
+function pricingPatch(p?: z.infer<typeof PricingSchema>) {
+  if (!p) return {};
+  return {
+    check_in: p.checkIn || null,
+    check_out: p.checkOut || null,
+    nights: p.nights ?? null,
+    unit_price: p.unitPrice ?? null,
+    subtotal: p.subtotal ?? null,
+    discount_percent: p.discountPercent ?? null,
+    discount_amount: p.discountAmount ?? null,
+    tax_percent: p.taxPercent ?? null,
+    tax_amount: p.taxAmount ?? null,
+    total_amount: p.totalAmount ?? null,
+    currency: p.currency || null,
+  };
+}
 
 export type BookingInput = z.infer<typeof BookingSchema>;
 
@@ -68,6 +100,7 @@ export const createBooking = createServerFn({ method: "POST" })
         notes: data.notes || null,
         source: "website",
         status: "pending",
+        ...pricingPatch(data.pricing),
       })
       .select("id")
       .single();
@@ -114,6 +147,7 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
         notes: data.notes || null,
         source: "website",
         status: "pending",
+        ...pricingPatch(data.pricing),
       })
       .select("id")
       .single();
