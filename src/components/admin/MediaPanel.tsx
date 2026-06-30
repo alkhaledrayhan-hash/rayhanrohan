@@ -247,7 +247,7 @@ export function MediaPanel() {
               item={it}
               onOpen={() => setPreview(it)}
               onCopy={() => handleCopy(it.url)}
-              onDelete={() => handleDelete(it.name)}
+              onDelete={() => handleDelete(it)}
             />
           ))}
         </div>
