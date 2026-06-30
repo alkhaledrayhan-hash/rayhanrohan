@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock, Eye, MapPin, Bed, Bath, Maximize2, Calendar, BadgeCheck, Tag } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
+import { LocationAutocomplete } from "@/components/admin/LocationAutocomplete";
 
 type PropertyRow = {
   id: string;
