@@ -190,6 +190,24 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     return true;
   });
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: typeof filtered) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("properties").delete().in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`Deleted ${ids.length} propert${ids.length === 1 ? "y" : "ies"}`);
+    qc.invalidateQueries({ queryKey: ["admin-properties"] });
+  };
+  const bulkUpdate = async (patch: Record<string, any>, label: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await supabase.from("properties").update(patch).in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`${label}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin-properties"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -198,6 +216,31 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <Plus className="h-4 w-4" /> Add property
         </button>
       </div>
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="property"
+        exportFilename="properties"
+        exportColumns={[
+          { key: "title", label: "Title" },
+          { key: "location", label: "Location" },
+          { key: "type", label: "Type" },
+          { key: "price", label: "Price" },
+          { key: "status", label: "Status" },
+          { key: "listing_status", label: "Approval" },
+        ]}
+      >
+        {isAdmin && (
+          <>
+            <button onClick={() => bulkUpdate({ listing_status: "approved" }, "Approved")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Approve</button>
+            <button onClick={() => bulkUpdate({ listing_status: "rejected" }, "Rejected")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Reject</button>
+            <button onClick={() => bulkUpdate({ status: "active" }, "Set active")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Activate</button>
+            <button onClick={() => bulkUpdate({ status: "inactive" }, "Set inactive")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Deactivate</button>
+          </>
+        )}
+      </BulkActionsBar>
 
       <div className="grid grid-cols-1 gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <input
