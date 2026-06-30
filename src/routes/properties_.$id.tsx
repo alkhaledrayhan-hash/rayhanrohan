@@ -23,6 +23,7 @@ import { BookingForm } from "@/components/site/BookingForm";
 import { EnquireForm } from "@/components/site/EnquireForm";
 import { formatPrice, usePropertyBySlug } from "@/lib/properties";
 import { OfferCountdown } from "@/components/site/OfferCountdown";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/properties_/$id")({
   head: ({ params }) => {
