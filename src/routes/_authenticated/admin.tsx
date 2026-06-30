@@ -955,6 +955,46 @@ function ChartCard({
   );
 }
 
+function ChartSkeleton({ variant }: { variant: "area" | "bar" }) {
+  const bars = [55, 70, 45, 80, 60, 75, 50, 90, 65, 72, 58, 82];
+  return (
+    <div className="relative h-[260px] w-full overflow-hidden rounded-lg bg-gradient-to-b from-muted/40 to-muted/10">
+      <div className="absolute inset-0 flex items-end gap-2 px-3 pb-6 pt-3">
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            className={`flex-1 rounded-t ${variant === "area" ? "bg-primary/15" : "bg-primary/20"} animate-pulse`}
+            style={{ height: `${h}%`, animationDelay: `${i * 60}ms` }}
+          />
+        ))}
+      </div>
+      <div className="absolute inset-x-3 bottom-2 flex justify-between">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-2 w-6 rounded bg-muted-foreground/15" />
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+    </div>
+  );
+}
+
+function ChartEmpty({ label, hint }: { label: string; hint?: string }) {
+  return (
+    <div className="flex h-[260px] flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 text-center">
+      <div className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 3v18h18" />
+          <path d="M7 14l4-4 4 4 5-6" />
+        </svg>
+      </div>
+      <p className="mt-3 text-sm font-medium text-foreground">{label}</p>
+      {hint && <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+
+
 
 function RecentLeads({ leads, onSeeAll }: { leads: { id: string; name: string; property: string; status: string; time: string }[]; onSeeAll?: () => void }) {
   if (!leads.length) {
