@@ -52,29 +52,44 @@ export function Header() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex min-w-0 items-center gap-2">
-          {settings.site_logo_url ? (
-            <img
-              src={settings.site_logo_url}
-              alt={settings.site_title}
-              className="h-9 w-9 shrink-0 rounded-md object-cover shadow-[var(--shadow-soft)]"
-            />
-          ) : (
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
-              <Home className="h-4 w-4" />
-            </span>
-          )}
-          <span className="flex min-w-0 flex-col leading-tight">
-            <span
-              className={`truncate font-display text-lg font-semibold transition-colors ${
-                scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
-              }`}
-            >
-              {settings.site_title}
-            </span>
-            <span className="truncate text-[10px] uppercase tracking-[0.2em] text-gold">
-              {settings.site_tagline}
-            </span>
-          </span>
+          {(() => {
+            const mode = settings.brand_display_mode || "full";
+            const showLogo = mode !== "text";
+            const showText = mode !== "logo" || !settings.site_logo_url;
+            return (
+              <>
+                {showLogo && (
+                  settings.site_logo_url ? (
+                    <img
+                      src={settings.site_logo_url}
+                      alt={settings.site_title}
+                      className={`${mode === "logo" ? "h-10 w-auto max-w-[160px] object-contain" : "h-9 w-9 rounded-md object-cover"} shrink-0 shadow-[var(--shadow-soft)]`}
+                    />
+                  ) : (
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+                      <Home className="h-4 w-4" />
+                    </span>
+                  )
+                )}
+                {showText && (
+                  <span className="flex min-w-0 flex-col leading-tight">
+                    <span
+                      className={`truncate font-display text-lg font-semibold transition-colors ${
+                        scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
+                      }`}
+                    >
+                      {settings.site_title}
+                    </span>
+                    {settings.site_tagline && (
+                      <span className="truncate text-[10px] uppercase tracking-[0.2em] text-gold">
+                        {settings.site_tagline}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </>
+            );
+          })()}
         </Link>
         <nav
           className={`hidden items-center gap-1 rounded-full border p-1 text-sm font-medium backdrop-blur-xl transition-colors lg:flex ${
