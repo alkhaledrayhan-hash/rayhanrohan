@@ -20,6 +20,7 @@ import {
 import { fileToDataUrl } from "@/lib/image-upload";
 import { MenusEditor } from "@/components/admin/MenusEditor";
 import { ThemeEditor } from "@/components/admin/ThemeEditor";
+import { FooterContentPanel } from "@/components/admin/FooterContentPanel";
 
 type SettingsMap = Record<string, string>;
 const KEYS = [
