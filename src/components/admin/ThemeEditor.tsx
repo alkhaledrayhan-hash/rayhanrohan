@@ -23,6 +23,7 @@ const COLOR_FIELDS: Array<{ key: keyof ThemeColors; label: string }> = [
   { key: "muted", label: "Muted" },
   { key: "accent", label: "Accent" },
   { key: "border", label: "Border" },
+  { key: "scrollbar", label: "Scrollbar" },
 ];
 
 const SIZE_FIELDS: Array<{ key: keyof ThemeTypography; label: string; min: number; max: number }> = [

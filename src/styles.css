@@ -466,14 +466,14 @@ select:-webkit-autofill {
   color: var(--primary) !important;
 }
 
-/* ============ Webapp-style scrollbar (overlay, orange accent) ============ */
+/* ============ Webapp-style scrollbar (overlay, themed) ============ */
 :root {
-  --scrollbar-accent: 28 95% 53%; /* orange (HSL) */
+  --scrollbar-color: #f97316; /* default orange — overridable from Admin → Settings → Theme */
 }
 html {
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--scrollbar-accent) / 0.7) transparent;
+  scrollbar-color: color-mix(in oklab, var(--scrollbar-color) 70%, transparent) transparent;
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -483,13 +483,13 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--scrollbar-accent) / 0.65);
+  background: color-mix(in oklab, var(--scrollbar-color) 65%, transparent);
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--scrollbar-accent) / 0.95);
+  background: color-mix(in oklab, var(--scrollbar-color) 95%, transparent);
   background-clip: padding-box;
 }
 
