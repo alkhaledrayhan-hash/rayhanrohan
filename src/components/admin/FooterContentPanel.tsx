@@ -3,6 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
+import { ThemedColorInput } from "@/components/ui/themed-color-input";
 
 const FOOTER_CONTENT_KEYS = [
   "footer_about",
