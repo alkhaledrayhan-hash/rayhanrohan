@@ -495,3 +495,12 @@ body[data-scroll-locked] {
   margin-right: 0 !important;
   padding-right: 0 !important;
 }
+
+/* Strong override: react-remove-scroll injects body { padding-right: Npx !important }.
+   Force zero compensation since scrollbar-gutter already reserves the gutter. */
+html body,
+html body[data-scroll-locked],
+html body[style] {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
