@@ -3,7 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ThemedSelect } from "@/components/ui/themed-select";
-import { Pencil, Plus, Trash2, Eye, Copy, Sparkles, Megaphone, Newspaper, Home as HomeIcon, X } from "lucide-react";
+import {
+  Pencil, Plus, Trash2, Eye, Copy, Sparkles, Megaphone, Newspaper, Home as HomeIcon,
+  X, Mail, Cookie, LogOut, ShieldAlert, Video, BarChart3, Palette, Target, Zap, FlaskConical, FileText,
+} from "lucide-react";
 
 type Popup = {
   id: string;
@@ -15,112 +18,87 @@ type Popup = {
   image_url: string | null;
   cta_label: string | null;
   cta_url: string | null;
+  secondary_cta_label: string | null;
+  secondary_cta_url: string | null;
+  collect_email: boolean;
+  email_placeholder: string | null;
   target_type: string;
   target_value: string | null;
+  trigger_type: string;
+  scroll_threshold: number;
+  device_target: string;
+  visitor_target: string;
   delay_seconds: number;
   frequency: string;
   position: string;
   bg_color: string | null;
   text_color: string | null;
   accent_color: string | null;
+  overlay_color: string | null;
+  overlay_opacity: number;
+  overlay_blur: number;
+  animation: string;
+  border_radius: number;
+  shadow: string;
+  font_family: string | null;
+  title_size: number;
+  body_size: number;
+  variant_b: any;
+  ab_split: number;
   start_at: string | null;
   end_at: string | null;
   is_active: boolean;
   priority: number;
 };
 
-const TEMPLATES = [
-  {
-    id: "promotional",
-    label: "Promotional",
-    icon: Sparkles,
-    description: "Banner image + headline + CTA — great for campaigns.",
-    sample: {
-      template: "promotional",
-      title: "Big Summer Sale",
-      subtitle: "Limited time",
-      body: "Get up to 25% off select listings this month.",
-      cta_label: "Browse properties",
-      cta_url: "/properties",
-      image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200",
-      accent_color: "#16a34a",
-    },
-  },
-  {
-    id: "offer",
-    label: "Special Offer",
-    icon: Megaphone,
-    description: "Badge-style headline for discounts and deals.",
-    sample: {
-      template: "offer",
-      title: "Exclusive Offer",
-      subtitle: "This week only",
-      body: "Book a viewing this week and get free legal consultation.",
-      cta_label: "See offer",
-      cta_url: "/offers",
-      accent_color: "#dc2626",
-    },
-  },
-  {
-    id: "hot-news",
-    label: "Hot News",
-    icon: Newspaper,
-    description: "Bold news-style alert for announcements.",
-    sample: {
-      template: "hot-news",
-      title: "New Project Launched",
-      subtitle: "Just announced",
-      body: "Explore our newest residential tower in Lusail — now accepting reservations.",
-      cta_label: "Read more",
-      cta_url: "/news",
-      accent_color: "#0ea5e9",
-    },
-  },
-  {
-    id: "real-estate",
-    label: "Real Estate",
-    icon: HomeIcon,
-    description: "Property-style card with image and details.",
-    sample: {
-      template: "real-estate",
-      title: "Featured Villa in Pearl",
-      subtitle: "4 BR · 3 Bath",
-      body: "A beautifully appointed waterfront villa now available for viewing.",
-      cta_label: "View property",
-      cta_url: "/properties",
-      image_url: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200",
-      accent_color: "#0f766e",
-    },
-  },
+const TEMPLATES: { id: string; label: string; icon: any; description: string; sample: Partial<Popup> }[] = [
+  { id: "promotional", label: "Promotional", icon: Sparkles, description: "Banner image + headline + CTA.",
+    sample: { template: "promotional", title: "Big Summer Sale", subtitle: "Limited time", body: "Get up to 25% off select listings.", cta_label: "Browse properties", cta_url: "/properties", image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200", accent_color: "#16a34a" } },
+  { id: "offer", label: "Special Offer", icon: Megaphone, description: "Badge-style discount alert.",
+    sample: { template: "offer", title: "Exclusive Offer", subtitle: "This week only", body: "Book a viewing this week and get free legal consultation.", cta_label: "See offer", cta_url: "/offers", accent_color: "#dc2626" } },
+  { id: "hot-news", label: "Hot News", icon: Newspaper, description: "Bold news-style announcement.",
+    sample: { template: "hot-news", title: "New Project Launched", subtitle: "Just announced", body: "Explore our newest residential tower in Lusail.", cta_label: "Read more", cta_url: "/news", accent_color: "#0ea5e9" } },
+  { id: "real-estate", label: "Real Estate", icon: HomeIcon, description: "Property-style card.",
+    sample: { template: "real-estate", title: "Featured Villa in Pearl", subtitle: "4 BR · 3 Bath", body: "Waterfront villa now available.", cta_label: "View property", cta_url: "/properties", image_url: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200", accent_color: "#0f766e" } },
+  { id: "newsletter", label: "Newsletter", icon: Mail, description: "Email signup with capture form.",
+    sample: { template: "newsletter", title: "Join our newsletter", subtitle: "Weekly insights", body: "Be the first to know about new listings and market trends.", cta_label: "Subscribe", collect_email: true, email_placeholder: "you@example.com", accent_color: "#6366f1" } },
+  { id: "cookie", label: "Cookie Consent", icon: Cookie, description: "GDPR-style bottom banner.",
+    sample: { template: "cookie", title: "We use cookies", body: "We use cookies to improve your experience. By using our site, you accept our cookie policy.", cta_label: "Accept", secondary_cta_label: "Decline", position: "bottom-right", accent_color: "#0f172a", frequency: "once" } },
+  { id: "exit-intent", label: "Exit Intent", icon: LogOut, description: "Triggers when user moves to leave.",
+    sample: { template: "exit-intent", title: "Wait! Don't leave yet", subtitle: "Special offer inside", body: "Get a free property consultation before you go.", cta_label: "Yes, I'm interested", trigger_type: "exit_intent", accent_color: "#f59e0b" } },
+  { id: "age-verify", label: "Age Verification", icon: ShieldAlert, description: "Confirm visitor is 18+.",
+    sample: { template: "age-verify", title: "Are you 18 or older?", body: "This site contains content intended for adults only.", cta_label: "Yes, I am 18+", secondary_cta_label: "No, exit", frequency: "once", accent_color: "#7c3aed" } },
+  { id: "video", label: "Video Popup", icon: Video, description: "Embed a YouTube/Vimeo video.",
+    sample: { template: "video", title: "See the property tour", body: "https://www.youtube.com/embed/dQw4w9WgXcQ", cta_label: "Explore listings", cta_url: "/properties", accent_color: "#ef4444" } },
 ];
 
 function emptyPopup(): Partial<Popup> {
   return {
-    name: "",
-    template: "promotional",
-    title: "",
-    subtitle: "",
-    body: "",
-    image_url: "",
-    cta_label: "",
-    cta_url: "",
-    target_type: "all",
-    target_value: "",
-    delay_seconds: 2,
-    frequency: "session",
-    position: "center",
-    bg_color: "#ffffff",
-    text_color: "#0f172a",
-    accent_color: "#16a34a",
-    is_active: true,
-    priority: 0,
+    name: "", template: "promotional",
+    title: "", subtitle: "", body: "", image_url: "",
+    cta_label: "", cta_url: "",
+    secondary_cta_label: "", secondary_cta_url: "",
+    collect_email: false, email_placeholder: "Your email",
+    target_type: "all", target_value: "",
+    trigger_type: "time", scroll_threshold: 50,
+    device_target: "all", visitor_target: "all",
+    delay_seconds: 2, frequency: "session", position: "center",
+    bg_color: "#ffffff", text_color: "#0f172a", accent_color: "#16a34a",
+    overlay_color: "#000000", overlay_opacity: 50, overlay_blur: 4,
+    animation: "fade", border_radius: 16, shadow: "xl",
+    font_family: "", title_size: 24, body_size: 14,
+    variant_b: null, ab_split: 0,
+    is_active: true, priority: 0,
   };
 }
+
+type Tab = "content" | "design" | "targeting" | "triggers" | "schedule" | "abtest" | "analytics";
 
 export function PopupsManager() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partial<Popup> | null>(null);
   const [previewOf, setPreviewOf] = useState<Popup | null>(null);
+  const [statsOf, setStatsOf] = useState<Popup | null>(null);
 
   const { data: popups, isLoading } = useQuery({
     queryKey: ["admin", "popups"],
@@ -133,27 +111,33 @@ export function PopupsManager() {
 
   const save = useMutation({
     mutationFn: async (p: Partial<Popup>) => {
-      const payload = {
+      const payload: any = {
         name: p.name?.trim() || "Untitled popup",
         template: p.template ?? "promotional",
-        title: p.title || null,
-        subtitle: p.subtitle || null,
-        body: p.body || null,
+        title: p.title || null, subtitle: p.subtitle || null, body: p.body || null,
         image_url: p.image_url || null,
-        cta_label: p.cta_label || null,
-        cta_url: p.cta_url || null,
-        target_type: p.target_type ?? "all",
-        target_value: p.target_value || null,
+        cta_label: p.cta_label || null, cta_url: p.cta_url || null,
+        secondary_cta_label: p.secondary_cta_label || null, secondary_cta_url: p.secondary_cta_url || null,
+        collect_email: !!p.collect_email, email_placeholder: p.email_placeholder || null,
+        target_type: p.target_type ?? "all", target_value: p.target_value || null,
+        trigger_type: p.trigger_type ?? "time", scroll_threshold: Number(p.scroll_threshold ?? 50),
+        device_target: p.device_target ?? "all", visitor_target: p.visitor_target ?? "all",
         delay_seconds: Number(p.delay_seconds ?? 2),
-        frequency: p.frequency ?? "session",
-        position: p.position ?? "center",
-        bg_color: p.bg_color || null,
-        text_color: p.text_color || null,
-        accent_color: p.accent_color || null,
-        start_at: p.start_at || null,
-        end_at: p.end_at || null,
-        is_active: p.is_active ?? true,
-        priority: Number(p.priority ?? 0),
+        frequency: p.frequency ?? "session", position: p.position ?? "center",
+        bg_color: p.bg_color || null, text_color: p.text_color || null, accent_color: p.accent_color || null,
+        overlay_color: p.overlay_color || null,
+        overlay_opacity: Number(p.overlay_opacity ?? 50),
+        overlay_blur: Number(p.overlay_blur ?? 4),
+        animation: p.animation ?? "fade",
+        border_radius: Number(p.border_radius ?? 16),
+        shadow: p.shadow ?? "xl",
+        font_family: p.font_family || null,
+        title_size: Number(p.title_size ?? 24),
+        body_size: Number(p.body_size ?? 14),
+        variant_b: p.variant_b ?? null,
+        ab_split: Number(p.ab_split ?? 0),
+        start_at: p.start_at || null, end_at: p.end_at || null,
+        is_active: p.is_active ?? true, priority: Number(p.priority ?? 0),
       };
       if (p.id) {
         const { error } = await supabase.from("popups").update(payload).eq("id", p.id);
@@ -202,7 +186,7 @@ export function PopupsManager() {
         <div className="mb-3 flex items-center justify-between gap-2">
           <div>
             <h2 className="font-display text-lg font-semibold">Start from a template</h2>
-            <p className="text-xs text-muted-foreground">Pick a style, then customise content and target page.</p>
+            <p className="text-xs text-muted-foreground">9 templates · pick one, then customize.</p>
           </div>
           <button
             onClick={() => setEditing(emptyPopup())}
@@ -211,7 +195,7 @@ export function PopupsManager() {
             <Plus className="h-4 w-4" /> Blank popup
           </button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {TEMPLATES.map((t) => {
             const Icon = t.icon;
             return (
@@ -221,7 +205,7 @@ export function PopupsManager() {
                 className="rounded-xl border border-border bg-background p-4 text-left transition hover:border-primary hover:shadow-md"
               >
                 <Icon className="h-5 w-5 text-primary" />
-                <div className="mt-2 font-semibold">{t.label}</div>
+                <div className="mt-2 font-semibold text-sm">{t.label}</div>
                 <div className="mt-1 text-xs text-muted-foreground">{t.description}</div>
               </button>
             );
@@ -248,13 +232,19 @@ export function PopupsManager() {
                       <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wide ${p.is_active ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
                         {p.is_active ? "Active" : "Off"}
                       </span>
+                      {p.ab_split > 0 && (
+                        <span className="rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 text-[10px] uppercase tracking-wide">A/B {p.ab_split}%</span>
+                      )}
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
-                      Target: {p.target_type === "all" ? "Entire site" : `${p.target_type} · ${p.target_value || "—"}`} · Frequency: {p.frequency} · Position: {p.position}
+                      Target: {p.target_type === "all" ? "Entire site" : `${p.target_type} · ${p.target_value || "—"}`} · Trigger: {p.trigger_type || "time"} · Device: {p.device_target || "all"}
                     </div>
                     {p.title && <div className="mt-1 truncate text-sm">{p.title}</div>}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
+                    <button onClick={() => setStatsOf(p)} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
+                      <BarChart3 className="h-3.5 w-3.5" /> Stats
+                    </button>
                     <button onClick={() => setPreviewOf(p)} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-muted">
                       <Eye className="h-3.5 w-3.5" /> Preview
                     </button>
@@ -297,16 +287,22 @@ export function PopupsManager() {
       )}
 
       {previewOf && <PreviewModal popup={previewOf} onClose={() => setPreviewOf(null)} />}
+      {statsOf && <StatsModal popup={statsOf} onClose={() => setStatsOf(null)} />}
     </div>
   );
 }
 
+const TABS: { id: Tab; label: string; icon: any }[] = [
+  { id: "content", label: "Content", icon: FileText },
+  { id: "design", label: "Design", icon: Palette },
+  { id: "targeting", label: "Targeting", icon: Target },
+  { id: "triggers", label: "Triggers", icon: Zap },
+  { id: "schedule", label: "Schedule", icon: Sparkles },
+  { id: "abtest", label: "A/B Test", icon: FlaskConical },
+];
+
 function EditorModal({
-  value,
-  onChange,
-  onClose,
-  onSave,
-  saving,
+  value, onChange, onClose, onSave, saving,
 }: {
   value: Partial<Popup>;
   onChange: (v: Partial<Popup>) => void;
@@ -314,107 +310,41 @@ function EditorModal({
   onSave: () => void;
   saving: boolean;
 }) {
+  const [tab, setTab] = useState<Tab>("content");
   const set = (patch: Partial<Popup>) => onChange({ ...value, ...patch });
 
   return (
     <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:p-8">
-      <div className="w-full max-w-3xl rounded-2xl bg-card shadow-2xl">
+      <div className="w-full max-w-4xl rounded-2xl bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border p-4">
           <h3 className="font-display text-lg font-semibold">{value.id ? "Edit popup" : "New popup"}</h3>
           <button onClick={onClose} className="rounded-md p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
+
+        {/* Tab bar */}
+        <div className="flex flex-wrap gap-1 border-b border-border bg-muted/30 px-2 py-2">
+          {TABS.map((t) => {
+            const Icon = t.icon;
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition ${active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background"}`}
+              >
+                <Icon className="h-3.5 w-3.5" /> {t.label}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="grid gap-4 p-4 sm:p-5 md:grid-cols-2">
-          <Field label="Name (internal)">
-            <input className="input" value={value.name || ""} onChange={(e) => set({ name: e.target.value })} />
-          </Field>
-          <Field label="Template">
-            <ThemedSelect value={value.template || "promotional"} onValueChange={(v) => set({ template: v })}
-              options={TEMPLATES.map((t) => ({ value: t.id, label: t.label }))} />
-          </Field>
-
-          <Field label="Subtitle / eyebrow">
-            <input className="input" value={value.subtitle || ""} onChange={(e) => set({ subtitle: e.target.value })} />
-          </Field>
-          <Field label="Title">
-            <input className="input" value={value.title || ""} onChange={(e) => set({ title: e.target.value })} />
-          </Field>
-          <Field label="Body" full>
-            <textarea className="input min-h-[90px]" value={value.body || ""} onChange={(e) => set({ body: e.target.value })} />
-          </Field>
-
-          <Field label="Image URL">
-            <input className="input" value={value.image_url || ""} onChange={(e) => set({ image_url: e.target.value })} placeholder="https://…" />
-          </Field>
-          <Field label="CTA label">
-            <input className="input" value={value.cta_label || ""} onChange={(e) => set({ cta_label: e.target.value })} />
-          </Field>
-          <Field label="CTA URL" full>
-            <input className="input" value={value.cta_url || ""} onChange={(e) => set({ cta_url: e.target.value })} placeholder="/properties or https://…" />
-          </Field>
-
-          <Field label="Target type">
-            <ThemedSelect value={value.target_type || "all"} onValueChange={(v) => set({ target_type: v })}
-              options={[
-                { value: "all", label: "Entire site" },
-                { value: "route", label: "Specific page (exact path)" },
-                { value: "prefix", label: "Path prefix (e.g. /properties)" },
-              ]} />
-          </Field>
-          <Field label="Target value (path)">
-            <input
-              className="input"
-              value={value.target_value || ""}
-              onChange={(e) => set({ target_value: e.target.value })}
-              disabled={value.target_type === "all"}
-              placeholder={value.target_type === "all" ? "—" : "/offers"}
-            />
-          </Field>
-
-          <Field label="Position">
-            <ThemedSelect value={value.position || "center"} onValueChange={(v) => set({ position: v })}
-              options={[
-                { value: "center", label: "Center modal" },
-                { value: "bottom-right", label: "Bottom right corner" },
-                { value: "top", label: "Top banner" },
-              ]} />
-          </Field>
-          <Field label="Frequency">
-            <ThemedSelect value={value.frequency || "session"} onValueChange={(v) => set({ frequency: v })}
-              options={[
-                { value: "always", label: "Always show" },
-                { value: "session", label: "Once per session" },
-                { value: "once", label: "Only once (ever)" },
-              ]} />
-          </Field>
-
-          <Field label="Delay (seconds)">
-            <input type="number" min={0} className="input" value={value.delay_seconds ?? 2} onChange={(e) => set({ delay_seconds: Number(e.target.value) })} />
-          </Field>
-          <Field label="Priority (higher = wins)">
-            <input type="number" className="input" value={value.priority ?? 0} onChange={(e) => set({ priority: Number(e.target.value) })} />
-          </Field>
-
-          <Field label="Background color">
-            <input type="color" className="input h-10" value={value.bg_color || "#ffffff"} onChange={(e) => set({ bg_color: e.target.value })} />
-          </Field>
-          <Field label="Text color">
-            <input type="color" className="input h-10" value={value.text_color || "#0f172a"} onChange={(e) => set({ text_color: e.target.value })} />
-          </Field>
-          <Field label="Accent / CTA color">
-            <input type="color" className="input h-10" value={value.accent_color || "#16a34a"} onChange={(e) => set({ accent_color: e.target.value })} />
-          </Field>
-
-          <Field label="Start date (optional)">
-            <input type="datetime-local" className="input" value={toLocalInput(value.start_at)} onChange={(e) => set({ start_at: fromLocalInput(e.target.value) })} />
-          </Field>
-          <Field label="End date (optional)">
-            <input type="datetime-local" className="input" value={toLocalInput(value.end_at)} onChange={(e) => set({ end_at: fromLocalInput(e.target.value) })} />
-          </Field>
-
-          <label className="flex items-center gap-2 md:col-span-2">
-            <input type="checkbox" checked={!!value.is_active} onChange={(e) => set({ is_active: e.target.checked })} />
-            <span className="text-sm">Active</span>
-          </label>
+          {tab === "content" && <ContentTab value={value} set={set} />}
+          {tab === "design" && <DesignTab value={value} set={set} />}
+          {tab === "targeting" && <TargetingTab value={value} set={set} />}
+          {tab === "triggers" && <TriggersTab value={value} set={set} />}
+          {tab === "schedule" && <ScheduleTab value={value} set={set} />}
+          {tab === "abtest" && <ABTestTab value={value} set={set} />}
         </div>
 
         <div className="flex justify-end gap-2 border-t border-border p-4">
@@ -427,6 +357,244 @@ function EditorModal({
 
       <style>{`.input { width:100%; border:1px solid hsl(var(--border)); background: hsl(var(--background)); border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem; }`}</style>
     </div>
+  );
+}
+
+function ContentTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  return (
+    <>
+      <Field label="Name (internal)">
+        <input className="input" value={value.name || ""} onChange={(e) => set({ name: e.target.value })} />
+      </Field>
+      <Field label="Template">
+        <ThemedSelect value={value.template || "promotional"} onValueChange={(v) => set({ template: v })}
+          options={TEMPLATES.map((t) => ({ value: t.id, label: t.label }))} />
+      </Field>
+      <Field label="Subtitle / eyebrow">
+        <input className="input" value={value.subtitle || ""} onChange={(e) => set({ subtitle: e.target.value })} />
+      </Field>
+      <Field label="Title">
+        <input className="input" value={value.title || ""} onChange={(e) => set({ title: e.target.value })} />
+      </Field>
+      <Field label={value.template === "video" ? "Video embed URL" : "Body"} full>
+        <textarea className="input min-h-[90px]" value={value.body || ""} onChange={(e) => set({ body: e.target.value })}
+          placeholder={value.template === "video" ? "https://www.youtube.com/embed/..." : ""} />
+      </Field>
+      <Field label="Image URL">
+        <input className="input" value={value.image_url || ""} onChange={(e) => set({ image_url: e.target.value })} placeholder="https://…" />
+      </Field>
+      <Field label="Primary CTA label">
+        <input className="input" value={value.cta_label || ""} onChange={(e) => set({ cta_label: e.target.value })} />
+      </Field>
+      <Field label="Primary CTA URL" full>
+        <input className="input" value={value.cta_url || ""} onChange={(e) => set({ cta_url: e.target.value })} placeholder="/properties or https://…" />
+      </Field>
+      <Field label="Secondary CTA label (optional)">
+        <input className="input" value={value.secondary_cta_label || ""} onChange={(e) => set({ secondary_cta_label: e.target.value })} placeholder="No thanks" />
+      </Field>
+      <Field label="Secondary CTA URL (optional)">
+        <input className="input" value={value.secondary_cta_url || ""} onChange={(e) => set({ secondary_cta_url: e.target.value })} placeholder="Leave blank to dismiss" />
+      </Field>
+      <label className="flex items-center gap-2 md:col-span-2 mt-2">
+        <input type="checkbox" checked={!!value.collect_email} onChange={(e) => set({ collect_email: e.target.checked })} />
+        <span className="text-sm">Collect email address (shows input above CTA)</span>
+      </label>
+      {value.collect_email && (
+        <Field label="Email field placeholder" full>
+          <input className="input" value={value.email_placeholder || ""} onChange={(e) => set({ email_placeholder: e.target.value })} placeholder="you@example.com" />
+        </Field>
+      )}
+    </>
+  );
+}
+
+function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  return (
+    <>
+      <Field label="Position">
+        <ThemedSelect value={value.position || "center"} onValueChange={(v) => set({ position: v })}
+          options={[
+            { value: "center", label: "Center modal" },
+            { value: "bottom-right", label: "Bottom right corner" },
+            { value: "bottom", label: "Bottom banner" },
+            { value: "top", label: "Top banner" },
+          ]} />
+      </Field>
+      <Field label="Entry animation">
+        <ThemedSelect value={value.animation || "fade"} onValueChange={(v) => set({ animation: v })}
+          options={[
+            { value: "fade", label: "Fade" },
+            { value: "zoom", label: "Zoom in" },
+            { value: "slide-up", label: "Slide up" },
+            { value: "slide-down", label: "Slide down" },
+            { value: "bounce", label: "Bounce" },
+            { value: "none", label: "None" },
+          ]} />
+      </Field>
+      <Field label="Background color">
+        <input type="color" className="input h-10" value={value.bg_color || "#ffffff"} onChange={(e) => set({ bg_color: e.target.value })} />
+      </Field>
+      <Field label="Text color">
+        <input type="color" className="input h-10" value={value.text_color || "#0f172a"} onChange={(e) => set({ text_color: e.target.value })} />
+      </Field>
+      <Field label="Accent / CTA color">
+        <input type="color" className="input h-10" value={value.accent_color || "#16a34a"} onChange={(e) => set({ accent_color: e.target.value })} />
+      </Field>
+      <Field label="Border radius (px)">
+        <input type="number" min={0} max={48} className="input" value={value.border_radius ?? 16} onChange={(e) => set({ border_radius: Number(e.target.value) })} />
+      </Field>
+      <Field label="Shadow">
+        <ThemedSelect value={value.shadow || "xl"} onValueChange={(v) => set({ shadow: v })}
+          options={[
+            { value: "none", label: "None" },
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium" },
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" },
+            { value: "2xl", label: "Dramatic" },
+          ]} />
+      </Field>
+      <Field label="Font family (CSS family, optional)">
+        <input className="input" value={value.font_family || ""} onChange={(e) => set({ font_family: e.target.value })} placeholder="Inter, system-ui, sans-serif" />
+      </Field>
+      <Field label="Title size (px)">
+        <input type="number" min={12} max={64} className="input" value={value.title_size ?? 24} onChange={(e) => set({ title_size: Number(e.target.value) })} />
+      </Field>
+      <Field label="Body size (px)">
+        <input type="number" min={10} max={28} className="input" value={value.body_size ?? 14} onChange={(e) => set({ body_size: Number(e.target.value) })} />
+      </Field>
+      <div className="md:col-span-2 rounded-xl border border-border bg-muted/30 p-3 space-y-3">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Backdrop overlay</div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Field label="Overlay color">
+            <input type="color" className="input h-10" value={value.overlay_color || "#000000"} onChange={(e) => set({ overlay_color: e.target.value })} />
+          </Field>
+          <Field label={`Opacity ${value.overlay_opacity ?? 50}%`}>
+            <input type="range" min={0} max={100} value={value.overlay_opacity ?? 50} onChange={(e) => set({ overlay_opacity: Number(e.target.value) })} className="w-full" />
+          </Field>
+          <Field label={`Blur ${value.overlay_blur ?? 4}px`}>
+            <input type="range" min={0} max={20} value={value.overlay_blur ?? 4} onChange={(e) => set({ overlay_blur: Number(e.target.value) })} className="w-full" />
+          </Field>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TargetingTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  return (
+    <>
+      <Field label="Target type">
+        <ThemedSelect value={value.target_type || "all"} onValueChange={(v) => set({ target_type: v })}
+          options={[
+            { value: "all", label: "Entire site" },
+            { value: "route", label: "Specific page (exact path)" },
+            { value: "prefix", label: "Path prefix" },
+          ]} />
+      </Field>
+      <Field label="Target value (path)">
+        <input className="input" value={value.target_value || ""} onChange={(e) => set({ target_value: e.target.value })}
+          disabled={value.target_type === "all"} placeholder={value.target_type === "all" ? "—" : "/offers"} />
+      </Field>
+      <Field label="Device target">
+        <ThemedSelect value={value.device_target || "all"} onValueChange={(v) => set({ device_target: v })}
+          options={[
+            { value: "all", label: "All devices" },
+            { value: "desktop", label: "Desktop only" },
+            { value: "mobile", label: "Mobile only" },
+          ]} />
+      </Field>
+      <Field label="Visitor target">
+        <ThemedSelect value={value.visitor_target || "all"} onValueChange={(v) => set({ visitor_target: v })}
+          options={[
+            { value: "all", label: "All visitors" },
+            { value: "new", label: "New visitors only" },
+            { value: "returning", label: "Returning visitors only" },
+          ]} />
+      </Field>
+      <Field label="Frequency">
+        <ThemedSelect value={value.frequency || "session"} onValueChange={(v) => set({ frequency: v })}
+          options={[
+            { value: "always", label: "Always show" },
+            { value: "session", label: "Once per session" },
+            { value: "once", label: "Only once (ever)" },
+          ]} />
+      </Field>
+      <Field label="Priority (higher = wins)">
+        <input type="number" className="input" value={value.priority ?? 0} onChange={(e) => set({ priority: Number(e.target.value) })} />
+      </Field>
+    </>
+  );
+}
+
+function TriggersTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  return (
+    <>
+      <Field label="Trigger type">
+        <ThemedSelect value={value.trigger_type || "time"} onValueChange={(v) => set({ trigger_type: v })}
+          options={[
+            { value: "time", label: "Time delay" },
+            { value: "exit_intent", label: "Exit intent (mouse leaves)" },
+            { value: "scroll", label: "Scroll percentage" },
+            { value: "time_and_scroll", label: "Time + scroll (both)" },
+          ]} />
+      </Field>
+      <Field label="Delay (seconds)">
+        <input type="number" min={0} className="input" value={value.delay_seconds ?? 2} onChange={(e) => set({ delay_seconds: Number(e.target.value) })}
+          disabled={value.trigger_type === "exit_intent" || value.trigger_type === "scroll"} />
+      </Field>
+      <Field label={`Scroll threshold (${value.scroll_threshold ?? 50}%)`} full>
+        <input type="range" min={5} max={100} value={value.scroll_threshold ?? 50} onChange={(e) => set({ scroll_threshold: Number(e.target.value) })}
+          className="w-full" disabled={value.trigger_type === "time" || value.trigger_type === "exit_intent"} />
+        <div className="mt-1 text-xs text-muted-foreground">Used for "Scroll" and "Time + scroll" triggers.</div>
+      </Field>
+    </>
+  );
+}
+
+function ScheduleTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  return (
+    <>
+      <Field label="Start date (optional)">
+        <input type="datetime-local" className="input" value={toLocalInput(value.start_at)} onChange={(e) => set({ start_at: fromLocalInput(e.target.value) })} />
+      </Field>
+      <Field label="End date (optional)">
+        <input type="datetime-local" className="input" value={toLocalInput(value.end_at)} onChange={(e) => set({ end_at: fromLocalInput(e.target.value) })} />
+      </Field>
+      <label className="flex items-center gap-2 md:col-span-2">
+        <input type="checkbox" checked={!!value.is_active} onChange={(e) => set({ is_active: e.target.checked })} />
+        <span className="text-sm">Active</span>
+      </label>
+    </>
+  );
+}
+
+function ABTestTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Popup>) => void }) {
+  const variant = value.variant_b || {};
+  const setV = (patch: any) => set({ variant_b: { ...variant, ...patch } });
+  return (
+    <>
+      <Field label={`A/B split — % of viewers shown variant B (${value.ab_split ?? 0}%)`} full>
+        <input type="range" min={0} max={100} value={value.ab_split ?? 0} onChange={(e) => set({ ab_split: Number(e.target.value) })} className="w-full" />
+        <div className="mt-1 text-xs text-muted-foreground">Set to 0 to disable the A/B test.</div>
+      </Field>
+      {(value.ab_split ?? 0) > 0 && (
+        <>
+          <Field label="Variant B title">
+            <input className="input" value={variant.title || ""} onChange={(e) => setV({ title: e.target.value })} />
+          </Field>
+          <Field label="Variant B CTA label">
+            <input className="input" value={variant.cta_label || ""} onChange={(e) => setV({ cta_label: e.target.value })} />
+          </Field>
+          <Field label="Variant B body" full>
+            <textarea className="input min-h-[80px]" value={variant.body || ""} onChange={(e) => setV({ body: e.target.value })} />
+          </Field>
+          <Field label="Variant B accent color">
+            <input type="color" className="input h-10" value={variant.accent_color || value.accent_color || "#16a34a"} onChange={(e) => setV({ accent_color: e.target.value })} />
+          </Field>
+        </>
+      )}
+    </>
   );
 }
 
@@ -443,21 +611,102 @@ function PreviewModal({ popup, onClose }: { popup: Popup; onClose: () => void })
   const accent = popup.accent_color || "#16a34a";
   const bg = popup.bg_color || "#ffffff";
   const text = popup.text_color || "#0f172a";
+  const radius = popup.border_radius ?? 16;
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div className="w-full max-w-md overflow-hidden rounded-2xl shadow-2xl" style={{ background: bg, color: text }} onClick={(e) => e.stopPropagation()}>
-        {popup.image_url && <img src={popup.image_url} alt="" className="h-44 w-full object-cover" />}
-        <div className="p-5">
+      <div className="w-full max-w-md overflow-hidden shadow-2xl" style={{ background: bg, color: text, borderRadius: radius, fontFamily: popup.font_family || undefined }} onClick={(e) => e.stopPropagation()}>
+        {popup.template === "video" && popup.body?.startsWith("http") ? (
+          <div className="aspect-video w-full"><iframe src={popup.body} className="h-full w-full" allowFullScreen /></div>
+        ) : popup.image_url ? (
+          <img src={popup.image_url} alt="" className="h-44 w-full object-cover" />
+        ) : null}
+        <div className="p-5" style={{ fontSize: popup.body_size ?? 14 }}>
           {popup.subtitle && <div className="mb-1 text-xs font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>}
-          {popup.title && <h3 className="font-display text-xl font-semibold">{popup.title}</h3>}
-          {popup.body && <p className="mt-2 text-sm opacity-80 whitespace-pre-line">{popup.body}</p>}
-          {popup.cta_label && (
-            <button className="mt-4 inline-flex rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ background: accent }}>
-              {popup.cta_label}
-            </button>
+          {popup.title && <h3 className="font-display font-semibold" style={{ fontSize: popup.title_size ?? 24 }}>{popup.title}</h3>}
+          {popup.body && popup.template !== "video" && <p className="mt-2 opacity-80 whitespace-pre-line">{popup.body}</p>}
+          {popup.collect_email && <input className="mt-3 w-full rounded-md border border-border bg-white/80 px-3 py-2 text-sm text-slate-900" placeholder={popup.email_placeholder || "you@example.com"} />}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {popup.cta_label && (
+              <button className="inline-flex rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ background: accent }}>{popup.cta_label}</button>
+            )}
+            {popup.secondary_cta_label && (
+              <button className="inline-flex rounded-md border border-current px-4 py-2 text-sm font-semibold">{popup.secondary_cta_label}</button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatsModal({ popup, onClose }: { popup: Popup; onClose: () => void }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "popup-events", popup.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("popup_events")
+        .select("event_type, variant, occurred_at")
+        .eq("popup_id", popup.id);
+      if (error) throw error;
+      return data as { event_type: string; variant: string; occurred_at: string }[];
+    },
+  });
+
+  const stats = useMemo(() => {
+    const out = { a: { view: 0, click: 0, dismiss: 0, conversion: 0 }, b: { view: 0, click: 0, dismiss: 0, conversion: 0 } } as any;
+    (data || []).forEach((e) => {
+      const v = e.variant === "b" ? "b" : "a";
+      if (out[v][e.event_type] !== undefined) out[v][e.event_type] += 1;
+    });
+    return out;
+  }, [data]);
+
+  const rate = (clicks: number, views: number) => views > 0 ? ((clicks / views) * 100).toFixed(1) + "%" : "—";
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div className="w-full max-w-2xl rounded-2xl bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border p-4">
+          <h3 className="font-display text-lg font-semibold">Stats · {popup.name}</h3>
+          <button onClick={onClose} className="rounded-md p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="p-5">
+          {isLoading ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
+          ) : (
+            <div className={`grid gap-4 ${popup.ab_split > 0 ? "sm:grid-cols-2" : ""}`}>
+              <VariantStats name={popup.ab_split > 0 ? "Variant A" : "All time"} stats={stats.a} rate={rate} />
+              {popup.ab_split > 0 && <VariantStats name="Variant B" stats={stats.b} rate={rate} />}
+            </div>
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function VariantStats({ name, stats, rate }: { name: string; stats: any; rate: (a: number, b: number) => string }) {
+  return (
+    <div className="rounded-xl border border-border p-4">
+      <div className="font-semibold mb-3">{name}</div>
+      <div className="grid grid-cols-2 gap-3 text-sm">
+        <Stat label="Views" value={stats.view} />
+        <Stat label="Clicks" value={stats.click} />
+        <Stat label="Dismissed" value={stats.dismiss} />
+        <Stat label="Conversions" value={stats.conversion} />
+      </div>
+      <div className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+        CTR: <span className="font-semibold text-foreground">{rate(stats.click, stats.view)}</span> · Conv rate: <span className="font-semibold text-foreground">{rate(stats.conversion, stats.view)}</span>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg bg-muted/40 p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-xl font-semibold">{value}</div>
     </div>
   );
 }
@@ -469,9 +718,7 @@ function toLocalInput(v: string | null | undefined) {
     const off = d.getTimezoneOffset();
     const local = new Date(d.getTime() - off * 60000);
     return local.toISOString().slice(0, 16);
-  } catch {
-    return "";
-  }
+  } catch { return ""; }
 }
 function fromLocalInput(v: string) {
   if (!v) return null as any;

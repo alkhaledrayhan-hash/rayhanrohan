@@ -304,24 +304,77 @@ export type Database = {
         }
         Relationships: []
       }
+      popup_events: {
+        Row: {
+          event_type: string
+          id: string
+          meta: Json | null
+          occurred_at: string
+          popup_id: string
+          session_id: string | null
+          variant: string
+        }
+        Insert: {
+          event_type: string
+          id?: string
+          meta?: Json | null
+          occurred_at?: string
+          popup_id: string
+          session_id?: string | null
+          variant?: string
+        }
+        Update: {
+          event_type?: string
+          id?: string
+          meta?: Json | null
+          occurred_at?: string
+          popup_id?: string
+          session_id?: string | null
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "popup_events_popup_id_fkey"
+            columns: ["popup_id"]
+            isOneToOne: false
+            referencedRelation: "popups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       popups: {
         Row: {
+          ab_split: number
           accent_color: string | null
+          animation: string
           bg_color: string | null
           body: string | null
+          body_size: number
+          border_radius: number
+          collect_email: boolean
           created_at: string
           created_by: string | null
           cta_label: string | null
           cta_url: string | null
           delay_seconds: number
+          device_target: string
+          email_placeholder: string | null
           end_at: string | null
+          font_family: string | null
           frequency: string
           id: string
           image_url: string | null
           is_active: boolean
           name: string
+          overlay_blur: number
+          overlay_color: string | null
+          overlay_opacity: number
           position: string
           priority: number
+          scroll_threshold: number
+          secondary_cta_label: string | null
+          secondary_cta_url: string | null
+          shadow: string
           start_at: string | null
           subtitle: string | null
           target_type: string
@@ -329,25 +382,44 @@ export type Database = {
           template: string
           text_color: string | null
           title: string | null
+          title_size: number
+          trigger_type: string
           updated_at: string
+          variant_b: Json | null
+          visitor_target: string
         }
         Insert: {
+          ab_split?: number
           accent_color?: string | null
+          animation?: string
           bg_color?: string | null
           body?: string | null
+          body_size?: number
+          border_radius?: number
+          collect_email?: boolean
           created_at?: string
           created_by?: string | null
           cta_label?: string | null
           cta_url?: string | null
           delay_seconds?: number
+          device_target?: string
+          email_placeholder?: string | null
           end_at?: string | null
+          font_family?: string | null
           frequency?: string
           id?: string
           image_url?: string | null
           is_active?: boolean
           name: string
+          overlay_blur?: number
+          overlay_color?: string | null
+          overlay_opacity?: number
           position?: string
           priority?: number
+          scroll_threshold?: number
+          secondary_cta_label?: string | null
+          secondary_cta_url?: string | null
+          shadow?: string
           start_at?: string | null
           subtitle?: string | null
           target_type?: string
@@ -355,25 +427,44 @@ export type Database = {
           template?: string
           text_color?: string | null
           title?: string | null
+          title_size?: number
+          trigger_type?: string
           updated_at?: string
+          variant_b?: Json | null
+          visitor_target?: string
         }
         Update: {
+          ab_split?: number
           accent_color?: string | null
+          animation?: string
           bg_color?: string | null
           body?: string | null
+          body_size?: number
+          border_radius?: number
+          collect_email?: boolean
           created_at?: string
           created_by?: string | null
           cta_label?: string | null
           cta_url?: string | null
           delay_seconds?: number
+          device_target?: string
+          email_placeholder?: string | null
           end_at?: string | null
+          font_family?: string | null
           frequency?: string
           id?: string
           image_url?: string | null
           is_active?: boolean
           name?: string
+          overlay_blur?: number
+          overlay_color?: string | null
+          overlay_opacity?: number
           position?: string
           priority?: number
+          scroll_threshold?: number
+          secondary_cta_label?: string | null
+          secondary_cta_url?: string | null
+          shadow?: string
           start_at?: string | null
           subtitle?: string | null
           target_type?: string
@@ -381,7 +472,11 @@ export type Database = {
           template?: string
           text_color?: string | null
           title?: string | null
+          title_size?: number
+          trigger_type?: string
           updated_at?: string
+          variant_b?: Json | null
+          visitor_target?: string
         }
         Relationships: []
       }
