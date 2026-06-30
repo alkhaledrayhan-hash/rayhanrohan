@@ -89,15 +89,29 @@ export function CalendarPanel() {
     return cells;
   }, [cursor]);
 
+  const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "completed" | "cancelled">("all");
+
+  const filteredBookings = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    return bookings.filter((b) => {
+      if (statusFilter !== "all" && b.status !== statusFilter) return false;
+      if (!term) return true;
+      return [b.customer_name, b.customer_phone, b.customer_email, b.property_title, b.notes]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term));
+    });
+  }, [bookings, q, statusFilter]);
+
   const byDate = useMemo(() => {
     const m = new Map<string, typeof bookings>();
-    for (const b of bookings) {
+    for (const b of filteredBookings) {
       const k = b.scheduled_date;
       if (!m.has(k)) m.set(k, [] as typeof bookings);
       m.get(k)!.push(b);
     }
     return m;
-  }, [bookings]);
+  }, [filteredBookings]);
 
   const [selected, setSelected] = useState<string | null>(null);
   const selectedBookings = selected ? byDate.get(selected) ?? [] : [];
