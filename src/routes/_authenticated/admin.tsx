@@ -282,6 +282,9 @@ function AdminDashboard() {
           <NavGroup label="Content" />
           <NavItem icon={Image} label="Media" active={section === "media"} onClick={() => goSection("media")} />
           <NavItem icon={Newspaper} label="News & Blogs" active={section === "posts"} onClick={() => goSection("posts")} />
+          {isAdmin && (
+            <NavItem icon={Sparkles} label="Popup Maker" active={section === "popups"} onClick={() => goSection("popups")} />
+          )}
 
           <NavGroup label="System" />
           <NavItem icon={Settings} label="Settings" active={section === "settings"} onClick={() => goSection("settings")} />
