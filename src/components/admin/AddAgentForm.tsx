@@ -67,7 +67,8 @@ export function AddAgentForm() {
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); mut.mutate(); }}
+      onSubmit={handleSubmit}
+
       className="grid gap-5 lg:grid-cols-[340px_1fr]"
     >
       {/* Avatar card */}
