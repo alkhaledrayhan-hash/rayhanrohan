@@ -281,12 +281,46 @@ function BookingDetailDialog({
 }) {
   const qc = useQueryClient();
   const updateFn = useServerFn(updateBooking);
+  const settings = useSiteSettings();
   const [editing, setEditing] = useState(false);
   const [scheduledDate, setScheduledDate] = useState(booking.scheduled_date);
   const [scheduledTime, setScheduledTime] = useState(booking.scheduled_time);
   const [status, setStatus] = useState<Status>(booking.status as Status);
   const [notes, setNotes] = useState(booking.notes || "");
   const [busy, setBusy] = useState(false);
+
+  const { data: propertyExtra } = useQuery({
+    queryKey: ["booking-property", booking.property_id],
+    enabled: !!booking.property_id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("properties")
+        .select("price, location")
+        .eq("id", booking.property_id!)
+        .maybeSingle();
+      return (data ?? null) as { price: number | null; location: string | null } | null;
+    },
+  });
+
+  function handlePrint() {
+    printBookingInvoice(
+      booking,
+      {
+        siteTitle: settings.site_title,
+        siteTagline: settings.site_tagline,
+        logoUrl: settings.site_logo_url,
+        address: settings.footer_address,
+        phone: settings.footer_phone,
+        email: settings.footer_email,
+      },
+      {
+        agentName: agent?.full_name ?? null,
+        agentEmail: agent?.email ?? null,
+        propertyPrice: propertyExtra?.price ?? null,
+        propertyLocation: propertyExtra?.location ?? null,
+      },
+    );
+  }
 
   async function save() {
     setBusy(true);
