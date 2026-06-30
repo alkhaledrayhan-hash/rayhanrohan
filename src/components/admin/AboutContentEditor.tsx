@@ -47,7 +47,7 @@ export type AboutContent = {
 const DEFAULT: AboutContent = {
   stats: [],
   story: { eyebrow: "", title: "", paragraphs: [], image: "", badge_title: "", badge_subtitle: "" },
-  mission: { eyebrow: "", title: "", description: "", items: [] },
+  mission: { eyebrow: "", title: "", description: "", columns: 2, items: [] },
   values: { eyebrow: "", title: "", items: [] },
   team: { eyebrow: "", title: "", description: "", members: [] },
   company: { eyebrow: "", title: "", description: "", details: [], primary_cta_label: "", secondary_cta_label: "", secondary_cta_email: "" },
