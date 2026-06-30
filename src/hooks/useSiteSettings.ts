@@ -6,6 +6,7 @@ export type SiteSettings = {
   site_tagline: string;
   site_url: string;
   site_logo_url: string;
+  site_favicon_url: string;
   admin_email: string;
   site_timezone: string;
   date_format: string;
