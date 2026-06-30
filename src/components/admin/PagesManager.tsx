@@ -90,7 +90,16 @@ export function PagesManager({
     { section_key: "contact-subjects", label: "Subjects", icon: ListChecks, sort_order: 3 },
     { section_key: "contact-office", label: "Head office", icon: MapPinned, sort_order: 4 },
   ] : [];
-  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : activePage === "contact" ? CONTACT_SUBS : [];
+  const virtualForPageBase = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : activePage === "contact" ? CONTACT_SUBS : [];
+  // Parent row that stores per-virtual meta (hidden / sort_order) in content._meta.virtual
+  const parentVirtualRow: Section | undefined = activePage === "about" ? aboutContentRow : activePage === "contact" ? contactInfoRow : undefined;
+  const virtualMetaMap: Record<string, { hidden?: boolean; sort_order?: number }> =
+    (parentVirtualRow?.content as any)?._meta?.virtual || {};
+  const virtualForPage = virtualForPageBase.map((v) => ({
+    ...v,
+    sort_order: virtualMetaMap[v.section_key]?.sort_order ?? v.sort_order,
+    hidden: !!virtualMetaMap[v.section_key]?.hidden,
+  }));
 
   // Hide raw aggregate rows from their respective sidebars — the parts replace them.
   const visibleSections = activePage === "about"
