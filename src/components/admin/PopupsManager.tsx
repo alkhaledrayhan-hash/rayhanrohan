@@ -72,6 +72,12 @@ const TEMPLATES: { id: string; label: string; icon: any; description: string; sa
     sample: { template: "age-verify", title: "Are you 18 or older?", body: "This site contains content intended for adults only.", cta_label: "Yes, I am 18+", secondary_cta_label: "No, exit", frequency: "once", accent_color: "#7c3aed" } },
   { id: "video", label: "Video Popup", icon: Video, description: "Embed a YouTube/Vimeo video.",
     sample: { template: "video", title: "See the property tour", body: "https://www.youtube.com/embed/dQw4w9WgXcQ", cta_label: "Explore listings", cta_url: "/properties", accent_color: "#ef4444" } },
+  { id: "split-image", label: "Split — Image Left", icon: Columns2, description: "Image on the left, headline + CTA on the right.",
+    sample: { template: "split-image", title: "Discover your next home", subtitle: "Curated picks", body: "Hand-selected listings updated weekly by our experts.", cta_label: "View collection", cta_url: "/properties", image_url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200", accent_color: "#0f766e" } },
+  { id: "gradient-hero", label: "Gradient Hero", icon: Wand2, description: "No image — bold gradient background with text on top.",
+    sample: { template: "gradient-hero", title: "Limited-time launch", subtitle: "Early access", body: "Lock in launch pricing before public release.", cta_label: "Get early access", cta_url: "/offers", accent_color: "#7c3aed", text_color: "#ffffff" } },
+  { id: "glass-card", label: "Frosted Glass", icon: Layers, description: "Frosted glass card with decorative gradient blobs.",
+    sample: { template: "glass-card", title: "Become a member", subtitle: "Members only", body: "Unlock private listings, early access, and partner perks.", cta_label: "Join now", cta_url: "/auth", accent_color: "#0ea5e9" } },
 ];
 
 function emptyPopup(): Partial<Popup> {
