@@ -157,8 +157,23 @@ export function PagesManager({
     if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-") && !active.section_key.startsWith("contact-")) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
-    if (!activeKey && visibleSections[0]) setActiveKey(visibleSections[0].section_key);
-  }, [active?.id, visibleSections.length]);
+  }, [active?.id]);
+
+  // When the page changes (or sections finish loading), pick a sensible default
+  // section so sub-pages like Contact/About land on the first sub-tab (e.g. Hero)
+  // instead of showing the raw aggregate row.
+  useEffect(() => {
+    const merged = [
+      ...visibleSections.map((s) => ({ key: s.section_key, sort_order: s.sort_order })),
+      ...virtualForPage.map((v) => ({ key: v.section_key, sort_order: v.sort_order })),
+    ].sort((a, b) => a.sort_order - b.sort_order);
+    if (merged.length === 0) return;
+    const keys = merged.map((m) => m.key);
+    if (!activeKey || !keys.includes(activeKey)) {
+      setActiveKey(merged[0].key);
+    }
+  }, [activePage, visibleSections.length, virtualForPage.length]);
+
 
 
   const SECTION_ICONS: Record<string, typeof Home> = {
