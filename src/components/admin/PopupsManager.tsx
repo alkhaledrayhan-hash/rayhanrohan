@@ -7,6 +7,7 @@ import { ThemedColorInput } from "@/components/ui/themed-color-input";
 import {
   Pencil, Plus, Trash2, Eye, Copy, Sparkles, Megaphone, Newspaper, Home as HomeIcon,
   X, Mail, Cookie, LogOut, ShieldAlert, Video, BarChart3, Palette, Target, Zap, FlaskConical, FileText,
+  Columns2, Wand2, Layers,
 } from "lucide-react";
 
 type Popup = {
