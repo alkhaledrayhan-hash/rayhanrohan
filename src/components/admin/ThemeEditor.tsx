@@ -47,6 +47,30 @@ export function ThemeEditor() {
     }
   }, [data]);
 
+  // Live-apply edits site-wide by writing to the same <style id="dynamic-theme">
+  // tag that useApplyTheme manages.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const id = "dynamic-theme";
+    let el = document.getElementById(id) as HTMLStyleElement | null;
+    if (!el) {
+      el = document.createElement("style");
+      el.id = id;
+      document.head.appendChild(el);
+    }
+    el.textContent = buildThemeCss(colors, typo);
+  }, [colors, typo]);
+
+  // On unmount, restore the saved theme.
+  useEffect(() => {
+    return () => {
+      if (typeof document === "undefined") return;
+      const el = document.getElementById("dynamic-theme") as HTMLStyleElement | null;
+      if (el && data) el.textContent = buildThemeCss(data.colors, data.typography);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const save = useMutation({
     mutationFn: async () => {
       const rows = [
