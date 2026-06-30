@@ -72,6 +72,18 @@ export function UsersManager() {
     };
   }, [rows]);
 
+  const qc = useQueryClient();
+  const bulkDelFn = useServerFn(deleteUser);
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Row[]) => {
+    let ok = 0;
+    for (const u of items) {
+      try { await bulkDelFn({ data: { id: u.id } }); ok++; } catch (e: any) { toast.error(`${u.email}: ${e.message}`); }
+    }
+    if (ok) toast.success(`Deleted ${ok} user(s)`);
+    qc.invalidateQueries({ queryKey: ["all-users"] });
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,6 +92,24 @@ export function UsersManager() {
         <StatCard label="Agents" value={counts.agent} tone="amber" />
         <StatCard label="Customers" value={counts.user} tone="slate" />
       </div>
+
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="user"
+        exportFilename="users"
+        exportColumns={[
+          { key: "full_name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "username", label: "Username" },
+          { key: "role", label: "Role" },
+          { key: "created_at", label: "Created" },
+        ]}
+      />
+
 
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
         <div className="relative flex-1 min-w-[220px]">
