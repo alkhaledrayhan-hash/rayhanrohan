@@ -52,29 +52,44 @@ export function Header() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex min-w-0 items-center gap-2">
-          {settings.site_logo_url ? (
-            <img
-              src={settings.site_logo_url}
-              alt={settings.site_title}
-              className="h-9 w-9 shrink-0 rounded-md object-cover shadow-[var(--shadow-soft)]"
-            />
-          ) : (
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
-              <Home className="h-4 w-4" />
-            </span>
-          )}
-          <span className="flex min-w-0 flex-col leading-tight">
-            <span
-              className={`truncate font-display text-lg font-semibold transition-colors ${
-                scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
-              }`}
-            >
-              {settings.site_title}
-            </span>
-            <span className="truncate text-[10px] uppercase tracking-[0.2em] text-gold">
-              {settings.site_tagline}
-            </span>
-          </span>
+          {(() => {
+            const mode = settings.brand_display_mode || "full";
+            const showLogo = mode !== "text";
+            const showText = mode !== "logo" || !settings.site_logo_url;
+            return (
+              <>
+                {showLogo && (
+                  settings.site_logo_url ? (
+                    <img
+                      src={settings.site_logo_url}
+                      alt={settings.site_title}
+                      className={`${mode === "logo" ? "h-10 w-auto max-w-[160px] object-contain" : "h-9 w-9 rounded-md object-cover"} shrink-0 shadow-[var(--shadow-soft)]`}
+                    />
+                  ) : (
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+                      <Home className="h-4 w-4" />
+                    </span>
+                  )
+                )}
+                {showText && (
+                  <span className="flex min-w-0 flex-col leading-tight">
+                    <span
+                      className={`truncate font-display text-lg font-semibold transition-colors ${
+                        scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]"
+                      }`}
+                    >
+                      {settings.site_title}
+                    </span>
+                    {settings.site_tagline && (
+                      <span className="truncate text-[10px] uppercase tracking-[0.2em] text-gold">
+                        {settings.site_tagline}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </>
+            );
+          })()}
         </Link>
         <nav
           className={`hidden items-center gap-1 rounded-full border p-1 text-sm font-medium backdrop-blur-xl transition-colors lg:flex ${
@@ -162,27 +177,40 @@ export function Header() {
                   className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/25 via-gold/15 to-transparent blur-2xl"
                 />
                 <div className="relative flex items-center gap-3">
-                  {settings.site_logo_url ? (
-                    <img
-                      src={settings.site_logo_url}
-                      alt=""
-                      className="h-10 w-10 rounded-xl object-cover ring-1 ring-border/60"
-                    />
-                  ) : (
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-gold text-primary-foreground shadow-[var(--shadow-soft)]">
-                      <Home className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate font-display text-lg font-semibold text-foreground">
-                      {settings.site_title}
-                    </p>
-                    {settings.site_tagline && (
-                      <p className="truncate text-[10px] uppercase tracking-[0.22em] text-gold">
-                        {settings.site_tagline}
-                      </p>
-                    )}
-                  </div>
+                  {(() => {
+                    const mode = settings.brand_display_mode || "full";
+                    const showLogo = mode !== "text";
+                    const showText = mode !== "logo" || !settings.site_logo_url;
+                    return (
+                      <>
+                        {showLogo && (
+                          settings.site_logo_url ? (
+                            <img
+                              src={settings.site_logo_url}
+                              alt=""
+                              className={mode === "logo" ? "h-11 w-auto max-w-[170px] object-contain" : "h-10 w-10 rounded-xl object-cover ring-1 ring-border/60"}
+                            />
+                          ) : (
+                            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-gold text-primary-foreground shadow-[var(--shadow-soft)]">
+                              <Home className="h-5 w-5" />
+                            </div>
+                          )
+                        )}
+                        {showText && (
+                          <div className="min-w-0">
+                            <p className="truncate font-display text-lg font-semibold text-foreground">
+                              {settings.site_title}
+                            </p>
+                            {settings.site_tagline && (
+                              <p className="truncate text-[10px] uppercase tracking-[0.22em] text-gold">
+                                {settings.site_tagline}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
 

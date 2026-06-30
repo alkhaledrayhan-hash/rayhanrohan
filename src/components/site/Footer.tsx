@@ -113,25 +113,40 @@ export function Footer() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 text-center sm:px-6 lg:grid-cols-3 lg:text-left lg:px-8">
         <div>
           <Link to="/" className="inline-flex items-center gap-3">
-            {settings.site_logo_url ? (
-              <img
-                src={settings.site_logo_url}
-                alt={settings.site_title}
-                className="h-12 w-12 rounded-xl object-cover shadow-[var(--shadow-soft)]"
-              />
-            ) : (
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
-                <Home className="h-5 w-5" />
-              </span>
-            )}
-            <span className="flex flex-col leading-tight text-left">
-              <span className="font-display text-2xl font-semibold text-white">
-                {settings.site_title}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-gold">
-                {settings.site_tagline}
-              </span>
-            </span>
+            {(() => {
+              const mode = settings.brand_display_mode || "full";
+              const showLogo = mode !== "text";
+              const showText = mode !== "logo" || !settings.site_logo_url;
+              return (
+                <>
+                  {showLogo && (
+                    settings.site_logo_url ? (
+                      <img
+                        src={settings.site_logo_url}
+                        alt={settings.site_title}
+                        className={mode === "logo" ? "h-14 w-auto max-w-[200px] object-contain" : "h-12 w-12 rounded-xl object-cover shadow-[var(--shadow-soft)]"}
+                      />
+                    ) : (
+                      <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-soft)]">
+                        <Home className="h-5 w-5" />
+                      </span>
+                    )
+                  )}
+                  {showText && (
+                    <span className="flex flex-col leading-tight text-left">
+                      <span className="font-display text-2xl font-semibold text-white">
+                        {settings.site_title}
+                      </span>
+                      {settings.site_tagline && (
+                        <span className="text-[10px] uppercase tracking-[0.25em] text-gold">
+                          {settings.site_tagline}
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </>
+              );
+            })()}
           </Link>
           <p className="mx-auto mt-4 max-w-sm text-sm text-white/70 lg:mx-0">
             {settings.footer_about}

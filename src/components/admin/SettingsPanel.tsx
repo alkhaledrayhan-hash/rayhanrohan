@@ -30,6 +30,7 @@ const KEYS = [
   "site_url",
   "site_logo_url",
   "site_favicon_url",
+  "brand_display_mode",
   "admin_email",
   "site_timezone",
   "date_format",
@@ -258,6 +259,36 @@ export function SettingsPanel() {
                 )}
               </div>
             </div>
+          </Field>
+
+          <Field icon={ImageIcon} label="Brand display mode" hint="Choose how the logo, title and tagline appear in the header and footer.">
+            <div className="grid gap-2 sm:grid-cols-3">
+              {[
+                { v: "full", label: "Logo + Title + Tagline", desc: "Default — show everything." },
+                { v: "logo", label: "Logo only", desc: "Hide title & tagline; show only the uploaded logo." },
+                { v: "text", label: "Title + Tagline only", desc: "No logo image, only text branding." },
+              ].map((opt) => {
+                const active = (form.brand_display_mode || "full") === opt.v;
+                return (
+                  <button
+                    type="button"
+                    key={opt.v}
+                    onClick={() => setForm({ ...form, brand_display_mode: opt.v })}
+                    className={`rounded-lg border p-3 text-left transition-colors ${
+                      active
+                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                        : "border-input bg-background hover:bg-secondary"
+                    }`}
+                  >
+                    <div className="text-sm font-medium">{opt.label}</div>
+                    <div className="text-xs text-muted-foreground">{opt.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
+            {(form.brand_display_mode || "full") === "logo" && !form.site_logo_url && (
+              <p className="mt-2 text-xs text-amber-600">No logo uploaded yet — upload one above, otherwise the site will fall back to the title.</p>
+            )}
           </Field>
 
           <Field icon={ImageIcon} label="Favicon" hint="Browser tab icon. PNG or ICO, square (e.g. 32×32 or 64×64).">
