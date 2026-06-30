@@ -271,7 +271,7 @@ function AboutPage() {
                 </div>
                 {c.team.description && <p className="max-w-md text-sm text-white/70">{c.team.description}</p>}
               </div>
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className={`mt-10 grid gap-5 ${({1:"",2:"sm:grid-cols-2",3:"sm:grid-cols-2 lg:grid-cols-3",4:"sm:grid-cols-2 lg:grid-cols-4"} as Record<number,string>)[(c.team as any).columns ?? 4] || "sm:grid-cols-2 lg:grid-cols-4"}`}>
                 {c.team.members.map((m) => (
                   <div key={m.name} className="group rounded-2xl border border-white/20 bg-white/10 p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-gold/60 hover:bg-white/15 hover:shadow-2xl">
                     <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/25 transition-all duration-300 group-hover:scale-110 group-hover:bg-gold/30 group-hover:ring-gold/60">
