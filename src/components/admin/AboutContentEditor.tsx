@@ -192,9 +192,14 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           {v.story.image && <img src={v.story.image} alt="" className="mt-2 aspect-[4/3] w-full max-w-sm rounded-lg object-cover" />}
         </Card>
       </Group>
+      </>
+      )}
 
+      {show("mission") && (
+      <>
       {/* Mission & Vision */}
       <Group title="Mission & Vision">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.mission.eyebrow} onChange={(x) => setV({ ...v, mission: { ...v.mission, eyebrow: x } })} />
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
