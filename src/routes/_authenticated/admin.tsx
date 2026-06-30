@@ -807,35 +807,47 @@ function Overview({ name, role, onJump }: { name: string | undefined; role: stri
 
       {/* Charts */}
       <div className="grid gap-5 lg:grid-cols-2">
-        <ChartCard title="Listing Value (12 mo)" headline={fmtCurrency(a?.totalValue ?? 0)} delta={fmtDelta(a?.valueDelta ?? 0)} trend={trendOf(a?.valueDelta ?? 0)}>
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={a?.monthlyValue ?? []}>
-              <defs>
-                <linearGradient id="s1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
-              <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
-              <YAxis tickLine={false} axisLine={false} fontSize={11} />
-              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: any, k) => k === "value" ? fmtCurrency(Number(v)) : v} />
-              <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#s1)" />
-            </AreaChart>
-          </ResponsiveContainer>
+        <ChartCard title="Listing Value (12 mo)" headline={isLoading ? "—" : fmtCurrency(a?.totalValue ?? 0)} delta={fmtDelta(a?.valueDelta ?? 0)} trend={trendOf(a?.valueDelta ?? 0)}>
+          {isLoading ? (
+            <ChartSkeleton variant="area" />
+          ) : !a?.monthlyValue?.some((b) => b.value > 0) ? (
+            <ChartEmpty label="No listing value yet" hint="Add properties with a price to see trends here." />
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={a?.monthlyValue ?? []}>
+                <defs>
+                  <linearGradient id="s1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
+                <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
+                <YAxis tickLine={false} axisLine={false} fontSize={11} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: any, k) => k === "value" ? fmtCurrency(Number(v)) : v} />
+                <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#s1)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </ChartCard>
 
-        <ChartCard title="Leads vs Bookings" headline={String((a?.totalLeads ?? 0) + (a?.monthly?.reduce((s, m) => s + m.bookings, 0) ?? 0))} delta={fmtDelta(a?.leadsDelta ?? 0)} trend={trendOf(a?.leadsDelta ?? 0)}>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={a?.monthly ?? []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
-              <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
-              <YAxis tickLine={false} axisLine={false} fontSize={11} />
-              <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-              <Bar dataKey="leads" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="bookings" fill="#ea580c" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <ChartCard title="Leads vs Bookings" headline={isLoading ? "—" : String((a?.totalLeads ?? 0) + (a?.monthly?.reduce((s, m) => s + m.bookings, 0) ?? 0))} delta={fmtDelta(a?.leadsDelta ?? 0)} trend={trendOf(a?.leadsDelta ?? 0)}>
+          {isLoading ? (
+            <ChartSkeleton variant="bar" />
+          ) : !a?.monthly?.some((b) => b.leads > 0 || b.bookings > 0) ? (
+            <ChartEmpty label="No leads or bookings yet" hint="Activity from inquiries and bookings will appear here." />
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={a?.monthly ?? []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#eef0f3" vertical={false} />
+                <XAxis dataKey="m" tickLine={false} axisLine={false} fontSize={11} />
+                <YAxis tickLine={false} axisLine={false} fontSize={11} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
+                <Bar dataKey="leads" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="bookings" fill="#ea580c" radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </ChartCard>
       </div>
 
