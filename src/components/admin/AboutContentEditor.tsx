@@ -206,19 +206,29 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
         </div>
         <Input label="Description" value={v.mission.description} onChange={(x) => setV({ ...v, mission: { ...v.mission, description: x } })} multiline rows={2} />
-        <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Columns (desktop)</span>
-          <select
-            className={inputCls}
-            value={String(v.mission.columns)}
-            onChange={(e) => setV({ ...v, mission: { ...v.mission, columns: Number(e.target.value) as 1|2|3|4 } })}
-          >
-            <option value="1">1 column</option>
-            <option value="2">2 columns</option>
-            <option value="3">3 columns</option>
-            <option value="4">4 columns</option>
-          </select>
-        </label>
+        <div>
+          <span className="mb-2 block text-xs font-medium text-muted-foreground">Columns per row</span>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {([1, 2, 3, 4] as const).map((c) => {
+              const Icon = c === 1 ? Rows3 : c === 2 ? Columns2 : c === 3 ? Columns3 : Columns4;
+              const active = v.mission.columns === c;
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setV({ ...v, mission: { ...v.mission, columns: c } })}
+                  className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-medium transition ${
+                    active ? "border-primary bg-primary/10 text-primary" : "border-border bg-white hover:border-primary/40"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  {c} column{c > 1 ? "s" : ""}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {v.mission.items.map((it, i) => (
           <Card key={i} title={`Item ${i + 1}`} onRemove={() => setV({ ...v, mission: { ...v.mission, items: v.mission.items.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">
