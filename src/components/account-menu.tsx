@@ -146,7 +146,8 @@ export function AccountMenu({
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
