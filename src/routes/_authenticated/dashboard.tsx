@@ -141,6 +141,7 @@ function Dashboard() {
           <SideItem icon={LayoutDashboard} label="Overview" active={active === "overview"} onClick={() => setActive("overview")} />
           <SideItem icon={User} label="My Profile" active={active === "profile"} onClick={() => setActive("profile")} />
           <SideItem icon={Heart} label="Saved Properties" active={active === "saved"} onClick={() => setActive("saved")} />
+          <SideItem icon={CalendarCheck} label="My Bookings" active={active === "bookings"} onClick={() => setActive("bookings")} />
           <SideItem icon={Mail} label="Messages" active={active === "messages"} onClick={() => setActive("messages")} />
           {canAccessAdmin && (
             <Link
