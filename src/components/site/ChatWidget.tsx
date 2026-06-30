@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { MessageCircle, X, Send, Loader2, Home, ShieldCheck } from "lucide-react";
@@ -242,9 +243,9 @@ export function ChatWidget() {
                       <span className="block truncate text-[10px] text-muted-foreground">Admin team</span>
                     </span>
                   </button>
-                  <select
+                  <ThemedSelect
                     value={recipient === "admin" ? "" : recipient}
-                    onChange={(e) => setRecipient(e.target.value || "admin")}
+                    onChange={(v: string) => setRecipient(v || "admin")}
                     className={`rounded-md border bg-background px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary ${
                       recipient !== "admin"
                         ? "border-primary ring-1 ring-primary/40"
@@ -257,13 +258,13 @@ export function ChatWidget() {
                         {a.full_name || a.username || "Agent"}
                       </option>
                     ))}
-                  </select>
+                  </ThemedSelect>
                 </div>
               </div>
 
               <input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(v: string) => setName(v)}
                 placeholder="Your name"
                 required
                 maxLength={100}
@@ -271,7 +272,7 @@ export function ChatWidget() {
               />
               <input
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(v: string) => setEmail(v)}
                 type="email"
                 placeholder="Email"
                 required
@@ -280,7 +281,7 @@ export function ChatWidget() {
               />
               <textarea
                 value={body}
-                onChange={(e) => setBody(e.target.value)}
+                onChange={(v: string) => setBody(v)}
                 placeholder="How can we help?"
                 required
                 rows={5}
@@ -315,7 +316,7 @@ export function ChatWidget() {
               <form onSubmit={handleReply} className="flex items-end gap-2 border-t border-border bg-background p-3">
                 <textarea
                   value={reply}
-                  onChange={(e) => setReply(e.target.value)}
+                  onChange={(v: string) => setReply(v)}
                   placeholder="Type a reply…"
                   rows={2}
                   maxLength={4000}

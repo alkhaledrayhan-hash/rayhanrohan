@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { Mail, Phone, Send, CheckCircle2 } from "lucide-react";
 import { submitLead } from "@/lib/leads";
 import { PhoneInput } from "@/components/site/PhoneInput";
@@ -101,7 +102,7 @@ export function HomeContact() {
               <label className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary-foreground/70">
                 Topic
               </label>
-              <select
+              <ThemedSelect
                 name="subject"
                 defaultValue={cfg.subjects[0]}
                 className="h-11 rounded-md border border-white/20 bg-white/10 px-3 text-sm text-primary-foreground backdrop-blur-xl outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30"
@@ -109,7 +110,7 @@ export function HomeContact() {
                 {cfg.subjects.map((s) => (
                   <option key={s} className="text-foreground">{s}</option>
                 ))}
-              </select>
+              </ThemedSelect>
             </div>
           </div>
           <div className="mt-4 flex flex-col gap-1.5">

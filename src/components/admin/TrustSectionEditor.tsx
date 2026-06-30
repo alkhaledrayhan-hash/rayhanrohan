@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -77,7 +78,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
         <label className="flex items-center gap-2 text-sm font-medium">
           <input
             type="checkbox" checked={value.scroll.enabled}
-            onChange={(e) => setScroll({ enabled: e.target.checked })}
+            onChange={(v: string) => setScroll({ enabled: e.target.checked })}
             className="h-4 w-4 rounded border-input"
           />
           Enable horizontal scrolling when there are many items
@@ -90,7 +91,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             </span>
             <input
               type="range" min={10} max={120} step={5} value={value.scroll.speed}
-              onChange={(e) => setScroll({ speed: Number(e.target.value) })}
+              onChange={(v: string) => setScroll({ speed: Number(v) })}
               className="w-full accent-primary"
             />
           </label>
@@ -101,7 +102,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             <div className="flex items-center gap-2">
               <input
                 type="number" min={1} max={20} value={value.scroll.threshold}
-                onChange={(e) => setScroll({ threshold: Math.max(1, Number(e.target.value) || 1) })}
+                onChange={(v: string) => setScroll({ threshold: Math.max(1, Number(v) || 1) })}
                 className="w-20 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <span className="text-xs text-muted-foreground">items (default 3)</span>
@@ -117,21 +118,21 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
         {value.items.map((item, i) => (
           <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[140px_1fr_1fr_auto]">
             <Field label="Icon">
-              <select
+              <ThemedSelect
                 value={item.icon || ""}
-                onChange={(e) => setItem(i, { icon: e.target.value || undefined })}
+                onChange={(v: string) => setItem(i, { icon: v || undefined })}
                 className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
               >
                 <option value="">Auto</option>
                 {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
-              </select>
+              </ThemedSelect>
             </Field>
             <Field label="Title">
-              <input value={item.title} onChange={(e) => setItem(i, { title: e.target.value })}
+              <input value={item.title} onChange={(v: string) => setItem(i, { title: v })}
                 className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm" />
             </Field>
             <Field label="Body">
-              <input value={item.body} onChange={(e) => setItem(i, { body: e.target.value })}
+              <input value={item.body} onChange={(v: string) => setItem(i, { body: v })}
                 className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm" />
             </Field>
             <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">

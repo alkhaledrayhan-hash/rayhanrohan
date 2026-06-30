@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -83,21 +84,21 @@ export function UsersManager() {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(v: string) => setQ(v)}
             placeholder="Search by name, email, username…"
             className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <select
+        <ThemedSelect
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value as any)}
+          onChange={(v: string) => setRoleFilter(v as any)}
           className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
         >
           <option value="all">All roles</option>
           <option value="admin">Admins</option>
           <option value="agent">Agents</option>
           <option value="user">Customers</option>
-        </select>
+        </ThemedSelect>
         <button
           onClick={() => setCreating(true)}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
@@ -304,7 +305,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
           <input
             required
             value={form.full_name}
-            onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, full_name: v })}
             className={fieldCls}
           />
         </Field>
@@ -313,7 +314,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             required
             type="email"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, email: v })}
             className={fieldCls}
           />
         </Field>
@@ -323,25 +324,25 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             type="text"
             minLength={8}
             value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, password: v })}
             className={fieldCls}
           />
         </Field>
         <Field label="Role *">
-          <select
+          <ThemedSelect
             value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
+            onChange={(v: string) => setForm({ ...form, role: v as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>
             <option value="agent">Agent</option>
             <option value="admin">Admin</option>
-          </select>
+          </ThemedSelect>
         </Field>
         <Field label="Phone">
           <input
             value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, phone: v })}
             className={fieldCls}
           />
         </Field>
@@ -351,7 +352,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             pattern="^[a-zA-Z0-9_]{3,30}$"
             title="3–30 chars, letters/numbers/_"
             value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, username: v })}
             placeholder="unique handle"
             className={fieldCls}
           />
@@ -408,25 +409,25 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
           <input
             required
             value={form.full_name}
-            onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, full_name: v })}
             className={fieldCls}
           />
         </Field>
         <Field label="Role *">
-          <select
+          <ThemedSelect
             value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
+            onChange={(v: string) => setForm({ ...form, role: v as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>
             <option value="agent">Agent</option>
             <option value="admin">Admin</option>
-          </select>
+          </ThemedSelect>
         </Field>
         <Field label="Phone">
           <input
             value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, phone: v })}
             className={fieldCls}
           />
         </Field>
@@ -436,7 +437,7 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
             pattern="^[a-zA-Z0-9_]{3,30}$"
             title="3–30 chars, letters/numbers/_"
             value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            onChange={(v: string) => setForm({ ...form, username: v })}
             className={fieldCls}
           />
         </Field>
@@ -490,7 +491,7 @@ function PasswordDialog({ user, onClose }: { user: Row; onClose: () => void }) {
             type="text"
             minLength={8}
             value={pw}
-            onChange={(e) => setPw(e.target.value)}
+            onChange={(v: string) => setPw(v)}
             className={fieldCls}
             placeholder="Enter a strong password"
           />

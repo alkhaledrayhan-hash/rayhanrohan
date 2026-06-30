@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -187,7 +188,7 @@ function FooterContentEditor({ content, onChange }: { content: FooterContent; on
             type="checkbox"
             className="h-5 w-9 cursor-pointer appearance-none rounded-full bg-muted transition-colors checked:bg-primary relative before:absolute before:top-0.5 before:left-0.5 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-transform checked:before:translate-x-4"
             checked={content.footer_show_plane !== "false"}
-            onChange={(e) => set("footer_show_plane", e.target.checked ? "true" : "false")}
+            onChange={(v: string) => set("footer_show_plane", e.target.checked ? "true" : "false")}
           />
         </label>
       </Section>
@@ -238,7 +239,7 @@ function Textarea({ label, value, onChange }: { label: string; value: string; on
       <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <textarea
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(v: string) => onChange(v)}
         rows={3}
         className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
@@ -253,7 +254,7 @@ function CtaEditor({ cta, onChange }: { cta: HeaderCta; onChange: (v: HeaderCta)
         <input
           type="checkbox"
           checked={cta.enabled}
-          onChange={(e) => onChange({ ...cta, enabled: e.target.checked })}
+          onChange={(v: string) => onChange({ ...cta, enabled: e.target.checked })}
           className="h-4 w-4 rounded border-input"
         />
         Show CTA button in header
@@ -342,14 +343,14 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
                       const Icon = getMenuIcon(c.icon);
                       return Icon ? <Icon className="h-4 w-4 text-primary" /> : <span className="h-4 w-4" />;
                     })()}
-                    <select
+                    <ThemedSelect
                       value={c.icon || ""}
-                      onChange={(e) => updateChild(i, ci, { icon: e.target.value || undefined })}
+                      onChange={(v: string) => updateChild(i, ci, { icon: v || undefined })}
                       className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
                     >
                       <option value="">Auto</option>
                       {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
-                    </select>
+                    </ThemedSelect>
                   </div>
                 </label>
                 <RowActions
@@ -464,7 +465,7 @@ function Input({ label, value, onChange, placeholder }: { label: string; value: 
       <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(v: string) => onChange(v)}
         placeholder={placeholder}
         className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
@@ -545,7 +546,7 @@ function TickerEditor({ value, onChange }: { value: TickerConfig; onChange: (v: 
           <input
             type="checkbox"
             checked={value.enabled}
-            onChange={(e) => set("enabled", e.target.checked)}
+            onChange={(v: string) => set("enabled", e.target.checked)}
             className="h-4 w-4 rounded border-input"
           />
           Show news ticker on the website
@@ -562,7 +563,7 @@ function TickerEditor({ value, onChange }: { value: TickerConfig; onChange: (v: 
               max={120}
               step={5}
               value={speed}
-              onChange={(e) => set("speed", Number(e.target.value))}
+              onChange={(v: string) => set("speed", Number(v))}
               className="w-full accent-primary"
             />
           </label>
@@ -576,7 +577,7 @@ function TickerEditor({ value, onChange }: { value: TickerConfig; onChange: (v: 
                 min={1}
                 max={20}
                 value={threshold}
-                onChange={(e) => set("scrollThreshold", Math.max(1, Number(e.target.value) || 1))}
+                onChange={(v: string) => set("scrollThreshold", Math.max(1, Number(v) || 1))}
                 className="w-20 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <span className="text-xs text-muted-foreground">items (default 3)</span>
