@@ -28,6 +28,7 @@ const KEYS = [
   "site_tagline",
   "site_url",
   "site_logo_url",
+  "site_favicon_url",
   "admin_email",
   "site_timezone",
   "date_format",
