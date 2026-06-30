@@ -217,11 +217,26 @@ function PropertyDetail() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
-                  {formatPrice(property)}
-                </p>
+                {property.isOffer && (property.offerDiscount || 0) > 0 ? (
+                  <>
+                    <p className="text-sm text-muted-foreground line-through">
+                      {formatPrice(property)}
+                    </p>
+                    <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                      {formatPrice({ ...property, price: Math.round(property.price * (1 - (property.offerDiscount || 0) / 100)) })}
+                    </p>
+                    <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                      Save {property.offerDiscount}%
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-display text-3xl font-semibold text-primary sm:text-4xl">
+                    {formatPrice(property)}
+                  </p>
+                )}
                 <p className="text-sm text-muted-foreground">{property.sqft.toLocaleString()} Sq Ft</p>
               </div>
+
             </div>
 
             {/* Overview */}
