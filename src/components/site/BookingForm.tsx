@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { createBooking, createBookingAsUser } from "@/lib/bookings.functions";
 import { supabase } from "@/integrations/supabase/client";
 import type { Property } from "@/lib/properties";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 // 24-hour day, every 30 minutes
 function buildTimeSlots() {
