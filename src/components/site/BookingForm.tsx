@@ -302,6 +302,37 @@ export function BookingForm({ property }: { property: Property }) {
         <Input label="Phone number" value={phone} onChange={setPhone} placeholder="+974 …" type="tel" />
       </div>
 
+      {/* Pricing breakdown */}
+      <div className="mt-5 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
+        {isRent ? (
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              {money(unitPrice)} × {nights} night{nights === 1 ? "" : "s"}
+              {offerActive ? ` · ${discount}% offer` : ""}
+            </span>
+            <span className="font-medium">{money(subtotal)}</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              Property price{offerActive ? ` · ${discount}% offer` : ""}
+            </span>
+            <span className="font-medium">{money(subtotal)}</span>
+          </div>
+        )}
+        {taxPct > 0 ? (
+          <div className="mt-1 flex items-center justify-between text-muted-foreground">
+            <span>VAT ({taxPct}%)</span>
+            <span>{money(taxAmount)}</span>
+          </div>
+        ) : null}
+        <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
+          <span className="font-display text-base font-semibold">Total</span>
+          <span className="font-display text-base font-semibold text-primary">{money(total)}</span>
+        </div>
+      </div>
+
+
       <button
         type="submit"
         disabled={submitting}
