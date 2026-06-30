@@ -362,6 +362,12 @@ export type Database = {
           end_at: string | null
           font_family: string | null
           frequency: string
+          glass_blur: number
+          glass_border: number
+          glass_tint: number
+          gradient_angle: number
+          gradient_from: string | null
+          gradient_to: string | null
           id: string
           image_url: string | null
           is_active: boolean
@@ -407,6 +413,12 @@ export type Database = {
           end_at?: string | null
           font_family?: string | null
           frequency?: string
+          glass_blur?: number
+          glass_border?: number
+          glass_tint?: number
+          gradient_angle?: number
+          gradient_from?: string | null
+          gradient_to?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
@@ -452,6 +464,12 @@ export type Database = {
           end_at?: string | null
           font_family?: string | null
           frequency?: string
+          glass_blur?: number
+          glass_border?: number
+          glass_tint?: number
+          gradient_angle?: number
+          gradient_from?: string | null
+          gradient_to?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean

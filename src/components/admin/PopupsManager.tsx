@@ -51,6 +51,12 @@ type Popup = {
   end_at: string | null;
   is_active: boolean;
   priority: number;
+  gradient_from: string | null;
+  gradient_to: string | null;
+  gradient_angle: number;
+  glass_blur: number;
+  glass_tint: number;
+  glass_border: number;
 };
 
 const TEMPLATES: { id: string; label: string; icon: any; description: string; sample: Partial<Popup> }[] = [
@@ -97,6 +103,8 @@ function emptyPopup(): Partial<Popup> {
     font_family: "", title_size: 24, body_size: 14,
     variant_b: null, ab_split: 0,
     is_active: true, priority: 0,
+    gradient_from: "#7c3aed", gradient_to: "#ec4899", gradient_angle: 135,
+    glass_blur: 20, glass_tint: 15, glass_border: 25,
   };
 }
 
@@ -146,6 +154,12 @@ export function PopupsManager() {
         ab_split: Number(p.ab_split ?? 0),
         start_at: p.start_at || null, end_at: p.end_at || null,
         is_active: p.is_active ?? true, priority: Number(p.priority ?? 0),
+        gradient_from: p.gradient_from || null,
+        gradient_to: p.gradient_to || null,
+        gradient_angle: Number(p.gradient_angle ?? 135),
+        glass_blur: Number(p.glass_blur ?? 20),
+        glass_tint: Number(p.glass_tint ?? 15),
+        glass_border: Number(p.glass_border ?? 25),
       };
       if (p.id) {
         const { error } = await supabase.from("popups").update(payload).eq("id", p.id);
@@ -448,21 +462,28 @@ function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device
   const isGradient = popup.template === "gradient-hero";
   const isGlass = popup.template === "glass-card";
 
+  const gFrom = popup.gradient_from || accent;
+  const gTo = popup.gradient_to || shiftHex(accent, -40);
+  const gAngle = popup.gradient_angle ?? 135;
+  const glassBlur = popup.glass_blur ?? 20;
+  const glassTint = popup.glass_tint ?? 15;
+  const glassBorder = popup.glass_border ?? 25;
+
   const cardBg = isGradient
-    ? `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})`
+    ? `linear-gradient(${gAngle}deg, ${gFrom}, ${gTo})`
     : isGlass
-      ? `linear-gradient(135deg, ${hexAlpha(accent, 15)}, ${hexAlpha(accent, 5)}), ${bg}`
+      ? `linear-gradient(${gAngle}deg, ${hexAlpha(gFrom, glassTint)}, ${hexAlpha(gTo, Math.max(2, glassTint - 10))}), ${bg}`
       : bg;
 
   return (
     <div className="mx-auto overflow-hidden rounded-xl border border-border bg-[linear-gradient(135deg,#f8fafc,#e2e8f0)] shadow-inner" style={{ width: stageW, height: stageH, maxWidth: "100%" }}>
       <div className={`relative h-full w-full flex ${align}`} style={{ background: overlayBg, backdropFilter: position === "center" && (popup.overlay_blur ?? 0) > 0 ? `blur(${Math.min(popup.overlay_blur ?? 0, 12)}px)` : undefined }}>
-        <div className="relative overflow-hidden" style={{ width: isSplit ? Math.min(Number(cardW) + 80, device === "mobile" ? 250 : 360) : cardW, background: cardBg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%", border: isGlass ? `1px solid ${hexAlpha(accent, 25)}` : undefined }}>
+        <div className="relative overflow-hidden" style={{ width: isSplit ? Math.min(Number(cardW) + 80, device === "mobile" ? 250 : 360) : cardW, background: cardBg, color: text, borderRadius: radius, boxShadow: shadowVal, fontFamily: popup.font_family || undefined, maxHeight: "95%", border: isGlass ? `1px solid ${hexAlpha(gFrom, glassBorder)}` : undefined, backdropFilter: isGlass && glassBlur > 0 ? `blur(${Math.min(glassBlur, 24)}px) saturate(140%)` : undefined }}>
           <div className="absolute right-2 top-2 z-10 rounded-full bg-black/10 p-1"><X className="h-3 w-3" /></div>
           {(isGradient || isGlass) && (
             <>
-              <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full opacity-40 blur-2xl" style={{ background: shiftHex(accent, 60) }} />
-              <div className="pointer-events-none absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-30 blur-2xl" style={{ background: shiftHex(accent, -30) }} />
+              <div className="pointer-events-none absolute -left-6 -top-6 h-20 w-20 rounded-full opacity-40 blur-2xl" style={{ background: shiftHex(gFrom, 60) }} />
+              <div className="pointer-events-none absolute -bottom-8 -right-6 h-24 w-24 rounded-full opacity-30 blur-2xl" style={{ background: shiftHex(gTo, -30) }} />
             </>
           )}
           {isSplit ? (
@@ -471,7 +492,7 @@ function LivePreview({ popup, device, variant }: { popup: Partial<Popup>; device
                 {popup.image_url ? (
                   <img src={popup.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
-                  <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${accent}, ${shiftHex(accent, -40)})` }} />
+                  <div className="absolute inset-0" style={{ background: `linear-gradient(${gAngle}deg, ${gFrom}, ${gTo})` }} />
                 )}
               </div>
               <PreviewBody popup={popup} title={title} body={body} ctaLabel={ctaLabel} accent={accent} />
@@ -667,6 +688,111 @@ function DesignTab({ value, set }: { value: Partial<Popup>; set: (p: Partial<Pop
           </Field>
         </div>
       </div>
+
+      {(value.template === "gradient-hero" || value.template === "split-image") && (
+        <div className="md:col-span-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">Gradient design</div>
+            <button
+              type="button"
+              onClick={() => set({ gradient_from: "#7c3aed", gradient_to: "#ec4899", gradient_angle: 135 })}
+              className="text-[10px] text-muted-foreground underline hover:text-foreground"
+            >
+              Reset
+            </button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Field label="From color">
+              <ThemedColorInput
+                value={value.gradient_from || value.accent_color || "#7c3aed"}
+                onChange={(v) => set({ gradient_from: v })}
+              />
+            </Field>
+            <Field label="To color">
+              <ThemedColorInput
+                value={value.gradient_to || "#ec4899"}
+                onChange={(v) => set({ gradient_to: v })}
+              />
+            </Field>
+            <Field label={`Angle ${value.gradient_angle ?? 135}°`}>
+              <input
+                type="range" min={0} max={360}
+                value={value.gradient_angle ?? 135}
+                onChange={(e) => set({ gradient_angle: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+          </div>
+          <div
+            className="h-10 w-full rounded-md border border-border"
+            style={{
+              background: `linear-gradient(${value.gradient_angle ?? 135}deg, ${value.gradient_from || value.accent_color || "#7c3aed"}, ${value.gradient_to || "#ec4899"})`,
+            }}
+          />
+        </div>
+      )}
+
+      {value.template === "glass-card" && (
+        <div className="md:col-span-2 rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">Glass effect</div>
+            <label className="flex items-center gap-2 text-xs">
+              <input
+                type="checkbox"
+                checked={(value.glass_blur ?? 20) > 0}
+                onChange={(e) => set({ glass_blur: e.target.checked ? 20 : 0 })}
+              />
+              Blur on
+            </label>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Tint from color">
+              <ThemedColorInput
+                value={value.gradient_from || value.accent_color || "#0ea5e9"}
+                onChange={(v) => set({ gradient_from: v })}
+              />
+            </Field>
+            <Field label="Tint to color">
+              <ThemedColorInput
+                value={value.gradient_to || "#6366f1"}
+                onChange={(v) => set({ gradient_to: v })}
+              />
+            </Field>
+            <Field label={`Blur ${value.glass_blur ?? 20}px`}>
+              <input
+                type="range" min={0} max={60}
+                value={value.glass_blur ?? 20}
+                onChange={(e) => set({ glass_blur: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Tint strength ${value.glass_tint ?? 15}%`}>
+              <input
+                type="range" min={0} max={80}
+                value={value.glass_tint ?? 15}
+                onChange={(e) => set({ glass_tint: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Border opacity ${value.glass_border ?? 25}%`}>
+              <input
+                type="range" min={0} max={100}
+                value={value.glass_border ?? 25}
+                onChange={(e) => set({ glass_border: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+            <Field label={`Gradient angle ${value.gradient_angle ?? 135}°`}>
+              <input
+                type="range" min={0} max={360}
+                value={value.gradient_angle ?? 135}
+                onChange={(e) => set({ gradient_angle: Number(e.target.value) })}
+                className="w-full"
+              />
+            </Field>
+          </div>
+        </div>
+      )}
     </>
   );
 }
