@@ -189,10 +189,35 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
         </button>
       </div>
 
+      {isAdmin && (
+        <BulkActionsBar
+          count={bulk.count}
+          selectedItems={bulk.selectedItems}
+          onClear={bulk.clear}
+          onDelete={bulkDelete}
+          entityName="lead"
+          exportFilename="leads"
+          exportColumns={[
+            { key: "created_at", label: "Date" },
+            { key: "name", label: "Name" },
+            { key: "email", label: "Email" },
+            { key: "phone", label: "Phone" },
+            { key: "source", label: "Source" },
+            { key: "subject", label: "Subject" },
+            { key: "message", label: "Message" },
+            { key: "status", label: "Status" },
+          ]}
+        >
+          <button onClick={() => bulkStatus("contacted")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Mark contacted</button>
+          <button onClick={() => bulkStatus("closed")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Mark closed</button>
+        </BulkActionsBar>
+      )}
+
       <div className="responsive-table-wrap overflow-hidden rounded-2xl border border-border bg-white shadow-sm md:overflow-visible">
         <div className="overflow-x-auto">
           <table className="responsive-table responsive-cards w-full min-w-[960px] text-sm md:min-w-0 md:table-fixed">
             <colgroup className="hidden md:table-column-group">
+              {isAdmin && <col style={{ width: "40px" }} />}
               <col style={{ width: "110px" }} />
               <col style={{ width: "150px" }} />
               <col style={{ width: "210px" }} />
@@ -205,6 +230,16 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
 
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
+                {isAdmin && (
+                  <th className="px-3 py-3">
+                    <SelectCheckbox
+                      checked={bulk.allSelected}
+                      indeterminate={bulk.someSelected}
+                      onChange={bulk.toggleAll}
+                      ariaLabel="Select all leads"
+                    />
+                  </th>
+                )}
                 <th className="px-4 py-3">When</th>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Contact</th>
@@ -216,8 +251,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr
                   key={r.id}
