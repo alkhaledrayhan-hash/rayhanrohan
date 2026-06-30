@@ -380,3 +380,82 @@ function hexWithAlpha(hex: string, opacity: number) {
   if (isNaN(r) || isNaN(g) || isNaN(b)) return `rgba(0,0,0,${opacity / 100})`;
   return `rgba(${r},${g},${b},${opacity / 100})`;
 }
+
+function withAlpha(color: string, alpha: number) {
+  if (color.startsWith("#")) return hexWithAlpha(color, alpha * 100);
+  return color;
+}
+
+function shiftColor(color: string, amount: number) {
+  // amount: -100..100, shifts each channel toward 0 (negative) or 255 (positive)
+  if (!color.startsWith("#")) return color;
+  const clean = color.replace("#", "");
+  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return color;
+  const shift = (v: number) => Math.max(0, Math.min(255, v + amount));
+  const hex = (n: number) => shift(n).toString(16).padStart(2, "0");
+  return `#${hex(r)}${hex(g)}${hex(b)}`;
+}
+
+type PopupBodyProps = {
+  popup: Popup;
+  title: string | null;
+  body: string | null;
+  ctaLabel: string | null;
+  accent: string;
+  onCta: (url?: string | null) => void;
+  onEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  close: (asDismiss?: boolean) => void;
+};
+
+function PopupBody({ popup, title, body, ctaLabel, accent, onCta, onEmailSubmit, close }: PopupBodyProps) {
+  const isSplit = popup.template === "split-image";
+  return (
+    <div className={`relative ${isSplit ? "flex flex-col justify-center p-5 sm:p-6" : "p-5 sm:p-6"}`} style={{ fontSize: popup.body_size ?? 14 }}>
+      {popup.subtitle && (
+        <div className="mb-1 text-xs font-medium uppercase tracking-wider opacity-70">{popup.subtitle}</div>
+      )}
+      {title && <h3 className="font-display font-semibold leading-tight" style={{ fontSize: popup.title_size ?? 24 }}>{title}</h3>}
+      {body && popup.template !== "video" && <p className="mt-2 opacity-80 whitespace-pre-line">{body}</p>}
+
+      {popup.collect_email ? (
+        <form className="mt-4 space-y-2" onSubmit={onEmailSubmit}>
+          <input
+            type="email" name="email" required
+            placeholder={popup.email_placeholder || "you@example.com"}
+            className="w-full rounded-md border border-current/20 bg-white/90 px-3 py-2 text-sm text-slate-900"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" className="inline-flex flex-1 items-center justify-center rounded-md px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" style={{ background: accent }}>
+              {ctaLabel || "Subscribe"}
+            </button>
+            {popup.secondary_cta_label && (
+              <button type="button" onClick={() => close(true)} className="rounded-md border border-current/30 px-4 py-2.5 text-sm font-semibold">
+                {popup.secondary_cta_label}
+              </button>
+            )}
+          </div>
+        </form>
+      ) : (
+        (ctaLabel || popup.secondary_cta_label) && (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {ctaLabel && (
+              <button onClick={() => onCta(popup.cta_url)} className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90" style={{ background: accent }}>
+                {ctaLabel}
+              </button>
+            )}
+            {popup.secondary_cta_label && (
+              <button onClick={() => popup.secondary_cta_url ? onCta(popup.secondary_cta_url) : close(true)} className="inline-flex items-center justify-center rounded-md border border-current/30 px-5 py-2.5 text-sm font-semibold">
+                {popup.secondary_cta_label}
+              </button>
+            )}
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
