@@ -143,6 +143,8 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
   return (
     <div className="space-y-4">
 
+      {show("stats") && (
+      <>
       {/* Stats */}
       <Group title="Stats strip">
         {v.stats.map((s, i) => (
