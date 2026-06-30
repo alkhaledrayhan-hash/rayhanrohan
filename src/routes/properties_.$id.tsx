@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   ArrowLeft,
   Bath,
@@ -10,7 +12,7 @@ import {
   MapPin,
   Maximize2,
   MessageCircle,
-  Share2,
+  
   Star,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
@@ -68,7 +70,7 @@ export const Route = createFileRoute("/properties_/$id")({
 function PropertyDetail() {
   const { id } = Route.useParams();
   const { data: property, isLoading } = usePropertyBySlug(id);
-  const [activeImg, setActiveImg] = useState<string | null>(null);
+  
 
   if (isLoading) {
     return (
@@ -108,7 +110,7 @@ function PropertyDetail() {
     );
   }
 
-  const currentImg = activeImg ?? property.gallery[0] ?? property.image;
+  
 
   const waMsg = encodeURIComponent(
     `Hello, I am interested in viewing the property ${property.title} located in ${property.location}. Please let me know your availability.`,
@@ -133,48 +135,12 @@ function PropertyDetail() {
       <main className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
 
         {/* Gallery */}
-        <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
-          <div className="relative overflow-hidden rounded-2xl border border-border">
-            <img
-              src={currentImg}
-              alt={property.title}
-              width={1280}
-              height={896}
-              className="aspect-[16/8] w-full object-cover"
-            />
-            <span className="absolute left-4 top-4 rounded-md bg-background/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground shadow">
-              For {property.status}
-            </span>
-            <button
-              aria-label="Share"
-              className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-background/95 text-foreground shadow transition hover:bg-primary hover:text-primary-foreground"
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:h-full md:grid-cols-2 md:grid-rows-2 md:gap-2">
-            {property.gallery.slice(0, 4).map((g: string, i: number) => (
-              <button
-                key={`${g}-${i}`}
-                onClick={() => setActiveImg(g)}
-                className={`relative overflow-hidden rounded-lg border transition md:min-h-0 ${
-                  currentImg === g
-                    ? "border-primary ring-2 ring-primary/30"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                <img
-                  src={g}
-                  alt={`${property.title} ${i + 1}`}
-                  loading="lazy"
-                  width={640}
-                  height={480}
-                  className="aspect-square w-full object-cover md:aspect-auto md:h-full"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
+        <GallerySlider
+          images={property.gallery.length ? property.gallery : [property.image]}
+          title={property.title}
+          status={property.status}
+        />
+
 
 
 
@@ -341,3 +307,128 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function GallerySlider({
+  images,
+  title,
+  status,
+}: {
+  images: string[];
+  title: string;
+  status: string;
+}) {
+  const [slides, setSlides] = useState<string[]>(images);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const [selected, setSelected] = useState(0);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setSlides(images);
+  }, [images]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    onSelect();
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi]);
+
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [slides, emblaApi]);
+
+  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
+  const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const handleDrop = (target: number) => {
+    if (dragIndex === null || dragIndex === target) return;
+    setSlides((prevSlides) => {
+      const arr = [...prevSlides];
+      [arr[dragIndex], arr[target]] = [arr[target], arr[dragIndex]];
+      return arr;
+    });
+    setDragIndex(null);
+  };
+
+  return (
+    <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
+      <div className="relative overflow-hidden rounded-2xl border border-border">
+        <div ref={emblaRef} className="overflow-hidden">
+          <div className="flex">
+            {slides.map((g, i) => (
+              <div key={`${g}-${i}`} className="min-w-0 flex-[0_0_100%]">
+                <img
+                  src={g}
+                  alt={`${title} ${i + 1}`}
+                  width={1280}
+                  height={896}
+                  className="aspect-[16/8] w-full object-cover"
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <span className="pointer-events-none absolute left-4 top-4 rounded-md bg-background/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground shadow">
+          For {status}
+        </span>
+        <span className="pointer-events-none absolute right-4 top-4 rounded-md bg-background/95 px-2.5 py-1 text-[11px] font-semibold text-foreground shadow">
+          {selected + 1} / {slides.length}
+        </span>
+        {slides.length > 1 ? (
+          <>
+            <button
+              aria-label="Previous image"
+              onClick={prev}
+              className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow transition hover:bg-primary hover:text-primary-foreground"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              aria-label="Next image"
+              onClick={next}
+              className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow transition hover:bg-primary hover:text-primary-foreground"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        ) : null}
+      </div>
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:h-full md:grid-cols-2 md:grid-rows-2 md:gap-2">
+        {slides.slice(0, 4).map((g, i) => (
+          <button
+            key={`${g}-${i}`}
+            onClick={() => scrollTo(i)}
+            draggable
+            onDragStart={() => setDragIndex(i)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={() => setDragIndex(null)}
+            title="Click to view · Drag to swap"
+            className={`relative cursor-grab overflow-hidden rounded-lg border transition active:cursor-grabbing md:min-h-0 ${
+              selected === i
+                ? "border-primary ring-2 ring-primary/30"
+                : "border-border hover:border-primary/40"
+            } ${dragIndex === i ? "opacity-50" : ""}`}
+          >
+            <img
+              src={g}
+              alt={`${title} ${i + 1}`}
+              loading="lazy"
+              width={640}
+              height={480}
+              className="pointer-events-none aspect-square w-full object-cover md:aspect-auto md:h-full"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
