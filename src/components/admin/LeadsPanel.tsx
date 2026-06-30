@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,7 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const [src, setSrc] = useState<string>("all");
   const [agentFilter, setAgentFilter] = useState<string>("all");
   const [viewing, setViewing] = useState<Lead | null>(null);
+  const [pendingOpenId, setPendingOpenId] = useState<string | null>(null);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
@@ -44,6 +45,25 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
       return data as Lead[];
     },
   });
+
+  // Open a lead detail when notifications (or anywhere) dispatch the event.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const id = (e as CustomEvent<{ id: string }>).detail?.id;
+      if (id) setPendingOpenId(id);
+    };
+    window.addEventListener("admin:open-lead", onOpen as EventListener);
+    return () => window.removeEventListener("admin:open-lead", onOpen as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (!pendingOpenId || !rows.length) return;
+    const found = rows.find((r) => r.id === pendingOpenId);
+    if (found) {
+      setViewing(found);
+      setPendingOpenId(null);
+    }
+  }, [pendingOpenId, rows]);
 
   const { data: adminEmail } = useQuery({
     queryKey: ["site-settings", "admin_email"],

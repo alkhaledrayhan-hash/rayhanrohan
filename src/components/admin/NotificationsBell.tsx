@@ -125,7 +125,24 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
               return (
                 <button
                   key={n.id}
-                  onClick={() => { onNavigate(n.kind); setOpen(false); }}
+                  onClick={() => {
+                    onNavigate(n.kind);
+                    setOpen(false);
+                    // Extract original record id (after first dash) and dispatch
+                    // an open event AFTER the target panel has mounted.
+                    const recordId = n.id.replace(/^(lead|book|msg)-/, "");
+                    const evtName =
+                      n.kind === "leads"
+                        ? "admin:open-lead"
+                        : n.kind === "bookings"
+                        ? "admin:open-booking"
+                        : "admin:open-message";
+                    setTimeout(() => {
+                      window.dispatchEvent(
+                        new CustomEvent(evtName, { detail: { id: recordId } }),
+                      );
+                    }, 50);
+                  }}
                   className="flex w-full items-start gap-3 border-b border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
                 >
                   <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
