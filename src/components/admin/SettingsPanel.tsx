@@ -46,7 +46,12 @@ const KEYS = [
   "auth_signup_heading",
   "rent_tax_percent",
   "sale_tax_percent",
+  "auth_google_enabled",
+  "auth_apple_enabled",
+  "auth_phone_sms_enabled",
+  "auth_phone_whatsapp_enabled",
 ] as const;
+
 
 const CURRENCIES = [
   { code: "QAR", label: "Qatari Riyal (QAR ر.ق)" },
@@ -76,7 +81,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "theme" | "menus" | "footer";
+type TabId = "general" | "auth" | "providers" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -171,6 +176,8 @@ export function SettingsPanel() {
       <div className="flex flex-wrap items-center gap-2 border-b border-border">
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
+        <TabButton active={tab === "providers"} onClick={() => setTab("providers")}>Sign-in providers</TabButton>
+
         <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
         <TabButton active={tab === "footer"} onClick={() => setTab("footer")}>Footer content</TabButton>
@@ -478,6 +485,39 @@ export function SettingsPanel() {
           </div>
         </div>
       )}
+
+      {tab === "providers" && (
+        <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
+          <div>
+            <h4 className="font-display text-base font-semibold">Sign-in providers</h4>
+            <p className="text-xs text-muted-foreground">Enable or disable each authentication method. Disabled methods are hidden from the sign-in page.</p>
+          </div>
+          {[
+            { k: "auth_google_enabled", label: "Google sign-in", hint: "OAuth via Google (managed)." },
+            { k: "auth_apple_enabled", label: "Apple sign-in", hint: "OAuth via Apple (requires Apple credentials in backend)." },
+            { k: "auth_phone_sms_enabled", label: "Phone — SMS OTP", hint: "Send a 6-digit code via SMS (Twilio)." },
+            { k: "auth_phone_whatsapp_enabled", label: "Phone — WhatsApp OTP", hint: "Send a 6-digit code via WhatsApp (Twilio)." },
+          ].map((p) => {
+            const on = (form[p.k] ?? "false") === "true";
+            return (
+              <label key={p.k} className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-input bg-white p-3">
+                <div>
+                  <div className="text-sm font-semibold">{p.label}</div>
+                  <div className="text-xs text-muted-foreground">{p.hint}</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={(e) => setForm({ ...form, [p.k]: e.target.checked ? "true" : "false" })}
+                  className="mt-1 h-5 w-5 accent-primary"
+                />
+              </label>
+            );
+          })}
+        </div>
+      )}
+
+
 
       {tab === "auth" && (
         <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
