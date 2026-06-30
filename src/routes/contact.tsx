@@ -245,15 +245,18 @@ function ContactPage() {
             </div>
 
             {/* Map */}
-            <div className="overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)]">
-              <iframe
-                title="Office location"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(cfg.map_query)}&output=embed`}
-                className="h-64 w-full"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
+            {!virtualMeta["contact-map"]?.hidden && (
+              <div className={MAP_TEMPLATES.find((t) => t.id === cfg.map.template)?.wrapper || "overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)]"}>
+                <iframe
+                  title="Office location"
+                  src={buildMapSrc(cfg.map)}
+                  style={{ height: cfg.map.height || 256, filter: cfg.map.grayscale ? "grayscale(1) contrast(0.95)" : undefined }}
+                  className="w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            )}
           </aside>
           )}
         </div>
