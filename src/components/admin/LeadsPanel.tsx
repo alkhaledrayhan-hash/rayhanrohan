@@ -32,6 +32,7 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const [src, setSrc] = useState<string>("all");
   const [agentFilter, setAgentFilter] = useState<string>("all");
   const [viewing, setViewing] = useState<Lead | null>(null);
+  const [pendingOpenId, setPendingOpenId] = useState<string | null>(null);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
