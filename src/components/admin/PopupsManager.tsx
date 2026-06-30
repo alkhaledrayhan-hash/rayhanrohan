@@ -154,6 +154,12 @@ export function PopupsManager() {
         ab_split: Number(p.ab_split ?? 0),
         start_at: p.start_at || null, end_at: p.end_at || null,
         is_active: p.is_active ?? true, priority: Number(p.priority ?? 0),
+        gradient_from: p.gradient_from || null,
+        gradient_to: p.gradient_to || null,
+        gradient_angle: Number(p.gradient_angle ?? 135),
+        glass_blur: Number(p.glass_blur ?? 20),
+        glass_tint: Number(p.glass_tint ?? 15),
+        glass_border: Number(p.glass_border ?? 25),
       };
       if (p.id) {
         const { error } = await supabase.from("popups").update(payload).eq("id", p.id);
