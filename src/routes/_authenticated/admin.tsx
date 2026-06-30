@@ -345,9 +345,13 @@ function AdminDashboard() {
               initials={initials}
               fullName={profile?.full_name || "Account"}
               roleLabel={roleLabel}
+              email={profile?.email || roleData?.user?.email || undefined}
+              avatarUrl={profile?.avatar_url || undefined}
+              profileLink={{ label: "User Dashboard", to: "/dashboard", icon: LayoutDashboard }}
               onSettings={() => goSection("settings")}
               onSignOut={handleSignOut}
             />
+
 
           </div>
         </header>
