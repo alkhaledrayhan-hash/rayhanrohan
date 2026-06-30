@@ -360,7 +360,7 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
+          {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} onJump={(s) => goSection(s)} />}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
           {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel />}
