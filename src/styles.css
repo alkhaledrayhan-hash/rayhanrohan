@@ -439,11 +439,29 @@ select:-webkit-autofill {
   color: #fff;
 }
 
-/* Radix / shadcn highlighted items — override any leftover blue accent */
+/* Radix / shadcn highlighted, hover, checked & selected items — always themed (no browser blue) */
 [data-radix-collection-item][data-highlighted],
+[data-radix-collection-item]:hover,
 [role="option"][data-highlighted],
+[role="option"]:hover,
+[role="option"][aria-selected="true"],
+[role="option"][data-state="checked"],
 [role="menuitem"][data-highlighted],
-[cmdk-item][data-selected="true"] {
-  background-color: color-mix(in oklab, var(--primary) 12%, transparent) !important;
+[role="menuitem"]:hover,
+[role="menuitemcheckbox"][data-highlighted],
+[role="menuitemradio"][data-highlighted],
+[data-radix-select-item][data-highlighted],
+[data-radix-select-item][data-state="checked"],
+[data-radix-dropdown-menu-item][data-highlighted],
+[cmdk-item][data-selected="true"],
+[cmdk-item]:hover {
+  background-color: color-mix(in oklab, var(--primary) 14%, transparent) !important;
+  color: var(--primary) !important;
+}
+
+/* Currently selected item gets a stronger themed fill */
+[role="option"][aria-selected="true"][data-highlighted],
+[data-radix-select-item][data-state="checked"][data-highlighted] {
+  background-color: color-mix(in oklab, var(--primary) 22%, transparent) !important;
   color: var(--primary) !important;
 }
