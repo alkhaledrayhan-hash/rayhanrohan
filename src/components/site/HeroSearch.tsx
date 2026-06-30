@@ -7,6 +7,13 @@ import heroImg3 from "@/assets/qatar-corniche.jpg?w=1600&quality=72&format=webp"
 import heroImg4 from "@/assets/qatar-westbay.jpg?w=1600&quality=72&format=webp";
 import { LOCATIONS } from "@/lib/properties";
 import { usePageSections } from "@/lib/page-sections";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function withAlpha(hex: string, opacityPct: number) {
   const a = Math.max(0, Math.min(100, opacityPct)) / 100;
