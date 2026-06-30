@@ -19,6 +19,7 @@ export type AboutContent = {
     eyebrow: string;
     title: string;
     description: string;
+    columns: 1 | 2 | 3 | 4;
     items: Array<{ tag: string; title: string; body: string; points: string[] }>;
   };
   values: {
