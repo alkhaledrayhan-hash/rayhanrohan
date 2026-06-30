@@ -228,7 +228,7 @@ function AdminDashboard() {
         </div>
 
 
-        <nav className="flex-1 space-y-0.5 overflow-y-auto p-3 text-sm">
+        <nav className="flex-1 space-y-0.5 p-3 text-sm">
           <NavGroup label="Main" />
           <NavItem icon={LayoutDashboard} label="Dashboard" active={section === "overview"} onClick={() => goSection("overview")} />
           <NavItem icon={Building2} label="Properties" active={section === "properties"} onClick={() => goSection("properties")} />
