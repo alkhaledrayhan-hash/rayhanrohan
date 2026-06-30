@@ -14,7 +14,7 @@ import { OffersSection } from "@/components/site/OffersSection";
 import { LogoMarquee } from "@/components/site/LogoMarquee";
 import { NewsTicker } from "@/components/site/NewsTicker";
 import { useProperties, useOfferProperties, LOCATIONS } from "@/lib/properties";
-import { usePageSections, useHiddenSections } from "@/lib/page-sections";
+import { usePageSections, useHiddenSections, useSectionOrder } from "@/lib/page-sections";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
 import locLusail from "@/assets/prop-3.jpg?w=800&quality=70&format=webp";
