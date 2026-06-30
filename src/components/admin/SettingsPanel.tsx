@@ -144,6 +144,19 @@ export function SettingsPanel() {
     }
   }
 
+  async function handleFaviconFile(file: File) {
+    try {
+      setUploadingFavicon(true);
+      const dataUrl = await fileToDataUrl(file, { maxSize: 128, quality: 0.9, mime: "image/png" });
+      setForm((f) => ({ ...f, site_favicon_url: dataUrl }));
+      toast.success("Favicon ready — click Save to apply.");
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+    } finally {
+      setUploadingFavicon(false);
+    }
+  }
+
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
   const bgColor = form.auth_bg_color || "#1a0a0f";
