@@ -259,6 +259,11 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                   onClick={() => setViewing(r)}
                   className="cursor-pointer align-top hover:bg-muted/30"
                 >
+                  {isAdmin && (
+                    <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                      <SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select lead" />
+                    </td>
+                  )}
                   <td data-label="When" className="px-4 py-3 text-xs text-muted-foreground md:whitespace-nowrap">
                     <div className="font-medium text-foreground/80">{formatDate(r.created_at)}</div>
                     <div className="text-[11px] text-muted-foreground">{formatTime(r.created_at)}</div>
