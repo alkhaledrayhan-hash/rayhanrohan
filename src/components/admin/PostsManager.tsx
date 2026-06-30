@@ -13,6 +13,8 @@ import {
   upsertCategory, deleteCategory,
   upsertTag, deleteTag,
 } from "@/lib/posts.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Category = { id: string; name: string; slug: string; description: string | null };
 type Tag = { id: string; name: string; slug: string };
