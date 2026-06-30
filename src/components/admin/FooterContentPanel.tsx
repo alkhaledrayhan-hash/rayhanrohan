@@ -123,17 +123,53 @@ export function FooterContentPanel() {
       <Section title="Background & overlay">
         <div className="grid gap-3 sm:grid-cols-2">
           <ColorField
-            label="Background color (leave empty for default gradient)"
-            value={content.footer_bg_color}
-            onChange={(v) => set("footer_bg_color", v)}
+            label="Gradient from"
+            value={content.footer_bg_from}
+            onChange={(v) => set("footer_bg_from", v)}
             allowEmpty
           />
+          <ColorField
+            label="Gradient to"
+            value={content.footer_bg_to}
+            onChange={(v) => set("footer_bg_to", v)}
+            allowEmpty
+          />
+          <label className="block space-y-1">
+            <span className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span>Gradient angle</span>
+              <span className="rounded bg-muted px-1.5 py-0.5 font-mono">
+                {parseInt(content.footer_bg_angle || "180", 10) || 180}°
+              </span>
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={360}
+              step={5}
+              value={parseInt(content.footer_bg_angle || "180", 10) || 180}
+              onChange={(e) => set("footer_bg_angle", e.target.value)}
+              className="w-full"
+            />
+          </label>
+          <div className="flex items-end">
+            <button
+              type="button"
+              onClick={() => {
+                set("footer_bg_from", "");
+                set("footer_bg_to", "");
+                set("footer_bg_angle", "180");
+              }}
+              className="rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted"
+            >
+              Reset to default gradient
+            </button>
+          </div>
           <ColorField
             label="Overlay color"
             value={content.footer_overlay_color || "#000000"}
             onChange={(v) => set("footer_overlay_color", v)}
           />
-          <label className="block space-y-1 sm:col-span-2">
+          <label className="block space-y-1">
             <span className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               <span>Overlay opacity</span>
               <span className="rounded bg-muted px-1.5 py-0.5 font-mono">
@@ -154,10 +190,16 @@ export function FooterContentPanel() {
             className="sm:col-span-2 h-20 rounded-lg border border-border relative overflow-hidden"
             style={{
               background:
-                content.footer_bg_color ||
-                "linear-gradient(180deg, oklch(0.28 0.13 18) 0%, oklch(0.20 0.07 22) 55%, oklch(0.12 0.03 25) 100%)",
+                content.footer_bg_from && content.footer_bg_to
+                  ? `linear-gradient(${parseInt(content.footer_bg_angle || "180", 10) || 180}deg, ${content.footer_bg_from}, ${content.footer_bg_to})`
+                  : DEFAULT_GRADIENT,
             }}
           >
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: content.footer_overlay_color || "#000000",
+                opacity: parseFloat(content.footer_overlay_opacity || "0") || 0,
             <div
               className="absolute inset-0"
               style={{
