@@ -115,8 +115,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
   const bulkStatus = async (status: string) => {
     const ids = bulk.selectedIds;
     if (!ids.length) return;
-    const { error } = await supabase.from("leads").update({ status }).in("id", ids);
-    if (error) return toast.error(error.message);
+    const { error } = await (supabase.from("leads") as any).update({ status }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Marked ${ids.length} as ${status}`);
     qc.invalidateQueries({ queryKey: ["admin-leads"] });
     bulk.clear();
