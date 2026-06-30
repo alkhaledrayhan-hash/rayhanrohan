@@ -305,7 +305,18 @@ export function CalendarPanel() {
               .slice()
               .sort((a, b) => a.scheduled_time.localeCompare(b.scheduled_time))
               .map((b) => (
-                <div key={b.id} className="rounded-lg border border-border p-3 text-sm">
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent("admin:open-booking", { detail: { id: b.id } }),
+                    );
+                    window.dispatchEvent(new Event("admin:goto-bookings"));
+                  }}
+                  className="w-full rounded-lg border border-border p-3 text-left text-sm transition hover:border-primary hover:bg-primary/5"
+                  title="Open booking details"
+                >
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{b.scheduled_time}</span>
                     <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${
@@ -317,8 +328,9 @@ export function CalendarPanel() {
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">{b.property_title}</div>
                   <div className="mt-1 text-xs">{b.customer_name} · {b.customer_phone}</div>
-                </div>
+                </button>
               ))}
+
           </div>
         </aside>
       </div>
