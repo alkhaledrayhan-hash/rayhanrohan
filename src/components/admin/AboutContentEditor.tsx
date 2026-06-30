@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Save, Trash2, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Plus, Save, Trash2, Upload, X, Image as ImageIcon, Rows3, Columns2, Columns3, Columns4 } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 
 export type AboutContent = {
