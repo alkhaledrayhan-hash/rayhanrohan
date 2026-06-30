@@ -102,10 +102,10 @@ function Card({ title, children, onRemove }: { title: string; children: React.Re
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <details open className="rounded-xl border border-border bg-white">
-      <summary className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold">{title}</summary>
+    <div className="rounded-xl border border-border bg-white">
+      <div className="rounded-t-xl px-4 py-3 text-sm font-semibold">{title}</div>
       <div className="space-y-3 border-t border-border p-4">{children}</div>
-    </details>
+    </div>
   );
 }
 
