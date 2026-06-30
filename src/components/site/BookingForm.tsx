@@ -68,19 +68,41 @@ export function BookingForm({ property }: { property: Property }) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const isValidDate = (d: unknown): d is Date =>
+      d instanceof Date && !Number.isNaN(d.getTime());
+
     if (isRent) {
-      if (!range?.from || !range?.to) {
-        toast.error("Please pick a start and end date.");
+      if (!range?.from || !isValidDate(range.from)) {
+        toast.error("Please select a valid check-in date.");
         return;
       }
-    } else if (!date) {
-      toast.error("Please pick a date.");
-      return;
+      if (!range?.to || !isValidDate(range.to)) {
+        toast.error("Please select a valid check-out date.");
+        return;
+      }
+      if (range.from < today) {
+        toast.error("Check-in date cannot be in the past.");
+        return;
+      }
+      if (differenceInCalendarDays(range.to, range.from) < 1) {
+        toast.error("Check-out date must be after the check-in date (at least 1 night).");
+        return;
+      }
+    } else {
+      if (!date || !isValidDate(date)) {
+        toast.error("Please select a valid viewing date.");
+        return;
+      }
+      if (date < today) {
+        toast.error("Viewing date cannot be in the past.");
+        return;
+      }
     }
     if (name.trim().length < 2 || phone.trim().length < 6) {
       toast.error("Please add your name and a valid phone number.");
       return;
     }
+
     setSubmitting(true);
     try {
       const { data: auth } = await supabase.auth.getUser();
