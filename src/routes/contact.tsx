@@ -127,6 +127,7 @@ function ContactPage() {
           />
         </div>
       </section>
+      )}
 
       {/* Form + Office details */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
