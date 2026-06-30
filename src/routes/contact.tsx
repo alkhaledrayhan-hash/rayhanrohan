@@ -166,12 +166,14 @@ function ContactPage() {
                 onPhoneChange={(v) => setForm({ ...form, phone: v })}
                 placeholder="Phone number"
               />
-              <FormSelect
-                label="Subject"
-                value={form.subject}
-                onChange={(v) => setForm({ ...form, subject: v })}
-                options={cfg.subjects}
-              />
+              {!hiddenSubjects && (
+                <FormSelect
+                  label="Subject"
+                  value={form.subject}
+                  onChange={(v) => setForm({ ...form, subject: v })}
+                  options={cfg.subjects}
+                />
+              )}
               <label className="flex flex-col gap-1 sm:col-span-2">
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                   Message
