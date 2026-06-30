@@ -85,6 +85,7 @@ export function HeroSearch() {
   const isNavigating = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
   const [filters, setFilters] = useState<FilterState>(DEFAULTS);
   const [submitting, setSubmitting] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const { data: sections = {} } = usePageSections("home");
   const hero = (sections.hero || {}) as any;
@@ -232,7 +233,11 @@ export function HeroSearch() {
 
         <form
           onSubmit={submit}
-          className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 sm:p-4"
+          onMouseEnter={() => setExpanded(true)}
+          onFocus={() => setExpanded(true)}
+          onClick={() => setExpanded(true)}
+          data-expanded={expanded ? "true" : "false"}
+          className="group/search mt-10 rounded-2xl border border-white/20 bg-white/10 p-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 ease-out hover:border-white/30 hover:bg-white/15 focus-within:border-white/30 focus-within:bg-white/15 data-[expanded=true]:border-white/30 data-[expanded=true]:bg-white/15 sm:p-4"
         >
           <div className="flex flex-nowrap items-center justify-between gap-2">
             <div className="inline-flex shrink-0 rounded-full bg-white/10 p-1 text-xs backdrop-blur sm:text-sm">
@@ -284,7 +289,7 @@ export function HeroSearch() {
           </div>
 
 
-          <div className="mt-3 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,margin] duration-500 ease-out md:mt-0 md:grid-rows-[0fr] md:opacity-0 md:group-hover/search:mt-3 md:group-hover/search:grid-rows-[1fr] md:group-hover/search:opacity-100 md:group-focus-within/search:mt-3 md:group-focus-within/search:grid-rows-[1fr] md:group-focus-within/search:opacity-100">
+          <div className="mt-3 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,margin] duration-500 ease-out md:mt-0 md:grid-rows-[0fr] md:opacity-0 md:group-hover/search:mt-3 md:group-hover/search:grid-rows-[1fr] md:group-hover/search:opacity-100 md:group-focus-within/search:mt-3 md:group-focus-within/search:grid-rows-[1fr] md:group-focus-within/search:opacity-100 md:data-[expanded=true]:mt-3 md:data-[expanded=true]:grid-rows-[1fr] md:data-[expanded=true]:opacity-100" data-expanded={expanded ? "true" : "false"}>
             <div className="min-h-0 overflow-hidden">
               <div className="grid gap-2 md:grid-cols-3">
                 <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
