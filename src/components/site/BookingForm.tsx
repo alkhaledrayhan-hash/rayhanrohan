@@ -319,24 +319,34 @@ export function BookingForm({ property }: { property: Property }) {
         <Input label="Phone number" value={phone} onChange={setPhone} placeholder="+974 …" type="tel" />
       </div>
 
-      {/* Pricing breakdown */}
+      {/* Pricing breakdown — confirm before submit */}
       <div className="mt-5 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
+        <div className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Price summary
+        </div>
         {isRent ? (
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">
-              {money(unitPrice)} × {nights} night{nights === 1 ? "" : "s"}
-              {offerActive ? ` · ${discount}% offer` : ""}
+              {money(property.price)} × {nights || 0} night{nights === 1 ? "" : "s"}
             </span>
-            <span className="font-medium">{money(subtotal)}</span>
+            <span className="font-medium">{money(property.price * units)}</span>
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              Property price{offerActive ? ` · ${discount}% offer` : ""}
-            </span>
-            <span className="font-medium">{money(subtotal)}</span>
+            <span className="text-muted-foreground">Property price</span>
+            <span className="font-medium">{money(property.price)}</span>
           </div>
         )}
+        {offerActive ? (
+          <div className="mt-1 flex items-center justify-between text-emerald-600">
+            <span>Offer discount ({discount}%)</span>
+            <span>− {money(property.price * units - subtotal)}</span>
+          </div>
+        ) : null}
+        <div className="mt-1 flex items-center justify-between">
+          <span className="text-muted-foreground">Subtotal</span>
+          <span className="font-medium">{money(subtotal)}</span>
+        </div>
         {taxPct > 0 ? (
           <div className="mt-1 flex items-center justify-between text-muted-foreground">
             <span>VAT ({taxPct}%)</span>
@@ -347,6 +357,9 @@ export function BookingForm({ property }: { property: Property }) {
           <span className="font-display text-base font-semibold">Total</span>
           <span className="font-display text-base font-semibold text-primary">{money(total)}</span>
         </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          Please review the amount before confirming your {isRent ? "rental" : "booking"} request.
+        </p>
       </div>
 
 
