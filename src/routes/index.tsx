@@ -52,6 +52,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: sections = {} } = usePageSections("home");
   const { data: hidden = new Set<string>() } = useHiddenSections("home");
+  const { data: orderMap = {} } = useSectionOrder("home");
   const isHidden = (k: string) => hidden.has(k);
   const { data: allProperties = [] } = useProperties();
   const { data: offerProperties = [] } = useOfferProperties();
