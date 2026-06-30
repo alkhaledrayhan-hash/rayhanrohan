@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned, ArrowUp, ArrowDown, Eye, EyeOff, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
