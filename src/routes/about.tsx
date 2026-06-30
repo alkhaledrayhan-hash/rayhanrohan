@@ -242,7 +242,7 @@ function AboutPage() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {c.values.eyebrow && <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">{c.values.eyebrow}</p>}
               {c.values.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.values.title}</h2>}
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className={`mt-10 grid gap-5 ${({1:"",2:"sm:grid-cols-2",3:"sm:grid-cols-2 lg:grid-cols-3",4:"sm:grid-cols-2 lg:grid-cols-4"} as Record<number,string>)[(c.values as any).columns ?? 4] || "sm:grid-cols-2 lg:grid-cols-4"}`}>
                 {c.values.items.map((v) => (
                   <div key={v.title} className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]">
                     <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
