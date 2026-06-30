@@ -125,7 +125,9 @@ git push origin main
 1. https://vercel.com → **Add New Project**
 2. GitHub repo import: `AhnabShahin/rayhanrohan`
 3. Framework auto-detect hobe (`vercel.json` already configured)
-4. **Environment Variables** section khulun ebong ei 5ta add korun:
+4. **Environment Variables** section khulun ebong ei variables add korun:
+
+**Required (Supabase core):**
 
 | Name | Value | Scope |
 |------|-------|-------|
@@ -134,9 +136,49 @@ git push origin main
 | `SUPABASE_URL` | Same Project URL | Production, Preview, Development |
 | `SUPABASE_PUBLISHABLE_KEY` | Same anon key | Production, Preview, Development |
 | `SUPABASE_SERVICE_ROLE_KEY` | Step 1 er service_role key | Production, Preview, Development |
+| `SUPABASE_JWKS_URL` | `https://<NEW_PROJECT_REF>.supabase.co/auth/v1/.well-known/jwks.json` | Production, Preview, Development |
+| `SUPABASE_PROJECT_ID` | Step 1 er Project Reference ID | Production, Preview, Development |
+| `VITE_SUPABASE_PROJECT_ID` | Same Project Reference ID | Production, Preview, Development |
+
+**Optional — Twilio Phone/WhatsApp OTP** (sudu jodi SMS/WhatsApp sign-in use korben):
+
+| Name | Value | Notes |
+|------|-------|-------|
+| `TWILIO_ACCOUNT_SID` | Twilio Console → Account SID | |
+| `TWILIO_AUTH_TOKEN` | Twilio Console → Auth Token | Secret, never expose |
+| `TWILIO_SMS_FROM` | Verified Twilio number, E.164 (e.g. `+974...`) | SMS er jonno |
+| `TWILIO_WHATSAPP_FROM` | WhatsApp sender (e.g. `+14155238886`) | WhatsApp er jonno |
+
+> ⚠️ Twilio variables na dile admin dashboard theke SMS/WhatsApp toggle on korleo OTP send fail korbe. Sob other auth methods (email/password, Google, Apple) tobuo kaaj korbe.
+
+**Optional — Lovable AI** (jodi AI chat/image features use korben):
+
+| Name | Value | Notes |
+|------|-------|-------|
+| `LOVABLE_API_KEY` | Lovable workspace theke generate korun | Vercel a Lovable AI Gateway use korte hole lagbe |
 
 5. **Deploy** click korun
 6. Build complete hole apnar URL pabean: `https://rayhanrohan.vercel.app`
+
+---
+
+## Step 6.5: Social Auth (Google + Apple)
+
+Lovable Cloud er managed Google/Apple broker Vercel deploy a kaaj korbe na — apnar nijer Supabase a manually configure korte hobe:
+
+### Google
+1. Google Cloud Console → OAuth 2.0 Client banan
+2. Authorized redirect URI: `https://<NEW_PROJECT_REF>.supabase.co/auth/v1/callback`
+3. Supabase Dashboard → **Authentication → Providers → Google** enable + Client ID/Secret paste korun
+
+### Apple
+1. Apple Developer → Services ID + Sign in with Apple Key (.p8) banan
+2. Return URL: `https://<NEW_PROJECT_REF>.supabase.co/auth/v1/callback`
+3. Supabase Dashboard → **Authentication → Providers → Apple** enable + Team ID, Services ID, Key ID, Private Key paste korun
+
+> Note: Apnar code `@lovable.dev/cloud-auth-js` use kore — eta Vercel a Lovable broker call korar try korbe ja fail hobe. Vercel a deploy korar age `src/routes/auth.tsx` a Google/Apple buttons gulo `supabase.auth.signInWithOAuth({ provider: "google" })` use korar moto change korte hobe, ba sudu email/password + Phone OTP use korte hobe.
+
+
 
 ---
 
