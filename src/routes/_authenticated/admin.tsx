@@ -360,7 +360,7 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} />}
+          {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} onJump={(s) => goSection(s as typeof section)} />}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
           {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel />}
@@ -650,7 +650,7 @@ function useAdminAnalytics() {
         supabase.from("bookings").select("id, status, created_at, property_title").gte("created_at", sinceIso),
         supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "agent"),
         supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "user"),
-        supabase.from("leads").select("id, name, property_title, status, created_at").order("created_at", { ascending: false }).limit(5),
+        supabase.from("leads").select("id, name, property_title, status, created_at").order("created_at", { ascending: false }).limit(6),
       ]);
 
       const properties = props.data ?? [];
@@ -745,6 +745,7 @@ function useAdminAnalytics() {
         valueDelta: pct(lastBucket, prevBucket),
         topLocations,
         recentLeads: (recent.data ?? []).map((l: any) => ({
+          id: l.id as string,
           name: l.name || "Anonymous",
           property: l.property_title || "—",
           status: l.status || "New",
@@ -772,7 +773,7 @@ function fmtCurrency(n: number) {
   return `QAR ${n.toLocaleString()}`;
 }
 
-function Overview({ name, role }: { name: string | undefined; role: string }) {
+function Overview({ name, role, onJump }: { name: string | undefined; role: string; onJump: (s: string) => void }) {
   const { data, isLoading } = useAdminAnalytics();
   const a = data;
   const trendOf = (n: number): "up" | "down" => (n >= 0 ? "up" : "down");
@@ -840,7 +841,7 @@ function Overview({ name, role }: { name: string | undefined; role: string }) {
 
       {/* Bottom row */}
       <div className="grid gap-5 lg:grid-cols-3">
-        <RecentLeads leads={a?.recentLeads ?? []} />
+        <RecentLeads leads={a?.recentLeads ?? []} onSeeAll={() => onJump("leads")} />
         <TopLocations data={a?.topLocations ?? []} />
       </div>
     </div>
@@ -943,7 +944,7 @@ function ChartCard({
 }
 
 
-function RecentLeads({ leads }: { leads: { name: string; property: string; status: string; time: string }[] }) {
+function RecentLeads({ leads, onSeeAll }: { leads: { id: string; name: string; property: string; status: string; time: string }[]; onSeeAll?: () => void }) {
   if (!leads.length) {
     return (
       <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
@@ -956,11 +957,11 @@ function RecentLeads({ leads }: { leads: { name: string; property: string; statu
     <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:col-span-2">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-base font-semibold">Recent Leads</h3>
-        <button className="text-xs font-medium text-primary hover:underline">See all</button>
+        <button onClick={onSeeAll} className="text-xs font-medium text-primary hover:underline">See all</button>
       </div>
       <div className="mt-4 divide-y divide-border">
         {leads.map((l) => (
-          <div key={l.name} className="flex items-center justify-between py-3 text-sm">
+          <div key={l.id} className="flex items-center justify-between py-3 text-sm">
             <div className="flex items-center gap-3">
               <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                 {l.name
