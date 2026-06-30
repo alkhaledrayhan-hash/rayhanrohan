@@ -53,7 +53,14 @@ const PROPERTY_IMAGE_FALLBACKS = [prop1, prop2, prop3, prop4, prop5, prop6, prop
 export function resolvePropertyImage(src: string | null | undefined, seed?: string): string {
   if (src && SEEDED_PROPERTY_IMAGES[src]) return SEEDED_PROPERTY_IMAGES[src];
   if (src && /^(https?:|data:|blob:)/.test(src)) return src;
-  if (src && src.startsWith("/") && !src.startsWith("/src/")) return src;
+
+  // Map any path ending in prop-N.jpg/.png/.webp (e.g. /demo/prop-3.jpg) to bundled asset.
+  if (src) {
+    const m = src.match(/prop-([1-7])\.(jpg|jpeg|png|webp)$/i);
+    if (m) return PROPERTY_IMAGE_FALLBACKS[Number(m[1]) - 1] ?? PROPERTY_IMAGE_FALLBACKS[0];
+  }
+
+  if (src && src.startsWith("/") && !src.startsWith("/src/") && !src.startsWith("/demo/")) return src;
 
   const key = seed || src || "property";
   let h = 0;
