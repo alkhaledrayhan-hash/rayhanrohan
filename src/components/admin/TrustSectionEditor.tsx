@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -117,14 +118,14 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
         {value.items.map((item, i) => (
           <div key={i} className="grid gap-2 rounded-lg border border-border/60 bg-white p-2.5 sm:grid-cols-[140px_1fr_1fr_auto]">
             <Field label="Icon">
-              <select
+              <ThemedSelect
                 value={item.icon || ""}
-                onChange={(e) => setItem(i, { icon: e.target.value || undefined })}
+                onChange={(v: string) => setItem(i, { icon: v || undefined })}
                 className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
               >
                 <option value="">Auto</option>
                 {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
-              </select>
+              </ThemedSelect>
             </Field>
             <Field label="Title">
               <input value={item.title} onChange={(e) => setItem(i, { title: e.target.value })}

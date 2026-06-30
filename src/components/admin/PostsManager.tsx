@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -167,21 +168,21 @@ export function PostsManager() {
                 className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm"
               />
             </div>
-            <select value={fStatus} onChange={(e) => setFStatus(e.target.value as "all" | "draft" | "published")} className={inputCls}>
+            <ThemedSelect value={fStatus} onChange={(v: string) => setFStatus(v as "all" | "draft" | "published")} className={inputCls}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
-            </select>
-            <select
+            </ThemedSelect>
+            <ThemedSelect
               value={fCategory}
-              onChange={(e) => setFCategory(e.target.value)}
+              onChange={(v: string) => setFCategory(v)}
               className={`${inputCls} lg:col-span-4`}
             >
               <option value="all">All categories</option>
               {cats.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
-            </select>
+            </ThemedSelect>
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
@@ -380,36 +381,36 @@ function PostEditor({
             />
           </Field>
           <Field label="Type">
-            <select
+            <ThemedSelect
               value={value.type || "blog"}
-              onChange={(e) => onChange({ ...value, type: e.target.value as any })}
+              onChange={(v: string) => onChange({ ...value, type: v as any })}
               className={inputCls}
             >
               <option value="blog">Blog</option>
               <option value="news">News</option>
-            </select>
+            </ThemedSelect>
           </Field>
           <Field label="Category">
-            <select
+            <ThemedSelect
               value={value.category_id || ""}
-              onChange={(e) => onChange({ ...value, category_id: e.target.value || null })}
+              onChange={(v: string) => onChange({ ...value, category_id: v || null })}
               className={inputCls}
             >
               <option value="">— None —</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
-            </select>
+            </ThemedSelect>
           </Field>
           <Field label="Status">
-            <select
+            <ThemedSelect
               value={value.status || "draft"}
-              onChange={(e) => onChange({ ...value, status: e.target.value as any })}
+              onChange={(v: string) => onChange({ ...value, status: v as any })}
               className={inputCls}
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
-            </select>
+            </ThemedSelect>
           </Field>
           <Field label="Featured" hint="Show as the highlighted story on the News page" className="col-span-2">
             <label className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm">

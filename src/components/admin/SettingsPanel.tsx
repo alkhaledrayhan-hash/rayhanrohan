@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -268,21 +269,21 @@ export function SettingsPanel() {
           </Field>
 
           <Field icon={Globe} label="Website time zone" hint="Used to display dates and times across the dashboard.">
-            <select
+            <ThemedSelect
               value={form.site_timezone || "Asia/Qatar"}
-              onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_timezone: v })}
               className={inputCls}
             >
               {Array.from(new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES])).map((tz) => (
                 <option key={tz} value={tz}>{tz}</option>
               ))}
-            </select>
+            </ThemedSelect>
           </Field>
 
           <Field icon={Calendar} label="Date format">
-            <select
+            <ThemedSelect
               value={form.date_format || "MMMM d, yyyy"}
-              onChange={(e) => setForm({ ...form, date_format: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, date_format: v })}
               className={inputCls}
             >
               <option value="MMMM d, yyyy">November 6, 2025</option>
@@ -290,54 +291,54 @@ export function SettingsPanel() {
               <option value="dd/MM/yyyy">06/11/2025</option>
               <option value="MM/dd/yyyy">11/06/2025</option>
               <option value="d MMM yyyy">6 Nov 2025</option>
-            </select>
+            </ThemedSelect>
           </Field>
 
           <Field icon={Clock} label="Time format">
-            <select
+            <ThemedSelect
               value={form.time_format || "h:mm a"}
-              onChange={(e) => setForm({ ...form, time_format: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, time_format: v })}
               className={inputCls}
             >
               <option value="h:mm a">12-hour (3:45 PM)</option>
               <option value="HH:mm">24-hour (15:45)</option>
-            </select>
+            </ThemedSelect>
           </Field>
 
           <Field icon={CalendarDays} label="Week starts on">
-            <select
+            <ThemedSelect
               value={form.week_starts_on || "monday"}
-              onChange={(e) => setForm({ ...form, week_starts_on: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, week_starts_on: v })}
               className={inputCls}
             >
               <option value="sunday">Sunday</option>
               <option value="monday">Monday</option>
               <option value="saturday">Saturday</option>
-            </select>
+            </ThemedSelect>
           </Field>
 
           <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
-            <select
+            <ThemedSelect
               value={form.site_currency || "QAR"}
-              onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_currency: v })}
               className={inputCls}
             >
               {CURRENCIES.map((c) => (
                 <option key={c.code} value={c.code}>{c.label}</option>
               ))}
-            </select>
+            </ThemedSelect>
           </Field>
 
           <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
-            <select
+            <ThemedSelect
               value={form.site_language || "en"}
-              onChange={(e) => setForm({ ...form, site_language: e.target.value })}
+              onChange={(v: string) => setForm({ ...form, site_language: v })}
               className={inputCls}
             >
               {LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code}>{l.label}</option>
               ))}
-            </select>
+            </ThemedSelect>
           </Field>
         </div>
       )}

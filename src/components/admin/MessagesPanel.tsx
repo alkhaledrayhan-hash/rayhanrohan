@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Send, MessageSquare, Search } from "lucide-react";
@@ -140,10 +141,10 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
             />
           </div>
           {isAdmin && (
-            <select
+            <ThemedSelect
               value={agentFilter}
-              onChange={(e) => {
-                setAgentFilter(e.target.value);
+              onChange={(v: string) => {
+                setAgentFilter(v);
                 setSelectedId(null);
               }}
               className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -155,7 +156,7 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
                   {(a.full_name || a.email)} ({agentCounts.map.get(a.id) ?? 0})
                 </option>
               ))}
-            </select>
+            </ThemedSelect>
           )}
         </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -147,25 +148,25 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <div>
               <label className={label}>Status</label>
-              <select className={input} value={cfg.filter.status} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, status: e.target.value as any } })}>
+              <ThemedSelect className={input} value={cfg.filter.status} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, status: v as any } })}>
                 <option value="">Any</option>
                 <option value="rent">For Rent</option>
                 <option value="sale">For Sale</option>
-              </select>
+              </ThemedSelect>
             </div>
             <div>
               <label className={label}>Type</label>
-              <select className={input} value={cfg.filter.type} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, type: e.target.value } })}>
+              <ThemedSelect className={input} value={cfg.filter.type} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, type: v } })}>
                 <option value="">Any</option>
                 {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
+              </ThemedSelect>
             </div>
             <div>
               <label className={label}>Location</label>
-              <select className={input} value={cfg.filter.location} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, location: e.target.value } })}>
+              <ThemedSelect className={input} value={cfg.filter.location} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, location: v } })}>
                 <option value="">Any</option>
                 {LOCATIONS.map((l) => <option key={l} value={l}>{l}</option>)}
-              </select>
+              </ThemedSelect>
             </div>
           </div>
         )}

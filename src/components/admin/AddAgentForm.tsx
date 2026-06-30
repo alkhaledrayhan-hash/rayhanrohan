@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -70,10 +71,10 @@ export function AddAgentForm() {
 
           <Field label="Username"><input value={form.username} onChange={set("username")} placeholder="agent_handle" className={inputCls} maxLength={30} /></Field>
           <Field label="Gender">
-            <select value={form.gender} onChange={set("gender")} className={inputCls}>
+            <ThemedSelect value={form.gender} onChange={set("gender")} className={inputCls}>
               <option value="">Select gender</option>
               <option>Male</option><option>Female</option><option>Other</option>
-            </select>
+            </ThemedSelect>
           </Field>
           <Field label="Temporary Password *"><input required type="password" autoComplete="new-password" value={form.password} onChange={set("password")} placeholder="min 8 characters" className={inputCls} minLength={8} maxLength={72} /></Field>
 

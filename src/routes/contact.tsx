@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useState } from "react";
 import { submitLead } from "@/lib/leads";
 import {
@@ -328,9 +329,9 @@ function FormSelect({
       <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
         {label}
       </span>
-      <select
+      <ThemedSelect
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(v: string) => onChange(v)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
         {options.map((o) => (
@@ -338,7 +339,7 @@ function FormSelect({
             {o}
           </option>
         ))}
-      </select>
+      </ThemedSelect>
     </label>
   );
 }

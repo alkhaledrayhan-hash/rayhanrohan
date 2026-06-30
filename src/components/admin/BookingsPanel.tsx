@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -148,9 +149,9 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
             className="w-full rounded-lg border border-input bg-muted/30 py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <select
+        <ThemedSelect
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as Status | "all")}
+          onChange={(v: string) => setStatusFilter(v as Status | "all")}
           className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
         >
           <option value="all">All status</option>
@@ -159,7 +160,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
               {s.charAt(0).toUpperCase() + s.slice(1)}
             </option>
           ))}
-        </select>
+        </ThemedSelect>
       </div>
 
       <div className="responsive-table-wrap overflow-x-auto rounded-xl border border-border bg-white">
@@ -214,15 +215,15 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   </td>
                   <td className="px-4 py-3 capitalize text-muted-foreground">{b.source}</td>
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                    <select
+                    <ThemedSelect
                       value={b.status}
-                      onChange={(e) => setStatus.mutate({ id: b.id, status: e.target.value as Status })}
+                      onChange={(v: string) => setStatus.mutate({ id: b.id, status: v as Status })}
                       className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${statusClass[b.status as Status] ?? "bg-muted"}`}
                     >
                       {STATUSES.map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
-                    </select>
+                    </ThemedSelect>
                   </td>
                   <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                     {isAdmin && (
@@ -388,9 +389,9 @@ function BookingDetailDialog({
                       onChange={(e) => setScheduledTime(e.target.value)} className="input" />
                   </Field>
                   <Field label="Status">
-                    <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
+                    <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                    </ThemedSelect>
                   </Field>
                   <Field label="Notes" className="sm:col-span-2">
                     <textarea rows={3} value={notes}
@@ -522,9 +523,9 @@ function CreateBookingDialog({
 
         <div className="mt-4 grid gap-3">
           <Field label="Property">
-            <select required value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="input">
+            <ThemedSelect required value={propertyId} onChange={(v: string) => setPropertyId(v)} className="input">
               {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-            </select>
+            </ThemedSelect>
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Customer name">
@@ -545,9 +546,9 @@ function CreateBookingDialog({
               <input required type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="input" />
             </Field>
             <Field label="Status">
-              <select value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
+              <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
+              </ThemedSelect>
             </Field>
           </div>
           <Field label="Notes">

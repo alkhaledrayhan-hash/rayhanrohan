@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -342,14 +343,14 @@ function HeaderEditor({ items, onChange }: { items: HeaderMenuItem[]; onChange: 
                       const Icon = getMenuIcon(c.icon);
                       return Icon ? <Icon className="h-4 w-4 text-primary" /> : <span className="h-4 w-4" />;
                     })()}
-                    <select
+                    <ThemedSelect
                       value={c.icon || ""}
-                      onChange={(e) => updateChild(i, ci, { icon: e.target.value || undefined })}
+                      onChange={(v: string) => updateChild(i, ci, { icon: v || undefined })}
                       className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
                     >
                       <option value="">Auto</option>
                       {MENU_ICON_KEYS.map((k) => <option key={k} value={k}>{k}</option>)}
-                    </select>
+                    </ThemedSelect>
                   </div>
                 </label>
                 <RowActions

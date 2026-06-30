@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
@@ -302,14 +303,14 @@ export function CalendarPanel() {
             </div>
             <div className="mt-4 grid gap-3">
               <Field label="Property">
-                <select
+                <ThemedSelect
                   value={form.propertyId}
-                  onChange={(e) => setForm((f) => ({ ...f, propertyId: e.target.value }))}
+                  onChange={(v: string) => setForm((f) => ({ ...f, propertyId: v }))}
                   className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                 >
                   <option value="">— Select a property —</option>
                   {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-                </select>
+                </ThemedSelect>
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
@@ -322,16 +323,16 @@ export function CalendarPanel() {
                   />
                 </Field>
                 <Field label="Status">
-                  <select
+                  <ThemedSelect
                     value={form.status}
-                    onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as typeof form.status }))}
+                    onChange={(v: string) => setForm((f) => ({ ...f, status: v as typeof form.status }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
-                  </select>
+                  </ThemedSelect>
                 </Field>
               </div>
 
@@ -363,16 +364,16 @@ export function CalendarPanel() {
 
               {isAdmin && (
                 <Field label="Assign agent (optional)">
-                  <select
+                  <ThemedSelect
                     value={form.agentId}
-                    onChange={(e) => setForm((f) => ({ ...f, agentId: e.target.value }))}
+                    onChange={(v: string) => setForm((f) => ({ ...f, agentId: v }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="">— Use property's assigned agent —</option>
                     {agents.map((a) => (
                       <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
                     ))}
-                  </select>
+                  </ThemedSelect>
                 </Field>
               )}
 

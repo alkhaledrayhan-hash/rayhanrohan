@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { RotateCcw, Search as SearchIcon, SlidersHorizontal } from "lucide-react";
@@ -176,15 +177,15 @@ function PropertiesPage() {
               </p>
               <label className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Sort</span>
-                <select
+                <ThemedSelect
                   value={search.sort ?? "newest"}
-                  onChange={(e) => update({ sort: e.target.value as SortKey })}
+                  onChange={(v: string) => update({ sort: v as SortKey })}
                   className="bg-transparent text-sm outline-none"
                 >
                   {SORT_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
-                </select>
+                </ThemedSelect>
               </label>
             </div>
             <PropertyGrid properties={pageItems} columns={layout.columns} variant={layout.cardStyle} />
@@ -355,13 +356,13 @@ function FieldSelect({
   return (
     <label className="flex flex-col gap-1">
       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
-      <select
+      <ThemedSelect
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(v: string) => onChange(v)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
+      </ThemedSelect>
     </label>
   );
 }

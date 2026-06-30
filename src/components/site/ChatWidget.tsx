@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { MessageCircle, X, Send, Loader2, Home, ShieldCheck } from "lucide-react";
@@ -242,9 +243,9 @@ export function ChatWidget() {
                       <span className="block truncate text-[10px] text-muted-foreground">Admin team</span>
                     </span>
                   </button>
-                  <select
+                  <ThemedSelect
                     value={recipient === "admin" ? "" : recipient}
-                    onChange={(e) => setRecipient(e.target.value || "admin")}
+                    onChange={(v: string) => setRecipient(v || "admin")}
                     className={`rounded-md border bg-background px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary ${
                       recipient !== "admin"
                         ? "border-primary ring-1 ring-primary/40"
@@ -257,7 +258,7 @@ export function ChatWidget() {
                         {a.full_name || a.username || "Agent"}
                       </option>
                     ))}
-                  </select>
+                  </ThemedSelect>
                 </div>
               </div>
 

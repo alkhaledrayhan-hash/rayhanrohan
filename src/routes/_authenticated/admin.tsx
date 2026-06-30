@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -815,11 +816,11 @@ function ChartCard({
             {headline} <span className={`ml-1 text-xs font-semibold ${trendColor}`}>{delta}</span>
           </p>
         </div>
-        <select className="rounded-md border border-input bg-white px-2 py-1 text-xs text-muted-foreground">
+        <ThemedSelect className="rounded-md border border-input bg-white px-2 py-1 text-xs text-muted-foreground">
           <option>Today</option>
           <option>This week</option>
           <option>This month</option>
-        </select>
+        </ThemedSelect>
       </div>
       <div className="mt-4">{children}</div>
     </div>
@@ -936,17 +937,17 @@ function PropertiesTable() {
       <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <h3 className="font-display text-base font-semibold">All Properties</h3>
         <div className="flex items-center gap-2 text-xs">
-          <select className="rounded-md border border-input px-2 py-1">
+          <ThemedSelect className="rounded-md border border-input px-2 py-1">
             <option>All status</option>
             <option>Active</option>
             <option>Sold</option>
             <option>Reserved</option>
-          </select>
-          <select className="rounded-md border border-input px-2 py-1">
+          </ThemedSelect>
+          <ThemedSelect className="rounded-md border border-input px-2 py-1">
             <option>All types</option>
             <option>Rent</option>
             <option>Sale</option>
-          </select>
+          </ThemedSelect>
         </div>
       </div>
       <div className="overflow-x-auto">
