@@ -255,22 +255,33 @@ export function ThemeEditor() {
 
 function toHex(value: string): string {
   if (!value) return "#000000";
-  if (/^#[0-9a-f]{6}$/i.test(value)) return value;
-  if (/^#[0-9a-f]{3}$/i.test(value)) {
-    return "#" + value.slice(1).split("").map((c) => c + c).join("");
+  const v = value.trim();
+  if (/^#[0-9a-f]{6}$/i.test(v)) return v.toLowerCase();
+  if (/^#[0-9a-f]{3}$/i.test(v)) {
+    return ("#" + v.slice(1).split("").map((c) => c + c).join("")).toLowerCase();
   }
   if (typeof document === "undefined") return "#000000";
-  // Use the browser to convert any CSS color (oklch/hsl/rgb/named) to rgb, then hex.
-  const probe = document.createElement("div");
-  probe.style.color = value;
-  probe.style.display = "none";
-  document.body.appendChild(probe);
-  const rgb = getComputedStyle(probe).color;
-  document.body.removeChild(probe);
-  const m = rgb.match(/\d+(\.\d+)?/g);
-  if (!m || m.length < 3) return "#000000";
-  const [r, g, b] = m.slice(0, 3).map((n) => Math.max(0, Math.min(255, Math.round(parseFloat(n)))));
-  return "#" + [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("");
+  // Convert any CSS color (oklch, hsl, rgb, named) to a sRGB hex via canvas.
+  // getComputedStyle returns oklch as-is in Chrome, so a regex parse mis-reads
+  // its lightness/chroma/hue numbers as RGB. Canvas rasterises to sRGB and
+  // getImageData returns the actual [r,g,b] bytes.
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "#000000";
+    ctx.clearRect(0, 0, 1, 1);
+    ctx.fillStyle = "#000000";
+    ctx.fillStyle = v; // ignored if invalid → stays #000000
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+    return (
+      "#" + [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("")
+    );
+  } catch {
+    return "#000000";
+  }
 }
 
 function ColorRow({
