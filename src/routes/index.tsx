@@ -190,7 +190,7 @@ function Home() {
         )}
 
         {/* Exclusive offers */}
-        {offers.length > 0 && (
+        {!isHidden("offer") && offers.length > 0 && (
           <OffersSection
             offers={offers}
             heading={{
