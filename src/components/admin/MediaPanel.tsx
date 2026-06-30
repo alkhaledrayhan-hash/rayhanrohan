@@ -562,7 +562,7 @@ function AssignToPropertyDialog({
       setSaving(false);
       return toast.error("Property not found");
     }
-    const patch: Record<string, unknown> = {};
+    const patch: { image?: string; gallery?: string[] } = {};
     if (target === "cover") patch.image = url;
     else patch.gallery = [...prop.gallery, url];
 
