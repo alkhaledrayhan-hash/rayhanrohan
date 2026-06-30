@@ -71,7 +71,7 @@ export function AddAgentForm() {
 
           <Field label="Username"><input value={form.username} onChange={set("username")} placeholder="agent_handle" className={inputCls} maxLength={30} /></Field>
           <Field label="Gender">
-            <ThemedSelect value={form.gender} onChange={set("gender")} className={inputCls}>
+            <ThemedSelect value={form.gender} onChange={(v) => setForm((f) => ({ ...f, gender: v }))} className={inputCls}>
               <option value="">Select gender</option>
               <option>Male</option><option>Female</option><option>Other</option>
             </ThemedSelect>
