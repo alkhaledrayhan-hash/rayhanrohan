@@ -206,23 +206,33 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
     );
     const q = supabaseAdmin
       .from("properties")
-      .select("id, title, assigned_agent_id, created_by");
+      .select("id, title, status, price, offer_discount, offer_ends, assigned_agent_id, created_by");
     const { data: prop } = isUuid
       ? await q.eq("id", data.propertyId).maybeSingle()
       : await q.eq("slug", data.propertyId).maybeSingle();
     if (!prop) throw new Error("Property not found");
     const propertyUuid = (prop as { id: string }).id;
+    const resolvedTitle = (prop as { title: string }).title;
     const agentId =
       (prop as { assigned_agent_id?: string | null }).assigned_agent_id ??
       (prop as { created_by?: string | null }).created_by ??
       null;
     const email =
       (context.claims as { email?: string } | undefined)?.email || data.email || null;
+
+    const breakdown = await computeBreakdown(
+      supabaseAdmin,
+      prop as { price: number; status: string; offer_discount?: number | null; offer_ends?: string | null },
+      data.pricing,
+    );
+    const computedNotes = breakdownNotes(breakdown, resolvedTitle ?? data.propertyTitle);
+    const finalNotes = data.notes ? `${data.notes}\n\n${computedNotes}` : computedNotes;
+
     const { data: inserted, error } = await supabaseAdmin
       .from("bookings")
       .insert({
         property_id: propertyUuid,
-        property_title: (prop as { title: string }).title ?? data.propertyTitle,
+        property_title: resolvedTitle ?? data.propertyTitle,
         agent_id: agentId,
         customer_user_id: context.userId,
         customer_name: data.name,
@@ -230,15 +240,15 @@ export const createBookingAsUser = createServerFn({ method: "POST" })
         customer_email: email,
         scheduled_date: data.date,
         scheduled_time: data.time,
-        notes: data.notes || null,
+        notes: finalNotes,
         source: "website",
         status: "pending",
-        ...pricingPatch(data.pricing),
+        ...patchFromBreakdown(breakdown),
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString() };
+    return { ok: true, id: inserted.id, receivedAt: new Date().toISOString(), breakdown };
   });
 
 export const listMyBookings = createServerFn({ method: "GET" })
