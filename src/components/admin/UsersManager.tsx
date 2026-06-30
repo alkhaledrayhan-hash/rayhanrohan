@@ -11,6 +11,8 @@ import {
   setUserPassword,
   updateUser,
 } from "@/lib/users.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Role = "admin" | "agent" | "user";
 
