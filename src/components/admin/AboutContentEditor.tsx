@@ -25,12 +25,14 @@ export type AboutContent = {
   values: {
     eyebrow: string;
     title: string;
+    columns: 1 | 2 | 3 | 4;
     items: Array<{ icon: string; title: string; body: string }>;
   };
   team: {
     eyebrow: string;
     title: string;
     description: string;
+    columns: 1 | 2 | 3 | 4;
     members: Array<{ name: string; role: string; bio: string }>;
   };
   company: {
