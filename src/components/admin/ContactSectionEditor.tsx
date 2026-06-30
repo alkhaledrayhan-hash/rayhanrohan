@@ -176,7 +176,34 @@ export function HomeContactEditor({ sectionId, initial }: { sectionId: string; i
   );
 }
 
-export type ContactSectionKey = "hero" | "channels" | "subjects" | "office";
+export type ContactSectionKey = "hero" | "channels" | "subjects" | "office" | "map";
+
+export function extractIframeSrc(html: string): string {
+  if (!html) return "";
+  const trimmed = html.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const m = trimmed.match(/src=["']([^"']+)["']/i);
+  return m ? m[1] : "";
+}
+
+export function buildMapSrc(map: MapConfig): string {
+  if (map.mode === "embed") {
+    const src = extractIframeSrc(map.embed_html);
+    if (src) return src;
+  }
+  if (map.mode === "coords" && map.lat && map.lng) {
+    return `https://www.google.com/maps?q=${encodeURIComponent(map.lat + "," + map.lng)}&z=${map.zoom || 14}&output=embed`;
+  }
+  return `https://www.google.com/maps?q=${encodeURIComponent(map.query || "")}&z=${map.zoom || 14}&output=embed`;
+}
+
+export const MAP_TEMPLATES: { id: MapTemplate; label: string; desc: string; wrapper: string }[] = [
+  { id: "classic", label: "Classic", desc: "Soft border + card shadow", wrapper: "overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)]" },
+  { id: "rounded", label: "Pill", desc: "Extra-rounded corners", wrapper: "overflow-hidden rounded-[2rem] border border-border shadow-lg" },
+  { id: "framed", label: "Framed", desc: "Thick frame with padding", wrapper: "overflow-hidden rounded-2xl border-[6px] border-primary/20 bg-background p-1 shadow-lg" },
+  { id: "dark", label: "Dark", desc: "Dark inverted frame", wrapper: "overflow-hidden rounded-2xl border border-foreground/80 bg-foreground p-1 shadow-xl" },
+  { id: "minimal", label: "Minimal", desc: "No border, flat", wrapper: "overflow-hidden rounded-md" },
+];
 
 export function ContactPageEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: ContactSectionKey }) {
   const [v, setV] = useState<ContactPageConfig>(normalizeContactPage(initial));
