@@ -89,6 +89,7 @@ export function PagesManager({
     { section_key: "contact-channels", label: "Contact channels", icon: Phone, sort_order: 2 },
     { section_key: "contact-subjects", label: "Subjects", icon: ListChecks, sort_order: 3 },
     { section_key: "contact-office", label: "Head office", icon: MapPinned, sort_order: 4 },
+    { section_key: "contact-map", label: "Map", icon: MapPinned, sort_order: 5 },
   ] : [];
   const virtualForPageBase = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : activePage === "contact" ? CONTACT_SUBS : [];
   // Parent row that stores per-virtual meta (hidden / sort_order) in content._meta.virtual
