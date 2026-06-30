@@ -145,6 +145,10 @@ export function BookingForm({ property }: { property: Property }) {
       if (taxPct > 0) lines.push(`VAT (${taxPct}%): ${money(taxAmount)}`);
       lines.push(`Total: ${money(total)}`);
       const notes = lines.join("\n");
+      const round2 = (n: number) => Math.round(n * 100) / 100;
+      const discountAmount = offerActive
+        ? round2(property.price * units * (discount / 100))
+        : 0;
       const payload = {
         propertyId: property.id,
         propertyTitle: property.title,
@@ -153,6 +157,19 @@ export function BookingForm({ property }: { property: Property }) {
         date: iso(startDate),
         time,
         notes,
+        pricing: {
+          checkIn: iso(startDate),
+          checkOut: endDate ? iso(endDate) : "",
+          nights: isRent ? nights : 0,
+          unitPrice: round2(unitPrice),
+          subtotal: round2(subtotal),
+          discountPercent: offerActive ? discount : 0,
+          discountAmount,
+          taxPercent: taxPct,
+          taxAmount: round2(taxAmount),
+          totalAmount: round2(total),
+          currency,
+        },
       };
       const res = auth?.user
         ? await submitAsUser({ data: payload })
