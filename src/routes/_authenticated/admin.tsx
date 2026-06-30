@@ -141,6 +141,17 @@ function AdminDashboard() {
   }, [desktopCollapsed]);
   const closeMobileNav = () => setMobileNavOpen(false);
 
+  // Listen for cross-panel "jump to bookings" events (e.g. from Calendar)
+  useEffect(() => {
+    const onJump = () => {
+      setSection("bookings");
+      setMobileNavOpen(false);
+    };
+    window.addEventListener("admin:goto-bookings", onJump);
+    return () => window.removeEventListener("admin:goto-bookings", onJump);
+  }, []);
+
+
   const { counts: unread, markRead } = useUnreadCounts();
   // Wrap setSection so picking an item on mobile also closes the drawer, and
   // mark the corresponding section read so its badge clears.
