@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned, ArrowUp, ArrowDown, Eye, EyeOff, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -53,6 +53,17 @@ export function PagesManager({
   }, [pageSlug]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [draft, setDraft] = useState<string>("");
+  const [sectionsCollapsed, setSectionsCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("pm:sectionsCollapsed") === "1";
+  });
+  const toggleSectionsCollapsed = () => {
+    setSectionsCollapsed((v) => {
+      const nv = !v;
+      try { localStorage.setItem("pm:sectionsCollapsed", nv ? "1" : "0"); } catch {}
+      return nv;
+    });
+  };
 
   const { data: sections = [] } = useQuery({
     queryKey: ["page-sections", activePage],
@@ -236,12 +247,24 @@ export function PagesManager({
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+    <div className={`grid gap-4 ${sectionsCollapsed ? "lg:grid-cols-[44px_1fr]" : "lg:grid-cols-[240px_1fr]"}`}>
 
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
-        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
-        {visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
+        <div className="flex items-center justify-between gap-2 px-2 pb-2">
+          {!sectionsCollapsed && (
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
+          )}
+          <button
+            type="button"
+            onClick={toggleSectionsCollapsed}
+            title={sectionsCollapsed ? "Show sections" : "Hide sections"}
+            className="ml-auto grid h-7 w-7 place-items-center rounded-md hover:bg-muted text-muted-foreground"
+          >
+            {sectionsCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+        </div>
+        {!sectionsCollapsed && visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
           <p className="px-3 py-4 text-xs text-muted-foreground">
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
@@ -281,6 +304,19 @@ export function PagesManager({
                 toggleHidden.mutate({ id: item.id, value: !item.hidden });
               }
             };
+            if (sectionsCollapsed) {
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActiveKey(item.key)}
+                  title={item.label}
+                  className={`mx-auto my-0.5 grid h-8 w-8 place-items-center rounded-lg ${active?.section_key === item.key ? "bg-primary/10 text-primary" : "hover:bg-muted text-muted-foreground"} ${item.hidden ? "opacity-60" : ""}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+              );
+            }
             return (
               <div
                 key={item.id}
