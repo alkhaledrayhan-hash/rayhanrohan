@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AtSign, Eye, Mail, Pencil, Phone, Trash2, UserCircle2, X } from "lucide-react";
+import { AtSign, Eye, Mail, Pencil, Phone, Trash2, UserCircle2, UserPlus, X } from "lucide-react";
 import { deleteAgent, listAgents, updateAgent } from "@/lib/agents.functions";
 import { AvatarUploader } from "@/components/admin/AddAgentForm";
 
@@ -15,7 +15,7 @@ type Agent = {
   avatar_url: string | null;
 };
 
-export function AgentsPanel() {
+export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
   const listFn = useServerFn(listAgents);
   const { data, isLoading } = useQuery({
     queryKey: ["agents"],
@@ -25,26 +25,51 @@ export function AgentsPanel() {
   const [editing, setEditing] = useState<Agent | null>(null);
   const [viewing, setViewing] = useState<Agent | null>(null);
 
+  const header = onAddAgent ? (
+    <div className="flex items-center justify-between gap-3">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Agents</h2>
+        <p className="text-xs text-muted-foreground">Manage agent accounts and details.</p>
+      </div>
+      <button
+        type="button"
+        onClick={onAddAgent}
+        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+      >
+        <UserPlus className="h-4 w-4" /> Add Agent
+      </button>
+    </div>
+  ) : null;
+
   if (isLoading) {
-    return <div className="rounded-2xl border border-border bg-white p-10 text-center text-sm text-muted-foreground">Loading agents…</div>;
+    return (
+      <div className="space-y-4">
+        {header}
+        <div className="rounded-2xl border border-border bg-white p-10 text-center text-sm text-muted-foreground">Loading agents…</div>
+      </div>
+    );
   }
 
   const agents = (data?.agents ?? []) as Agent[];
 
   if (!agents.length) {
     return (
-      <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-white p-16 text-center">
-        <UserCircle2 className="h-10 w-10 text-muted-foreground" />
-        <p className="mt-3 font-display text-lg font-semibold">No agents yet</p>
-        <p className="mt-1 max-w-md text-sm text-muted-foreground">
-          Use the "Add Agent" submenu to create your first agent account.
-        </p>
+      <div className="space-y-4">
+        {header}
+        <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-white p-16 text-center">
+          <UserCircle2 className="h-10 w-10 text-muted-foreground" />
+          <p className="mt-3 font-display text-lg font-semibold">No agents yet</p>
+          <p className="mt-1 max-w-md text-sm text-muted-foreground">
+            Click "Add Agent" to create your first agent account.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      {header}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {agents.map((a) => (
           <AgentCard
@@ -63,7 +88,7 @@ export function AgentsPanel() {
         />
       )}
       {editing && <EditAgentDialog agent={editing} onClose={() => setEditing(null)} />}
-    </>
+    </div>
   );
 }
 

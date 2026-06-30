@@ -358,7 +358,7 @@ function AdminDashboard() {
           {section === "overview" && <Overview name={profile?.full_name?.split(" ")[0]} role={roleLabel} onJump={(s) => goSection(s as typeof section)} />}
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
           {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
-          {section === "agents" && isAdmin && <AgentsPanel />}
+          {section === "agents" && isAdmin && <AgentsPanel onAddAgent={() => goSection("add-agent")} />}
           {section === "add-agent" && isAdmin && <AddAgentForm />}
           {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
           {section === "email-requests" && (isAdmin ? <EmailChangeRequestsPanel /> : <PlaceholderCard icon={Mail} title="Email Requests" desc="Only admins can review email change requests." />)}
