@@ -14,7 +14,7 @@ import { OffersSection } from "@/components/site/OffersSection";
 import { LogoMarquee } from "@/components/site/LogoMarquee";
 import { NewsTicker } from "@/components/site/NewsTicker";
 import { useProperties, useOfferProperties, LOCATIONS } from "@/lib/properties";
-import { usePageSections } from "@/lib/page-sections";
+import { usePageSections, useHiddenSections } from "@/lib/page-sections";
 import locDoha from "@/assets/prop-7.jpg?w=800&quality=70&format=webp";
 import locPearl from "@/assets/prop-1.jpg?w=800&quality=70&format=webp";
 import locLusail from "@/assets/prop-3.jpg?w=800&quality=70&format=webp";
@@ -51,6 +51,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { data: sections = {} } = usePageSections("home");
+  const { data: hidden = new Set<string>() } = useHiddenSections("home");
+  const isHidden = (k: string) => hidden.has(k);
   const { data: allProperties = [] } = useProperties();
   const { data: offerProperties = [] } = useOfferProperties();
   const featuredCfg = normalizeFeatured(sections.featured);
@@ -127,12 +129,13 @@ function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <HeroSearch />
+        {!isHidden("hero") && <HeroSearch />}
 
-        <NewsTicker />
+        {!isHidden("ticker") && <NewsTicker />}
 
 
         {/* Trust strip */}
+        {!isHidden("trust") && (
         <section className="border-y border-border bg-secondary/40">
           {trustShouldScroll ? (
             <div className="group relative overflow-hidden py-8">
@@ -158,9 +161,11 @@ function Home() {
             </div>
           )}
         </section>
+        )}
 
 
         {/* Featured */}
+        {!isHidden("featured") && (
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -182,9 +187,10 @@ function Home() {
             <PropertyGrid properties={featured} />
           </div>
         </section>
+        )}
 
         {/* Exclusive offers */}
-        {offers.length > 0 && (
+        {!isHidden("offer") && offers.length > 0 && (
           <OffersSection
             offers={offers}
             heading={{
@@ -198,6 +204,7 @@ function Home() {
         )}
 
         {/* Locations */}
+        {!isHidden("locations") && (
         <section className="bg-secondary/40 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-gold">
@@ -279,10 +286,11 @@ function Home() {
 
           </div>
         </section>
+        )}
 
-        <HomeContact />
+        {!isHidden("contact") && <HomeContact />}
 
-        <LogoMarquee />
+        {!isHidden("partners") && <LogoMarquee />}
       </main>
       <Footer />
     </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -22,6 +22,7 @@ type Section = {
   label: string;
   content: any;
   sort_order: number;
+  is_hidden?: boolean;
 };
 
 const PAGES: { slug: string; label: string; icon: typeof Home; editable: boolean }[] = [
@@ -170,6 +171,36 @@ export function PagesManager({
     onError: (e: any) => toast.error(e.message),
   });
 
+  const toggleHidden = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase.from("page_sections").update({ is_hidden: value } as any).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["page-sections"] });
+      qc.invalidateQueries({ queryKey: ["home-sections"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const swapOrder = useMutation({
+    mutationFn: async ({ a, b }: { a: Section; b: Section }) => {
+      // Two-step swap to avoid unique conflicts if any
+      const tmp = -Math.abs(a.sort_order) - 1000 - Math.floor(Math.random() * 1000);
+      const r1 = await supabase.from("page_sections").update({ sort_order: tmp }).eq("id", a.id);
+      if (r1.error) throw r1.error;
+      const r2 = await supabase.from("page_sections").update({ sort_order: a.sort_order }).eq("id", b.id);
+      if (r2.error) throw r2.error;
+      const r3 = await supabase.from("page_sections").update({ sort_order: b.sort_order }).eq("id", a.id);
+      if (r3.error) throw r3.error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["page-sections"] });
+      qc.invalidateQueries({ queryKey: ["home-sections"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
@@ -183,24 +214,65 @@ export function PagesManager({
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
-        {[
-          ...visibleSections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
-          ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon })),
-        ]
-
-          .sort((a, b) => a.sort_order - b.sort_order)
-          .map((item) => {
+        {(() => {
+          const items = [
+            ...visibleSections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText, hidden: !!s.is_hidden, row: s })),
+            ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon, hidden: false, row: null as Section | null })),
+          ].sort((a, b) => a.sort_order - b.sort_order);
+          // Reordering only swaps among real DB sections.
+          const dbItems = items.filter((i) => i.kind === "db");
+          return items.map((item) => {
             const Icon = item.icon;
+            const dbIdx = item.kind === "db" ? dbItems.findIndex((d) => d.id === item.id) : -1;
+            const canUp = item.kind === "db" && dbIdx > 0;
+            const canDown = item.kind === "db" && dbIdx >= 0 && dbIdx < dbItems.length - 1;
             return (
-              <button
+              <div
                 key={item.id}
-                onClick={() => setActiveKey(item.key)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${active?.section_key === item.key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"}`}
+                className={`group flex w-full items-center gap-1 rounded-lg px-2 py-1.5 text-sm ${active?.section_key === item.key ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted"} ${item.hidden ? "opacity-60" : ""}`}
               >
-                <span className="flex items-center gap-2"><Icon className="h-3.5 w-3.5" /> {item.label}</span>
-              </button>
+                <button
+                  onClick={() => setActiveKey(item.key)}
+                  className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                >
+                  <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                  {item.hidden && <span className="ml-1 rounded bg-muted-foreground/10 px-1 text-[9px] uppercase tracking-wide text-muted-foreground">hidden</span>}
+                </button>
+                {item.kind === "db" && (
+                  <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      type="button"
+                      title="Move up"
+                      disabled={!canUp || swapOrder.isPending}
+                      onClick={(e) => { e.stopPropagation(); if (canUp) swapOrder.mutate({ a: item.row as Section, b: dbItems[dbIdx - 1].row as Section }); }}
+                      className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
+                    >
+                      <ArrowUp className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      title="Move down"
+                      disabled={!canDown || swapOrder.isPending}
+                      onClick={(e) => { e.stopPropagation(); if (canDown) swapOrder.mutate({ a: item.row as Section, b: dbItems[dbIdx + 1].row as Section }); }}
+                      className="grid h-6 w-6 place-items-center rounded hover:bg-background disabled:opacity-30"
+                    >
+                      <ArrowDown className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      title={item.hidden ? "Show on site" : "Hide from site"}
+                      onClick={(e) => { e.stopPropagation(); toggleHidden.mutate({ id: item.id, value: !item.hidden }); }}
+                      className="grid h-6 w-6 place-items-center rounded hover:bg-background"
+                    >
+                      {item.hidden ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    </button>
+                  </div>
+                )}
+              </div>
             );
-          })}
+          });
+        })()}
 
       </div>
 

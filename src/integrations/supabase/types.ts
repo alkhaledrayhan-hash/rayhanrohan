@@ -273,6 +273,7 @@ export type Database = {
           content: Json
           created_at: string
           id: string
+          is_hidden: boolean
           label: string
           page_slug: string
           section_key: string
@@ -283,6 +284,7 @@ export type Database = {
           content?: Json
           created_at?: string
           id?: string
+          is_hidden?: boolean
           label: string
           page_slug: string
           section_key: string
@@ -293,6 +295,7 @@ export type Database = {
           content?: Json
           created_at?: string
           id?: string
+          is_hidden?: boolean
           label?: string
           page_slug?: string
           section_key?: string
