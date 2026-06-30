@@ -58,7 +58,7 @@ export function normalizeAbout(raw: any): AboutContent {
   return {
     stats: Array.isArray(raw.stats) ? raw.stats : DEFAULT.stats,
     story: { ...DEFAULT.story, ...(raw.story || {}), paragraphs: Array.isArray(raw.story?.paragraphs) ? raw.story.paragraphs : [] },
-    mission: { ...DEFAULT.mission, ...(raw.mission || {}), items: Array.isArray(raw.mission?.items) ? raw.mission.items : [] },
+    mission: { ...DEFAULT.mission, ...(raw.mission || {}), columns: ([1,2,3,4].includes(Number(raw.mission?.columns)) ? Number(raw.mission.columns) : 2) as 1|2|3|4, items: Array.isArray(raw.mission?.items) ? raw.mission.items : [] },
     values: { ...DEFAULT.values, ...(raw.values || {}), items: Array.isArray(raw.values?.items) ? raw.values.items : [] },
     team: { ...DEFAULT.team, ...(raw.team || {}), members: Array.isArray(raw.team?.members) ? raw.team.members : [] },
     company: { ...DEFAULT.company, ...(raw.company || {}), details: Array.isArray(raw.company?.details) ? raw.company.details : [] },
