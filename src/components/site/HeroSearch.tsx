@@ -289,7 +289,7 @@ export function HeroSearch() {
           </div>
 
 
-          <div className="mt-3 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,margin] duration-500 ease-out md:mt-0 md:grid-rows-[0fr] md:opacity-0 md:group-hover/search:mt-3 md:group-hover/search:grid-rows-[1fr] md:group-hover/search:opacity-100 md:group-focus-within/search:mt-3 md:group-focus-within/search:grid-rows-[1fr] md:group-focus-within/search:opacity-100">
+          <div className="mt-3 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,margin] duration-500 ease-out md:mt-0 md:grid-rows-[0fr] md:opacity-0 md:group-hover/search:mt-3 md:group-hover/search:grid-rows-[1fr] md:group-hover/search:opacity-100 md:group-focus-within/search:mt-3 md:group-focus-within/search:grid-rows-[1fr] md:group-focus-within/search:opacity-100 md:data-[expanded=true]:mt-3 md:data-[expanded=true]:grid-rows-[1fr] md:data-[expanded=true]:opacity-100" data-expanded={expanded ? "true" : "false"}>
             <div className="min-h-0 overflow-hidden">
               <div className="grid gap-2 md:grid-cols-3">
                 <Field label="Location" icon={<MapPin className="h-4 w-4" />}>
