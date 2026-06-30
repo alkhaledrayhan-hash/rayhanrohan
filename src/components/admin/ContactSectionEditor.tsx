@@ -148,7 +148,9 @@ export function HomeContactEditor({ sectionId, initial }: { sectionId: string; i
   );
 }
 
-export function ContactPageEditor({ sectionId, initial }: { sectionId: string; initial: any }) {
+export type ContactSectionKey = "hero" | "channels" | "subjects" | "office";
+
+export function ContactPageEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: ContactSectionKey }) {
   const [v, setV] = useState<ContactPageConfig>(normalizeContactPage(initial));
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => { setV(normalizeContactPage(initial)); }, [sectionId]);
@@ -162,46 +164,56 @@ export function ContactPageEditor({ sectionId, initial }: { sectionId: string; i
     } catch (e: any) { toast.error(e.message); }
   }
 
+  const show = (k: ContactSectionKey) => !only || only === k;
+
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
-        <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Page hero</p>
-        <Field label="Eyebrow" value={v.hero.eyebrow} onChange={(x) => setV({ ...v, hero: { ...v.hero, eyebrow: x } })} />
-        <Field label="Title" value={v.hero.title} onChange={(x) => setV({ ...v, hero: { ...v.hero, title: x } })} />
-        <div className="sm:col-span-2"><Field label="Description" value={v.hero.description} onChange={(x) => setV({ ...v, hero: { ...v.hero, description: x } })} multiline rows={3} /></div>
-        <div className="sm:col-span-2 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Hero background image</p>
-          <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { if (e.target.files?.[0]) uploadHero(e.target.files[0]); e.target.value = ""; }} />
-          <div className="flex flex-wrap items-center gap-2">
-            <button type="button" onClick={() => fileRef.current?.click()} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"><Upload className="h-4 w-4" /> Upload image</button>
-            {v.hero.image && <button type="button" onClick={() => setV({ ...v, hero: { ...v.hero, image: "" } })} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-muted"><X className="h-3 w-3" /> Remove</button>}
+      {show("hero") && (
+        <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Page hero</p>
+          <Field label="Eyebrow" value={v.hero.eyebrow} onChange={(x) => setV({ ...v, hero: { ...v.hero, eyebrow: x } })} />
+          <Field label="Title" value={v.hero.title} onChange={(x) => setV({ ...v, hero: { ...v.hero, title: x } })} />
+          <div className="sm:col-span-2"><Field label="Description" value={v.hero.description} onChange={(x) => setV({ ...v, hero: { ...v.hero, description: x } })} multiline rows={3} /></div>
+          <div className="sm:col-span-2 space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Hero background image</p>
+            <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { if (e.target.files?.[0]) uploadHero(e.target.files[0]); e.target.value = ""; }} />
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => fileRef.current?.click()} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"><Upload className="h-4 w-4" /> Upload image</button>
+              {v.hero.image && <button type="button" onClick={() => setV({ ...v, hero: { ...v.hero, image: "" } })} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-muted"><X className="h-3 w-3" /> Remove</button>}
+            </div>
+            <Field label="Or paste image URL" value={v.hero.image || ""} onChange={(x) => setV({ ...v, hero: { ...v.hero, image: x } })} />
+            {v.hero.image && <img src={v.hero.image} alt="" className="mt-2 aspect-[16/6] w-full rounded-lg object-cover" />}
           </div>
-          <Field label="Or paste image URL" value={v.hero.image || ""} onChange={(x) => setV({ ...v, hero: { ...v.hero, image: x } })} />
-          {v.hero.image && <img src={v.hero.image} alt="" className="mt-2 aspect-[16/6] w-full rounded-lg object-cover" />}
         </div>
-      </div>
+      )}
 
-      <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
-        <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact channels</p>
-        <Field label="Phone (display)" value={v.phone_display} onChange={(x) => setV({ ...v, phone_display: x })} />
-        <Field label="Phone (E.164)" value={v.phone_e164} onChange={(x) => setV({ ...v, phone_e164: x })} />
-        <Field label="WhatsApp (digits only, country+number)" value={v.whatsapp_e164} onChange={(x) => setV({ ...v, whatsapp_e164: x })} />
-        <Field label="Email" value={v.email} onChange={(x) => setV({ ...v, email: x })} />
-        <Field label="Hours (short)" value={v.hours_short} onChange={(x) => setV({ ...v, hours_short: x })} />
-        <Field label="Default dial code" value={v.default_dial_code} onChange={(x) => setV({ ...v, default_dial_code: x })} />
-      </div>
+      {show("channels") && (
+        <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact channels</p>
+          <Field label="Phone (display)" value={v.phone_display} onChange={(x) => setV({ ...v, phone_display: x })} />
+          <Field label="Phone (E.164)" value={v.phone_e164} onChange={(x) => setV({ ...v, phone_e164: x })} />
+          <Field label="WhatsApp (digits only, country+number)" value={v.whatsapp_e164} onChange={(x) => setV({ ...v, whatsapp_e164: x })} />
+          <Field label="Email" value={v.email} onChange={(x) => setV({ ...v, email: x })} />
+          <Field label="Hours (short)" value={v.hours_short} onChange={(x) => setV({ ...v, hours_short: x })} />
+          <Field label="Default dial code" value={v.default_dial_code} onChange={(x) => setV({ ...v, default_dial_code: x })} />
+        </div>
+      )}
 
-      <SubjectsEditor subjects={v.subjects} onChange={(s) => setV({ ...v, subjects: s })} />
+      {show("subjects") && (
+        <SubjectsEditor subjects={v.subjects} onChange={(s) => setV({ ...v, subjects: s })} />
+      )}
 
-      <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
-        <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Head office</p>
-        <Field label="Name" value={v.office.name} onChange={(x) => setV({ ...v, office: { ...v.office, name: x } })} />
-        <Field label="License" value={v.office.license} onChange={(x) => setV({ ...v, office: { ...v.office, license: x } })} />
-        <Field label="CR No." value={v.office.cr} onChange={(x) => setV({ ...v, office: { ...v.office, cr: x } })} />
-        <Field label="Map query (used by Google Maps embed)" value={v.map_query} onChange={(x) => setV({ ...v, map_query: x })} />
-        <div className="sm:col-span-2"><Field label="Address (multi-line)" value={v.office.address} onChange={(x) => setV({ ...v, office: { ...v.office, address: x } })} multiline rows={3} /></div>
-        <div className="sm:col-span-2"><Field label="Hours (multi-line)" value={v.office.hours} onChange={(x) => setV({ ...v, office: { ...v.office, hours: x } })} multiline rows={3} /></div>
-      </div>
+      {show("office") && (
+        <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Head office</p>
+          <Field label="Name" value={v.office.name} onChange={(x) => setV({ ...v, office: { ...v.office, name: x } })} />
+          <Field label="License" value={v.office.license} onChange={(x) => setV({ ...v, office: { ...v.office, license: x } })} />
+          <Field label="CR No." value={v.office.cr} onChange={(x) => setV({ ...v, office: { ...v.office, cr: x } })} />
+          <Field label="Map query (used by Google Maps embed)" value={v.map_query} onChange={(x) => setV({ ...v, map_query: x })} />
+          <div className="sm:col-span-2"><Field label="Address (multi-line)" value={v.office.address} onChange={(x) => setV({ ...v, office: { ...v.office, address: x } })} multiline rows={3} /></div>
+          <div className="sm:col-span-2"><Field label="Hours (multi-line)" value={v.office.hours} onChange={(x) => setV({ ...v, office: { ...v.office, hours: x } })} multiline rows={3} /></div>
+        </div>
+      )}
 
       <SaveBar pending={save.isPending} onSave={() => save.mutate(v)} />
     </div>

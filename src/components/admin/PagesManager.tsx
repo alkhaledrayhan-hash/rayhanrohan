@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase, Phone, ListChecks, MapPinned } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -81,11 +81,21 @@ export function PagesManager({
     { section_key: "about-team", label: "Team", icon: UsersRound, sort_order: 14 },
     { section_key: "about-company", label: "Company details", icon: Briefcase, sort_order: 15 },
   ] : [];
-  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : [];
+  // Same idea for the Contact page — split the `info` row into focused tabs.
+  const contactInfoRow = sections.find((s) => s.section_key === "info");
+  const CONTACT_SUBS: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = contactInfoRow ? [
+    { section_key: "contact-hero", label: "Hero", icon: Home, sort_order: 1 },
+    { section_key: "contact-channels", label: "Contact channels", icon: Phone, sort_order: 2 },
+    { section_key: "contact-subjects", label: "Subjects", icon: ListChecks, sort_order: 3 },
+    { section_key: "contact-office", label: "Head office", icon: MapPinned, sort_order: 4 },
+  ] : [];
+  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : activePage === "contact" ? CONTACT_SUBS : [];
 
-  // Hide the raw `content` row from the about sidebar — its parts show as sub-sections instead.
+  // Hide raw aggregate rows from their respective sidebars — the parts replace them.
   const visibleSections = activePage === "about"
     ? sections.filter((s) => s.section_key !== "content")
+    : activePage === "contact"
+    ? sections.filter((s) => s.section_key !== "info")
     : sections;
 
   const aboutOnlyMap: Record<string, "stats" | "story" | "mission" | "values" | "team" | "company"> = {
@@ -96,23 +106,32 @@ export function PagesManager({
     "about-team": "team",
     "about-company": "company",
   };
+  const contactOnlyMap: Record<string, "hero" | "channels" | "subjects" | "office"> = {
+    "contact-hero": "hero",
+    "contact-channels": "channels",
+    "contact-subjects": "subjects",
+    "contact-office": "office",
+  };
 
   const virtualHit = virtualForPage.find((v) => v.section_key === activeKey);
+  const virtualSourceRow = virtualHit
+    ? (aboutOnlyMap[virtualHit.section_key] ? aboutContentRow : contactOnlyMap[virtualHit.section_key] ? contactInfoRow : null)
+    : null;
   const active = sections.find((s) => s.section_key === activeKey)
     || (virtualHit
       ? ({
-          id: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.id : `virtual-${activeKey}`,
+          id: virtualSourceRow ? virtualSourceRow.id : `virtual-${activeKey}`,
           page_slug: activePage,
           section_key: activeKey!,
           label: virtualHit.label,
-          content: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.content : null,
+          content: virtualSourceRow ? virtualSourceRow.content : null,
           sort_order: 999,
         } as Section)
       : undefined)
     || visibleSections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-")) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-") && !active.section_key.startsWith("contact-")) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && visibleSections[0]) setActiveKey(visibleSections[0].section_key);
@@ -279,6 +298,14 @@ export function PagesManager({
                 <p className="text-xs text-muted-foreground">About page · edit this section and click save.</p>
               </div>
               <AboutContentEditor sectionId={active.id} initial={active.content || {}} only={aboutOnlyMap[active.section_key]} />
+            </>
+          ) : active.page_slug === "contact" && active.section_key.startsWith("contact-") ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">Contact page · edit this section and click save.</p>
+              </div>
+              <ContactPageEditor sectionId={active.id} initial={active.content || {}} only={contactOnlyMap[active.section_key]} />
             </>
           ) : active.section_key === "content" && active.page_slug === "about" ? (
             <>
