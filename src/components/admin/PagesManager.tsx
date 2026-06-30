@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BadgePercent as Tag } from "lucide-react";
+import { FileText, Home, Info, Mail, Newspaper, Building2, Users, Megaphone, ShieldCheck, Handshake, MapPin, BadgePercent, Layout, BarChart3, BookOpen, Target, Sparkles, UsersRound, Briefcase } from "lucide-react";
 import { HeroEditor } from "./HeroEditor";
 import { TickerSectionEditor } from "./TickerSectionEditor";
 import { TrustSectionEditor } from "./TrustSectionEditor";
@@ -66,23 +66,58 @@ export function PagesManager({
     },
   });
 
-  // Virtual sections (not stored in page_sections) that get their own editors.
+  // Virtual sections (not stored as their own rows) that get their own editors.
   const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = [
     { section_key: "ticker", label: "News ticker", icon: Megaphone, sort_order: 2 },
   ];
-  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : [];
+  // For the About page we expose the parts of the single `content` row as
+  // separate sidebar entries — each routes back into AboutContentEditor with `only=`.
+  const aboutContentRow = sections.find((s) => s.section_key === "content");
+  const ABOUT_SUBS: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = aboutContentRow ? [
+    { section_key: "about-stats", label: "Stats strip", icon: BarChart3, sort_order: 10 },
+    { section_key: "about-story", label: "Our Story", icon: BookOpen, sort_order: 11 },
+    { section_key: "about-mission", label: "Mission & Vision", icon: Target, sort_order: 12 },
+    { section_key: "about-values", label: "Values", icon: Sparkles, sort_order: 13 },
+    { section_key: "about-team", label: "Team", icon: UsersRound, sort_order: 14 },
+    { section_key: "about-company", label: "Company details", icon: Briefcase, sort_order: 15 },
+  ] : [];
+  const virtualForPage = activePage === "home" ? VIRTUAL_HOME : activePage === "about" ? ABOUT_SUBS : [];
 
+  // Hide the raw `content` row from the about sidebar — its parts show as sub-sections instead.
+  const visibleSections = activePage === "about"
+    ? sections.filter((s) => s.section_key !== "content")
+    : sections;
 
+  const aboutOnlyMap: Record<string, "stats" | "story" | "mission" | "values" | "team" | "company"> = {
+    "about-stats": "stats",
+    "about-story": "story",
+    "about-mission": "mission",
+    "about-values": "values",
+    "about-team": "team",
+    "about-company": "company",
+  };
+
+  const virtualHit = virtualForPage.find((v) => v.section_key === activeKey);
   const active = sections.find((s) => s.section_key === activeKey)
-    || (virtualForPage.find((v) => v.section_key === activeKey) ? ({ id: `virtual-${activeKey}`, page_slug: activePage, section_key: activeKey!, label: virtualForPage.find((v) => v.section_key === activeKey)!.label, content: null, sort_order: 999 } as Section) : undefined)
-    || sections[0];
+    || (virtualHit
+      ? ({
+          id: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.id : `virtual-${activeKey}`,
+          page_slug: activePage,
+          section_key: activeKey!,
+          label: virtualHit.label,
+          content: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.content : null,
+          sort_order: 999,
+        } as Section)
+      : undefined)
+    || visibleSections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key)) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-")) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
-    if (!activeKey && sections[0]) setActiveKey(sections[0].section_key);
-  }, [active?.id, sections.length]);
+    if (!activeKey && visibleSections[0]) setActiveKey(visibleSections[0].section_key);
+  }, [active?.id, visibleSections.length]);
+
 
   const SECTION_ICONS: Record<string, typeof Home> = {
     hero: Home,
@@ -124,15 +159,16 @@ export function PagesManager({
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
         <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
-        {sections.length === 0 && currentPage && !currentPage.editable && (
+        {visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
           <p className="px-3 py-4 text-xs text-muted-foreground">
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
         {[
-          ...sections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
+          ...visibleSections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
           ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon })),
         ]
+
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((item) => {
             const Icon = item.icon;
@@ -236,6 +272,14 @@ export function PagesManager({
               </div>
               <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
             </>
+          ) : active.page_slug === "about" && active.section_key.startsWith("about-") ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">About page · edit this section and click save.</p>
+              </div>
+              <AboutContentEditor sectionId={active.id} initial={active.content || {}} only={aboutOnlyMap[active.section_key]} />
+            </>
           ) : active.section_key === "content" && active.page_slug === "about" ? (
             <>
               <div className="mb-4">
@@ -244,6 +288,7 @@ export function PagesManager({
               </div>
               <AboutContentEditor sectionId={active.id} initial={active.content || {}} />
             </>
+
           ) : (
             <>
               <div className="mb-3 flex items-center justify-between">

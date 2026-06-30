@@ -109,7 +109,9 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-export function AboutContentEditor({ sectionId, initial }: { sectionId: string; initial: any }) {
+export type AboutSectionKey = "stats" | "story" | "mission" | "values" | "team" | "company";
+
+export function AboutContentEditor({ sectionId, initial, only }: { sectionId: string; initial: any; only?: AboutSectionKey }) {
   const qc = useQueryClient();
   const [v, setV] = useState<AboutContent>(normalizeAbout(initial));
   const fileRef = useRef<HTMLInputElement>(null);
@@ -136,8 +138,13 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
     } catch (e: any) { toast.error(e.message); }
   }
 
+  const show = (k: AboutSectionKey) => !only || only === k;
+
   return (
     <div className="space-y-4">
+
+      {show("stats") && (
+      <>
       {/* Stats */}
       <Group title="Stats strip">
         {v.stats.map((s, i) => (
@@ -152,9 +159,14 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
         ))}
         <button onClick={() => setV({ ...v, stats: [...v.stats, { label: "New stat", value: 0, suffix: "" }] })} className="inline-flex items-center gap-2 rounded-md border border-input bg-white px-3 py-1.5 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add stat</button>
       </Group>
+      </>
+      )}
 
+      {show("story") && (
+      <>
       {/* Story */}
       <Group title="Story section">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.story.eyebrow} onChange={(x) => setV({ ...v, story: { ...v.story, eyebrow: x } })} />
           <Input label="Title" value={v.story.title} onChange={(x) => setV({ ...v, story: { ...v.story, title: x } })} />
@@ -180,9 +192,14 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
           {v.story.image && <img src={v.story.image} alt="" className="mt-2 aspect-[4/3] w-full max-w-sm rounded-lg object-cover" />}
         </Card>
       </Group>
+      </>
+      )}
 
+      {show("mission") && (
+      <>
       {/* Mission & Vision */}
       <Group title="Mission & Vision">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.mission.eyebrow} onChange={(x) => setV({ ...v, mission: { ...v.mission, eyebrow: x } })} />
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
@@ -209,9 +226,14 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
         ))}
         <button onClick={() => setV({ ...v, mission: { ...v.mission, items: [...v.mission.items, { tag: "Mission", title: "", body: "", points: [] }] } })} className="inline-flex items-center gap-2 rounded-md border border-input bg-white px-3 py-1.5 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add item</button>
       </Group>
+      </>
+      )}
 
+      {show("values") && (
+      <>
       {/* Values */}
       <Group title="Values">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.values.eyebrow} onChange={(x) => setV({ ...v, values: { ...v.values, eyebrow: x } })} />
           <Input label="Title" value={v.values.title} onChange={(x) => setV({ ...v, values: { ...v.values, title: x } })} />
@@ -227,9 +249,14 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
         ))}
         <button onClick={() => setV({ ...v, values: { ...v.values, items: [...v.values.items, { icon: "sparkles", title: "", body: "" }] } })} className="inline-flex items-center gap-2 rounded-md border border-input bg-white px-3 py-1.5 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add value</button>
       </Group>
+      </>
+      )}
 
+      {show("team") && (
+      <>
       {/* Team */}
       <Group title="Team">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.team.eyebrow} onChange={(x) => setV({ ...v, team: { ...v.team, eyebrow: x } })} />
           <Input label="Title" value={v.team.title} onChange={(x) => setV({ ...v, team: { ...v.team, title: x } })} />
@@ -246,9 +273,14 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
         ))}
         <button onClick={() => setV({ ...v, team: { ...v.team, members: [...v.team.members, { name: "", role: "", bio: "" }] } })} className="inline-flex items-center gap-2 rounded-md border border-input bg-white px-3 py-1.5 text-sm hover:bg-muted"><Plus className="h-4 w-4" /> Add member</button>
       </Group>
+      </>
+      )}
 
+      {show("company") && (
+      <>
       {/* Company */}
       <Group title="Company details">
+
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Eyebrow" value={v.company.eyebrow} onChange={(x) => setV({ ...v, company: { ...v.company, eyebrow: x } })} />
           <Input label="Title" value={v.company.title} onChange={(x) => setV({ ...v, company: { ...v.company, title: x } })} />
@@ -268,6 +300,10 @@ export function AboutContentEditor({ sectionId, initial }: { sectionId: string; 
           <Input label="Secondary CTA email" value={v.company.secondary_cta_email} onChange={(x) => setV({ ...v, company: { ...v.company, secondary_cta_email: x } })} />
         </div>
       </Group>
+      </>
+      )}
+
+
 
       <div className="sticky bottom-2 flex justify-end">
         <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow disabled:opacity-60">
