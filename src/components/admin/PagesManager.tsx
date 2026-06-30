@@ -304,6 +304,19 @@ export function PagesManager({
                 toggleHidden.mutate({ id: item.id, value: !item.hidden });
               }
             };
+            if (sectionsCollapsed) {
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActiveKey(item.key)}
+                  title={item.label}
+                  className={`mx-auto my-0.5 grid h-8 w-8 place-items-center rounded-lg ${active?.section_key === item.key ? "bg-primary/10 text-primary" : "hover:bg-muted text-muted-foreground"} ${item.hidden ? "opacity-60" : ""}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+              );
+            }
             return (
               <div
                 key={item.id}
