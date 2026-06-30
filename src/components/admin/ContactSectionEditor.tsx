@@ -237,7 +237,26 @@ export function ContactPageEditor({ sectionId, initial, only }: { sectionId: str
               {v.hero.image && <button type="button" onClick={() => setV({ ...v, hero: { ...v.hero, image: "" } })} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:bg-muted"><X className="h-3 w-3" /> Remove</button>}
             </div>
             <Field label="Or paste image URL" value={v.hero.image || ""} onChange={(x) => setV({ ...v, hero: { ...v.hero, image: x } })} />
-            {v.hero.image && <img src={v.hero.image} alt="" className="mt-2 aspect-[16/6] w-full rounded-lg object-cover" />}
+          </div>
+          <div className="sm:col-span-2 space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Live preview</p>
+            <div
+              className="relative overflow-hidden rounded-xl border border-border"
+              style={{
+                backgroundImage: v.hero.image ? `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)), url(${v.hero.image})` : undefined,
+                backgroundColor: v.hero.image ? undefined : "var(--primary)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                minHeight: 220,
+              }}
+            >
+              <div className="flex h-full flex-col justify-center gap-2 p-6 text-white">
+                {v.hero.eyebrow && <p className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-90">{v.hero.eyebrow}</p>}
+                {v.hero.title && <h3 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">{v.hero.title}</h3>}
+                {v.hero.description && <p className="max-w-xl text-sm opacity-90">{v.hero.description}</p>}
+                {!v.hero.image && <p className="mt-2 text-[11px] opacity-75">Upload a background image to see it here.</p>}
+              </div>
+            </div>
           </div>
         </div>
       )}
