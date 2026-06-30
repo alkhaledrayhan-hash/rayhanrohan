@@ -55,7 +55,7 @@ export function Footer() {
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
               <stop offset="100%" stopColor="oklch(0.92 0.16 85)" stopOpacity="1" />
             </linearGradient>
-            <path id="flight-path" d="M60,250 Q200,140 360,170 T740,80" />
+            <path id="flight-path" d="M60,250 Q200,140 360,170 T740,80 L960,-40" />
           </defs>
 
           {/* Dotted flight path */}
