@@ -135,48 +135,12 @@ function PropertyDetail() {
       <main className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
 
         {/* Gallery */}
-        <div className="mt-5 grid gap-3 md:grid-cols-[2fr_1fr] md:items-stretch">
-          <div className="relative overflow-hidden rounded-2xl border border-border">
-            <img
-              src={currentImg}
-              alt={property.title}
-              width={1280}
-              height={896}
-              className="aspect-[16/8] w-full object-cover"
-            />
-            <span className="absolute left-4 top-4 rounded-md bg-background/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground shadow">
-              For {property.status}
-            </span>
-            <button
-              aria-label="Share"
-              className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-background/95 text-foreground shadow transition hover:bg-primary hover:text-primary-foreground"
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:h-full md:grid-cols-2 md:grid-rows-2 md:gap-2">
-            {property.gallery.slice(0, 4).map((g: string, i: number) => (
-              <button
-                key={`${g}-${i}`}
-                onClick={() => setActiveImg(g)}
-                className={`relative overflow-hidden rounded-lg border transition md:min-h-0 ${
-                  currentImg === g
-                    ? "border-primary ring-2 ring-primary/30"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                <img
-                  src={g}
-                  alt={`${property.title} ${i + 1}`}
-                  loading="lazy"
-                  width={640}
-                  height={480}
-                  className="aspect-square w-full object-cover md:aspect-auto md:h-full"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
+        <GallerySlider
+          images={property.gallery.length ? property.gallery : [property.image]}
+          title={property.title}
+          status={property.status}
+        />
+
 
 
 
