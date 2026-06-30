@@ -203,6 +203,25 @@ export function PopupsManager() {
     setEditing({ ...emptyPopup(), ...(tpl?.sample as any), name: tpl?.label || "New popup" });
   };
 
+  const bulk = useBulkSelection((popups ?? []) as { id: string }[]);
+  const bulkDelete = async (items: { id: string }[]) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("popups").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} popup(s)`);
+    qc.invalidateQueries({ queryKey: ["admin", "popups"] });
+  };
+  const bulkToggle = async (is_active: boolean) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("popups") as any).update({ is_active }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${is_active ? "Enabled" : "Disabled"}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin", "popups"] });
+    bulk.clear();
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Templates */}
