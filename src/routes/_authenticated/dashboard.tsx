@@ -105,9 +105,9 @@ function Dashboard() {
   const isAdmin = !!roles?.isAdmin;
   const isAgent = !!roles?.isAgent;
   const canAccessAdmin = isAdmin || isAgent;
-  const [active, setActive] = useState<"overview" | "profile" | "saved" | "messages" | "admin">(
-    "overview",
-  );
+  const [active, setActive] = useState<
+    "overview" | "profile" | "saved" | "bookings" | "messages" | "admin"
+  >("overview");
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
