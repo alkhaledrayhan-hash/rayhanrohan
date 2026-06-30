@@ -28,7 +28,7 @@ export function BulkActionsBar<T extends { id: string }>({
 
   const doExport = () => {
     if (!selectedItems.length) return;
-    const cols =
+    const cols: { key: keyof T | string; label: string; get?: (row: T) => any }[] =
       exportColumns ??
       Object.keys(selectedItems[0] as any).map((k) => ({ key: k, label: k }));
     const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
