@@ -356,7 +356,7 @@ function AdminDashboard() {
           {section === "properties" && <PropertiesManager isAdmin={!!isAdmin} />}
           {section === "pages" && isAdmin && <PagesManager pageSlug={pageSlug} onPageChange={setPageSlug} />}
           {section === "agents" && isAdmin && <AgentsPanel onAddAgent={() => goSection("add-agent")} />}
-          {section === "add-agent" && isAdmin && <AddAgentForm />}
+          {section === "add-agent" && isAdmin && <AddAgentForm onBack={() => goSection("agents")} />}
           {section === "users" && (isAdmin ? <UsersManager /> : <PlaceholderCard icon={ShieldCheck} title="Users" desc="Only admins can manage users." />)}
           {section === "email-requests" && (isAdmin ? <EmailChangeRequestsPanel /> : <PlaceholderCard icon={Mail} title="Email Requests" desc="Only admins can review email change requests." />)}
           {section === "leads" && <LeadsPanel isAdmin={!!isAdmin} />}
