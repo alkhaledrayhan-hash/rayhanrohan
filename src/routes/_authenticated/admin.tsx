@@ -199,7 +199,7 @@ function AdminDashboard() {
 
       {/* Sidebar — drawer on mobile, static on md+ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-[transform,width] duration-200 md:sticky md:top-0 md:z-auto md:h-screen md:max-w-none md:translate-x-0 md:self-start ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col border-r border-border bg-white transition-[transform,width] duration-200 md:relative md:inset-y-auto md:z-auto md:max-w-none md:translate-x-0 ${
           desktopCollapsed ? "md:w-16" : "md:w-64"
         } ${mobileNavOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
