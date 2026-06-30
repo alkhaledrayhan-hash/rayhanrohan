@@ -650,7 +650,7 @@ function useAdminAnalytics() {
         supabase.from("bookings").select("id, status, created_at, property_title").gte("created_at", sinceIso),
         supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "agent"),
         supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "user"),
-        supabase.from("leads").select("id, name, property_title, status, created_at").order("created_at", { ascending: false }).limit(5),
+        supabase.from("leads").select("id, name, property_title, status, created_at").order("created_at", { ascending: false }).limit(6),
       ]);
 
       const properties = props.data ?? [];
