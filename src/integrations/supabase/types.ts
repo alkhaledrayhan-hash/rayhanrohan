@@ -17,13 +17,19 @@ export type Database = {
       bookings: {
         Row: {
           agent_id: string | null
+          check_in: string | null
+          check_out: string | null
           created_at: string
           created_by: string | null
+          currency: string | null
           customer_email: string | null
           customer_name: string
           customer_phone: string
           customer_user_id: string | null
+          discount_amount: number | null
+          discount_percent: number | null
           id: string
+          nights: number | null
           notes: string | null
           property_id: string | null
           property_title: string
@@ -31,17 +37,28 @@ export type Database = {
           scheduled_time: string
           source: string
           status: string
+          subtotal: number | null
+          tax_amount: number | null
+          tax_percent: number | null
+          total_amount: number | null
+          unit_price: number | null
           updated_at: string
         }
         Insert: {
           agent_id?: string | null
+          check_in?: string | null
+          check_out?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string | null
           customer_email?: string | null
           customer_name: string
           customer_phone: string
           customer_user_id?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
           id?: string
+          nights?: number | null
           notes?: string | null
           property_id?: string | null
           property_title: string
@@ -49,17 +66,28 @@ export type Database = {
           scheduled_time: string
           source?: string
           status?: string
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_percent?: number | null
+          total_amount?: number | null
+          unit_price?: number | null
           updated_at?: string
         }
         Update: {
           agent_id?: string | null
+          check_in?: string | null
+          check_out?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string | null
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string
           customer_user_id?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
           id?: string
+          nights?: number | null
           notes?: string | null
           property_id?: string | null
           property_title?: string
@@ -67,6 +95,11 @@ export type Database = {
           scheduled_time?: string
           source?: string
           status?: string
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_percent?: number | null
+          total_amount?: number | null
+          unit_price?: number | null
           updated_at?: string
         }
         Relationships: [
