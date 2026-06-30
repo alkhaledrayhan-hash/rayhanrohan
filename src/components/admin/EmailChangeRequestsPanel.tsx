@@ -8,6 +8,8 @@ import {
   listAllEmailChangeRequests,
   rejectEmailChange,
 } from "@/lib/email-change.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Row = {
   id: string;
@@ -62,6 +64,24 @@ export function EmailChangeRequestsPanel() {
     (r) => filter === "all" || r.status === filter,
   );
 
+  const bulk = useBulkSelection(rows);
+  const bulkRun = async (action: "approve" | "reject") => {
+    const items = bulk.selectedItems.filter((r) => r.status === "pending");
+    if (!items.length) { toast.info("No pending items selected"); return; }
+    let ok = 0;
+    for (const r of items) {
+      try {
+        if (action === "approve") await approveFn({ data: { id: r.id, admin_note: "" } });
+        else await rejectFn({ data: { id: r.id, admin_note: "" } });
+        ok++;
+      } catch (e: any) { toast.error(e.message); }
+    }
+    if (ok) toast.success(`${action === "approve" ? "Approved" : "Rejected"} ${ok}`);
+    qc.invalidateQueries({ queryKey: ["email-change-requests"] });
+    qc.invalidateQueries({ queryKey: ["all-users"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
@@ -84,10 +104,28 @@ export function EmailChangeRequestsPanel() {
         </div>
       </div>
 
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        entityName="request"
+        exportFilename="email-change-requests"
+        exportColumns={[
+          { key: "current_email", label: "Current" },
+          { key: "new_email", label: "New" },
+          { key: "status", label: "Status" },
+          { key: "created_at", label: "Submitted" },
+        ]}
+      >
+        <button onClick={() => bulkRun("approve")} className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs text-emerald-700 hover:bg-emerald-100">Approve all</button>
+        <button onClick={() => bulkRun("reject")} className="rounded-md border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-100">Reject all</button>
+      </BulkActionsBar>
+
       <div className="responsive-table-wrap overflow-x-auto rounded-2xl border border-border bg-white">
         <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
               <th className="px-4 py-3">User</th>
               <th className="px-4 py-3">Current → New</th>
               <th className="px-4 py-3">Reason</th>
@@ -99,20 +137,21 @@ export function EmailChangeRequestsPanel() {
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   Loading…
                 </td>
               </tr>
             )}
             {!isLoading && !rows.length && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No requests.
                 </td>
               </tr>
             )}
             {rows.map((r) => (
               <tr key={r.id} className="border-t border-border align-top">
+                <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select request" /></td>
                 <td className="px-4 py-3">
                   <p className="font-medium">{r.profile?.full_name || "—"}</p>
                   <p className="text-xs text-muted-foreground">{r.profile?.email}</p>

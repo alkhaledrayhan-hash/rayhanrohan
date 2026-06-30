@@ -9,6 +9,8 @@ import {
   X, Mail, Cookie, LogOut, ShieldAlert, Video, BarChart3, Palette, Target, Zap, FlaskConical, FileText,
   Columns2, Wand2, Layers,
 } from "lucide-react";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Popup = {
   id: string;
@@ -201,6 +203,25 @@ export function PopupsManager() {
     setEditing({ ...emptyPopup(), ...(tpl?.sample as any), name: tpl?.label || "New popup" });
   };
 
+  const bulk = useBulkSelection((popups ?? []) as { id: string }[]);
+  const bulkDelete = async (items: { id: string }[]) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("popups").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} popup(s)`);
+    qc.invalidateQueries({ queryKey: ["admin", "popups"] });
+  };
+  const bulkToggle = async (is_active: boolean) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("popups") as any).update({ is_active }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${is_active ? "Enabled" : "Disabled"}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin", "popups"] });
+    bulk.clear();
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Templates */}
@@ -238,6 +259,22 @@ export function PopupsManager() {
       {/* List */}
       <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
         <h2 className="font-display text-lg font-semibold">All popups</h2>
+        <BulkActionsBar
+          count={bulk.count}
+          selectedItems={bulk.selectedItems as any}
+          onClear={bulk.clear}
+          onDelete={bulkDelete}
+          entityName="popup"
+          exportFilename="popups"
+        >
+          <button onClick={() => bulkToggle(true)} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Enable</button>
+          <button onClick={() => bulkToggle(false)} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Disable</button>
+        </BulkActionsBar>
+        {(popups && popups.length > 0) && (
+          <label className="mt-3 inline-flex items-center gap-2 text-xs text-muted-foreground">
+            <SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all popups" /> Select all
+          </label>
+        )}
         {isLoading ? (
           <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
         ) : !popups || popups.length === 0 ? (
@@ -247,7 +284,8 @@ export function PopupsManager() {
             {popups.map((p) => (
               <div key={p.id} className="rounded-xl border border-border bg-background p-3 sm:p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <SelectCheckbox checked={bulk.isSelected(p.id)} onChange={() => bulk.toggle(p.id)} ariaLabel="Select popup" />
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="font-semibold">{p.name}</div>
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide">{p.template}</span>

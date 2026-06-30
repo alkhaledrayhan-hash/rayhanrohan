@@ -11,6 +11,8 @@ import {
   setUserPassword,
   updateUser,
 } from "@/lib/users.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Role = "admin" | "agent" | "user";
 
@@ -70,6 +72,18 @@ export function UsersManager() {
     };
   }, [rows]);
 
+  const qc = useQueryClient();
+  const bulkDelFn = useServerFn(deleteUser);
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Row[]) => {
+    let ok = 0;
+    for (const u of items) {
+      try { await bulkDelFn({ data: { id: u.id } }); ok++; } catch (e: any) { toast.error(`${u.email}: ${e.message}`); }
+    }
+    if (ok) toast.success(`Deleted ${ok} user(s)`);
+    qc.invalidateQueries({ queryKey: ["all-users"] });
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -78,6 +92,24 @@ export function UsersManager() {
         <StatCard label="Agents" value={counts.agent} tone="amber" />
         <StatCard label="Customers" value={counts.user} tone="slate" />
       </div>
+
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="user"
+        exportFilename="users"
+        exportColumns={[
+          { key: "full_name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "username", label: "Username" },
+          { key: "role", label: "Role" },
+          { key: "created_at", label: "Created" },
+        ]}
+      />
+
 
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
         <div className="relative flex-1 min-w-[220px]">
@@ -111,6 +143,9 @@ export function UsersManager() {
         <table className="responsive-table w-full min-w-[720px] text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
+              <th className="px-3 py-3 w-10">
+                <SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all users" />
+              </th>
               <th className="px-4 py-3">User</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Phone</th>
@@ -121,14 +156,14 @@ export function UsersManager() {
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   Loading users…
                 </td>
               </tr>
             )}
             {!isLoading && !filtered.length && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   <UserCircle2 className="mx-auto mb-2 h-8 w-8" /> No users match your filters.
                 </td>
               </tr>
@@ -146,6 +181,9 @@ export function UsersManager() {
                   onClick={() => setViewing(u)}
                   className="cursor-pointer border-t border-border transition hover:bg-muted/40"
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    <SelectCheckbox checked={bulk.isSelected(u.id)} onChange={() => bulk.toggle(u.id)} ariaLabel="Select user" />
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">

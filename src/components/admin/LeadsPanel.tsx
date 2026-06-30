@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Download, Mail, Trash2, Search, Eye, X, Phone as PhoneIcon, Calendar, Building2, User as UserIcon, Tag } from "lucide-react";
 import { useFormatters } from "@/lib/format";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Lead = {
   id: string;
@@ -102,6 +104,24 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Lead[]) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("leads").delete().in("id", ids);
+    if (error) throw error;
+    toast.success(`${ids.length} lead(s) deleted`);
+    qc.invalidateQueries({ queryKey: ["admin-leads"] });
+  };
+  const bulkStatus = async (status: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("leads") as any).update({ status }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Marked ${ids.length} as ${status}`);
+    qc.invalidateQueries({ queryKey: ["admin-leads"] });
+    bulk.clear();
+  };
+
   const exportCsv = () => {
     if (!filtered.length) { toast.error("No leads to export"); return; }
     const header = ["Date", "Name", "Email", "Phone", "Source", "Subject", "Message", "Status"];
@@ -169,10 +189,35 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
         </button>
       </div>
 
+      {isAdmin && (
+        <BulkActionsBar
+          count={bulk.count}
+          selectedItems={bulk.selectedItems}
+          onClear={bulk.clear}
+          onDelete={bulkDelete}
+          entityName="lead"
+          exportFilename="leads"
+          exportColumns={[
+            { key: "created_at", label: "Date" },
+            { key: "name", label: "Name" },
+            { key: "email", label: "Email" },
+            { key: "phone", label: "Phone" },
+            { key: "source", label: "Source" },
+            { key: "subject", label: "Subject" },
+            { key: "message", label: "Message" },
+            { key: "status", label: "Status" },
+          ]}
+        >
+          <button onClick={() => bulkStatus("contacted")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Mark contacted</button>
+          <button onClick={() => bulkStatus("closed")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Mark closed</button>
+        </BulkActionsBar>
+      )}
+
       <div className="responsive-table-wrap overflow-hidden rounded-2xl border border-border bg-white shadow-sm md:overflow-visible">
         <div className="overflow-x-auto">
           <table className="responsive-table responsive-cards w-full min-w-[960px] text-sm md:min-w-0 md:table-fixed">
             <colgroup className="hidden md:table-column-group">
+              {isAdmin && <col style={{ width: "40px" }} />}
               <col style={{ width: "110px" }} />
               <col style={{ width: "150px" }} />
               <col style={{ width: "210px" }} />
@@ -185,6 +230,16 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
 
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
+                {isAdmin && (
+                  <th className="px-3 py-3">
+                    <SelectCheckbox
+                      checked={bulk.allSelected}
+                      indeterminate={bulk.someSelected}
+                      onChange={bulk.toggleAll}
+                      ariaLabel="Select all leads"
+                    />
+                  </th>
+                )}
                 <th className="px-4 py-3">When</th>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Contact</th>
@@ -196,14 +251,19 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr
                   key={r.id}
                   onClick={() => setViewing(r)}
                   className="cursor-pointer align-top hover:bg-muted/30"
                 >
+                  {isAdmin && (
+                    <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                      <SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select lead" />
+                    </td>
+                  )}
                   <td data-label="When" className="px-4 py-3 text-xs text-muted-foreground md:whitespace-nowrap">
                     <div className="font-medium text-foreground/80">{formatDate(r.created_at)}</div>
                     <div className="text-[11px] text-muted-foreground">{formatTime(r.created_at)}</div>

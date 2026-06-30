@@ -6,6 +6,8 @@ import { AtSign, Eye, Mail, Pencil, Phone, Search, Trash2, UserCircle2, UserPlus
 import { ThemedSelect } from "@/components/ui/themed-select";
 import { deleteAgent, listAgents, updateAgent } from "@/lib/agents.functions";
 import { AvatarUploader } from "@/components/admin/AddAgentForm";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 
 type Agent = {
@@ -120,9 +122,35 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
     );
   }
 
+  const qc = useQueryClient();
+  const bulkDelFn = useServerFn(deleteAgent);
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Agent[]) => {
+    let ok = 0;
+    for (const a of items) {
+      try { await bulkDelFn({ data: { id: a.id } }); ok++; } catch (e: any) { toast.error(`${a.email}: ${e.message}`); }
+    }
+    if (ok) toast.success(`Removed ${ok} agent(s)`);
+    qc.invalidateQueries({ queryKey: ["agents"] });
+  };
+
   return (
     <div className="space-y-4">
       {header}
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="agent"
+        exportFilename="agents"
+        exportColumns={[
+          { key: "full_name", label: "Name" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+          { key: "username", label: "Username" },
+        ]}
+      />
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-white p-10 text-center text-sm text-muted-foreground">
           No agents match your filters.
@@ -133,6 +161,8 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
             <AgentCard
               key={a.id}
               agent={a}
+              selected={bulk.isSelected(a.id)}
+              onToggleSelect={() => bulk.toggle(a.id)}
               onView={() => setViewing(a)}
               onEdit={() => setEditing(a)}
             />
@@ -152,7 +182,7 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
 }
 
 
-function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void; onEdit: () => void }) {
+function AgentCard({ agent, onView, onEdit, selected, onToggleSelect }: { agent: Agent; onView: () => void; onEdit: () => void; selected?: boolean; onToggleSelect?: () => void }) {
   const delFn = useServerFn(deleteAgent);
   const qc = useQueryClient();
   const mut = useMutation({
@@ -172,7 +202,12 @@ function AgentCard({ agent, onView, onEdit }: { agent: Agent; onView: () => void
     .toUpperCase();
 
   return (
-    <div className="group rounded-2xl border border-border bg-white p-5 text-center shadow-sm transition hover:border-primary/40 hover:shadow-md">
+    <div className={`group relative rounded-2xl border bg-white p-5 text-center shadow-sm transition hover:border-primary/40 hover:shadow-md ${selected ? "border-primary ring-2 ring-primary/30" : "border-border"}`}>
+      {onToggleSelect && (
+        <div className="absolute left-3 top-3 z-10" onClick={(e) => e.stopPropagation()}>
+          <SelectCheckbox checked={!!selected} onChange={onToggleSelect} ariaLabel="Select agent" />
+        </div>
+      )}
       <button
         type="button"
         onClick={onView}

@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock, Eye, MapPin, Bed, Bath, Maximize2, Calendar, BadgeCheck, Tag } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
 import { LocationAutocomplete } from "@/components/admin/LocationAutocomplete";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type PropertyRow = {
   id: string;
@@ -188,6 +190,24 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     return true;
   });
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: typeof filtered) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("properties").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} propert${ids.length === 1 ? "y" : "ies"}`);
+    qc.invalidateQueries({ queryKey: ["admin-properties"] });
+  };
+  const bulkUpdate = async (patch: any, label: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("properties") as any).update(patch).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${label}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin-properties"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -196,6 +216,31 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <Plus className="h-4 w-4" /> Add property
         </button>
       </div>
+      <BulkActionsBar
+        count={bulk.count}
+        selectedItems={bulk.selectedItems}
+        onClear={bulk.clear}
+        onDelete={bulkDelete}
+        entityName="property"
+        exportFilename="properties"
+        exportColumns={[
+          { key: "title", label: "Title" },
+          { key: "location", label: "Location" },
+          { key: "type", label: "Type" },
+          { key: "price", label: "Price" },
+          { key: "status", label: "Status" },
+          { key: "listing_status", label: "Approval" },
+        ]}
+      >
+        {isAdmin && (
+          <>
+            <button onClick={() => bulkUpdate({ listing_status: "approved" }, "Approved")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Approve</button>
+            <button onClick={() => bulkUpdate({ listing_status: "rejected" }, "Rejected")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Reject</button>
+            <button onClick={() => bulkUpdate({ status: "active" }, "Set active")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Activate</button>
+            <button onClick={() => bulkUpdate({ status: "inactive" }, "Set inactive")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Deactivate</button>
+          </>
+        )}
+      </BulkActionsBar>
 
       <div className="grid grid-cols-1 gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <input
@@ -235,6 +280,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <table className="responsive-table w-full min-w-[720px] text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
+                <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
                 <th className="px-5 py-3">Property</th>
                 <th className="px-5 py-3">Location</th>
                 <th className="px-5 py-3">Type</th>
@@ -246,10 +292,11 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
+                  <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select property" /></td>
                   <td className="px-5 py-3 font-medium">
                     <button
                       type="button"

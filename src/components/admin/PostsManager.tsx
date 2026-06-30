@@ -13,6 +13,8 @@ import {
   upsertCategory, deleteCategory,
   upsertTag, deleteTag,
 } from "@/lib/posts.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Category = { id: string; name: string; slug: string; description: string | null };
 type Tag = { id: string; name: string; slug: string };
@@ -125,6 +127,24 @@ export function PostsManager() {
     });
   }, [posts, search, currentType, fStatus, fCategory]);
 
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: typeof filtered) => {
+    const ids = items.map((i) => i.id);
+    const { error } = await supabase.from("posts").delete().in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${ids.length} post(s)`);
+    qc.invalidateQueries({ queryKey: ["admin-posts"] });
+  };
+  const bulkUpdate = async (patch: any, label: string) => {
+    const ids = bulk.selectedIds;
+    if (!ids.length) return;
+    const { error } = await (supabase.from("posts") as any).update(patch).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${label}: ${ids.length}`);
+    qc.invalidateQueries({ queryKey: ["admin-posts"] });
+    bulk.clear();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-border">
@@ -185,11 +205,32 @@ export function PostsManager() {
             </ThemedSelect>
           </div>
 
+          <BulkActionsBar
+            count={bulk.count}
+            selectedItems={bulk.selectedItems}
+            onClear={bulk.clear}
+            onDelete={bulkDelete}
+            entityName="post"
+            exportFilename="posts"
+            exportColumns={[
+              { key: "title", label: "Title" },
+              { key: "slug", label: "Slug" },
+              { key: "type", label: "Type" },
+              { key: "status", label: "Status" },
+              { key: "published_at", label: "Published" },
+            ]}
+          >
+            <button onClick={() => bulkUpdate({ status: "published", published_at: new Date().toISOString() }, "Published")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Publish</button>
+            <button onClick={() => bulkUpdate({ status: "draft" }, "Drafted")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Draft</button>
+            <button onClick={() => bulkUpdate({ is_featured: true }, "Featured")} className="rounded-md border border-border bg-white px-2.5 py-1.5 text-xs hover:bg-muted">Feature</button>
+          </BulkActionsBar>
+
           <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="responsive-table w-full min-w-[720px] text-sm">
                 <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                   <tr>
+                    <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
                     <th className="px-5 py-3">Title</th>
                     <th className="px-5 py-3">Type</th>
                     <th className="px-5 py-3">Category</th>
@@ -200,15 +241,16 @@ export function PostsManager() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {postsQ.isLoading && (
-                    <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>
+                    <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>
                   )}
                   {!postsQ.isLoading && filtered.length === 0 && (
-                    <tr><td colSpan={6} className="px-5 py-8 text-center text-muted-foreground">
+                    <tr><td colSpan={7} className="px-5 py-8 text-center text-muted-foreground">
                       {posts.length === 0 ? "No posts yet — click Add post." : "No posts match these filters."}
                     </td></tr>
                   )}
                   {filtered.map((p) => (
                     <tr key={p.id} className="hover:bg-muted/30">
+                      <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(p.id)} onChange={() => bulk.toggle(p.id)} ariaLabel="Select post" /></td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{p.title}</p>
