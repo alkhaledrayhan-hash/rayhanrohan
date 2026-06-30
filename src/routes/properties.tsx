@@ -164,7 +164,7 @@ function PropertiesPage() {
         </div>
 
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_320px]">
           {/* Listings column */}
           <section>
             <div className="mb-5 flex items-center justify-between">
@@ -207,7 +207,10 @@ function PropertiesPage() {
           </section>
 
           {/* Desktop sticky sidebar */}
-          <aside className="hidden lg:sticky lg:top-24 lg:block lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 [scrollbar-width:thin]">
+          <aside
+            className="hidden lg:block lg:pr-1 [scrollbar-width:thin]"
+            style={{ position: "sticky", top: "6rem", alignSelf: "flex-start", maxHeight: "calc(100vh - 7rem)", overflowY: "auto" }}
+          >
             {sidebarNode}
           </aside>
         </div>
