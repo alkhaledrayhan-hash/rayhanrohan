@@ -272,6 +272,14 @@ export function PagesManager({
               </div>
               <PageLayoutEditor sectionId={active.id} pageSlug={active.page_slug} initial={active.content || {}} />
             </>
+          ) : active.page_slug === "about" && active.section_key.startsWith("about-") ? (
+            <>
+              <div className="mb-4">
+                <h3 className="font-display text-lg font-semibold">{active.label}</h3>
+                <p className="text-xs text-muted-foreground">About page · edit this section and click save.</p>
+              </div>
+              <AboutContentEditor sectionId={active.id} initial={active.content || {}} only={aboutOnlyMap[active.section_key]} />
+            </>
           ) : active.section_key === "content" && active.page_slug === "about" ? (
             <>
               <div className="mb-4">
@@ -280,6 +288,7 @@ export function PagesManager({
               </div>
               <AboutContentEditor sectionId={active.id} initial={active.content || {}} />
             </>
+
           ) : (
             <>
               <div className="mb-3 flex items-center justify-between">
