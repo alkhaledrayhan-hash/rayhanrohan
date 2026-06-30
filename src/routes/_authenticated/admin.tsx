@@ -841,7 +841,7 @@ function Overview({ name, role, onJump }: { name: string | undefined; role: stri
 
       {/* Bottom row */}
       <div className="grid gap-5 lg:grid-cols-3">
-        <RecentLeads leads={a?.recentLeads ?? []} />
+        <RecentLeads leads={a?.recentLeads ?? []} onSeeAll={() => onJump("leads")} />
         <TopLocations data={a?.topLocations ?? []} />
       </div>
     </div>
