@@ -61,9 +61,18 @@ export function EmailChangeRequestsPanel() {
     onError: (e: any) => toast.error(e.message || "Failed"),
   });
 
-  const rows = ((data?.requests ?? []) as Row[]).filter(
-    (r) => filter === "all" || r.status === filter,
-  );
+  const [q, setQ] = useState("");
+  const rows = useMemo(() => {
+    const all = (data?.requests ?? []) as Row[];
+    const term = q.trim().toLowerCase();
+    return all.filter((r) => {
+      if (filter !== "all" && r.status !== filter) return false;
+      if (!term) return true;
+      return [r.current_email, r.new_email, r.profile?.full_name, r.profile?.email, r.reason]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term));
+    });
+  }, [data?.requests, filter, q]);
 
   const bulk = useBulkSelection(rows);
   const bulkRun = async (action: "approve" | "reject") => {
