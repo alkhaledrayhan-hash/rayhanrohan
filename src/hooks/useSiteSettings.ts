@@ -63,7 +63,6 @@ const DEFAULTS: SiteSettings = {
   footer_badge_text: "Licensed real estate brokerage · Qatar",
   footer_copyright: "© {year} {title}. All rights reserved.",
   footer_show_plane: "true",
-  footer_show_plane: "true",
   footer_bg_color: "",
   footer_overlay_color: "#000000",
   footer_overlay_opacity: "0",
