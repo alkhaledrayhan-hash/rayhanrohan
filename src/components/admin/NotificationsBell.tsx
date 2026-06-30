@@ -46,11 +46,20 @@ export function NotificationsBell({ onNavigate }: { onNavigate: (s: NotifSection
       });
     }
     for (const b of data.bookings) {
+      const cur = b.currency || "";
+      const bits: string[] = [];
+      bits.push(`${b.property_title ?? ""} — ${b.scheduled_date ?? ""}`);
+      if (b.nights && b.nights > 0) bits.push(`${b.nights} night${b.nights === 1 ? "" : "s"}`);
+      if (b.discount_percent && b.discount_percent > 0)
+        bits.push(`-${b.discount_percent}% offer`);
+      if (b.tax_percent && b.tax_percent > 0) bits.push(`VAT ${b.tax_percent}%`);
+      if (b.total_amount && b.total_amount > 0)
+        bits.push(`Total ${cur} ${b.total_amount}`);
       out.push({
         id: `book-${b.id}`,
         kind: "bookings",
-        title: `Viewing request · ${b.customer_name ?? ""}`,
-        subtitle: `${b.property_title ?? ""} — ${b.scheduled_date ?? ""}`,
+        title: `Booking request · ${b.customer_name ?? ""}`,
+        subtitle: bits.filter(Boolean).join(" · "),
         created_at: b.created_at,
       });
     }
