@@ -19,6 +19,7 @@ export type AboutContent = {
     eyebrow: string;
     title: string;
     description: string;
+    columns: 1 | 2 | 3 | 4;
     items: Array<{ tag: string; title: string; body: string; points: string[] }>;
   };
   values: {
@@ -46,7 +47,7 @@ export type AboutContent = {
 const DEFAULT: AboutContent = {
   stats: [],
   story: { eyebrow: "", title: "", paragraphs: [], image: "", badge_title: "", badge_subtitle: "" },
-  mission: { eyebrow: "", title: "", description: "", items: [] },
+  mission: { eyebrow: "", title: "", description: "", columns: 2, items: [] },
   values: { eyebrow: "", title: "", items: [] },
   team: { eyebrow: "", title: "", description: "", members: [] },
   company: { eyebrow: "", title: "", description: "", details: [], primary_cta_label: "", secondary_cta_label: "", secondary_cta_email: "" },
@@ -57,7 +58,7 @@ export function normalizeAbout(raw: any): AboutContent {
   return {
     stats: Array.isArray(raw.stats) ? raw.stats : DEFAULT.stats,
     story: { ...DEFAULT.story, ...(raw.story || {}), paragraphs: Array.isArray(raw.story?.paragraphs) ? raw.story.paragraphs : [] },
-    mission: { ...DEFAULT.mission, ...(raw.mission || {}), items: Array.isArray(raw.mission?.items) ? raw.mission.items : [] },
+    mission: { ...DEFAULT.mission, ...(raw.mission || {}), columns: ([1,2,3,4].includes(Number(raw.mission?.columns)) ? Number(raw.mission.columns) : 2) as 1|2|3|4, items: Array.isArray(raw.mission?.items) ? raw.mission.items : [] },
     values: { ...DEFAULT.values, ...(raw.values || {}), items: Array.isArray(raw.values?.items) ? raw.values.items : [] },
     team: { ...DEFAULT.team, ...(raw.team || {}), members: Array.isArray(raw.team?.members) ? raw.team.members : [] },
     company: { ...DEFAULT.company, ...(raw.company || {}), details: Array.isArray(raw.company?.details) ? raw.company.details : [] },
@@ -205,6 +206,19 @@ export function AboutContentEditor({ sectionId, initial, only }: { sectionId: st
           <Input label="Title" value={v.mission.title} onChange={(x) => setV({ ...v, mission: { ...v.mission, title: x } })} />
         </div>
         <Input label="Description" value={v.mission.description} onChange={(x) => setV({ ...v, mission: { ...v.mission, description: x } })} multiline rows={2} />
+        <label className="text-sm">
+          <span className="mb-1 block text-xs font-medium text-muted-foreground">Columns (desktop)</span>
+          <select
+            className={inputCls}
+            value={String(v.mission.columns)}
+            onChange={(e) => setV({ ...v, mission: { ...v.mission, columns: Number(e.target.value) as 1|2|3|4 } })}
+          >
+            <option value="1">1 column</option>
+            <option value="2">2 columns</option>
+            <option value="3">3 columns</option>
+            <option value="4">4 columns</option>
+          </select>
+        </label>
         {v.mission.items.map((it, i) => (
           <Card key={i} title={`Item ${i + 1}`} onRemove={() => setV({ ...v, mission: { ...v.mission, items: v.mission.items.filter((_, j) => j !== i) } })}>
             <div className="grid gap-3 sm:grid-cols-2">

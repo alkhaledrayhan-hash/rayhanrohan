@@ -206,7 +206,7 @@ function AboutPage() {
                 {c.mission.title && <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{c.mission.title}</h2>}
                 {c.mission.description && <p className="mt-4 text-sm leading-relaxed text-white/70">{c.mission.description}</p>}
               </div>
-              <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              <div className={`mt-12 grid gap-6 ${({1:"",2:"md:grid-cols-2",3:"sm:grid-cols-2 lg:grid-cols-3",4:"sm:grid-cols-2 lg:grid-cols-4"} as Record<number,string>)[(c.mission as any).columns ?? 2] || "md:grid-cols-2"}`}>
                 {c.mission.items.map((item) => (
                   <article key={item.tag} className="group relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:bg-white/[0.09] sm:p-10">
                     <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-3xl" />
