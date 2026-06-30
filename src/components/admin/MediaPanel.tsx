@@ -258,7 +258,7 @@ export function MediaPanel() {
           item={preview}
           onClose={() => setPreview(null)}
           onCopy={() => handleCopy(preview.url)}
-          onDelete={() => handleDelete(preview.name)}
+          onDelete={() => handleDelete(preview)}
         />
       )}
     </div>
