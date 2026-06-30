@@ -179,7 +179,7 @@ function PropertiesPage() {
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Sort</span>
                 <ThemedSelect
                   value={search.sort ?? "newest"}
-                  onChange={(v: string) => update({ sort: v as SortKey })}
+                  onChange={(e) => update({ sort: e.target.value as SortKey })}
                   className="bg-transparent text-sm outline-none"
                 >
                   {SORT_OPTIONS.map((o) => (
@@ -342,7 +342,7 @@ function FieldText({
       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
       <input
         value={value}
-        onChange={(v: string) => onChange(v)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       />
@@ -358,7 +358,7 @@ function FieldSelect({
       <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
       <ThemedSelect
         value={value}
-        onChange={(v: string) => onChange(v)}
+        onChange={(e) => onChange(e.target.value)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -376,7 +376,7 @@ function FieldNumber({
       <input
         type="number"
         value={value ?? ""}
-        onChange={(v: string) => onChange(v ? Number(v) : undefined)}
+        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
         placeholder={placeholder}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       />

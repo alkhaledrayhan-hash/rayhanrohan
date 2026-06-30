@@ -174,7 +174,7 @@ export function SettingsPanel() {
           <Field icon={Type} label="Site title">
             <input
               value={form.site_title || ""}
-              onChange={(v: string) => setForm({ ...form, site_title: v })}
+              onChange={(e) => setForm({ ...form, site_title: e.target.value })}
               placeholder="Your site name"
               className={inputCls}
             />
@@ -183,7 +183,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Tagline">
             <input
               value={form.site_tagline || ""}
-              onChange={(v: string) => setForm({ ...form, site_tagline: v })}
+              onChange={(e) => setForm({ ...form, site_tagline: e.target.value })}
               placeholder="A short tagline shown across the site"
               className={inputCls}
             />
@@ -193,7 +193,7 @@ export function SettingsPanel() {
             <div className="space-y-3">
               <input
                 value={(form.site_logo_url || "").startsWith("data:") ? "" : (form.site_logo_url || "")}
-                onChange={(v: string) => setForm({ ...form, site_logo_url: v })}
+                onChange={(e) => setForm({ ...form, site_logo_url: e.target.value })}
                 placeholder="https://example.com/logo.png"
                 className={inputCls}
                 disabled={(form.site_logo_url || "").startsWith("data:")}
@@ -211,10 +211,10 @@ export function SettingsPanel() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(v: string) => {
+                  onChange={(e) => {
                     const f = e.target.files?.[0];
                     if (f) handleLogoFile(f);
-                    v = "";
+                    e.target.value = "";
                   }}
                 />
                 <button
@@ -244,7 +244,7 @@ export function SettingsPanel() {
               <input
                 type="url"
                 value={form.site_url || ""}
-                onChange={(v: string) => setForm({ ...form, site_url: v })}
+                onChange={(e) => setForm({ ...form, site_url: e.target.value })}
                 placeholder="https://example.com"
                 className={inputCls}
               />
@@ -262,7 +262,7 @@ export function SettingsPanel() {
             <input
               type="email"
               value={form.admin_email || ""}
-              onChange={(v: string) => setForm({ ...form, admin_email: v })}
+              onChange={(e) => setForm({ ...form, admin_email: e.target.value })}
               placeholder="admin@example.com"
               className={inputCls}
             />
@@ -271,7 +271,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Website time zone" hint="Used to display dates and times across the dashboard.">
             <ThemedSelect
               value={form.site_timezone || "Asia/Qatar"}
-              onChange={(v: string) => setForm({ ...form, site_timezone: v })}
+              onChange={(e) => setForm({ ...form, site_timezone: e.target.value })}
               className={inputCls}
             >
               {Array.from(new Set([...(form.site_timezone ? [form.site_timezone] : []), ...TIMEZONES])).map((tz) => (
@@ -283,7 +283,7 @@ export function SettingsPanel() {
           <Field icon={Calendar} label="Date format">
             <ThemedSelect
               value={form.date_format || "MMMM d, yyyy"}
-              onChange={(v: string) => setForm({ ...form, date_format: v })}
+              onChange={(e) => setForm({ ...form, date_format: e.target.value })}
               className={inputCls}
             >
               <option value="MMMM d, yyyy">November 6, 2025</option>
@@ -297,7 +297,7 @@ export function SettingsPanel() {
           <Field icon={Clock} label="Time format">
             <ThemedSelect
               value={form.time_format || "h:mm a"}
-              onChange={(v: string) => setForm({ ...form, time_format: v })}
+              onChange={(e) => setForm({ ...form, time_format: e.target.value })}
               className={inputCls}
             >
               <option value="h:mm a">12-hour (3:45 PM)</option>
@@ -308,7 +308,7 @@ export function SettingsPanel() {
           <Field icon={CalendarDays} label="Week starts on">
             <ThemedSelect
               value={form.week_starts_on || "monday"}
-              onChange={(v: string) => setForm({ ...form, week_starts_on: v })}
+              onChange={(e) => setForm({ ...form, week_starts_on: e.target.value })}
               className={inputCls}
             >
               <option value="sunday">Sunday</option>
@@ -320,7 +320,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Default currency" hint="Used across the website for prices. Default: QAR.">
             <ThemedSelect
               value={form.site_currency || "QAR"}
-              onChange={(v: string) => setForm({ ...form, site_currency: v })}
+              onChange={(e) => setForm({ ...form, site_currency: e.target.value })}
               className={inputCls}
             >
               {CURRENCIES.map((c) => (
@@ -332,7 +332,7 @@ export function SettingsPanel() {
           <Field icon={Globe} label="Default language" hint="Default interface language for the website. Default: English.">
             <ThemedSelect
               value={form.site_language || "en"}
-              onChange={(v: string) => setForm({ ...form, site_language: v })}
+              onChange={(e) => setForm({ ...form, site_language: e.target.value })}
               className={inputCls}
             >
               {LANGUAGES.map((l) => (
@@ -353,7 +353,7 @@ export function SettingsPanel() {
           <Field icon={Type} label="Brand heading" hint="Shown under the logo. Leave empty to use the site title.">
             <input
               value={form.auth_heading || ""}
-              onChange={(v: string) => setForm({ ...form, auth_heading: v })}
+              onChange={(e) => setForm({ ...form, auth_heading: e.target.value })}
               placeholder="e.g. Ayesha Maison Qatar"
               className={inputCls}
             />
@@ -362,7 +362,7 @@ export function SettingsPanel() {
           <Field icon={Type} label="Subheading" hint="Optional small text under the brand heading.">
             <input
               value={form.auth_subheading || ""}
-              onChange={(v: string) => setForm({ ...form, auth_subheading: v })}
+              onChange={(e) => setForm({ ...form, auth_subheading: e.target.value })}
               placeholder="Welcome to your luxury living portal"
               className={inputCls}
             />
@@ -371,7 +371,7 @@ export function SettingsPanel() {
           <Field icon={Type} label="Sign in heading">
             <input
               value={form.auth_signin_heading || ""}
-              onChange={(v: string) => setForm({ ...form, auth_signin_heading: v })}
+              onChange={(e) => setForm({ ...form, auth_signin_heading: e.target.value })}
               placeholder="Welcome back"
               className={inputCls}
             />
@@ -380,7 +380,7 @@ export function SettingsPanel() {
           <Field icon={Type} label="Sign up heading">
             <input
               value={form.auth_signup_heading || ""}
-              onChange={(v: string) => setForm({ ...form, auth_signup_heading: v })}
+              onChange={(e) => setForm({ ...form, auth_signup_heading: e.target.value })}
               placeholder="Create your account"
               className={inputCls}
             />
@@ -392,12 +392,12 @@ export function SettingsPanel() {
               <input
                 type="color"
                 value={bgColor}
-                onChange={(v: string) => setForm({ ...form, auth_bg_color: v })}
+                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
                 className="h-10 w-14 cursor-pointer rounded-md border border-input bg-background"
               />
               <input
                 value={bgColor}
-                onChange={(v: string) => setForm({ ...form, auth_bg_color: v })}
+                onChange={(e) => setForm({ ...form, auth_bg_color: e.target.value })}
                 placeholder="#1a0a0f"
                 className={inputCls}
               />
@@ -408,7 +408,7 @@ export function SettingsPanel() {
             <div className="space-y-3">
               <input
                 value={bgImage.startsWith("data:") ? "" : bgImage}
-                onChange={(v: string) => setForm({ ...form, auth_bg_image_url: v })}
+                onChange={(e) => setForm({ ...form, auth_bg_image_url: e.target.value })}
                 placeholder="https://example.com/background.jpg"
                 className={inputCls}
                 disabled={bgImage.startsWith("data:")}
@@ -419,10 +419,10 @@ export function SettingsPanel() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(v: string) => {
+                  onChange={(e) => {
                     const f = e.target.files?.[0];
                     if (f) handleFile(f);
-                    v = "";
+                    e.target.value = "";
                   }}
                 />
                 <button

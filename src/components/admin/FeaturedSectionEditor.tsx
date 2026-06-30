@@ -102,19 +102,19 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className={label}>Eyebrow</label>
-          <input className={input} value={cfg.eyebrow} onChange={(v: string) => setCfg({ ...cfg, eyebrow: v })} />
+          <input className={input} value={cfg.eyebrow} onChange={(e) => setCfg({ ...cfg, eyebrow: e.target.value })} />
         </div>
         <div>
           <label className={label}>Title</label>
-          <input className={input} value={cfg.title} onChange={(v: string) => setCfg({ ...cfg, title: v })} />
+          <input className={input} value={cfg.title} onChange={(e) => setCfg({ ...cfg, title: e.target.value })} />
         </div>
         <div>
           <label className={label}>Link label</label>
-          <input className={input} value={cfg.link_label} onChange={(v: string) => setCfg({ ...cfg, link_label: v })} />
+          <input className={input} value={cfg.link_label} onChange={(e) => setCfg({ ...cfg, link_label: e.target.value })} />
         </div>
         <div>
           <label className={label}>Link URL</label>
-          <input className={input} value={cfg.link_href} onChange={(v: string) => setCfg({ ...cfg, link_href: v })} />
+          <input className={input} value={cfg.link_href} onChange={(e) => setCfg({ ...cfg, link_href: e.target.value })} />
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
               max={24}
               className="w-16 rounded-lg border border-input bg-white px-2 py-1 text-sm"
               value={cfg.limit}
-              onChange={(v: string) => setCfg({ ...cfg, limit: Math.max(1, Math.min(24, Number(v) || 6)) })}
+              onChange={(e) => setCfg({ ...cfg, limit: Math.max(1, Math.min(24, Number(e.target.value) || 6)) })}
             />
           </div>
         </div>
@@ -148,7 +148,7 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <div>
               <label className={label}>Status</label>
-              <ThemedSelect className={input} value={cfg.filter.status} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, status: v as any } })}>
+              <ThemedSelect className={input} value={cfg.filter.status} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, status: e.target.value as any } })}>
                 <option value="">Any</option>
                 <option value="rent">For Rent</option>
                 <option value="sale">For Sale</option>
@@ -156,14 +156,14 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
             </div>
             <div>
               <label className={label}>Type</label>
-              <ThemedSelect className={input} value={cfg.filter.type} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, type: v } })}>
+              <ThemedSelect className={input} value={cfg.filter.type} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, type: e.target.value } })}>
                 <option value="">Any</option>
                 {PROPERTY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </ThemedSelect>
             </div>
             <div>
               <label className={label}>Location</label>
-              <ThemedSelect className={input} value={cfg.filter.location} onChange={(v: string) => setCfg({ ...cfg, filter: { ...cfg.filter, location: v } })}>
+              <ThemedSelect className={input} value={cfg.filter.location} onChange={(e) => setCfg({ ...cfg, filter: { ...cfg.filter, location: e.target.value } })}>
                 <option value="">Any</option>
                 {LOCATIONS.map((l) => <option key={l} value={l}>{l}</option>)}
               </ThemedSelect>
@@ -185,7 +185,7 @@ export function FeaturedSectionEditor({ sectionId, initial }: { sectionId: strin
             )}
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input className={`${input} pl-9`} placeholder="Search properties to add…" value={search} onChange={(v: string) => setSearch(v)} />
+              <input className={`${input} pl-9`} placeholder="Search properties to add…" value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
             <div className="max-h-64 overflow-y-auto rounded-lg border border-border bg-white">
               {filtered.length === 0 && <p className="p-4 text-xs text-muted-foreground">No properties match.</p>}

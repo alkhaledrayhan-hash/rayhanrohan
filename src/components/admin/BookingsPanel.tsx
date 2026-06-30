@@ -144,14 +144,14 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
-            onChange={(v: string) => setQ(v)}
+            onChange={(e) => setQ(e.target.value)}
             placeholder="Search by customer, property, phone…"
             className="w-full rounded-lg border border-input bg-muted/30 py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
         <ThemedSelect
           value={statusFilter}
-          onChange={(v: string) => setStatusFilter(v as Status | "all")}
+          onChange={(e) => setStatusFilter(e.target.value as Status | "all")}
           className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
         >
           <option value="all">All status</option>
@@ -217,7 +217,7 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <ThemedSelect
                       value={b.status}
-                      onChange={(v: string) => setStatus.mutate({ id: b.id, status: v as Status })}
+                      onChange={(e) => setStatus.mutate({ id: b.id, status: e.target.value as Status })}
                       className={`rounded-md px-2 py-1 text-xs font-semibold capitalize ${statusClass[b.status as Status] ?? "bg-muted"}`}
                     >
                       {STATUSES.map((s) => (
@@ -382,20 +382,20 @@ function BookingDetailDialog({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Date">
                     <input type="date" value={scheduledDate}
-                      onChange={(v: string) => setScheduledDate(v)} className="input" />
+                      onChange={(e) => setScheduledDate(e.target.value)} className="input" />
                   </Field>
                   <Field label="Time">
                     <input type="time" value={scheduledTime}
-                      onChange={(v: string) => setScheduledTime(v)} className="input" />
+                      onChange={(e) => setScheduledTime(e.target.value)} className="input" />
                   </Field>
                   <Field label="Status">
-                    <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
+                    <ThemedSelect value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </ThemedSelect>
                   </Field>
                   <Field label="Notes" className="sm:col-span-2">
                     <textarea rows={3} value={notes}
-                      onChange={(v: string) => setNotes(v)} className="input" />
+                      onChange={(e) => setNotes(e.target.value)} className="input" />
                   </Field>
                 </div>
               )}
@@ -523,36 +523,36 @@ function CreateBookingDialog({
 
         <div className="mt-4 grid gap-3">
           <Field label="Property">
-            <ThemedSelect required value={propertyId} onChange={(v: string) => setPropertyId(v)} className="input">
+            <ThemedSelect required value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="input">
               {properties.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
             </ThemedSelect>
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Customer name">
-              <input required value={customerName} onChange={(v: string) => setCustomerName(v)} className="input" />
+              <input required value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="input" />
             </Field>
             <Field label="Phone">
-              <input required value={customerPhone} onChange={(v: string) => setCustomerPhone(v)} className="input" />
+              <input required value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="input" />
             </Field>
           </div>
           <Field label="Email (optional)">
-            <input type="email" value={customerEmail} onChange={(v: string) => setCustomerEmail(v)} className="input" />
+            <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="input" />
           </Field>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Date">
-              <input required type="date" value={scheduledDate} onChange={(v: string) => setScheduledDate(v)} className="input" />
+              <input required type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="input" />
             </Field>
             <Field label="Time">
-              <input required type="time" value={scheduledTime} onChange={(v: string) => setScheduledTime(v)} className="input" />
+              <input required type="time" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="input" />
             </Field>
             <Field label="Status">
-              <ThemedSelect value={status} onChange={(v: string) => setStatus(v as Status)} className="input">
+              <ThemedSelect value={status} onChange={(e) => setStatus(e.target.value as Status)} className="input">
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </ThemedSelect>
             </Field>
           </div>
           <Field label="Notes">
-            <textarea value={notes} onChange={(v: string) => setNotes(v)} rows={3} className="input" />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="input" />
           </Field>
         </div>
 

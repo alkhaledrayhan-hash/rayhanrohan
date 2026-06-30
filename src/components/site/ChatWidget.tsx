@@ -245,7 +245,7 @@ export function ChatWidget() {
                   </button>
                   <ThemedSelect
                     value={recipient === "admin" ? "" : recipient}
-                    onChange={(v: string) => setRecipient(v || "admin")}
+                    onChange={(e) => setRecipient(e.target.value || "admin")}
                     className={`rounded-md border bg-background px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary ${
                       recipient !== "admin"
                         ? "border-primary ring-1 ring-primary/40"
@@ -264,7 +264,7 @@ export function ChatWidget() {
 
               <input
                 value={name}
-                onChange={(v: string) => setName(v)}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 required
                 maxLength={100}
@@ -272,7 +272,7 @@ export function ChatWidget() {
               />
               <input
                 value={email}
-                onChange={(v: string) => setEmail(v)}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Email"
                 required
@@ -281,7 +281,7 @@ export function ChatWidget() {
               />
               <textarea
                 value={body}
-                onChange={(v: string) => setBody(v)}
+                onChange={(e) => setBody(e.target.value)}
                 placeholder="How can we help?"
                 required
                 rows={5}
@@ -316,7 +316,7 @@ export function ChatWidget() {
               <form onSubmit={handleReply} className="flex items-end gap-2 border-t border-border bg-background p-3">
                 <textarea
                   value={reply}
-                  onChange={(v: string) => setReply(v)}
+                  onChange={(e) => setReply(e.target.value)}
                   placeholder="Type a reply…"
                   rows={2}
                   maxLength={4000}

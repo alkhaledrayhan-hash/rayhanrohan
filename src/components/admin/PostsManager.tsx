@@ -163,19 +163,19 @@ export function PostsManager() {
               <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={search}
-                onChange={(v: string) => setSearch(v)}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search title, slug, excerpt…"
                 className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-2 text-sm"
               />
             </div>
-            <ThemedSelect value={fStatus} onChange={(v: string) => setFStatus(v as "all" | "draft" | "published")} className={inputCls}>
+            <ThemedSelect value={fStatus} onChange={(e) => setFStatus(e.target.value as "all" | "draft" | "published")} className={inputCls}>
               <option value="all">All status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
             </ThemedSelect>
             <ThemedSelect
               value={fCategory}
-              onChange={(v: string) => setFCategory(v)}
+              onChange={(e) => setFCategory(e.target.value)}
               className={`${inputCls} lg:col-span-4`}
             >
               <option value="all">All categories</option>
@@ -367,7 +367,7 @@ function PostEditor({
             <input
               required maxLength={200}
               value={value.title || ""}
-              onChange={(v: string) => onChange({ ...value, title: v })}
+              onChange={(e) => onChange({ ...value, title: e.target.value })}
               className={inputCls}
             />
           </Field>
@@ -375,7 +375,7 @@ function PostEditor({
             <input
               maxLength={80}
               value={value.slug || ""}
-              onChange={(v: string) => onChange({ ...value, slug: v })}
+              onChange={(e) => onChange({ ...value, slug: e.target.value })}
               placeholder="my-post-slug"
               className={inputCls}
             />
@@ -383,7 +383,7 @@ function PostEditor({
           <Field label="Type">
             <ThemedSelect
               value={value.type || "blog"}
-              onChange={(v: string) => onChange({ ...value, type: v as any })}
+              onChange={(e) => onChange({ ...value, type: e.target.value as any })}
               className={inputCls}
             >
               <option value="blog">Blog</option>
@@ -393,7 +393,7 @@ function PostEditor({
           <Field label="Category">
             <ThemedSelect
               value={value.category_id || ""}
-              onChange={(v: string) => onChange({ ...value, category_id: v || null })}
+              onChange={(e) => onChange({ ...value, category_id: e.target.value || null })}
               className={inputCls}
             >
               <option value="">— None —</option>
@@ -405,7 +405,7 @@ function PostEditor({
           <Field label="Status">
             <ThemedSelect
               value={value.status || "draft"}
-              onChange={(v: string) => onChange({ ...value, status: v as any })}
+              onChange={(e) => onChange({ ...value, status: e.target.value as any })}
               className={inputCls}
             >
               <option value="draft">Draft</option>
@@ -417,7 +417,7 @@ function PostEditor({
               <input
                 type="checkbox"
                 checked={!!value.is_featured}
-                onChange={(v: string) => onChange({ ...value, is_featured: e.target.checked })}
+                onChange={(e) => onChange({ ...value, is_featured: e.target.checked })}
               />
               Mark this {value.type || "post"} as featured
             </label>
@@ -426,7 +426,7 @@ function PostEditor({
             <input
               maxLength={2000}
               value={value.cover_image || ""}
-              onChange={(v: string) => onChange({ ...value, cover_image: v })}
+              onChange={(e) => onChange({ ...value, cover_image: e.target.value })}
               placeholder="https://… or paste a Media library URL"
               className={inputCls}
             />
@@ -442,7 +442,7 @@ function PostEditor({
             <textarea
               rows={2} maxLength={500}
               value={value.excerpt || ""}
-              onChange={(v: string) => onChange({ ...value, excerpt: v })}
+              onChange={(e) => onChange({ ...value, excerpt: e.target.value })}
               className={inputCls}
             />
           </Field>
@@ -450,7 +450,7 @@ function PostEditor({
             <textarea
               rows={10} maxLength={50000}
               value={value.content || ""}
-              onChange={(v: string) => onChange({ ...value, content: v })}
+              onChange={(e) => onChange({ ...value, content: e.target.value })}
               placeholder={"Write your article. You can use blank lines for paragraphs."}
               className={`${inputCls} font-mono text-[13px]`}
             />
@@ -590,14 +590,14 @@ function TaxonomyManager({
           {editing ? `Edit ${title.slice(0, -1).toLowerCase()}` : `Add new`}
         </h4>
         <Field label="Name">
-          <input required maxLength={80} value={name} onChange={(v: string) => setName(v)} className={inputCls} />
+          <input required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
         </Field>
         <Field label="Slug" hint="Optional. Auto-generated from name if empty.">
-          <input maxLength={80} value={slug} onChange={(v: string) => setSlug(v)} className={inputCls} />
+          <input maxLength={80} value={slug} onChange={(e) => setSlug(e.target.value)} className={inputCls} />
         </Field>
         {withDescription && (
           <Field label="Description">
-            <textarea rows={3} maxLength={500} value={description} onChange={(v: string) => setDescription(v)} className={inputCls} />
+            <textarea rows={3} maxLength={500} value={description} onChange={(e) => setDescription(e.target.value)} className={inputCls} />
           </Field>
         )}
         <div className="flex items-center justify-end gap-2 pt-1">

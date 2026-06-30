@@ -84,14 +84,14 @@ export function UsersManager() {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
-            onChange={(v: string) => setQ(v)}
+            onChange={(e) => setQ(e.target.value)}
             placeholder="Search by name, email, username…"
             className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
         <ThemedSelect
           value={roleFilter}
-          onChange={(v: string) => setRoleFilter(v as any)}
+          onChange={(e) => setRoleFilter(e.target.value as any)}
           className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
         >
           <option value="all">All roles</option>
@@ -305,7 +305,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
           <input
             required
             value={form.full_name}
-            onChange={(v: string) => setForm({ ...form, full_name: v })}
+            onChange={(e) => setForm({ ...form, full_name: e.target.value })}
             className={fieldCls}
           />
         </Field>
@@ -314,7 +314,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             required
             type="email"
             value={form.email}
-            onChange={(v: string) => setForm({ ...form, email: v })}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
             className={fieldCls}
           />
         </Field>
@@ -324,14 +324,14 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             type="text"
             minLength={8}
             value={form.password}
-            onChange={(v: string) => setForm({ ...form, password: v })}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
             className={fieldCls}
           />
         </Field>
         <Field label="Role *">
           <ThemedSelect
             value={form.role}
-            onChange={(v: string) => setForm({ ...form, role: v as Role })}
+            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>
@@ -342,7 +342,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
         <Field label="Phone">
           <input
             value={form.phone}
-            onChange={(v: string) => setForm({ ...form, phone: v })}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
             className={fieldCls}
           />
         </Field>
@@ -352,7 +352,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
             pattern="^[a-zA-Z0-9_]{3,30}$"
             title="3–30 chars, letters/numbers/_"
             value={form.username}
-            onChange={(v: string) => setForm({ ...form, username: v })}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
             placeholder="unique handle"
             className={fieldCls}
           />
@@ -409,14 +409,14 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
           <input
             required
             value={form.full_name}
-            onChange={(v: string) => setForm({ ...form, full_name: v })}
+            onChange={(e) => setForm({ ...form, full_name: e.target.value })}
             className={fieldCls}
           />
         </Field>
         <Field label="Role *">
           <ThemedSelect
             value={form.role}
-            onChange={(v: string) => setForm({ ...form, role: v as Role })}
+            onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
             className={fieldCls}
           >
             <option value="user">Customer</option>
@@ -427,7 +427,7 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
         <Field label="Phone">
           <input
             value={form.phone}
-            onChange={(v: string) => setForm({ ...form, phone: v })}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
             className={fieldCls}
           />
         </Field>
@@ -437,7 +437,7 @@ function EditDialog({ user, onClose }: { user: Row; onClose: () => void }) {
             pattern="^[a-zA-Z0-9_]{3,30}$"
             title="3–30 chars, letters/numbers/_"
             value={form.username}
-            onChange={(v: string) => setForm({ ...form, username: v })}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
             className={fieldCls}
           />
         </Field>
@@ -491,7 +491,7 @@ function PasswordDialog({ user, onClose }: { user: Row; onClose: () => void }) {
             type="text"
             minLength={8}
             value={pw}
-            onChange={(v: string) => setPw(v)}
+            onChange={(e) => setPw(e.target.value)}
             className={fieldCls}
             placeholder="Enter a strong password"
           />

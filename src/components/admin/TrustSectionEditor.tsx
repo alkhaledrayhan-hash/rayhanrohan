@@ -78,7 +78,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
         <label className="flex items-center gap-2 text-sm font-medium">
           <input
             type="checkbox" checked={value.scroll.enabled}
-            onChange={(v: string) => setScroll({ enabled: e.target.checked })}
+            onChange={(e) => setScroll({ enabled: e.target.checked })}
             className="h-4 w-4 rounded border-input"
           />
           Enable horizontal scrolling when there are many items
@@ -91,7 +91,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             </span>
             <input
               type="range" min={10} max={120} step={5} value={value.scroll.speed}
-              onChange={(v: string) => setScroll({ speed: Number(v) })}
+              onChange={(e) => setScroll({ speed: Number(e.target.value) })}
               className="w-full accent-primary"
             />
           </label>
@@ -102,7 +102,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             <div className="flex items-center gap-2">
               <input
                 type="number" min={1} max={20} value={value.scroll.threshold}
-                onChange={(v: string) => setScroll({ threshold: Math.max(1, Number(v) || 1) })}
+                onChange={(e) => setScroll({ threshold: Math.max(1, Number(e.target.value) || 1) })}
                 className="w-20 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <span className="text-xs text-muted-foreground">items (default 3)</span>
@@ -120,7 +120,7 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
             <Field label="Icon">
               <ThemedSelect
                 value={item.icon || ""}
-                onChange={(v: string) => setItem(i, { icon: v || undefined })}
+                onChange={(e) => setItem(i, { icon: e.target.value || undefined })}
                 className="w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
               >
                 <option value="">Auto</option>
@@ -128,11 +128,11 @@ export function TrustSectionEditor({ sectionId, initial }: { sectionId: string; 
               </ThemedSelect>
             </Field>
             <Field label="Title">
-              <input value={item.title} onChange={(v: string) => setItem(i, { title: v })}
+              <input value={item.title} onChange={(e) => setItem(i, { title: e.target.value })}
                 className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm" />
             </Field>
             <Field label="Body">
-              <input value={item.body} onChange={(v: string) => setItem(i, { body: v })}
+              <input value={item.body} onChange={(e) => setItem(i, { body: e.target.value })}
                 className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm" />
             </Field>
             <div className="flex items-end justify-end gap-1 sm:flex-col sm:items-stretch">

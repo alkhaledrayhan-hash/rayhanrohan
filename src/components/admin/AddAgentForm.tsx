@@ -189,7 +189,7 @@ export function AvatarUploader({
       {urlMode && (
         <input
           value={value.startsWith("data:") ? "" : value}
-          onChange={(v: string) => onChange(v)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="https://…"
           className="mt-3 w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />

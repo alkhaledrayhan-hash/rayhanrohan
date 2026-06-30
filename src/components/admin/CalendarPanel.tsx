@@ -305,7 +305,7 @@ export function CalendarPanel() {
               <Field label="Property">
                 <ThemedSelect
                   value={form.propertyId}
-                  onChange={(v: string) => setForm((f) => ({ ...f, propertyId: v }))}
+                  onChange={(e) => setForm((f) => ({ ...f, propertyId: e.target.value }))}
                   className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                 >
                   <option value="">— Select a property —</option>
@@ -318,14 +318,14 @@ export function CalendarPanel() {
                   <input
                     type="time"
                     value={form.scheduledTime}
-                    onChange={(v: string) => setForm((f) => ({ ...f, scheduledTime: v }))}
+                    onChange={(e) => setForm((f) => ({ ...f, scheduledTime: e.target.value }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   />
                 </Field>
                 <Field label="Status">
                   <ThemedSelect
                     value={form.status}
-                    onChange={(v: string) => setForm((f) => ({ ...f, status: v as typeof form.status }))}
+                    onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as typeof form.status }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="pending">Pending</option>
@@ -340,14 +340,14 @@ export function CalendarPanel() {
                 <Field label="Customer name">
                   <input
                     value={form.customerName}
-                    onChange={(v: string) => setForm((f) => ({ ...f, customerName: v }))}
+                    onChange={(e) => setForm((f) => ({ ...f, customerName: e.target.value }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   />
                 </Field>
                 <Field label="Phone">
                   <input
                     value={form.customerPhone}
-                    onChange={(v: string) => setForm((f) => ({ ...f, customerPhone: v }))}
+                    onChange={(e) => setForm((f) => ({ ...f, customerPhone: e.target.value }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   />
                 </Field>
@@ -357,7 +357,7 @@ export function CalendarPanel() {
                 <input
                   type="email"
                   value={form.customerEmail}
-                  onChange={(v: string) => setForm((f) => ({ ...f, customerEmail: v }))}
+                  onChange={(e) => setForm((f) => ({ ...f, customerEmail: e.target.value }))}
                   className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                 />
               </Field>
@@ -366,7 +366,7 @@ export function CalendarPanel() {
                 <Field label="Assign agent (optional)">
                   <ThemedSelect
                     value={form.agentId}
-                    onChange={(v: string) => setForm((f) => ({ ...f, agentId: v }))}
+                    onChange={(e) => setForm((f) => ({ ...f, agentId: e.target.value }))}
                     className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                   >
                     <option value="">— Use property's assigned agent —</option>
@@ -380,7 +380,7 @@ export function CalendarPanel() {
               <Field label="Notes">
                 <textarea
                   value={form.notes}
-                  onChange={(v: string) => setForm((f) => ({ ...f, notes: v }))}
+                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                   rows={3}
                   className="rounded-lg border border-input bg-white px-3 py-2 text-sm"
                 />

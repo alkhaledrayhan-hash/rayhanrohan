@@ -168,7 +168,7 @@ function ContactPage() {
                 </span>
                 <textarea
                   value={form.message}
-                  onChange={(v: string) => setForm({ ...form, message: v })}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
                   rows={5}
                   required
                   maxLength={2000}
@@ -305,7 +305,7 @@ function FormField({
       </span>
       <input
         value={value}
-        onChange={(v: string) => onChange(v)}
+        onChange={(e) => onChange(e.target.value)}
         type={type}
         required={required}
         maxLength={200}
@@ -331,7 +331,7 @@ function FormSelect({
       </span>
       <ThemedSelect
         value={value}
-        onChange={(v: string) => onChange(v)}
+        onChange={(e) => onChange(e.target.value)}
         className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
       >
         {options.map((o) => (

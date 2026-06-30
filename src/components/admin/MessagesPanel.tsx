@@ -135,7 +135,7 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               value={search}
-              onChange={(v: string) => setSearch(v)}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search name, email…"
               className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
@@ -143,8 +143,8 @@ export function MessagesPanel({ isAdmin }: { isAdmin: boolean }) {
           {isAdmin && (
             <ThemedSelect
               value={agentFilter}
-              onChange={(v: string) => {
-                setAgentFilter(v);
+              onChange={(e) => {
+                setAgentFilter(e.target.value);
                 setSelectedId(null);
               }}
               className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -371,7 +371,7 @@ function Thread({ conversationId, isAdmin }: { conversationId: string; isAdmin: 
       <form onSubmit={handleSend} className="flex items-end gap-2 border-t border-border p-3">
         <textarea
           value={reply}
-          onChange={(v: string) => setReply(v)}
+          onChange={(e) => setReply(e.target.value)}
           placeholder="Type your reply…"
           rows={2}
           maxLength={4000}

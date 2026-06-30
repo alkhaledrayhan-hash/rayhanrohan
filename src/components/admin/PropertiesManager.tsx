@@ -198,22 +198,22 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
       <div className="grid grid-cols-1 gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <input
           value={search}
-          onChange={(v: string) => setSearch(v)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Search title, location, address…"
           className="rounded-md border border-input bg-background px-3 py-2 text-sm lg:col-span-2"
         />
-        <ThemedSelect value={fStatus} onChange={(v: string) => setFStatus(v as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fStatus} onChange={(e) => setFStatus(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All status</option>
           <option value="rent">For rent</option>
           <option value="sale">For sale</option>
         </ThemedSelect>
-        <ThemedSelect value={fApproval} onChange={(v: string) => setFApproval(v as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fApproval} onChange={(e) => setFApproval(e.target.value as any)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All approval</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
           <option value="rejected">Rejected</option>
         </ThemedSelect>
-        <ThemedSelect value={fType} onChange={(v: string) => setFType(v)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
+        <ThemedSelect value={fType} onChange={(e) => setFType(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
           <option value="all">All types</option>
           {types.map((t) => <option key={t} value={t}>{t}</option>)}
         </ThemedSelect>
@@ -264,7 +264,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     {isAdmin ? (
                       <ThemedSelect
                         value={r.assigned_agent_id || ""}
-                        onChange={(v: string) => assignAgent.mutate({ id: r.id, agentId: v || null })}
+                        onChange={(e) => assignAgent.mutate({ id: r.id, agentId: e.target.value || null })}
                         className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
                       >
                         <option value="">— Unassigned —</option>
@@ -280,7 +280,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     {isAdmin ? (
                       <ThemedSelect
                         value={r.listing_status}
-                        onChange={(v: string) => setStatus.mutate({ id: r.id, status: v as any })}
+                        onChange={(e) => setStatus.mutate({ id: r.id, status: e.target.value as any })}
                         className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                           r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
                           : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
@@ -432,25 +432,25 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               onSubmit={(e) => { e.preventDefault(); save.mutate(editing); }}
               className="mt-4 grid max-h-[70vh] grid-cols-2 gap-3 overflow-y-auto text-sm"
             >
-              <Field label="Title" className="col-span-2"><input required value={editing.title || ""} onChange={(v: string) => setEditing({ ...editing, title: v })} className={inputCls} /></Field>
-              <Field label="Location"><input required value={editing.location || ""} onChange={(v: string) => setEditing({ ...editing, location: v })} className={inputCls} /></Field>
-              <Field label="Address"><input required value={editing.address || ""} onChange={(v: string) => setEditing({ ...editing, address: v })} className={inputCls} /></Field>
-              <Field label="Type"><input required value={editing.type || ""} onChange={(v: string) => setEditing({ ...editing, type: v })} className={inputCls} /></Field>
+              <Field label="Title" className="col-span-2"><input required value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className={inputCls} /></Field>
+              <Field label="Location"><input required value={editing.location || ""} onChange={(e) => setEditing({ ...editing, location: e.target.value })} className={inputCls} /></Field>
+              <Field label="Address"><input required value={editing.address || ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} className={inputCls} /></Field>
+              <Field label="Type"><input required value={editing.type || ""} onChange={(e) => setEditing({ ...editing, type: e.target.value })} className={inputCls} /></Field>
               <Field label="Rent / Sale">
-                <ThemedSelect value={editing.status || "rent"} onChange={(v: string) => setEditing({ ...editing, status: v as any })} className={inputCls}>
+                <ThemedSelect value={editing.status || "rent"} onChange={(e) => setEditing({ ...editing, status: e.target.value as any })} className={inputCls}>
                   <option value="rent">Rent</option><option value="sale">Sale</option>
                 </ThemedSelect>
               </Field>
-              <Field label="Price (QAR)"><input type="number" required value={editing.price ?? 0} onChange={(v: string) => setEditing({ ...editing, price: Number(v) })} className={inputCls} /></Field>
-              <Field label="Bedrooms"><input type="number" value={editing.bedrooms ?? 0} onChange={(v: string) => setEditing({ ...editing, bedrooms: Number(v) })} className={inputCls} /></Field>
-              <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(v: string) => setEditing({ ...editing, bathrooms: Number(v) })} className={inputCls} /></Field>
-              <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(v: string) => setEditing({ ...editing, rooms: Number(v) })} className={inputCls} /></Field>
-              <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(v: string) => setEditing({ ...editing, sqft: Number(v) })} className={inputCls} /></Field>
+              <Field label="Price (QAR)"><input type="number" required value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Bedrooms"><input type="number" value={editing.bedrooms ?? 0} onChange={(e) => setEditing({ ...editing, bedrooms: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Bathrooms"><input type="number" value={editing.bathrooms ?? 0} onChange={(e) => setEditing({ ...editing, bathrooms: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Rooms"><input type="number" value={editing.rooms ?? 0} onChange={(e) => setEditing({ ...editing, rooms: Number(e.target.value) })} className={inputCls} /></Field>
+              <Field label="Area (sqft)"><input type="number" value={editing.sqft ?? 0} onChange={(e) => setEditing({ ...editing, sqft: Number(e.target.value) })} className={inputCls} /></Field>
               {isAdmin && (
                 <Field label="Assigned agent" className="col-span-2">
                   <ThemedSelect
                     value={editing.assigned_agent_id || ""}
-                    onChange={(v: string) => setEditing({ ...editing, assigned_agent_id: v || null })}
+                    onChange={(e) => setEditing({ ...editing, assigned_agent_id: e.target.value || null })}
                     className={inputCls}
                   >
                     <option value="">— Unassigned —</option>
@@ -468,9 +468,9 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 <span className="text-xs font-medium text-muted-foreground">Gallery images</span>
                 <GalleryUploader value={editing.gallery || []} onChange={(v) => setEditing({ ...editing, gallery: v })} />
               </div>
-              <Field label="Description" className="col-span-2"><textarea rows={3} value={editing.description || ""} onChange={(v: string) => setEditing({ ...editing, description: v })} className={inputCls} /></Field>
+              <Field label="Description" className="col-span-2"><textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className={inputCls} /></Field>
               <Field label="Features (comma separated)" className="col-span-2">
-                <input value={(editing.features || []).join(", ")} onChange={(v: string) => setEditing({ ...editing, features: v.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
+                <input value={(editing.features || []).join(", ")} onChange={(e) => setEditing({ ...editing, features: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} className={inputCls} />
               </Field>
 
               <div className="col-span-2 mt-2 rounded-xl border border-amber-200 bg-amber-50/60 p-3 space-y-3">
@@ -478,7 +478,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   <input
                     type="checkbox"
                     checked={!!editing.is_offer}
-                    onChange={(v: string) => setEditing({ ...editing, is_offer: e.target.checked })}
+                    onChange={(e) => setEditing({ ...editing, is_offer: e.target.checked })}
                     className="h-4 w-4 rounded border-amber-300"
                   />
                   Mark as Special Offer (shown on home page Offers section & Offers page)
@@ -486,13 +486,13 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                 {editing.is_offer && (
                   <div className="grid grid-cols-3 gap-2">
                     <Field label="Discount %">
-                      <input type="number" min={0} max={90} value={editing.offer_discount ?? 0} onChange={(v: string) => setEditing({ ...editing, offer_discount: Number(v) })} className={inputCls} />
+                      <input type="number" min={0} max={90} value={editing.offer_discount ?? 0} onChange={(e) => setEditing({ ...editing, offer_discount: Number(e.target.value) })} className={inputCls} />
                     </Field>
                     <Field label="Tag (e.g. Move-in ready)">
-                      <input value={editing.offer_tag || ""} onChange={(v: string) => setEditing({ ...editing, offer_tag: v })} className={inputCls} />
+                      <input value={editing.offer_tag || ""} onChange={(e) => setEditing({ ...editing, offer_tag: e.target.value })} className={inputCls} />
                     </Field>
                     <Field label="Ends (e.g. Jul 31)">
-                      <input value={editing.offer_ends || ""} onChange={(v: string) => setEditing({ ...editing, offer_ends: v })} className={inputCls} />
+                      <input value={editing.offer_ends || ""} onChange={(e) => setEditing({ ...editing, offer_ends: e.target.value })} className={inputCls} />
                     </Field>
                   </div>
                 )}
@@ -556,13 +556,13 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
             <span className="text-xs">{busy ? "Uploading…" : "Click or drop cover image"}</span>
           </div>
         )}
-        <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(v: string) => onFile(e.target.files?.[0])} />
+        <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
       </div>
       <input
         type="url"
         placeholder="…or paste image URL"
         value={value.startsWith("data:") ? "" : value}
-        onChange={(v: string) => onChange(v)}
+        onChange={(e) => onChange(e.target.value)}
         className={inputCls}
       />
     </div>
@@ -609,7 +609,7 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
           </div>
         </button>
       </div>
-      <input ref={ref} type="file" accept="image/*" multiple className="hidden" onChange={(v: string) => onFiles(e.target.files)} />
+      <input ref={ref} type="file" accept="image/*" multiple className="hidden" onChange={(e) => onFiles(e.target.files)} />
       <p className="text-[11px] text-muted-foreground">You can select multiple images. Stored inline (downscaled).</p>
     </div>
   );
