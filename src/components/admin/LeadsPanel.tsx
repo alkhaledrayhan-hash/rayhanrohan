@@ -158,22 +158,22 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:flex-wrap">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search by name, email, message…"
-            className="w-full rounded-lg border border-input bg-white py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
-        <ThemedSelect value={src} onChange={(v: string) => setSrc(v)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+        <ThemedSelect value={src} onChange={(v: string) => setSrc(v)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-48">
           <option value="all">All sources</option>
           {sources.map((s) => <option key={s} value={s}>{s}</option>)}
         </ThemedSelect>
         {isAdmin && (
-          <ThemedSelect value={agentFilter} onChange={(v: string) => setAgentFilter(v)} className="rounded-lg border border-input bg-white px-3 py-2 text-sm">
+          <ThemedSelect value={agentFilter} onChange={(v: string) => setAgentFilter(v)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-52">
             <option value="all">All agents</option>
             <option value="unassigned">Unassigned</option>
             {agents.map((a) => (

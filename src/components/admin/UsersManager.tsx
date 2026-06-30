@@ -111,20 +111,20 @@ export function UsersManager() {
       />
 
 
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
+      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search by name, email, username…"
-            className="w-full rounded-full border border-input bg-muted/40 py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
         <ThemedSelect
           value={roleFilter}
           onChange={(v: string) => setRoleFilter(v as any)}
-          className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-48"
         >
           <option value="all">All roles</option>
           <option value="admin">Admins</option>
@@ -133,7 +133,7 @@ export function UsersManager() {
         </ThemedSelect>
         <button
           onClick={() => setCreating(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
           <Plus className="h-4 w-4" /> Add user
         </button>

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ThemedSelect } from "@/components/ui/themed-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { createManualBooking, listBookings } from "@/lib/bookings.functions";
@@ -89,15 +89,29 @@ export function CalendarPanel() {
     return cells;
   }, [cursor]);
 
+  const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "completed" | "cancelled">("all");
+
+  const filteredBookings = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    return bookings.filter((b) => {
+      if (statusFilter !== "all" && b.status !== statusFilter) return false;
+      if (!term) return true;
+      return [b.customer_name, b.customer_phone, b.customer_email, b.property_title, b.notes]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term));
+    });
+  }, [bookings, q, statusFilter]);
+
   const byDate = useMemo(() => {
     const m = new Map<string, typeof bookings>();
-    for (const b of bookings) {
+    for (const b of filteredBookings) {
       const k = b.scheduled_date;
       if (!m.has(k)) m.set(k, [] as typeof bookings);
       m.get(k)!.push(b);
     }
     return m;
-  }, [bookings]);
+  }, [filteredBookings]);
 
   const [selected, setSelected] = useState<string | null>(null);
   const selectedBookings = selected ? byDate.get(selected) ?? [] : [];
@@ -179,6 +193,29 @@ export function CalendarPanel() {
             className="rounded-md border border-border bg-white px-3 py-1.5 text-xs"
           >Today</button>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by customer, property, phone…"
+            className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
+        <ThemedSelect
+          value={statusFilter}
+          onChange={(v: string) => setStatusFilter(v as typeof statusFilter)}
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-48"
+        >
+          <option value="all">All status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </ThemedSelect>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check, MailQuestion, X } from "lucide-react";
+import { Check, MailQuestion, Search, X } from "lucide-react";
+import { ThemedSelect } from "@/components/ui/themed-select";
 import {
   approveEmailChange,
   listAllEmailChangeRequests,
@@ -60,9 +61,18 @@ export function EmailChangeRequestsPanel() {
     onError: (e: any) => toast.error(e.message || "Failed"),
   });
 
-  const rows = ((data?.requests ?? []) as Row[]).filter(
-    (r) => filter === "all" || r.status === filter,
-  );
+  const [q, setQ] = useState("");
+  const rows = useMemo(() => {
+    const all = (data?.requests ?? []) as Row[];
+    const term = q.trim().toLowerCase();
+    return all.filter((r) => {
+      if (filter !== "all" && r.status !== filter) return false;
+      if (!term) return true;
+      return [r.current_email, r.new_email, r.profile?.full_name, r.profile?.email, r.reason]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term));
+    });
+  }, [data?.requests, filter, q]);
 
   const bulk = useBulkSelection(rows);
   const bulkRun = async (action: "approve" | "reject") => {
@@ -84,24 +94,31 @@ export function EmailChangeRequestsPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-white p-3">
-        <MailQuestion className="h-4 w-4 text-primary" />
-        <p className="text-sm font-medium">Email change requests</p>
-        <div className="ml-auto flex gap-1">
-          {(["pending", "approved", "rejected", "all"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`rounded-full border px-3 py-1 text-xs capitalize ${
-                filter === s
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
+      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2 sm:hidden">
+          <MailQuestion className="h-4 w-4 text-primary" />
+          <p className="text-sm font-medium">Email change requests</p>
         </div>
+        <MailQuestion className="hidden h-4 w-4 text-primary sm:block" />
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by user, current or new email…"
+            className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </div>
+        <ThemedSelect
+          value={filter}
+          onChange={(v: string) => setFilter(v as typeof filter)}
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-44"
+        >
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="all">All status</option>
+        </ThemedSelect>
       </div>
 
       <BulkActionsBar
