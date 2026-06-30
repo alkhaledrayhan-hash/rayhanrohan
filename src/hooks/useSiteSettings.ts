@@ -71,6 +71,9 @@ const DEFAULTS: SiteSettings = {
   footer_bg_color: "",
   footer_overlay_color: "#000000",
   footer_overlay_opacity: "0",
+  site_currency: "QAR",
+  rent_tax_percent: "0",
+  sale_tax_percent: "0",
 };
 
 export function useSiteSettings() {
