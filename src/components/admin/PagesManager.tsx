@@ -247,12 +247,24 @@ export function PagesManager({
   const currentPage = PAGES.find((p) => p.slug === activePage);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+    <div className={`grid gap-4 ${sectionsCollapsed ? "lg:grid-cols-[44px_1fr]" : "lg:grid-cols-[240px_1fr]"}`}>
 
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
-        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
-        {visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
+        <div className="flex items-center justify-between gap-2 px-2 pb-2">
+          {!sectionsCollapsed && (
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
+          )}
+          <button
+            type="button"
+            onClick={toggleSectionsCollapsed}
+            title={sectionsCollapsed ? "Show sections" : "Hide sections"}
+            className="ml-auto grid h-7 w-7 place-items-center rounded-md hover:bg-muted text-muted-foreground"
+          >
+            {sectionsCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+        </div>
+        {!sectionsCollapsed && visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
           <p className="px-3 py-4 text-xs text-muted-foreground">
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
