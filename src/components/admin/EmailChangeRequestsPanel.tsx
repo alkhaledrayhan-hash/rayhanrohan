@@ -8,6 +8,8 @@ import {
   listAllEmailChangeRequests,
   rejectEmailChange,
 } from "@/lib/email-change.functions";
+import { useBulkSelection } from "@/hooks/useBulkSelection";
+import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
 
 type Row = {
   id: string;
