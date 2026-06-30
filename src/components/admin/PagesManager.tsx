@@ -114,21 +114,24 @@ export function PagesManager({
   };
 
   const virtualHit = virtualForPage.find((v) => v.section_key === activeKey);
+  const virtualSourceRow = virtualHit
+    ? (aboutOnlyMap[virtualHit.section_key] ? aboutContentRow : contactOnlyMap[virtualHit.section_key] ? contactInfoRow : null)
+    : null;
   const active = sections.find((s) => s.section_key === activeKey)
     || (virtualHit
       ? ({
-          id: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.id : `virtual-${activeKey}`,
+          id: virtualSourceRow ? virtualSourceRow.id : `virtual-${activeKey}`,
           page_slug: activePage,
           section_key: activeKey!,
           label: virtualHit.label,
-          content: aboutOnlyMap[virtualHit.section_key] && aboutContentRow ? aboutContentRow.content : null,
+          content: virtualSourceRow ? virtualSourceRow.content : null,
           sort_order: 999,
         } as Section)
       : undefined)
     || visibleSections[0];
 
   useEffect(() => {
-    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-")) {
+    if (active && !["hero", "ticker", "trust", "featured", "offer", "partners", "locations", "contact", "info", "layout", "content"].includes(active.section_key) && !active.section_key.startsWith("about-") && !active.section_key.startsWith("contact-")) {
       setDraft(JSON.stringify(active.content, null, 2));
     }
     if (!activeKey && visibleSections[0]) setActiveKey(visibleSections[0].section_key);
