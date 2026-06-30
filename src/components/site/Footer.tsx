@@ -47,14 +47,15 @@ export function Footer() {
         <svg
           viewBox="0 0 800 300"
           preserveAspectRatio="xMidYMin slice"
-          className="h-full w-full"
+          className="h-full w-full overflow-visible"
         >
+
           <defs>
             <linearGradient id="trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="oklch(0.85 0.14 85)" stopOpacity="0" />
               <stop offset="100%" stopColor="oklch(0.92 0.16 85)" stopOpacity="1" />
             </linearGradient>
-            <path id="flight-path" d="M60,250 Q200,140 360,170 T740,80" />
+            <path id="flight-path" d="M60,250 Q200,140 360,170 T740,80 L960,-40" />
           </defs>
 
           {/* Dotted flight path */}
@@ -99,7 +100,7 @@ export function Footer() {
               dur="9s"
               repeatCount="indefinite"
               rotate="auto"
-              path="M60,250 Q200,140 360,170 T740,80"
+              path="M60,250 Q200,140 360,170 T740,80 L960,-40"
             />
           </image>
         </svg>
