@@ -159,15 +159,16 @@ export function PagesManager({
       {/* Sections */}
       <div className="rounded-2xl border border-border bg-white p-3">
         <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Sections</p>
-        {sections.length === 0 && currentPage && !currentPage.editable && (
+        {visibleSections.length === 0 && virtualForPage.length === 0 && currentPage && !currentPage.editable && (
           <p className="px-3 py-4 text-xs text-muted-foreground">
             No editable sections yet for <strong>{currentPage.label}</strong>.
           </p>
         )}
         {[
-          ...sections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
+          ...visibleSections.map((s) => ({ kind: "db" as const, key: s.section_key, label: s.label, sort_order: s.sort_order, id: s.id, icon: SECTION_ICONS[s.section_key] || FileText })),
           ...virtualForPage.map((v) => ({ kind: "virtual" as const, key: v.section_key, label: v.label, sort_order: v.sort_order, id: `virtual-${v.section_key}`, icon: v.icon })),
         ]
+
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((item) => {
             const Icon = item.icon;
