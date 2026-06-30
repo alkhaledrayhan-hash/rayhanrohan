@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AtSign, Eye, Mail, Pencil, Phone, Trash2, UserCircle2, X } from "lucide-react";
+import { AtSign, Eye, Mail, Pencil, Phone, Trash2, UserCircle2, UserPlus, X } from "lucide-react";
 import { deleteAgent, listAgents, updateAgent } from "@/lib/agents.functions";
 import { AvatarUploader } from "@/components/admin/AddAgentForm";
 
