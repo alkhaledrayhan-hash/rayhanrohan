@@ -45,6 +45,12 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { data: sections } = usePageSections("contact");
   const cfg = normalizeContactPage(sections?.info);
+  const virtualMeta: Record<string, { hidden?: boolean }> =
+    ((sections as any)?.info?._meta?.virtual) || {};
+  const hiddenHero = !!virtualMeta["contact-hero"]?.hidden;
+  const hiddenChannels = !!virtualMeta["contact-channels"]?.hidden;
+  const hiddenSubjects = !!virtualMeta["contact-subjects"]?.hidden;
+  const hiddenOffice = !!virtualMeta["contact-office"]?.hidden;
 
   const [form, setForm] = useState({
     name: "",
@@ -81,15 +87,18 @@ function ContactPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <PageHero
-        image={cfg.hero.image || contactHero}
-        eyebrow={cfg.hero.eyebrow}
-        title={cfg.hero.title}
-        description={cfg.hero.description}
-        crumbs={[{ label: "Home", to: "/" }, { label: cfg.hero.eyebrow || "Contact" }]}
-      />
+      {!hiddenHero && (
+        <PageHero
+          image={cfg.hero.image || contactHero}
+          eyebrow={cfg.hero.eyebrow}
+          title={cfg.hero.title}
+          description={cfg.hero.description}
+          crumbs={[{ label: "Home", to: "/" }, { label: cfg.hero.eyebrow || "Contact" }]}
+        />
+      )}
 
       {/* Quick contact tiles */}
+      {!hiddenChannels && (
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <ContactTile
@@ -118,10 +127,11 @@ function ContactPage() {
           />
         </div>
       </section>
+      )}
 
       {/* Form + Office details */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+        <div className={`grid gap-8 ${hiddenOffice ? "" : "lg:grid-cols-[1.4fr_1fr]"}`}>
           {/* Form */}
           <form
             onSubmit={onSubmit}
@@ -156,12 +166,14 @@ function ContactPage() {
                 onPhoneChange={(v) => setForm({ ...form, phone: v })}
                 placeholder="Phone number"
               />
-              <FormSelect
-                label="Subject"
-                value={form.subject}
-                onChange={(v) => setForm({ ...form, subject: v })}
-                options={cfg.subjects}
-              />
+              {!hiddenSubjects && (
+                <FormSelect
+                  label="Subject"
+                  value={form.subject}
+                  onChange={(v) => setForm({ ...form, subject: v })}
+                  options={cfg.subjects}
+                />
+              )}
               <label className="flex flex-col gap-1 sm:col-span-2">
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                   Message
@@ -191,7 +203,7 @@ function ContactPage() {
             </p>
           </form>
 
-          {/* Office */}
+          {!hiddenOffice && (
           <aside className="space-y-6">
             <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-2">
@@ -243,6 +255,7 @@ function ContactPage() {
               />
             </div>
           </aside>
+          )}
         </div>
       </section>
 
