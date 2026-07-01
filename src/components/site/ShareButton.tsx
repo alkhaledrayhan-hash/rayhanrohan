@@ -60,15 +60,23 @@ export function ShareButton() {
 
   const outerRound = side === "left" ? "rounded-r-2xl" : "rounded-l-2xl";
   const rowSide = side === "left" ? "flex-row" : "flex-row-reverse";
-  const firstRound = side === "left" ? "rounded-tr-2xl" : "rounded-tl-2xl";
-  const lastRound = side === "left" ? "rounded-br-2xl" : "rounded-bl-2xl";
+  const roundOf = (idx: number, total: number) => {
+    const isFirst = idx === 0;
+    const isLast = idx === total - 1;
+    if (side === "left") {
+      return `${isFirst ? "rounded-tr-2xl" : ""} ${isLast ? "rounded-br-2xl" : ""}`;
+    }
+    return `${isFirst ? "rounded-tl-2xl" : ""} ${isLast ? "rounded-bl-2xl" : ""}`;
+  };
+  const totalRows = items.length + 1;
 
   return (
     <aside
-      className={`fixed z-[70] ${containerCls} flex flex-col ${outerRound} shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md [&>*:first-child]:${firstRound} [&>*:last-child]:${lastRound}`}
+      className={`fixed z-[70] ${containerCls} flex flex-col shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
       style={{ background: "rgba(255,255,255,0.06)" }}
       aria-label="Share this page"
     >
+
 
 
       {items.map((it) => {
