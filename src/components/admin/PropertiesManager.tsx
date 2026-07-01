@@ -343,35 +343,24 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                   </td>
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
-                  <td className="px-5 py-3">
-                    {isAdmin ? (
-                      <ThemedSelect
-                        value={r.assigned_agent_id || ""}
-                        onChange={(v: string) => assignAgent.mutate({ id: r.id, agentId: v || null })}
-                        className="max-w-[160px] cursor-pointer rounded-md border border-input bg-background px-2 py-1 text-xs"
-                      >
-                        <option value="">— Unassigned —</option>
-                        {agents.map((a) => (
-                          <option key={a.id} value={a.id}>{a.full_name || a.email}</option>
-                        ))}
-                      </ThemedSelect>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">{agentName(r.assigned_agent_id)}</span>
-                    )}
+                  <td className="px-2 py-3">
+                    <span className="admin-cell text-xs text-muted-foreground" title={agentName(r.assigned_agent_id) || "Unassigned"}>
+                      {agentName(r.assigned_agent_id) || <span className="italic">Unassigned</span>}
+                    </span>
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-2 py-3">
                     {isAdmin ? (
                       <ThemedSelect
                         value={r.listing_status}
                         onChange={(v: string) => setStatus.mutate({ id: r.id, status: v as any })}
-                        className={`cursor-pointer rounded-full border-0 px-2 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                        className={`w-full cursor-pointer rounded-full border-0 px-1.5 py-1 text-[10px] font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                           r.listing_status === "approved" ? "bg-emerald-50 text-emerald-700"
                           : r.listing_status === "pending" ? "bg-amber-50 text-amber-700"
                           : "bg-rose-50 text-rose-700"
                         }`}
                       >
                         <option value="approved">Approved</option>
-                        <option value="pending">Pending (delay)</option>
+                        <option value="pending">Pending</option>
                         <option value="rejected">Rejected</option>
                       </ThemedSelect>
                     ) : (
@@ -382,29 +371,33 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                       }`}>{r.listing_status}</span>
                     )}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-2 py-3">
                     <button
                       type="button"
                       onClick={() => toggleOffer.mutate({ id: r.id, is_offer: !r.is_offer })}
                       title={r.is_offer ? "Remove from offers" : "Mark as offer"}
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase transition ${
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold uppercase transition ${
                         r.is_offer
                           ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
                           : "bg-muted text-muted-foreground hover:bg-muted/70"
                       }`}
                     >
-                      {r.is_offer ? `★ ${r.offer_discount || 0}% off` : "Add offer"}
+                      {r.is_offer ? `★ ${r.offer_discount || 0}%` : "Add"}
                     </button>
                   </td>
-                  <td className="px-5 py-3 text-right">
+                  <td className="px-2 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                    {r.created_at ? new Date(r.created_at).toLocaleDateString(undefined, { day: "2-digit", month: "short" }) : "—"}
+                  </td>
+                  <td className="px-2 py-3 text-right">
                     <div className="admin-actions">
-                      <button onClick={() => setViewing(r)} title="View" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Eye className="h-4 w-4" /></button>
-                      <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => setViewing(r)} title="View" className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"><Eye className="h-4 w-4" /></button>
+                      <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
                       {isAdmin && (
-                        <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1.5 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
+                        <button onClick={() => { if (confirm("Delete this property?")) del.mutate(r.id); }} title="Delete" className="rounded p-1 text-rose-600 hover:bg-rose-50"><Trash2 className="h-4 w-4" /></button>
                       )}
                     </div>
                   </td>
+
                 </tr>
               ))}
             </tbody>
