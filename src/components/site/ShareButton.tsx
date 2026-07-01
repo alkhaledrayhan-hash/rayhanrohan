@@ -72,7 +72,7 @@ export function ShareButton() {
 
   return (
     <aside
-      className={`fixed z-[70] ${containerCls} flex flex-col shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
+      className={`fixed z-[70] ${containerCls} w-max flex flex-col shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
       style={{ background: "rgba(255,255,255,0.06)" }}
       aria-label="Share this page"
     >
@@ -95,9 +95,9 @@ export function ShareButton() {
               <Icon className="h-[18px] w-[18px]" />
             </span>
             <span
-              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[180px] group-hover:opacity-100 group-hover:px-3"
-              style={{ paddingInline: 0 }}
+              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[200px] group-hover:opacity-100 group-hover:pr-4 group-hover:pl-2"
             >
+
               {it.label}
             </span>
           </a>
