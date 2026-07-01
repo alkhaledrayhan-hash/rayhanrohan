@@ -33,12 +33,8 @@ export function ShareButton() {
   if ((s as any).share_button_enabled !== "true") return null;
 
   const pageUrl = typeof window !== "undefined" ? window.location.href : (s.site_url || "");
-  const title = s.site_title || "";
-  const enc = encodeURIComponent;
-
-  // If admin provided a direct profile URL for a platform, use it.
-  // Otherwise fall back to a share-intent URL that shares the current page.
   const raw = (k: string) => ((s as any)[k] || "").toString().trim();
+
 
   // Only show icons that the admin explicitly configured with a URL.
   // Blank field = hidden on the frontend (no auto share-intent fallback).
