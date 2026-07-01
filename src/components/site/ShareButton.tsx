@@ -51,7 +51,6 @@ export function ShareButton() {
 
   if (items.length === 0 && !pageUrl) return null;
 
-
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(pageUrl);
@@ -61,89 +60,89 @@ export function ShareButton() {
     }
   };
 
+  const position = ((s as any).share_button_position || "right-middle") as
+    | "right-middle" | "right-top" | "right-bottom"
+    | "left-middle" | "left-top" | "left-bottom";
+
+  // Anchor container placement + arc center (degrees, standard math: 0=right, 90=down)
+  const posMap: Record<typeof position, { cls: string; center: number; arcSpan: number }> = {
+    "right-middle": { cls: "right-3 top-1/2 -translate-y-1/2", center: 180, arcSpan: 160 },
+    "right-top":    { cls: "right-3 top-16",                    center: 135, arcSpan: 140 },
+    "right-bottom": { cls: "right-3 bottom-6",                  center: 225, arcSpan: 140 },
+    "left-middle":  { cls: "left-3 top-1/2 -translate-y-1/2",   center: 0,   arcSpan: 160 },
+    "left-top":     { cls: "left-3 top-16",                     center: 45,  arcSpan: 140 },
+    "left-bottom":  { cls: "left-3 bottom-6",                   center: -45, arcSpan: 140 },
+  } as any;
+  const { cls, center, arcSpan } = posMap[position];
+
+  const all = [
+    ...items,
+    { key: "__copy", label: "Copy link", color: "#334155", Icon: LinkIcon, href: "" },
+  ];
+  const total = all.length;
+  // Angular step per item — enough to avoid 44px icon overlap on the arc
+  const step = total > 1 ? Math.min(arcSpan / (total - 1), 42) : 0;
+  const usedArc = step * (total - 1);
+  // Ensure chord between adjacent icon centers >= 52px so 44px glass buttons don't touch
+  const minRadius = total > 1 ? 26 / Math.sin((step * Math.PI) / 360) : 0;
+  const radius = Math.max(96, Math.ceil(minRadius));
+  const start = center - usedArc / 2;
+
   return (
-    <div
-      ref={ref}
-      className="fixed right-3 top-1/2 z-[70] -translate-y-1/2"
-      aria-live="polite"
-    >
+    <div ref={ref} className={`fixed z-[70] ${cls}`} aria-live="polite">
       <div className="relative">
-        {/* Radial icons */}
-        {items.map((it, i) => {
-          // Fan out to the LEFT of the button in a quarter/half arc.
-          const total = items.length + 1; // + copy link
-          const startDeg = 150; // upper-left
-          const endDeg = 210;   // lower-left
-          const step = total > 1 ? (endDeg - startDeg) / (total - 1) : 0;
-          const deg = startDeg + step * i;
+        {all.map((it, i) => {
+          const deg = start + step * i;
           const rad = (deg * Math.PI) / 180;
-          const radius = 96;
           const x = Math.cos(rad) * radius;
           const y = Math.sin(rad) * radius;
+          const isCopy = it.key === "__copy";
           const style: React.CSSProperties = open
             ? {
-                transform: `translate(${x}px, ${y}px) scale(1)`,
+                transform: `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1)`,
                 opacity: 1,
                 transitionDelay: `${i * 40}ms`,
-                background: `linear-gradient(135deg, ${it.color}f2, ${it.color}bf)`,
-                boxShadow: `0 8px 24px -6px ${it.color}66, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.15)`,
+                background: isCopy
+                  ? "linear-gradient(135deg, rgba(71,85,105,0.92), rgba(30,41,59,0.82))"
+                  : `linear-gradient(135deg, ${it.color}f2, ${it.color}bf)`,
+                boxShadow: isCopy
+                  ? "0 8px 24px -6px rgba(15,23,42,0.5), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.2)"
+                  : `0 8px 24px -6px ${it.color}66, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.15)`,
               }
-            : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
+            : { transform: "translate(-50%, -50%) scale(0.4)", opacity: 0, pointerEvents: "none" };
           const Icon = it.Icon;
+          const cn = "ios-glass-btn absolute left-1/2 top-1/2 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110";
+          if (isCopy) {
+            return (
+              <button
+                key="copy"
+                type="button"
+                onClick={() => { copyLink(); setOpen(false); }}
+                aria-label="Copy link"
+                title="Copy link"
+                style={style}
+                className={cn}
+              >
+                <LinkIcon className="h-5 w-5" />
+              </button>
+            );
+          }
           return (
             <a
               key={it.key}
               href={it.href}
               target="_blank"
               rel="noopener noreferrer"
-
               onClick={() => setOpen(false)}
               aria-label={`Share on ${it.label}`}
               title={it.label}
               style={style}
-              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
-
+              className={cn}
             >
               <Icon className="h-5 w-5" />
             </a>
           );
         })}
-
-        {/* Copy link (last radial slot) */}
-        {(() => {
-          const total = items.length + 1;
-          const i = items.length;
-          const startDeg = 150;
-          const endDeg = 210;
-          const step = total > 1 ? (endDeg - startDeg) / (total - 1) : 0;
-          const deg = startDeg + step * i;
-          const rad = (deg * Math.PI) / 180;
-          const radius = 96;
-          const x = Math.cos(rad) * radius;
-          const y = Math.sin(rad) * radius;
-          const style: React.CSSProperties = open
-            ? {
-                transform: `translate(${x}px, ${y}px) scale(1)`,
-                opacity: 1,
-                transitionDelay: `${i * 40}ms`,
-                background: "linear-gradient(135deg, rgba(71,85,105,0.92), rgba(30,41,59,0.82))",
-                boxShadow: "0 8px 24px -6px rgba(15,23,42,0.5), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.2)",
-              }
-            : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
-          return (
-            <button
-              type="button"
-              onClick={() => { copyLink(); setOpen(false); }}
-              aria-label="Copy link"
-              title="Copy link"
-              style={style}
-              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
-
-            >
-              <LinkIcon className="h-5 w-5" />
-            </button>
-          );
-        })()}
 
         {/* Main toggle */}
         <button

@@ -51,6 +51,7 @@ const KEYS = [
   "auth_phone_sms_enabled",
   "auth_phone_whatsapp_enabled",
   "share_button_enabled",
+  "share_button_position",
   "share_facebook_url",
   "share_twitter_url",
   "share_instagram_url",
@@ -546,6 +547,21 @@ export function SettingsPanel() {
               Enable
             </label>
           </div>
+          <label className="block">
+            <div className="mb-1 text-xs font-semibold text-muted-foreground">Position on screen</div>
+            <select
+              value={form.share_button_position || "right-middle"}
+              onChange={(e) => setForm({ ...form, share_button_position: e.target.value })}
+              className={inputCls}
+            >
+              <option value="right-middle">Right — middle</option>
+              <option value="right-top">Right — top</option>
+              <option value="right-bottom">Right — bottom</option>
+              <option value="left-middle">Left — middle</option>
+              <option value="left-top">Left — top</option>
+              <option value="left-bottom">Left — bottom</option>
+            </select>
+          </label>
           {[
             { k: "share_facebook_url", label: "Facebook", placeholder: "https://facebook.com/yourpage or leave blank" },
             { k: "share_twitter_url", label: "X / Twitter", placeholder: "https://x.com/yourhandle or leave blank" },

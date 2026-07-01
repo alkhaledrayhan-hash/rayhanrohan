@@ -41,6 +41,7 @@ export type SiteSettings = {
   auth_phone_sms_enabled: string;
   auth_phone_whatsapp_enabled: string;
   share_button_enabled: string;
+  share_button_position: string;
   share_facebook_url: string;
   share_twitter_url: string;
   share_instagram_url: string;
@@ -94,6 +95,7 @@ const DEFAULTS: SiteSettings = {
   auth_phone_sms_enabled: "false",
   auth_phone_whatsapp_enabled: "false",
   share_button_enabled: "false",
+  share_button_position: "right-middle",
   share_facebook_url: "",
   share_twitter_url: "",
   share_instagram_url: "",
