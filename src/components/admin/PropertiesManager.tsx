@@ -341,7 +341,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                       {r.title}
                     </button>
                   </td>
-                  <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
+                  <td className="px-5 py-3"><span className="inline-block whitespace-nowrap rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
                   <td className="px-2 py-3">
                     <span className="admin-cell text-xs text-muted-foreground" title={agentName(r.assigned_agent_id) || "Unassigned"}>
