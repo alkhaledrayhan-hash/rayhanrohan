@@ -23,23 +23,19 @@ export function ShareButton() {
 
   const raw = (k: string) => ((s as any)[k] || "").toString().trim();
   const enc = encodeURIComponent(pageUrl || (typeof window !== "undefined" ? window.location.href : ""));
-  const pick = (custom: string, fallback: string) => (custom ? custom : fallback);
 
   const items: Item[] = [
-    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook,
-      href: pick(raw("share_facebook_url"), `https://www.facebook.com/sharer/sharer.php?u=${enc}`) },
-    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter,
-      href: pick(raw("share_twitter_url"), `https://twitter.com/intent/tweet?url=${enc}`) },
-    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin,
-      href: pick(raw("share_linkedin_url"), `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`) },
-    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle,
-      href: pick(raw("share_whatsapp_url"), `https://wa.me/?text=${enc}`) },
-    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send,
-      href: pick(raw("share_telegram_url"), `https://t.me/share/url?url=${enc}`) },
+    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: raw("share_facebook_url") },
+    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: raw("share_twitter_url") },
+    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: raw("share_linkedin_url") },
+    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: raw("share_whatsapp_url") },
+    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: raw("share_telegram_url") },
     { key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram, href: raw("share_instagram_url") },
     { key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube, href: raw("share_youtube_url") },
     { key: "tiktok", label: "TikTok", color: "#111111", Icon: Music2, href: raw("share_tiktok_url") },
   ].filter((i) => !!i.href);
+  void enc;
+
 
   const position = ((s as any).share_button_position || "right-middle") as
     | "right-middle" | "right-top" | "right-bottom"
