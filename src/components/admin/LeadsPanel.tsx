@@ -269,8 +269,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={isAdmin ? 8 : 6} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 8 : 6} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr
                   key={r.id}
