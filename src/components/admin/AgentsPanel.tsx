@@ -50,6 +50,18 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
     });
   }, [agents, search, status]);
 
+  const qc = useQueryClient();
+  const bulkDelFn = useServerFn(deleteAgent);
+  const bulk = useBulkSelection(filtered);
+  const bulkDelete = async (items: Agent[]) => {
+    let ok = 0;
+    for (const a of items) {
+      try { await bulkDelFn({ data: { id: a.id } }); ok++; } catch (e: any) { toast.error(`${a.email}: ${e.message}`); }
+    }
+    if (ok) toast.success(`Removed ${ok} agent(s)`);
+    qc.invalidateQueries({ queryKey: ["agents"] });
+  };
+
   const headerBar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -121,18 +133,6 @@ export function AgentsPanel({ onAddAgent }: { onAddAgent?: () => void } = {}) {
       </div>
     );
   }
-
-  const qc = useQueryClient();
-  const bulkDelFn = useServerFn(deleteAgent);
-  const bulk = useBulkSelection(filtered);
-  const bulkDelete = async (items: Agent[]) => {
-    let ok = 0;
-    for (const a of items) {
-      try { await bulkDelFn({ data: { id: a.id } }); ok++; } catch (e: any) { toast.error(`${a.email}: ${e.message}`); }
-    }
-    if (ok) toast.success(`Removed ${ok} agent(s)`);
-    qc.invalidateQueries({ queryKey: ["agents"] });
-  };
 
   return (
     <div className="space-y-4">
