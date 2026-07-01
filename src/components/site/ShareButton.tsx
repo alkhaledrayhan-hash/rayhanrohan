@@ -40,40 +40,21 @@ export function ShareButton() {
   // Otherwise fall back to a share-intent URL that shares the current page.
   const raw = (k: string) => ((s as any)[k] || "").toString().trim();
 
+  // Only show icons that the admin explicitly configured with a URL.
+  // Blank field = hidden on the frontend (no auto share-intent fallback).
   const items: Item[] = [
-    {
-      key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook,
-      href: raw("share_facebook_url") || `https://www.facebook.com/sharer/sharer.php?u=${enc(pageUrl)}`,
-    },
-    {
-      key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter,
-      href: raw("share_twitter_url") || `https://twitter.com/intent/tweet?url=${enc(pageUrl)}&text=${enc(title)}`,
-    },
-    {
-      key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin,
-      href: raw("share_linkedin_url") || `https://www.linkedin.com/sharing/share-offsite/?url=${enc(pageUrl)}`,
-    },
-    {
-      key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle,
-      href: raw("share_whatsapp_url") || `https://wa.me/?text=${enc(`${title} ${pageUrl}`)}`,
-    },
-    {
-      key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send,
-      href: raw("share_telegram_url") || `https://t.me/share/url?url=${enc(pageUrl)}&text=${enc(title)}`,
-    },
-    {
-      key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram,
-      href: raw("share_instagram_url"),
-    },
-    {
-      key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube,
-      href: raw("share_youtube_url"),
-    },
-    {
-      key: "tiktok", label: "TikTok", color: "#000000", Icon: Music2,
-      href: raw("share_tiktok_url"),
-    },
+    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: raw("share_facebook_url") },
+    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: raw("share_twitter_url") },
+    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: raw("share_linkedin_url") },
+    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: raw("share_whatsapp_url") },
+    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: raw("share_telegram_url") },
+    { key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram, href: raw("share_instagram_url") },
+    { key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube, href: raw("share_youtube_url") },
+    { key: "tiktok", label: "TikTok", color: "#000000", Icon: Music2, href: raw("share_tiktok_url") },
   ].filter((i) => !!i.href);
+
+  if (items.length === 0 && !pageUrl) return null;
+
 
   const copyLink = async () => {
     try {
