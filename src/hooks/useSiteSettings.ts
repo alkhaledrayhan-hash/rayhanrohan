@@ -95,6 +95,7 @@ const DEFAULTS: SiteSettings = {
   auth_phone_sms_enabled: "false",
   auth_phone_whatsapp_enabled: "false",
   share_button_enabled: "false",
+  share_button_position: "right-middle",
   share_facebook_url: "",
   share_twitter_url: "",
   share_instagram_url: "",
