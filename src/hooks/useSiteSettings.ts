@@ -40,6 +40,16 @@ export type SiteSettings = {
   auth_apple_enabled: string;
   auth_phone_sms_enabled: string;
   auth_phone_whatsapp_enabled: string;
+  share_button_enabled: string;
+  share_button_position: string;
+  share_facebook_url: string;
+  share_twitter_url: string;
+  share_instagram_url: string;
+  share_linkedin_url: string;
+  share_whatsapp_url: string;
+  share_telegram_url: string;
+  share_youtube_url: string;
+  share_tiktok_url: string;
 };
 
 
@@ -84,6 +94,16 @@ const DEFAULTS: SiteSettings = {
   auth_apple_enabled: "false",
   auth_phone_sms_enabled: "false",
   auth_phone_whatsapp_enabled: "false",
+  share_button_enabled: "true",
+  share_button_position: "right-middle",
+  share_facebook_url: "",
+  share_twitter_url: "",
+  share_instagram_url: "",
+  share_linkedin_url: "",
+  share_whatsapp_url: "",
+  share_telegram_url: "",
+  share_youtube_url: "",
+  share_tiktok_url: "",
 };
 
 

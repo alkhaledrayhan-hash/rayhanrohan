@@ -50,6 +50,16 @@ const KEYS = [
   "auth_apple_enabled",
   "auth_phone_sms_enabled",
   "auth_phone_whatsapp_enabled",
+  "share_button_enabled",
+  "share_button_position",
+  "share_facebook_url",
+  "share_twitter_url",
+  "share_instagram_url",
+  "share_linkedin_url",
+  "share_whatsapp_url",
+  "share_telegram_url",
+  "share_youtube_url",
+  "share_tiktok_url",
 ] as const;
 
 
@@ -82,7 +92,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "providers" | "theme" | "menus" | "footer";
+type TabId = "general" | "auth" | "providers" | "share" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -178,6 +188,7 @@ export function SettingsPanel() {
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
         <TabButton active={tab === "providers"} onClick={() => setTab("providers")}>Sign-in providers</TabButton>
+        <TabButton active={tab === "share"} onClick={() => setTab("share")}>Share button</TabButton>
         
 
 
@@ -520,9 +531,61 @@ export function SettingsPanel() {
         </div>
       )}
 
-
-
-
+      {tab === "share" && (
+        <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="font-display text-base font-semibold">Floating share bar</h4>
+              <p className="text-xs text-muted-foreground">Vertical sticky bar. Each icon slides out on hover to reveal the platform label. Leave a URL blank to use the current-page share intent for that platform.</p>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-input bg-white px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={(form.share_button_enabled ?? "true") === "true"}
+                onChange={(e) => setForm({ ...form, share_button_enabled: e.target.checked ? "true" : "false" })}
+                className="h-4 w-4 accent-primary"
+              />
+              Enable
+            </label>
+          </div>
+          <label className="block">
+            <div className="mb-1 text-xs font-semibold text-muted-foreground">Position on screen</div>
+            <select
+              value={form.share_button_position || "right-middle"}
+              onChange={(e) => setForm({ ...form, share_button_position: e.target.value })}
+              className={inputCls}
+            >
+              <option value="right-middle">Right — middle</option>
+              <option value="right-top">Right — top</option>
+              <option value="right-bottom">Right — bottom</option>
+              <option value="left-middle">Left — middle</option>
+              <option value="left-top">Left — top</option>
+              <option value="left-bottom">Left — bottom</option>
+            </select>
+          </label>
+          {[
+            { k: "share_facebook_url", label: "Facebook", placeholder: "https://facebook.com/yourpage or leave blank" },
+            { k: "share_twitter_url", label: "X / Twitter", placeholder: "https://x.com/yourhandle or leave blank" },
+            { k: "share_linkedin_url", label: "LinkedIn", placeholder: "https://linkedin.com/company/you or leave blank" },
+            { k: "share_whatsapp_url", label: "WhatsApp", placeholder: "https://wa.me/97400000000 or leave blank" },
+            { k: "share_telegram_url", label: "Telegram", placeholder: "https://t.me/yourchannel or leave blank" },
+            { k: "share_instagram_url", label: "Instagram", placeholder: "https://instagram.com/yourhandle" },
+            { k: "share_youtube_url", label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
+            { k: "share_tiktok_url", label: "TikTok", placeholder: "https://tiktok.com/@yourhandle" },
+          ].map((r) => (
+            <label key={r.k} className="block">
+              <div className="mb-1 text-xs font-semibold text-muted-foreground">{r.label}</div>
+              <input
+                value={form[r.k] || ""}
+                onChange={(e) => setForm({ ...form, [r.k]: e.target.value })}
+                placeholder={r.placeholder}
+                className={inputCls}
+              />
+            </label>
+          ))}
+          <p className="text-[11px] text-muted-foreground">Facebook / X / LinkedIn / WhatsApp / Telegram fall back to the current-page share intent when blank. Instagram / YouTube / TikTok need a URL — they are hidden if left empty.</p>
+        </div>
+      )}
 
 
       {tab === "auth" && (

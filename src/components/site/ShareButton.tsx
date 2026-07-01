@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Share2, X, Facebook, Twitter, Linkedin, MessageCircle, Send, Link as LinkIcon } from "lucide-react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, MessageCircle, Music2, Send, Link as LinkIcon, Check } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 type Item = {
   key: string;
@@ -11,128 +11,108 @@ type Item = {
 };
 
 export function ShareButton() {
-  const [open, setOpen] = useState(false);
+  const s = useSiteSettings();
   const [pageUrl, setPageUrl] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setPageUrl(window.location.href);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+  if ((s as any).share_button_enabled !== "true") return null;
 
+  const raw = (k: string) => ((s as any)[k] || "").toString().trim();
   const enc = encodeURIComponent(pageUrl || (typeof window !== "undefined" ? window.location.href : ""));
+  const pick = (custom: string, fallback: string) => (custom ? custom : fallback);
 
   const items: Item[] = [
-    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${enc}` },
-    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: `https://twitter.com/intent/tweet?url=${enc}` },
-    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc}` },
-    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: `https://wa.me/?text=${enc}` },
-    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: `https://t.me/share/url?url=${enc}` },
-  ];
+    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook,
+      href: pick(raw("share_facebook_url"), `https://www.facebook.com/sharer/sharer.php?u=${enc}`) },
+    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter,
+      href: pick(raw("share_twitter_url"), `https://twitter.com/intent/tweet?url=${enc}`) },
+    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin,
+      href: pick(raw("share_linkedin_url"), `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`) },
+    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle,
+      href: pick(raw("share_whatsapp_url"), `https://wa.me/?text=${enc}`) },
+    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send,
+      href: pick(raw("share_telegram_url"), `https://t.me/share/url?url=${enc}`) },
+    { key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram, href: raw("share_instagram_url") },
+    { key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube, href: raw("share_youtube_url") },
+    { key: "tiktok", label: "TikTok", color: "#111111", Icon: Music2, href: raw("share_tiktok_url") },
+  ].filter((i) => !!i.href);
+
+  const position = ((s as any).share_button_position || "right-middle") as
+    | "right-middle" | "right-top" | "right-bottom"
+    | "left-middle" | "left-top" | "left-bottom";
+
+  const side: "right" | "left" = position.startsWith("left") ? "left" : "right";
+
+  const containerCls = (() => {
+    const v = position.split("-")[1];
+    const vertical =
+      v === "top" ? "top-24" :
+      v === "bottom" ? "bottom-8" :
+      "top-1/2 -translate-y-1/2";
+    const horizontal = side === "left" ? "left-0" : "right-0";
+    return `${vertical} ${horizontal}`;
+  })();
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(pageUrl);
-      toast.success("Link copied");
-    } catch {
-      toast.error("Copy failed");
-    }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch {}
   };
 
-  const cls = "right-3 top-1/2 -translate-y-1/2";
-  const center = 180;
-  const arcSpan = 160;
-
-  const all = [
-    ...items,
-    { key: "__copy", label: "Copy link", color: "#334155", Icon: LinkIcon, href: "" },
-  ];
-  const total = all.length;
-  const step = total > 1 ? Math.min(arcSpan / (total - 1), 42) : 0;
-  const usedArc = step * (total - 1);
-  const minRadius = total > 1 ? 26 / Math.sin((step * Math.PI) / 360) : 0;
-  const radius = Math.max(96, Math.ceil(minRadius));
-  const start = center - usedArc / 2;
+  // Corner rounding: only on the exposed edge
+  const outerRound = side === "left" ? "rounded-r-2xl" : "rounded-l-2xl";
+  const rowSide = side === "left" ? "flex-row" : "flex-row-reverse";
 
   return (
-    <div ref={ref} className={`fixed z-[70] ${cls}`} aria-live="polite">
-      <div className="relative">
-        {all.map((it, i) => {
-          const deg = start + step * i;
-          const rad = (deg * Math.PI) / 180;
-          const x = Math.cos(rad) * radius;
-          const y = Math.sin(rad) * radius;
-          const isCopy = it.key === "__copy";
-          const style: React.CSSProperties = open
-            ? {
-                transform: `translate(-50%, -50%) translate(${x}px, ${y}px) scale(1)`,
-                opacity: 1,
-                transitionDelay: `${i * 40}ms`,
-                background: isCopy
-                  ? "linear-gradient(135deg, rgba(71,85,105,0.92), rgba(30,41,59,0.82))"
-                  : `linear-gradient(135deg, ${it.color}f2, ${it.color}bf)`,
-                boxShadow: isCopy
-                  ? "0 8px 24px -6px rgba(15,23,42,0.5), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.2)"
-                  : `0 8px 24px -6px ${it.color}66, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.15)`,
-              }
-            : { transform: "translate(-50%, -50%) scale(0.4)", opacity: 0, pointerEvents: "none" };
-          const Icon = it.Icon;
-          const cn = "ios-glass-btn absolute left-1/2 top-1/2 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110";
-          if (isCopy) {
-            return (
-              <button
-                key="copy"
-                type="button"
-                onClick={() => { copyLink(); setOpen(false); }}
-                aria-label="Copy link"
-                title="Copy link"
-                style={style}
-                className={cn}
-              >
-                <LinkIcon className="h-5 w-5" />
-              </button>
-            );
-          }
-          return (
-            <a
-              key={it.key}
-              href={it.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              aria-label={`Share on ${it.label}`}
-              title={it.label}
-              style={style}
-              className={cn}
+    <aside
+      className={`fixed z-[70] ${containerCls} flex flex-col ${outerRound} overflow-hidden shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
+      style={{ background: "rgba(255,255,255,0.06)" }}
+      aria-label="Share this page"
+    >
+      {items.map((it) => {
+        const Icon = it.Icon;
+        return (
+          <a
+            key={it.key}
+            href={it.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Share on ${it.label}`}
+            className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+            style={{ background: it.color }}
+          >
+            <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
+              <Icon className="h-[18px] w-[18px]" />
+            </span>
+            <span
+              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3"
+              style={{ paddingInline: 0 }}
             >
-              <Icon className="h-5 w-5" />
-            </a>
-          );
-        })}
-
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-label={open ? "Close share menu" : "Open share menu"}
-          className={`ios-glass-btn ios-glass-btn--primary relative grid h-12 w-12 place-items-center rounded-full text-white transition-transform hover:scale-110 ${open ? "rotate-90" : ""}`}
-        >
-          {open ? <X className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
-        </button>
-      </div>
-    </div>
+              {it.label}
+            </span>
+          </a>
+        );
+      })}
+      <button
+        type="button"
+        onClick={copyLink}
+        aria-label="Copy link"
+        className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+        style={{ background: "#334155" }}
+      >
+        <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
+          {copied ? <Check className="h-[18px] w-[18px]" /> : <LinkIcon className="h-[18px] w-[18px]" />}
+        </span>
+        <span className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3">
+          {copied ? "Copied!" : "Copy link"}
+        </span>
+      </button>
+    </aside>
   );
 }
