@@ -299,7 +299,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
 
       <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="responsive-table w-full min-w-[720px] text-sm">
+          <table className="responsive-table w-full min-w-[640px] text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
