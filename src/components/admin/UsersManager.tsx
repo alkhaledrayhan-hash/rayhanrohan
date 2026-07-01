@@ -139,16 +139,20 @@ export function UsersManager() {
         </button>
       </div>
 
-      <div className="responsive-table-wrap overflow-x-auto rounded-2xl border border-border bg-white">
-        <table className="responsive-table w-full min-w-[640px] text-sm">
+      <div className="responsive-table-wrap rounded-2xl border border-border bg-white">
+        <table className="responsive-table w-full min-w-[540px] text-sm">
+          <colgroup>
+            <col style={{ width: "40px" }} />
+            <col />
+            <col style={{ width: "110px" }} />
+            <col style={{ width: "210px" }} />
+          </colgroup>
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-3 py-3 w-10">
                 <SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all users" />
               </th>
               <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Phone</th>
               <th className="px-4 py-3">Role</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
@@ -156,14 +160,14 @@ export function UsersManager() {
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                   Loading users…
                 </td>
               </tr>
             )}
             {!isLoading && !filtered.length && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                   <UserCircle2 className="mx-auto mb-2 h-8 w-8" /> No users match your filters.
                 </td>
               </tr>
@@ -185,24 +189,22 @@ export function UsersManager() {
                     <SelectCheckbox checked={bulk.isSelected(u.id)} onChange={() => bulk.toggle(u.id)} ariaLabel="Select user" />
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
                         {u.avatar_url ? (
                           <img src={u.avatar_url} alt="" className="h-full w-full object-cover" />
                         ) : (
                           initials
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium">{u.full_name || "—"}</p>
+                      <div className="min-w-0">
+                        <p className="admin-cell font-medium" title={u.full_name || u.email || undefined}>{u.full_name || "—"}</p>
                         {u.username && (
-                          <p className="text-xs text-muted-foreground">@{u.username}</p>
+                          <p className="admin-cell text-xs text-muted-foreground" title={`@${u.username}`}>@{u.username}</p>
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{u.email || "—"}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{u.phone || "—"}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium capitalize ${roleBadge[u.role]}`}
@@ -212,7 +214,7 @@ export function UsersManager() {
                     </span>
                   </td>
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end gap-1.5">
+                    <div className="admin-actions">
                       <button
                         onClick={() => setViewing(u)}
                         title="View"
@@ -225,7 +227,7 @@ export function UsersManager() {
                         title="Set new password"
                         className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
                       >
-                        <KeyRound className="h-3 w-3" /> Password
+                        <KeyRound className="h-3 w-3" /> Pass
                       </button>
                       <button
                         onClick={() => setEditing(u)}

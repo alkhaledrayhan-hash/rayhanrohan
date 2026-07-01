@@ -138,14 +138,21 @@ export function EmailChangeRequestsPanel() {
         <button onClick={() => bulkRun("reject")} className="rounded-md border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-100">Reject all</button>
       </BulkActionsBar>
 
-      <div className="responsive-table-wrap overflow-x-auto rounded-2xl border border-border bg-white">
-        <table className="responsive-table w-full min-w-[640px] text-sm">
+      <div className="responsive-table-wrap rounded-2xl border border-border bg-white">
+        <table className="responsive-table w-full min-w-[620px] text-sm">
+          <colgroup>
+            <col style={{ width: "40px" }} />
+            <col style={{ width: "150px" }} />
+            <col />
+            <col style={{ width: "110px" }} />
+            <col style={{ width: "130px" }} />
+            <col style={{ width: "126px" }} />
+          </colgroup>
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
               <th className="px-4 py-3">User</th>
               <th className="px-4 py-3">Current → New</th>
-              <th className="px-4 py-3">Reason</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Submitted</th>
               <th className="px-4 py-3 text-right">Actions</th>
@@ -154,14 +161,14 @@ export function EmailChangeRequestsPanel() {
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   Loading…
                 </td>
               </tr>
             )}
             {!isLoading && !rows.length && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   No requests.
                 </td>
               </tr>
@@ -170,18 +177,12 @@ export function EmailChangeRequestsPanel() {
               <tr key={r.id} className="border-t border-border align-top">
                 <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select request" /></td>
                 <td className="px-4 py-3">
-                  <p className="font-medium">{r.profile?.full_name || "—"}</p>
-                  <p className="text-xs text-muted-foreground">{r.profile?.email}</p>
+                  <p className="admin-cell font-medium" title={r.profile?.full_name || undefined}>{r.profile?.full_name || "—"}</p>
+                  <p className="admin-cell text-xs text-muted-foreground" title={r.profile?.email || undefined}>{r.profile?.email}</p>
                 </td>
                 <td className="px-4 py-3 text-xs">
-                  <p className="text-muted-foreground line-through">{r.current_email}</p>
-                  <p className="font-medium">{r.new_email}</p>
-                </td>
-                <td className="px-4 py-3 text-xs text-muted-foreground max-w-xs">
-                  {r.reason || "—"}
-                  {r.admin_note && (
-                    <p className="mt-1 italic">Admin note: {r.admin_note}</p>
-                  )}
+                  <p className="admin-cell text-muted-foreground line-through" title={r.current_email}>{r.current_email}</p>
+                  <p className="admin-cell font-medium" title={r.new_email}>{r.new_email}</p>
                 </td>
                 <td className="px-4 py-3">
                   <span

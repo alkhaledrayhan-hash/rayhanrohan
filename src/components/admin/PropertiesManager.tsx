@@ -297,14 +297,23 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         )}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+      <div className="responsive-table-wrap rounded-2xl border border-border bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="responsive-table w-full min-w-[640px] text-sm">
+          <table className="responsive-table w-full min-w-[720px] text-sm">
+            <colgroup>
+              <col style={{ width: "40px" }} />
+              <col />
+              <col style={{ width: "82px" }} />
+              <col style={{ width: "118px" }} />
+              <col style={{ width: "150px" }} />
+              <col style={{ width: "112px" }} />
+              <col style={{ width: "102px" }} />
+              <col style={{ width: "92px" }} />
+            </colgroup>
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
                 <th className="px-5 py-3">Property</th>
-                <th className="px-5 py-3">Location</th>
                 <th className="px-5 py-3">Type</th>
                 <th className="px-5 py-3">Price</th>
                 <th className="px-5 py-3">Agent</th>
@@ -314,8 +323,8 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select property" /></td>
@@ -323,12 +332,12 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     <button
                       type="button"
                       onClick={() => setViewing(r)}
-                      className="text-left text-foreground hover:text-primary hover:underline"
+                      className="admin-cell text-left text-foreground hover:text-primary hover:underline"
+                      title={r.title}
                     >
                       {r.title}
                     </button>
                   </td>
-                  <td className="px-5 py-3 text-muted-foreground">{r.location}</td>
                   <td className="px-5 py-3"><span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{r.status}</span></td>
                   <td className="px-5 py-3">QAR {Number(r.price).toLocaleString()}</td>
                   <td className="px-5 py-3">
@@ -385,7 +394,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
                     </button>
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                    <div className="admin-actions">
                       <button onClick={() => setViewing(r)} title="View" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Eye className="h-4 w-4" /></button>
                       <button onClick={() => setEditing(r)} title="Edit" className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"><Pencil className="h-4 w-4" /></button>
                       {isAdmin && (

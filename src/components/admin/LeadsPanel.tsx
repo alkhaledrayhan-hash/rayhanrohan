@@ -233,19 +233,18 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
         </BulkActionsBar>
       )}
 
-      <div className="responsive-table-wrap overflow-hidden rounded-2xl border border-border bg-white shadow-sm md:overflow-visible">
+      <div className="responsive-table-wrap responsive-cards-wrap rounded-2xl border border-border bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="responsive-table responsive-cards w-full min-w-[820px] text-sm md:min-w-0 md:table-fixed">
+          <table className="responsive-table responsive-cards w-full min-w-[680px] text-sm md:min-w-0">
             <colgroup className="hidden md:table-column-group">
               {isAdmin && <col style={{ width: "40px" }} />}
-              <col style={{ width: "110px" }} />
+              <col style={{ width: "96px" }} />
               <col style={{ width: "150px" }} />
-              <col style={{ width: "210px" }} />
-              <col style={{ width: "100px" }} />
-              <col style={{ width: "180px" }} />
-              <col style={{ width: "130px" }} />
+              <col style={{ width: "96px" }} />
+              <col style={{ width: "170px" }} />
+              <col style={{ width: "120px" }} />
               <col />
-              {isAdmin && <col style={{ width: "90px" }} />}
+              {isAdmin && <col style={{ width: "78px" }} />}
             </colgroup>
 
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
@@ -262,7 +261,6 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                 )}
                 <th className="px-4 py-3">When</th>
                 <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Contact</th>
                 <th className="px-4 py-3">Source</th>
                 <th className="px-4 py-3">Property</th>
                 <th className="px-4 py-3">Agent</th>
@@ -271,8 +269,8 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 9 : 7} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
+              {isLoading && <tr><td colSpan={isAdmin ? 8 : 6} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={isAdmin ? 8 : 6} className="px-4 py-10 text-center text-muted-foreground">No leads yet.</td></tr>}
               {filtered.map((r) => (
                 <tr
                   key={r.id}
@@ -288,21 +286,20 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
                     <div className="font-medium text-foreground/80">{formatDate(r.created_at)}</div>
                     <div className="text-[11px] text-muted-foreground">{formatTime(r.created_at)}</div>
                   </td>
-                  <td data-label="Name" className="px-4 py-3 font-medium md:break-words">{r.name}</td>
-                  <td data-label="Contact" className="px-4 py-3 text-xs md:break-words" onClick={(e) => e.stopPropagation()}>
-                    <a href={`mailto:${r.email}`} className="block break-all text-primary hover:underline">{r.email}</a>
-                    {r.phone && <a href={`tel:${r.phone}`} className="block text-muted-foreground">{r.phone}</a>}
+                  <td data-label="Name" className="px-4 py-3 font-medium">
+                    <span className="admin-cell" title={r.name}>{r.name}</span>
+                    <span className="admin-cell text-[11px] text-muted-foreground" title={r.email}>{r.email}</span>
                   </td>
                   <td data-label="Source" className="px-4 py-3"><span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{r.source}</span></td>
-                  <td data-label="Property" className="px-4 py-3 text-xs text-muted-foreground md:truncate" title={r.property_title || undefined}>{r.property_title || "—"}</td>
-                  <td data-label="Agent" className="px-4 py-3 text-xs md:break-words">{agentName(r.agent_id)}</td>
+                  <td data-label="Property" className="px-4 py-3 text-xs text-muted-foreground"><span className="admin-cell" title={r.property_title || undefined}>{r.property_title || "—"}</span></td>
+                  <td data-label="Agent" className="px-4 py-3 text-xs"><span className="admin-cell" title={agentName(r.agent_id)}>{agentName(r.agent_id)}</span></td>
                   <td data-label="Message" className="px-4 py-3">
-                    {r.subject && <div className="truncate text-xs font-semibold text-foreground/70">{r.subject}</div>}
-                    <p className="line-clamp-2 text-xs text-muted-foreground">{r.message}</p>
+                    {r.subject && <div className="admin-cell text-xs font-semibold text-foreground/70" title={r.subject}>{r.subject}</div>}
+                    <p className="admin-cell-2 text-xs text-muted-foreground" title={r.message}>{r.message}</p>
                   </td>
                   {isAdmin && (
                     <td data-label="Actions" className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                      <div className="inline-flex items-center gap-1">
+                      <div className="admin-actions">
                         <button
                           onClick={() => setViewing(r)}
                           className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
