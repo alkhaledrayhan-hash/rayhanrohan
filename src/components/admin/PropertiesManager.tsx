@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, CheckCircle2, XCircle, Trash2, Pencil, Upload, X, ImagePlus, Clock, Eye, MapPin, Bed, Bath, Maximize2, Calendar, BadgeCheck, Tag } from "lucide-react";
 import { fileToDataUrl } from "@/lib/image-upload";
+import { resolvePropertyImage } from "@/lib/properties";
 import { LocationAutocomplete } from "@/components/admin/LocationAutocomplete";
 import { useBulkSelection } from "@/hooks/useBulkSelection";
 import { BulkActionsBar, SelectCheckbox } from "@/components/admin/BulkActionsBar";
@@ -383,7 +384,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative">
               {viewing.image ? (
-                <img src={viewing.image} alt={viewing.title} className="aspect-[16/9] w-full object-cover" />
+                <img src={resolvePropertyImage(viewing.image, viewing.slug)} alt={viewing.title} className="aspect-[16/9] w-full object-cover" />
               ) : (
                 <div className="aspect-[16/9] w-full bg-muted" />
               )}
@@ -448,7 +449,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               {viewing.gallery?.length > 0 && (
                 <div className="mt-3 grid grid-cols-4 gap-1.5">
                   {viewing.gallery.slice(0, 4).map((g, i) => (
-                    <img key={i} src={g} alt="" className="aspect-square w-full rounded-md object-cover" />
+                    <img key={i} src={resolvePropertyImage(g, viewing.slug)} alt="" className="aspect-square w-full rounded-md object-cover" />
                   ))}
                 </div>
               )}
@@ -609,7 +610,7 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
       >
         {value ? (
           <>
-            <img src={value} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={resolvePropertyImage(value)} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onChange(""); }}
@@ -654,7 +655,7 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
       <div className="grid grid-cols-4 gap-2">
         {(value || []).map((src, i) => (
           <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-border">
-            <img src={src} alt="" className="h-full w-full object-cover" />
+            <img src={resolvePropertyImage(src)} alt="" className="h-full w-full object-cover" />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, idx) => idx !== i))}
