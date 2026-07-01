@@ -302,6 +302,8 @@ function RootComponent() {
       <Outlet />
       <ChatWidget />
       <BackToTop />
+      <ShareButton />
+
       <PopupRenderer />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
