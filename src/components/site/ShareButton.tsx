@@ -58,7 +58,7 @@ export function ShareButton() {
     } catch {}
   };
 
-  const outerRound = side === "left" ? "rounded-r-2xl" : "rounded-l-2xl";
+  void side;
   const rowSide = side === "left" ? "flex-row" : "flex-row-reverse";
   const roundOf = (idx: number, total: number) => {
     const isFirst = idx === 0;
