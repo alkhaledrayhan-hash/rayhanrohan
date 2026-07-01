@@ -63,10 +63,11 @@ export function ShareButton() {
 
   return (
     <aside
-      className={`fixed z-[70] ${containerCls} flex flex-col ${outerRound} overflow-hidden shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
+      className={`fixed z-[70] ${containerCls} flex flex-col ${outerRound} shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
       style={{ background: "rgba(255,255,255,0.06)" }}
       aria-label="Share this page"
     >
+
       {items.map((it) => {
         const Icon = it.Icon;
         return (
