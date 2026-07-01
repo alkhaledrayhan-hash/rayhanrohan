@@ -50,7 +50,17 @@ const KEYS = [
   "auth_apple_enabled",
   "auth_phone_sms_enabled",
   "auth_phone_whatsapp_enabled",
+  "share_button_enabled",
+  "share_facebook_url",
+  "share_twitter_url",
+  "share_instagram_url",
+  "share_linkedin_url",
+  "share_whatsapp_url",
+  "share_telegram_url",
+  "share_youtube_url",
+  "share_tiktok_url",
 ] as const;
+
 
 
 const CURRENCIES = [
@@ -81,7 +91,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "providers" | "theme" | "menus" | "footer";
+type TabId = "general" | "auth" | "providers" | "share" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
@@ -177,6 +187,8 @@ export function SettingsPanel() {
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
         <TabButton active={tab === "providers"} onClick={() => setTab("providers")}>Sign-in providers</TabButton>
+        <TabButton active={tab === "share"} onClick={() => setTab("share")}>Share button</TabButton>
+
 
         <TabButton active={tab === "theme"} onClick={() => setTab("theme")}>Theme & style</TabButton>
         <TabButton active={tab === "menus"} onClick={() => setTab("menus")}>Menu controller</TabButton>
@@ -516,6 +528,49 @@ export function SettingsPanel() {
           })}
         </div>
       )}
+
+      {tab === "share" && (
+        <div className="space-y-4 rounded-xl border border-border bg-secondary/30 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h4 className="font-display text-base font-semibold">Floating share button</h4>
+              <p className="text-xs text-muted-foreground">Fixed on the right edge of every page. Icons fan out when tapped. Leave a link empty to use the platform's default share intent for the current page.</p>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-input bg-white px-3 py-2 text-sm">
+              <input
+                type="checkbox"
+                checked={(form.share_button_enabled ?? "false") === "true"}
+                onChange={(e) => setForm({ ...form, share_button_enabled: e.target.checked ? "true" : "false" })}
+                className="h-4 w-4 accent-primary"
+              />
+              Enable
+            </label>
+          </div>
+          {[
+            { k: "share_facebook_url", label: "Facebook", placeholder: "https://facebook.com/yourpage or leave blank" },
+            { k: "share_twitter_url", label: "X / Twitter", placeholder: "https://x.com/yourhandle or leave blank" },
+            { k: "share_instagram_url", label: "Instagram", placeholder: "https://instagram.com/yourhandle" },
+            { k: "share_linkedin_url", label: "LinkedIn", placeholder: "https://linkedin.com/company/you" },
+            { k: "share_whatsapp_url", label: "WhatsApp", placeholder: "https://wa.me/97400000000 or leave blank" },
+            { k: "share_telegram_url", label: "Telegram", placeholder: "https://t.me/yourchannel or leave blank" },
+            { k: "share_youtube_url", label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
+            { k: "share_tiktok_url", label: "TikTok", placeholder: "https://tiktok.com/@yourhandle" },
+          ].map((r) => (
+            <label key={r.k} className="block">
+              <div className="mb-1 text-xs font-semibold text-muted-foreground">{r.label}</div>
+              <input
+                value={form[r.k] || ""}
+                onChange={(e) => setForm({ ...form, [r.k]: e.target.value })}
+                placeholder={r.placeholder}
+                className={inputCls}
+              />
+            </label>
+          ))}
+          <p className="text-[11px] text-muted-foreground">Icons with no link and no share intent (Instagram, YouTube, TikTok) will be hidden.</p>
+        </div>
+      )}
+
+
 
 
 
