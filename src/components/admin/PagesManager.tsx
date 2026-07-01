@@ -203,6 +203,8 @@ export function PagesManager({
       toast.success("Section saved");
       qc.invalidateQueries({ queryKey: ["page-sections"] });
       qc.invalidateQueries({ queryKey: ["home-sections"] });
+      qc.invalidateQueries({ queryKey: ["section-order"] });
+      qc.invalidateQueries({ queryKey: ["hidden-sections"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -215,6 +217,8 @@ export function PagesManager({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["page-sections"] });
       qc.invalidateQueries({ queryKey: ["home-sections"] });
+      qc.invalidateQueries({ queryKey: ["section-order"] });
+      qc.invalidateQueries({ queryKey: ["hidden-sections"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -233,6 +237,8 @@ export function PagesManager({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["page-sections"] });
       qc.invalidateQueries({ queryKey: ["home-sections"] });
+      qc.invalidateQueries({ queryKey: ["section-order"] });
+      qc.invalidateQueries({ queryKey: ["hidden-sections"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -249,6 +255,8 @@ export function PagesManager({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["page-sections"] });
       qc.invalidateQueries({ queryKey: ["home-sections"] });
+      qc.invalidateQueries({ queryKey: ["section-order"] });
+      qc.invalidateQueries({ queryKey: ["hidden-sections"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
