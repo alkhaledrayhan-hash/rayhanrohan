@@ -58,16 +58,28 @@ export function ShareButton() {
     } catch {}
   };
 
-  const outerRound = side === "left" ? "rounded-r-2xl" : "rounded-l-2xl";
+  void side;
   const rowSide = side === "left" ? "flex-row" : "flex-row-reverse";
+  const roundOf = (idx: number, total: number) => {
+    const isFirst = idx === 0;
+    const isLast = idx === total - 1;
+    if (side === "left") {
+      return `${isFirst ? "rounded-tr-2xl" : ""} ${isLast ? "rounded-br-2xl" : ""}`;
+    }
+    return `${isFirst ? "rounded-tl-2xl" : ""} ${isLast ? "rounded-bl-2xl" : ""}`;
+  };
+  const totalRows = items.length + 1;
 
   return (
     <aside
-      className={`fixed z-[70] ${containerCls} flex flex-col ${outerRound} overflow-hidden shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
+      className={`fixed z-[70] ${containerCls} flex flex-col shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
       style={{ background: "rgba(255,255,255,0.06)" }}
       aria-label="Share this page"
     >
-      {items.map((it) => {
+
+
+
+      {items.map((it, idx) => {
         const Icon = it.Icon;
         return (
           <a
@@ -76,14 +88,14 @@ export function ShareButton() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Share on ${it.label}`}
-            className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+            className={`group relative flex ${rowSide} items-center h-11 text-white ${roundOf(idx, totalRows)}`}
             style={{ background: it.color }}
           >
             <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
               <Icon className="h-[18px] w-[18px]" />
             </span>
             <span
-              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3"
+              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[180px] group-hover:opacity-100 group-hover:px-3"
               style={{ paddingInline: 0 }}
             >
               {it.label}
@@ -95,16 +107,17 @@ export function ShareButton() {
         type="button"
         onClick={copyLink}
         aria-label="Copy link"
-        className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+        className={`group relative flex ${rowSide} items-center h-11 text-white ${roundOf(totalRows - 1, totalRows)}`}
         style={{ background: "#334155" }}
       >
         <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
           {copied ? <Check className="h-[18px] w-[18px]" /> : <LinkIcon className="h-[18px] w-[18px]" />}
         </span>
-        <span className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3">
+        <span className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[180px] group-hover:opacity-100 group-hover:px-3">
           {copied ? "Copied!" : "Copy link"}
         </span>
       </button>
+
     </aside>
   );
 }
