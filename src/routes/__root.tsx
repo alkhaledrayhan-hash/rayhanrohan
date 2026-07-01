@@ -302,7 +302,9 @@ function RootComponent() {
       <Outlet />
       <ChatWidget />
       <BackToTop />
-      <ShareButton />
+      {!pathname.startsWith("/admin") && !pathname.startsWith("/dashboard") && !pathname.startsWith("/auth") && (
+        <ShareButton />
+      )}
 
       <PopupRenderer />
       <Toaster position="top-center" richColors />
