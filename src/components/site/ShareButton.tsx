@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Share2, X, Facebook, Twitter, Instagram, Linkedin, Youtube, MessageCircle, Music2, Send, Link as LinkIcon } from "lucide-react";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Share2, X, Facebook, Twitter, Linkedin, MessageCircle, Send, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 
 type Item = {
@@ -12,9 +11,13 @@ type Item = {
 };
 
 export function ShareButton() {
-  const s = useSiteSettings();
   const [open, setOpen] = useState(false);
+  const [pageUrl, setPageUrl] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPageUrl(window.location.href);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -30,26 +33,15 @@ export function ShareButton() {
     };
   }, [open]);
 
-  if ((s as any).share_button_enabled !== "true") return null;
+  const enc = encodeURIComponent(pageUrl || (typeof window !== "undefined" ? window.location.href : ""));
 
-  const pageUrl = typeof window !== "undefined" ? window.location.href : (s.site_url || "");
-  const raw = (k: string) => ((s as any)[k] || "").toString().trim();
-
-
-  // Only show icons that the admin explicitly configured with a URL.
-  // Blank field = hidden on the frontend (no auto share-intent fallback).
   const items: Item[] = [
-    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: raw("share_facebook_url") },
-    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: raw("share_twitter_url") },
-    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: raw("share_linkedin_url") },
-    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: raw("share_whatsapp_url") },
-    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: raw("share_telegram_url") },
-    { key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram, href: raw("share_instagram_url") },
-    { key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube, href: raw("share_youtube_url") },
-    { key: "tiktok", label: "TikTok", color: "#000000", Icon: Music2, href: raw("share_tiktok_url") },
-  ].filter((i) => !!i.href);
-
-  if (items.length === 0 && !pageUrl) return null;
+    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${enc}` },
+    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: `https://twitter.com/intent/tweet?url=${enc}` },
+    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc}` },
+    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: `https://wa.me/?text=${enc}` },
+    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: `https://t.me/share/url?url=${enc}` },
+  ];
 
   const copyLink = async () => {
     try {
@@ -60,30 +52,17 @@ export function ShareButton() {
     }
   };
 
-  const position = ((s as any).share_button_position || "right-middle") as
-    | "right-middle" | "right-top" | "right-bottom"
-    | "left-middle" | "left-top" | "left-bottom";
-
-  // Anchor container placement + arc center (degrees, standard math: 0=right, 90=down)
-  const posMap: Record<typeof position, { cls: string; center: number; arcSpan: number }> = {
-    "right-middle": { cls: "right-3 top-1/2 -translate-y-1/2", center: 180, arcSpan: 160 },
-    "right-top":    { cls: "right-3 top-16",                    center: 135, arcSpan: 140 },
-    "right-bottom": { cls: "right-3 bottom-6",                  center: 225, arcSpan: 140 },
-    "left-middle":  { cls: "left-3 top-1/2 -translate-y-1/2",   center: 0,   arcSpan: 160 },
-    "left-top":     { cls: "left-3 top-16",                     center: 45,  arcSpan: 140 },
-    "left-bottom":  { cls: "left-3 bottom-6",                   center: -45, arcSpan: 140 },
-  } as any;
-  const { cls, center, arcSpan } = posMap[position];
+  const cls = "right-3 top-1/2 -translate-y-1/2";
+  const center = 180;
+  const arcSpan = 160;
 
   const all = [
     ...items,
     { key: "__copy", label: "Copy link", color: "#334155", Icon: LinkIcon, href: "" },
   ];
   const total = all.length;
-  // Angular step per item — enough to avoid 44px icon overlap on the arc
   const step = total > 1 ? Math.min(arcSpan / (total - 1), 42) : 0;
   const usedArc = step * (total - 1);
-  // Ensure chord between adjacent icon centers >= 52px so 44px glass buttons don't touch
   const minRadius = total > 1 ? 26 / Math.sin((step * Math.PI) / 360) : 0;
   const radius = Math.max(96, Math.ceil(minRadius));
   const start = center - usedArc / 2;
@@ -144,7 +123,6 @@ export function ShareButton() {
           );
         })}
 
-        {/* Main toggle */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
