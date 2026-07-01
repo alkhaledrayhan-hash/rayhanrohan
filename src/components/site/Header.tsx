@@ -167,7 +167,7 @@ export function Header() {
           </SheetTrigger>
           <SheetContent
             side="right"
-            className="w-[90vw] max-w-sm border-l border-border/60 bg-gradient-to-b from-background via-background to-secondary/30 p-0"
+            className="w-[90vw] max-w-sm border-l border-border/60 bg-white text-slate-900 p-0"
           >
             <div className="flex h-full flex-col">
               {/* Brand header */}
