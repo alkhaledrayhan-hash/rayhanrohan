@@ -428,14 +428,18 @@ a[href*="lovable.dev/?via=badge"],
 /* Desktop/tablet: prevent long strings (emails, URLs, titles) from stretching
    admin tables and breaking their layout. Cells wrap gracefully instead. */
 @media (min-width: 768px) {
-  .responsive-table th,
   .responsive-table td,
-  .responsive-cards th,
   .responsive-cards td {
     overflow-wrap: anywhere;
     word-break: break-word;
     vertical-align: top;
   }
+  .responsive-table td p,
+  .responsive-cards td p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   .responsive-table td p,
   .responsive-cards td p {
     overflow-wrap: anywhere;
