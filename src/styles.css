@@ -314,12 +314,20 @@ a[href*="lovable.dev/?via=badge"],
   pointer-events: none !important;
 }
 
-/* Admin tables: collapse into stacked cards on small screens (no horizontal scroll). */
+/* Admin tables: always allow horizontal scroll on small screens so cells
+   don't break or clip. Card-mode collapse is opt-in via `.responsive-cards`. */
 .responsive-table-wrap {
   -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
 }
+.responsive-table-wrap::-webkit-scrollbar { height: 8px; }
+.responsive-table-wrap::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--primary) 30%, transparent);
+  border-radius: 4px;
+}
+
 @media (max-width: 767px) {
-  .responsive-table-wrap,
+  /* Only tables explicitly opted into card mode collapse into stacked cards. */
   .responsive-cards-wrap {
     overflow: visible !important;
     border: 0 !important;
@@ -327,10 +335,6 @@ a[href*="lovable.dev/?via=badge"],
     padding: 0 !important;
     box-shadow: none !important;
   }
-  .responsive-table-wrap > div {
-    overflow: visible !important;
-  }
-  .responsive-table,
   .responsive-cards {
     display: block !important;
     min-width: 0 !important;
@@ -338,20 +342,14 @@ a[href*="lovable.dev/?via=badge"],
     border-collapse: separate;
     table-layout: auto !important;
   }
-  .responsive-table colgroup,
   .responsive-cards colgroup { display: none !important; }
-  .responsive-table thead,
   .responsive-cards thead { display: none !important; }
-  .responsive-table tbody,
   .responsive-cards tbody,
-  .responsive-table tr,
   .responsive-cards tr,
-  .responsive-table td,
   .responsive-cards td {
     display: block !important;
     width: 100% !important;
   }
-  .responsive-table tr,
   .responsive-cards tr {
     border: 1px solid var(--border);
     border-radius: 0.75rem;
@@ -359,7 +357,6 @@ a[href*="lovable.dev/?via=badge"],
     padding: 0.5rem 0.25rem;
     background: white;
   }
-  .responsive-table td,
   .responsive-cards td {
     padding: 0.375rem 0.625rem !important;
     text-align: left !important;
@@ -367,7 +364,6 @@ a[href*="lovable.dev/?via=badge"],
     max-width: none !important;
     white-space: normal !important;
   }
-  .responsive-table td[data-label]::before,
   .responsive-cards td[data-label]::before {
     content: attr(data-label);
     display: block;
@@ -379,6 +375,7 @@ a[href*="lovable.dev/?via=badge"],
     margin-bottom: 0.15rem;
   }
 }
+
 
 /* Desktop/tablet: prevent long strings (emails, URLs, titles) from stretching
    admin tables and breaking their layout. Cells wrap gracefully instead. */
