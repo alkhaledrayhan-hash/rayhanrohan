@@ -79,7 +79,7 @@ export function ShareButton() {
 
 
 
-      {items.map((it) => {
+      {items.map((it, idx) => {
         const Icon = it.Icon;
         return (
           <a
@@ -88,14 +88,14 @@ export function ShareButton() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Share on ${it.label}`}
-            className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+            className={`group relative flex ${rowSide} items-center h-11 text-white ${roundOf(idx, totalRows)}`}
             style={{ background: it.color }}
           >
             <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
               <Icon className="h-[18px] w-[18px]" />
             </span>
             <span
-              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3"
+              className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[180px] group-hover:opacity-100 group-hover:px-3"
               style={{ paddingInline: 0 }}
             >
               {it.label}
@@ -107,16 +107,17 @@ export function ShareButton() {
         type="button"
         onClick={copyLink}
         aria-label="Copy link"
-        className={`group relative flex ${rowSide} items-center h-11 text-white overflow-hidden`}
+        className={`group relative flex ${rowSide} items-center h-11 text-white ${roundOf(totalRows - 1, totalRows)}`}
         style={{ background: "#334155" }}
       >
         <span className="grid w-11 h-11 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
           {copied ? <Check className="h-[18px] w-[18px]" /> : <LinkIcon className="h-[18px] w-[18px]" />}
         </span>
-        <span className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[160px] group-hover:opacity-100 group-hover:px-3">
+        <span className="max-w-0 opacity-0 whitespace-nowrap text-[13px] font-medium tracking-wide transition-[max-width,opacity,padding] duration-300 ease-out group-hover:max-w-[180px] group-hover:opacity-100 group-hover:px-3">
           {copied ? "Copied!" : "Copy link"}
         </span>
       </button>
+
     </aside>
   );
 }
