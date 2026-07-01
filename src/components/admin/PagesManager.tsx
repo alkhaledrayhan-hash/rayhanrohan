@@ -79,9 +79,8 @@ export function PagesManager({
   });
 
   // Virtual sections (not stored as their own rows) that get their own editors.
-  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = [
-    { section_key: "ticker", label: "News ticker", icon: Megaphone, sort_order: 2 },
-  ];
+  // News ticker is managed in Settings → News Ticker; no virtual home entry.
+  const VIRTUAL_HOME: Array<{ section_key: string; label: string; icon: typeof Home; sort_order: number }> = [];
   // For the About page we expose the parts of the single `content` row as
   // separate sidebar entries — each routes back into AboutContentEditor with `only=`.
   const aboutContentRow = sections.find((s) => s.section_key === "content");
