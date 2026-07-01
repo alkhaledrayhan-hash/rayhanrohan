@@ -33,47 +33,24 @@ export function ShareButton() {
   if ((s as any).share_button_enabled !== "true") return null;
 
   const pageUrl = typeof window !== "undefined" ? window.location.href : (s.site_url || "");
-  const title = s.site_title || "";
-  const enc = encodeURIComponent;
-
-  // If admin provided a direct profile URL for a platform, use it.
-  // Otherwise fall back to a share-intent URL that shares the current page.
   const raw = (k: string) => ((s as any)[k] || "").toString().trim();
 
+
+  // Only show icons that the admin explicitly configured with a URL.
+  // Blank field = hidden on the frontend (no auto share-intent fallback).
   const items: Item[] = [
-    {
-      key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook,
-      href: raw("share_facebook_url") || `https://www.facebook.com/sharer/sharer.php?u=${enc(pageUrl)}`,
-    },
-    {
-      key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter,
-      href: raw("share_twitter_url") || `https://twitter.com/intent/tweet?url=${enc(pageUrl)}&text=${enc(title)}`,
-    },
-    {
-      key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin,
-      href: raw("share_linkedin_url") || `https://www.linkedin.com/sharing/share-offsite/?url=${enc(pageUrl)}`,
-    },
-    {
-      key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle,
-      href: raw("share_whatsapp_url") || `https://wa.me/?text=${enc(`${title} ${pageUrl}`)}`,
-    },
-    {
-      key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send,
-      href: raw("share_telegram_url") || `https://t.me/share/url?url=${enc(pageUrl)}&text=${enc(title)}`,
-    },
-    {
-      key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram,
-      href: raw("share_instagram_url"),
-    },
-    {
-      key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube,
-      href: raw("share_youtube_url"),
-    },
-    {
-      key: "tiktok", label: "TikTok", color: "#000000", Icon: Music2,
-      href: raw("share_tiktok_url"),
-    },
+    { key: "facebook", label: "Facebook", color: "#1877F2", Icon: Facebook, href: raw("share_facebook_url") },
+    { key: "twitter", label: "X / Twitter", color: "#0f1419", Icon: Twitter, href: raw("share_twitter_url") },
+    { key: "linkedin", label: "LinkedIn", color: "#0A66C2", Icon: Linkedin, href: raw("share_linkedin_url") },
+    { key: "whatsapp", label: "WhatsApp", color: "#25D366", Icon: MessageCircle, href: raw("share_whatsapp_url") },
+    { key: "telegram", label: "Telegram", color: "#229ED9", Icon: Send, href: raw("share_telegram_url") },
+    { key: "instagram", label: "Instagram", color: "#E4405F", Icon: Instagram, href: raw("share_instagram_url") },
+    { key: "youtube", label: "YouTube", color: "#FF0000", Icon: Youtube, href: raw("share_youtube_url") },
+    { key: "tiktok", label: "TikTok", color: "#000000", Icon: Music2, href: raw("share_tiktok_url") },
   ].filter((i) => !!i.href);
+
+  if (items.length === 0 && !pageUrl) return null;
+
 
   const copyLink = async () => {
     try {
@@ -104,7 +81,13 @@ export function ShareButton() {
           const x = Math.cos(rad) * radius;
           const y = Math.sin(rad) * radius;
           const style: React.CSSProperties = open
-            ? { transform: `translate(${x}px, ${y}px) scale(1)`, opacity: 1, transitionDelay: `${i * 40}ms` }
+            ? {
+                transform: `translate(${x}px, ${y}px) scale(1)`,
+                opacity: 1,
+                transitionDelay: `${i * 40}ms`,
+                background: `linear-gradient(135deg, ${it.color}f2, ${it.color}bf)`,
+                boxShadow: `0 8px 24px -6px ${it.color}66, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.15)`,
+              }
             : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
           const Icon = it.Icon;
           return (
@@ -113,11 +96,13 @@ export function ShareButton() {
               href={it.href}
               target="_blank"
               rel="noopener noreferrer"
+
               onClick={() => setOpen(false)}
               aria-label={`Share on ${it.label}`}
               title={it.label}
-              style={{ ...style, backgroundColor: it.color }}
-              className="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:scale-110"
+              style={style}
+              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
+
             >
               <Icon className="h-5 w-5" />
             </a>
@@ -137,7 +122,13 @@ export function ShareButton() {
           const x = Math.cos(rad) * radius;
           const y = Math.sin(rad) * radius;
           const style: React.CSSProperties = open
-            ? { transform: `translate(${x}px, ${y}px) scale(1)`, opacity: 1, transitionDelay: `${i * 40}ms` }
+            ? {
+                transform: `translate(${x}px, ${y}px) scale(1)`,
+                opacity: 1,
+                transitionDelay: `${i * 40}ms`,
+                background: "linear-gradient(135deg, rgba(71,85,105,0.92), rgba(30,41,59,0.82))",
+                boxShadow: "0 8px 24px -6px rgba(15,23,42,0.5), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.2)",
+              }
             : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
           return (
             <button
@@ -145,8 +136,9 @@ export function ShareButton() {
               onClick={() => { copyLink(); setOpen(false); }}
               aria-label="Copy link"
               title="Copy link"
-              style={{ ...style, backgroundColor: "#334155" }}
-              className="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:scale-110"
+              style={style}
+              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
+
             >
               <LinkIcon className="h-5 w-5" />
             </button>
@@ -159,7 +151,7 @@ export function ShareButton() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? "Close share menu" : "Open share menu"}
-          className={`relative grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-xl ring-1 ring-primary/40 transition-transform hover:scale-110 ${open ? "rotate-90" : ""}`}
+          className={`ios-glass-btn ios-glass-btn--primary relative grid h-12 w-12 place-items-center rounded-full text-white transition-transform hover:scale-110 ${open ? "rotate-90" : ""}`}
         >
           {open ? <X className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
         </button>
