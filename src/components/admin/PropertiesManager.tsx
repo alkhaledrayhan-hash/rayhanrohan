@@ -299,10 +299,10 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
 
       <div className="responsive-table-wrap rounded-2xl border border-border bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="responsive-table w-full min-w-[720px] text-sm">
+          <table className="responsive-table w-full min-w-[820px] text-sm" style={{ tableLayout: "fixed" }}>
             <colgroup>
               <col style={{ width: "34px" }} />
-              <col />
+              <col style={{ width: "180px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "110px" }} />
