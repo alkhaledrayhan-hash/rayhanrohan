@@ -81,7 +81,13 @@ export function ShareButton() {
           const x = Math.cos(rad) * radius;
           const y = Math.sin(rad) * radius;
           const style: React.CSSProperties = open
-            ? { transform: `translate(${x}px, ${y}px) scale(1)`, opacity: 1, transitionDelay: `${i * 40}ms` }
+            ? {
+                transform: `translate(${x}px, ${y}px) scale(1)`,
+                opacity: 1,
+                transitionDelay: `${i * 40}ms`,
+                background: `linear-gradient(135deg, ${it.color}f2, ${it.color}bf)`,
+                boxShadow: `0 8px 24px -6px ${it.color}66, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1px 0 rgba(0,0,0,0.15)`,
+              }
             : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
           const Icon = it.Icon;
           return (
@@ -90,6 +96,7 @@ export function ShareButton() {
               href={it.href}
               target="_blank"
               rel="noopener noreferrer"
+
               onClick={() => setOpen(false)}
               aria-label={`Share on ${it.label}`}
               title={it.label}
