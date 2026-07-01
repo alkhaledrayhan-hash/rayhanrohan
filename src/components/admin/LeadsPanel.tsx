@@ -235,7 +235,7 @@ export function LeadsPanel({ isAdmin }: { isAdmin: boolean }) {
 
       <div className="responsive-table-wrap overflow-hidden rounded-2xl border border-border bg-white shadow-sm md:overflow-visible">
         <div className="overflow-x-auto">
-          <table className="responsive-table responsive-cards w-full min-w-[960px] text-sm md:min-w-0 md:table-fixed">
+          <table className="responsive-table responsive-cards w-full min-w-[820px] text-sm md:min-w-0 md:table-fixed">
             <colgroup className="hidden md:table-column-group">
               {isAdmin && <col style={{ width: "40px" }} />}
               <col style={{ width: "110px" }} />

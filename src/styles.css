@@ -380,6 +380,34 @@ a[href*="lovable.dev/?via=badge"],
   }
 }
 
+/* Desktop/tablet: prevent long strings (emails, URLs, titles) from stretching
+   admin tables and breaking their layout. Cells wrap gracefully instead. */
+@media (min-width: 768px) {
+  .responsive-table th,
+  .responsive-table td,
+  .responsive-cards th,
+  .responsive-cards td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    vertical-align: top;
+  }
+  .responsive-table td p,
+  .responsive-cards td p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  /* Multi-line clamp for long descriptive cells */
+  .responsive-table td .clamp-2,
+  .responsive-cards td .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+
+
 
 
 
