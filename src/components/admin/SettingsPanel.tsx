@@ -82,7 +82,7 @@ const LANGUAGES = [
   { code: "zh", label: "中文 (Chinese)" },
 ];
 
-type TabId = "general" | "auth" | "providers" | "share" | "theme" | "menus" | "footer";
+type TabId = "general" | "auth" | "providers" | "theme" | "menus" | "footer";
 
 export function SettingsPanel() {
   const qc = useQueryClient();
