@@ -51,6 +51,7 @@ const KEYS = [
   "auth_phone_sms_enabled",
   "auth_phone_whatsapp_enabled",
   "share_button_enabled",
+  "share_button_position",
   "share_facebook_url",
   "share_twitter_url",
   "share_instagram_url",
