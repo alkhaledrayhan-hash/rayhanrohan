@@ -301,30 +301,33 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
         <div className="overflow-x-auto">
           <table className="responsive-table w-full min-w-[720px] text-sm">
             <colgroup>
-              <col style={{ width: "40px" }} />
+              <col style={{ width: "34px" }} />
               <col />
-              <col style={{ width: "82px" }} />
-              <col style={{ width: "118px" }} />
-              <col style={{ width: "150px" }} />
-              <col style={{ width: "112px" }} />
-              <col style={{ width: "102px" }} />
-              <col style={{ width: "92px" }} />
+              <col style={{ width: "60px" }} />
+              <col style={{ width: "96px" }} />
+              <col style={{ width: "110px" }} />
+              <col style={{ width: "80px" }} />
+              <col style={{ width: "70px" }} />
+              <col style={{ width: "78px" }} />
+              <col style={{ width: "84px" }} />
             </colgroup>
             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
-                <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
-                <th className="px-5 py-3">Property</th>
-                <th className="px-5 py-3">Type</th>
-                <th className="px-5 py-3">Price</th>
-                <th className="px-5 py-3">Agent</th>
-                <th className="px-5 py-3">Approval</th>
-                <th className="px-5 py-3">Offer</th>
-                <th className="px-5 py-3 text-right">Actions</th>
+                <th className="px-2 py-3"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
+                <th className="px-2 py-3">Property</th>
+                <th className="px-2 py-3">Type</th>
+                <th className="px-2 py-3">Price</th>
+                <th className="px-2 py-3">Agent</th>
+                <th className="px-2 py-3">Approval</th>
+                <th className="px-2 py-3">Offer</th>
+                <th className="px-2 py-3">Date</th>
+                <th className="px-2 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {isLoading && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+              {isLoading && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground">{rows.length === 0 ? "No properties yet." : "No properties match these filters."}</td></tr>}
+
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-muted/30">
                   <td className="px-3 py-3"><SelectCheckbox checked={bulk.isSelected(r.id)} onChange={() => bulk.toggle(r.id)} ariaLabel="Select property" /></td>
