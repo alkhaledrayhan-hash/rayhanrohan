@@ -122,7 +122,13 @@ export function ShareButton() {
           const x = Math.cos(rad) * radius;
           const y = Math.sin(rad) * radius;
           const style: React.CSSProperties = open
-            ? { transform: `translate(${x}px, ${y}px) scale(1)`, opacity: 1, transitionDelay: `${i * 40}ms` }
+            ? {
+                transform: `translate(${x}px, ${y}px) scale(1)`,
+                opacity: 1,
+                transitionDelay: `${i * 40}ms`,
+                background: "linear-gradient(135deg, rgba(71,85,105,0.92), rgba(30,41,59,0.82))",
+                boxShadow: "0 8px 24px -6px rgba(15,23,42,0.5), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.2)",
+              }
             : { transform: "translate(0,0) scale(0.4)", opacity: 0, pointerEvents: "none" };
           return (
             <button
@@ -130,8 +136,9 @@ export function ShareButton() {
               onClick={() => { copyLink(); setOpen(false); }}
               aria-label="Copy link"
               title="Copy link"
-              style={{ ...style, backgroundColor: "#334155" }}
-              className="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:scale-110"
+              style={style}
+              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
+
             >
               <LinkIcon className="h-5 w-5" />
             </button>
