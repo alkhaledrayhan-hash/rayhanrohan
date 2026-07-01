@@ -610,7 +610,7 @@ function CoverUploader({ value, onChange }: { value: string; onChange: (v: strin
       >
         {value ? (
           <>
-            <img src={value} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={resolvePropertyImage(value)} alt="cover" className="absolute inset-0 h-full w-full object-cover" />
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onChange(""); }}
