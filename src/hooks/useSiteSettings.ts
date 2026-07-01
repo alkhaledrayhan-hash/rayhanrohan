@@ -93,7 +93,17 @@ const DEFAULTS: SiteSettings = {
   auth_apple_enabled: "false",
   auth_phone_sms_enabled: "false",
   auth_phone_whatsapp_enabled: "false",
+  share_button_enabled: "false",
+  share_facebook_url: "",
+  share_twitter_url: "",
+  share_instagram_url: "",
+  share_linkedin_url: "",
+  share_whatsapp_url: "",
+  share_telegram_url: "",
+  share_youtube_url: "",
+  share_tiktok_url: "",
 };
+
 
 
 export function useSiteSettings() {
