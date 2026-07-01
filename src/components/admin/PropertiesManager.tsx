@@ -303,7 +303,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
             <colgroup>
               <col style={{ width: "34px" }} />
               <col />
-              <col style={{ width: "60px" }} />
+              <col style={{ width: "96px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "110px" }} />
               <col style={{ width: "80px" }} />
