@@ -151,7 +151,7 @@ export function ShareButton() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? "Close share menu" : "Open share menu"}
-          className={`relative grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-xl ring-1 ring-primary/40 transition-transform hover:scale-110 ${open ? "rotate-90" : ""}`}
+          className={`ios-glass-btn ios-glass-btn--primary relative grid h-12 w-12 place-items-center rounded-full text-white transition-transform hover:scale-110 ${open ? "rotate-90" : ""}`}
         >
           {open ? <X className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
         </button>
