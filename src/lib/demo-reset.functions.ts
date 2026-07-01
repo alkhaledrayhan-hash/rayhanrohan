@@ -35,7 +35,7 @@ export const resetDemoProperties = createServerFn({ method: "POST" })
     const rows = DEMO_PROPERTIES.map((p) => ({ ...p }));
     const { error: insErr, count } = await supabaseAdmin
       .from("properties")
-      .insert(rows, { count: "exact" });
+      .insert(rows as any, { count: "exact" });
     if (insErr) throw new Error(insErr.message);
 
     return { ok: true, deleted: ids.length, inserted: count ?? rows.length };
