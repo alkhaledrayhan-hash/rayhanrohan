@@ -100,8 +100,9 @@ export function ShareButton() {
               onClick={() => setOpen(false)}
               aria-label={`Share on ${it.label}`}
               title={it.label}
-              style={{ ...style, backgroundColor: it.color }}
-              className="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white shadow-lg ring-1 ring-black/10 transition-all duration-300 ease-out hover:scale-110"
+              style={style}
+              className="ios-glass-btn absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full text-white transition-all duration-300 ease-out hover:scale-110"
+
             >
               <Icon className="h-5 w-5" />
             </a>
