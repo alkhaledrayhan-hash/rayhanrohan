@@ -50,7 +50,17 @@ const KEYS = [
   "auth_apple_enabled",
   "auth_phone_sms_enabled",
   "auth_phone_whatsapp_enabled",
+  "share_button_enabled",
+  "share_facebook_url",
+  "share_twitter_url",
+  "share_instagram_url",
+  "share_linkedin_url",
+  "share_whatsapp_url",
+  "share_telegram_url",
+  "share_youtube_url",
+  "share_tiktok_url",
 ] as const;
+
 
 
 const CURRENCIES = [
