@@ -655,7 +655,7 @@ function GalleryUploader({ value, onChange }: { value: string[]; onChange: (v: s
       <div className="grid grid-cols-4 gap-2">
         {(value || []).map((src, i) => (
           <div key={i} className="group relative aspect-square overflow-hidden rounded-lg border border-border">
-            <img src={src} alt="" className="h-full w-full object-cover" />
+            <img src={resolvePropertyImage(src)} alt="" className="h-full w-full object-cover" />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, idx) => idx !== i))}
