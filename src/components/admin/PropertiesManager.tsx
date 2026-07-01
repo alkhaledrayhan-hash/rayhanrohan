@@ -384,7 +384,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative">
               {viewing.image ? (
-                <img src={viewing.image} alt={viewing.title} className="aspect-[16/9] w-full object-cover" />
+                <img src={resolvePropertyImage(viewing.image, viewing.slug)} alt={viewing.title} className="aspect-[16/9] w-full object-cover" />
               ) : (
                 <div className="aspect-[16/9] w-full bg-muted" />
               )}
