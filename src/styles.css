@@ -327,7 +327,19 @@ a[href*="lovable.dev/?via=badge"],
 .responsive-table th,
 .responsive-table td {
   min-width: 0;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-size: 0.8125rem;
 }
+.responsive-table th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.7rem;
+}
+
 .admin-cell,
 .admin-cell-2 {
   min-width: 0;
@@ -416,9 +428,7 @@ a[href*="lovable.dev/?via=badge"],
 /* Desktop/tablet: prevent long strings (emails, URLs, titles) from stretching
    admin tables and breaking their layout. Cells wrap gracefully instead. */
 @media (min-width: 768px) {
-  .responsive-table th,
   .responsive-table td,
-  .responsive-cards th,
   .responsive-cards td {
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -429,6 +439,8 @@ a[href*="lovable.dev/?via=badge"],
     overflow-wrap: anywhere;
     word-break: break-word;
   }
+
+
   /* Multi-line clamp for long descriptive cells */
   .responsive-table td .clamp-2,
   .responsive-cards td .clamp-2 {
