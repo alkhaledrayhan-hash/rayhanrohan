@@ -449,7 +449,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
               {viewing.gallery?.length > 0 && (
                 <div className="mt-3 grid grid-cols-4 gap-1.5">
                   {viewing.gallery.slice(0, 4).map((g, i) => (
-                    <img key={i} src={g} alt="" className="aspect-square w-full rounded-md object-cover" />
+                    <img key={i} src={resolvePropertyImage(g, viewing.slug)} alt="" className="aspect-square w-full rounded-md object-cover" />
                   ))}
                 </div>
               )}
