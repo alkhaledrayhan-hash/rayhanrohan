@@ -72,8 +72,7 @@ export function ShareButton() {
 
   return (
     <aside
-      className={`fixed z-[70] ${containerCls} w-max flex flex-col shadow-[0_10px_40px_-10px_rgba(15,23,42,0.35)] ring-1 ring-black/10 backdrop-blur-md`}
-      style={{ background: "rgba(255,255,255,0.06)" }}
+      className={`fixed z-[70] ${containerCls} w-max flex flex-col`}
       aria-label="Share this page"
     >
 
