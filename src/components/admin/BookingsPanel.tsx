@@ -220,8 +220,17 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
         ))}
       </BulkActionsBar>
 
-      <div className="responsive-table-wrap overflow-x-auto rounded-xl border border-border bg-white">
-        <table className="responsive-table w-full min-w-[640px] text-sm">
+      <div className="responsive-table-wrap rounded-xl border border-border bg-white">
+        <table className="responsive-table w-full min-w-[620px] text-sm">
+          <colgroup>
+            <col style={{ width: "40px" }} />
+            <col />
+            <col style={{ width: "150px" }} />
+            <col style={{ width: "120px" }} />
+            <col style={{ width: "118px" }} />
+            <col style={{ width: "104px" }} />
+            <col style={{ width: "54px" }} />
+          </colgroup>
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="px-3 py-3 w-10"><SelectCheckbox checked={bulk.allSelected} indeterminate={bulk.someSelected} onChange={bulk.toggleAll} ariaLabel="Select all" /></th>
@@ -229,17 +238,16 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
               <th className="px-4 py-3">Customer</th>
               <th className="px-4 py-3">Agent</th>
               <th className="px-4 py-3">When</th>
-              <th className="px-4 py-3">Source</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Loading…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">No bookings yet.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">No bookings yet.</td></tr>
             )}
             {filtered.map((b) => {
               const agent = agentForBooking(b);
@@ -252,16 +260,15 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                     <SelectCheckbox checked={bulk.isSelected(b.id)} onChange={() => bulk.toggle(b.id)} ariaLabel="Select booking" />
                   </td>
-                  <td className="px-4 py-3 font-medium">{b.property_title}</td>
+                  <td className="px-4 py-3 font-medium"><span className="admin-cell" title={b.property_title}>{b.property_title}</span></td>
                   <td className="px-4 py-3">
-                    <div>{b.customer_name}</div>
-                    <div className="text-xs text-muted-foreground">{b.customer_phone}</div>
+                    <div className="admin-cell" title={b.customer_name}>{b.customer_name}</div>
+                    <div className="admin-cell text-xs text-muted-foreground" title={b.customer_phone || undefined}>{b.customer_phone}</div>
                   </td>
                   <td className="px-4 py-3 text-xs">
                     {agent ? (
-                      <div>
-                        <div className="font-medium text-foreground">{agent.full_name || "Agent"}</div>
-                        <div className="text-muted-foreground">{agent.email}</div>
+                      <div className="min-w-0">
+                        <div className="admin-cell font-medium text-foreground" title={agent.full_name || agent.email || "Agent"}>{agent.full_name || "Agent"}</div>
                       </div>
                     ) : (
                       <span className="text-muted-foreground italic">Unassigned</span>
@@ -274,7 +281,6 @@ export function BookingsPanel({ isAdmin }: { isAdmin: boolean }) {
                     </div>
                     <div className="text-xs text-muted-foreground">{b.scheduled_time}</div>
                   </td>
-                  <td className="px-4 py-3 capitalize text-muted-foreground">{b.source}</td>
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <ThemedSelect
                       value={b.status}
