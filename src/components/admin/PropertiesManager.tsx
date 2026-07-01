@@ -302,7 +302,7 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
           <table className="responsive-table w-full min-w-[720px] text-sm">
             <colgroup>
               <col style={{ width: "34px" }} />
-              <col />
+              <col style={{ width: "180px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "110px" }} />
