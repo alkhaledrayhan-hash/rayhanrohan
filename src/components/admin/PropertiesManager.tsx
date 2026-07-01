@@ -213,9 +213,30 @@ export function PropertiesManager({ isAdmin }: { isAdmin: boolean }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{isAdmin ? "Manage all listings & approve agent submissions." : "Your listings (new entries need admin approval)."}</p>
-        <button onClick={() => setEditing({ ...empty })} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-          <Plus className="h-4 w-4" /> Add property
-        </button>
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <button
+              onClick={async () => {
+                if (!confirm("Reset demo properties? This deletes and re-seeds the 20 demo listings (and clears their bookings/leads/conversations).")) return;
+                try {
+                  const { resetDemoProperties } = await import("@/lib/demo-reset.functions");
+                  const res: any = await (resetDemoProperties as any)();
+                  toast.success(`Demo reset: ${res?.deleted ?? 0} removed, ${res?.inserted ?? 0} seeded`);
+                  qc.invalidateQueries({ queryKey: ["admin-properties"] });
+                } catch (e: any) {
+                  toast.error(e?.message || "Reset failed");
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+              title="Delete demo properties and re-seed with fresh images"
+            >
+              <Trash2 className="h-4 w-4" /> Reset demo data
+            </button>
+          )}
+          <button onClick={() => setEditing({ ...empty })} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+            <Plus className="h-4 w-4" /> Add property
+          </button>
+        </div>
       </div>
       <BulkActionsBar
         count={bulk.count}
