@@ -188,6 +188,7 @@ export function SettingsPanel() {
         <TabButton active={tab === "general"} onClick={() => setTab("general")}>General settings</TabButton>
         <TabButton active={tab === "auth"} onClick={() => setTab("auth")}>Auth page settings</TabButton>
         <TabButton active={tab === "providers"} onClick={() => setTab("providers")}>Sign-in providers</TabButton>
+        <TabButton active={tab === "share"} onClick={() => setTab("share")}>Share button</TabButton>
         
 
 
