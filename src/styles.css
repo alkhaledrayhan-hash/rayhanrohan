@@ -327,7 +327,19 @@ a[href*="lovable.dev/?via=badge"],
 .responsive-table th,
 .responsive-table td {
   min-width: 0;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-size: 0.8125rem;
 }
+.responsive-table th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.7rem;
+}
+
 .admin-cell,
 .admin-cell-2 {
   min-width: 0;
