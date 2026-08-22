@@ -105,7 +105,7 @@ export function OffersSection({ offers, heading }: { offers: Offer[]; heading?: 
                   <Link
                     to="/properties/$id"
                     params={{ id: property.id }}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-2 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                    className="group hover-lift relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]"
                   >
                     <div className="pointer-events-none absolute -right-12 top-5 z-10 rotate-45 bg-primary px-12 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground shadow-lg">
                       {discount}% off
