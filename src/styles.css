@@ -210,22 +210,26 @@
     transform: translateY(0) scale(0.98);
   }
 
-  /* YouTube-style expand-on-hover animation */
+  /* YouTube-style expand-on-hover animation - Refined & Smooth */
   .hover-lift,
   [data-card],
   .group\/card {
     transition:
-      transform 0.4s cubic-bezier(0.2, 0, 0, 1),
-      box-shadow 0.4s cubic-bezier(0.2, 0, 0, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
       z-index 0s;
     z-index: 1;
     will-change: transform, box-shadow;
   }
   .hover-lift:hover,
   [data-card]:hover {
-    transform: scale(1.08);
+    transform: scale(1.05); /* Slightly less aggressive than 1.08 */
     z-index: 50;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-color: var(--primary);
+    box-shadow: 
+      0 0 0 1px color-mix(in oklab, var(--primary) 20%, transparent),
+      0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   /* Images zoom inside their wrapper on hover */
