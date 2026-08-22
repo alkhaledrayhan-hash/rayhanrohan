@@ -114,7 +114,7 @@ function TicketCard({ property, onQuickView }: { property: Property; onQuickView
           alt={property.title}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
         />
 
         {/* Quick View Button */}
