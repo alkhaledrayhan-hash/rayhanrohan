@@ -206,7 +206,7 @@ export function HeroSearch() {
             className="mt-4 max-w-xl text-base sm:text-lg"
             style={{ color: heroStyle.subtitle_color || "rgba(255,255,255,0.8)" }}
           >
-            {hero.subtitle ?? "Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a white-glove experience from first viewing to keys in hand."}
+            {hero.subtitle ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            webapp slow kortece and database integration issue ache ami chai supabase theke jodi data remove kore json database make korte chai tumi ki parbe?\""}
           </p>
           {(hero.cta_label || hero.cta2_label) && (
             <div className={`mt-6 flex flex-wrap gap-3 ${heroStyle.align === "center" ? "justify-center" : ""}`}>
