@@ -187,26 +187,26 @@ export function HeroSearch() {
       )}
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24 lg:pt-40">
         <div className={`max-w-3xl text-white ${heroStyle.align === "center" ? "mx-auto text-center" : ""}`}>
-          {(hero.eyebrow ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            Implement the backend and frontend to use a JSON file (instead of Supabase) as the single source of truth for property listings.") && (
+          {(hero.eyebrow ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            scrolling smooth koro") && (
             <span
               className="inline-flex items-center gap-2 rounded-full border border-gold/60 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] backdrop-blur"
               style={heroStyle.eyebrow_color ? { color: heroStyle.eyebrow_color, borderColor: withAlpha(heroStyle.eyebrow_color, 60) } : undefined}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: heroStyle.eyebrow_color || undefined }} />
-              {hero.eyebrow ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            Implement the backend and frontend to use a JSON file (instead of Supabase) as the single source of truth for property listings."}
+              {hero.eyebrow ?? "Qatar's premium address book"}
             </span>
           )}
           <h1
             className={`mt-5 font-display font-semibold leading-[1.05] ${heroStyle.title_size === "md" ? "text-3xl sm:text-4xl" : heroStyle.title_size === "lg" ? "text-4xl sm:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl"}`}
             style={heroStyle.title_color ? { color: heroStyle.title_color } : undefined}
           >
-            {hero.title ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            webapp broken hoye geca fix it"}
+            {hero.title ?? <>Find a home worthy of <em className="text-gold not-italic">Qatar.</em></>}
           </h1>
           <p
             className="mt-4 max-w-xl text-base sm:text-lg"
             style={{ color: heroStyle.subtitle_color || "rgba(255,255,255,0.8)" }}
           >
-            {hero.subtitle ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            webapp slow kortece and database integration issue ache ami chai supabase theke jodi data remove kore json database make korte chai tumi ki parbe?\""}
+            {hero.subtitle ?? "Curated residences across Doha, The Pearl, Lusail, West Bay and Al Waab. Rent or buy with a white-glove experience from first viewing to keys in hand."}
           </p>
           {(hero.cta_label || hero.cta2_label) && (
             <div className={`mt-6 flex flex-wrap gap-3 ${heroStyle.align === "center" ? "justify-center" : ""}`}>
