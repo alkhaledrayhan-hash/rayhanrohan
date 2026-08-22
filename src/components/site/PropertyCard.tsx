@@ -21,7 +21,7 @@ function GridCard({ property }: { property: Property }) {
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-2 hover:border-primary/40 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] will-change-transform"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-3 hover:scale-[1.01] hover:border-primary/40 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2),0_15px_30px_-10px_rgba(0,0,0,0.1)] will-change-transform"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
