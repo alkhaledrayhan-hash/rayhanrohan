@@ -222,7 +222,7 @@
   .hover-lift:hover,
   [data-card]:hover {
     transform: translateY(-6px);
-    box-shadow: 0 22px 48px -18px color-mix(in oklab, var(--primary) 35%, transparent);
+    box-shadow: 0 22px 50px -18px color-mix(in oklab, var(--primary) 25%, transparent);
   }
 
   /* Images zoom inside their wrapper on hover */
