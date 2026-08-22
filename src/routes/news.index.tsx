@@ -179,7 +179,7 @@ function NewsPage() {
             <Link
               to="/news/$slug"
               params={{ slug: featured.slug }}
-              className="group mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 md:grid-cols-2"
+              className="group hover-lift mt-10 grid overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)] md:grid-cols-2"
             >
               <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto">
                 <img
@@ -228,7 +228,7 @@ function NewsPage() {
                     key={a.id}
                     to="/news/$slug"
                     params={{ slug: a.slug }}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:border-primary/30"
+                    className="group hover-lift flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img

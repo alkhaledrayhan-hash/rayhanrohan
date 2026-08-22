@@ -224,7 +224,7 @@
   }
   .hover-lift:hover,
   [data-card]:hover {
-    transform: translateY(-8px); /* YouTube-style lift instead of scale */
+    transform: translateY(-12px); /* Refined slow lift */
     z-index: 50;
     border-color: var(--primary);
     box-shadow: 
