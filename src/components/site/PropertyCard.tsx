@@ -38,7 +38,7 @@ export const PropertyCard = memo(function PropertyCard({
   );
 });
 
-function GridCard({ property }: { property: Property }) {
+function GridCard({ property, onQuickView }: { property: Property; onQuickView: (e: React.MouseEvent) => void }) {
   return (
     <Link
       to="/properties/$id"
