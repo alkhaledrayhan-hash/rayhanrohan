@@ -1,7 +1,8 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bed, Bath, Maximize2, MapPin } from "lucide-react";
+import { Bed, Bath, Maximize2, MapPin, Eye } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
+import { PropertyQuickView } from "./PropertyQuickView";
 
 export type PropertyCardVariant = "grid" | "ticket";
 
@@ -12,11 +13,32 @@ export const PropertyCard = memo(function PropertyCard({
   property: Property;
   variant?: PropertyCardVariant;
 }) {
-  if (variant === "ticket") return <TicketCard property={property} />;
-  return <GridCard property={property} />;
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setQuickViewOpen(true);
+  };
+
+  return (
+    <>
+      {variant === "ticket" ? (
+        <TicketCard property={property} onQuickView={handleQuickView} />
+      ) : (
+        <GridCard property={property} onQuickView={handleQuickView} />
+      )}
+      
+      <PropertyQuickView
+        property={property}
+        open={quickViewOpen}
+        onOpenChange={setQuickViewOpen}
+      />
+    </>
+  );
 });
 
-function GridCard({ property }: { property: Property }) {
+function GridCard({ property, onQuickView }: { property: Property; onQuickView: (e: React.MouseEvent) => void }) {
   return (
     <Link
       to="/properties/$id"
@@ -34,6 +56,18 @@ function GridCard({ property }: { property: Property }) {
           className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100" />
+        
+        {/* Quick View Button */}
+        <button
+          onClick={onQuickView}
+          className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 cursor-pointer"
+        >
+          <span className="flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-primary shadow-xl backdrop-blur-sm transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0 hover:bg-primary hover:text-white">
+            <Eye className="h-4 w-4" />
+            Quick View
+          </span>
+        </button>
+
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
@@ -62,7 +96,7 @@ function GridCard({ property }: { property: Property }) {
   );
 }
 
-function TicketCard({ property }: { property: Property }) {
+function TicketCard({ property, onQuickView }: { property: Property; onQuickView: (e: React.MouseEvent) => void }) {
   return (
     <Link
       to="/properties/$id"
@@ -82,6 +116,18 @@ function TicketCard({ property }: { property: Property }) {
           decoding="async"
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
         />
+
+        {/* Quick View Button */}
+        <button
+          onClick={onQuickView}
+          className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 cursor-pointer"
+        >
+          <span className="flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-primary shadow-xl backdrop-blur-sm transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0 hover:bg-primary hover:text-white">
+            <Eye className="h-4 w-4" />
+            Quick View
+          </span>
+        </button>
+
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
