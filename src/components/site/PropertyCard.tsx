@@ -1,7 +1,8 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bed, Bath, Maximize2, MapPin } from "lucide-react";
+import { Bed, Bath, Maximize2, MapPin, Eye } from "lucide-react";
 import { formatPrice, type Property } from "@/lib/properties";
+import { PropertyQuickView } from "./PropertyQuickView";
 
 export type PropertyCardVariant = "grid" | "ticket";
 
@@ -12,8 +13,29 @@ export const PropertyCard = memo(function PropertyCard({
   property: Property;
   variant?: PropertyCardVariant;
 }) {
-  if (variant === "ticket") return <TicketCard property={property} />;
-  return <GridCard property={property} />;
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setQuickViewOpen(true);
+  };
+
+  return (
+    <>
+      {variant === "ticket" ? (
+        <TicketCard property={property} onQuickView={handleQuickView} />
+      ) : (
+        <GridCard property={property} onQuickView={handleQuickView} />
+      )}
+      
+      <PropertyQuickView
+        property={property}
+        open={quickViewOpen}
+        onOpenChange={setQuickViewOpen}
+      />
+    </>
+  );
 });
 
 function GridCard({ property }: { property: Property }) {
