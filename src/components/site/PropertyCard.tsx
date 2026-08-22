@@ -67,7 +67,7 @@ function TicketCard({ property }: { property: Property }) {
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[var(--shadow-soft)] sm:grid-cols-[minmax(0,320px)_1fr]"
+      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] sm:grid-cols-[minmax(0,320px)_1fr]"
     >
       {/* Perforated divider */}
       <span className="pointer-events-none absolute left-[320px] top-0 hidden h-full w-px bg-[radial-gradient(circle,theme(colors.border)_1px,transparent_1.5px)] bg-[length:2px_10px] bg-repeat-y sm:block" aria-hidden />
