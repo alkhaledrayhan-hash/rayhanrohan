@@ -58,7 +58,7 @@ export function LogoMarquee() {
           {(config.scroll.enabled ? row : config.items).map((logo, i) => (
             <div
               key={i}
-              className="flex h-24 w-52 shrink-0 items-center justify-center rounded-xl border border-white/25 bg-white/15 px-6 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150 transition duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/25"
+              className="group hover-lift flex h-24 w-52 shrink-0 items-center justify-center rounded-xl border border-white/25 bg-white/15 px-6 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl backdrop-saturate-150"
             >
               <img
                 src={resolveLogo(logo.logo_url, logo.name)}

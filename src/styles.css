@@ -225,11 +225,17 @@
   .hover-lift:hover,
   [data-card]:hover {
     transform: translateY(-12px); /* Refined slow lift */
-    z-index: 50;
     border-color: var(--primary);
     box-shadow: 
       0 0 0 1px color-mix(in oklab, var(--primary) 20%, transparent),
       0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Handle white/transparent borders on dark backgrounds */
+  .bg-white\/10.hover-lift:hover,
+  .bg-white\/15.hover-lift:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
 
   /* Images zoom inside their wrapper on hover */
