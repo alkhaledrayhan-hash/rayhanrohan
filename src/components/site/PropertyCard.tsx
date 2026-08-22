@@ -31,16 +31,16 @@ function GridCard({ property }: { property: Property }) {
           decoding="async"
           width={1280}
           height={896}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:scale-110"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
         <span className="absolute right-3 top-3 rounded-full border border-gold/70 bg-black/40 px-3 py-1 text-[11px] font-medium text-gold backdrop-blur">
           {property.type}
         </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow transition-all duration-700 ease-out group-hover:-translate-y-1 group-hover:shadow-md">
+        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:-translate-y-1.5 group-hover:shadow-lg group-hover:bg-primary group-hover:text-primary-foreground">
           {formatPrice(property)}
         </span>
       </div>
