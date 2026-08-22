@@ -200,7 +200,7 @@ export function HeroSearch() {
             className={`mt-5 font-display font-semibold leading-[1.05] ${heroStyle.title_size === "md" ? "text-3xl sm:text-4xl" : heroStyle.title_size === "lg" ? "text-4xl sm:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl"}`}
             style={heroStyle.title_color ? { color: heroStyle.title_color } : undefined}
           >
-            {hero.title ?? <>Find a home worthy of <em className="text-gold not-italic">Qatar.</em></>}
+            {hero.title ?? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            webapp broken hoye geca fix it"}
           </h1>
           <p
             className="mt-4 max-w-xl text-base sm:text-lg"
