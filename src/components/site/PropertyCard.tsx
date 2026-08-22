@@ -43,7 +43,7 @@ function GridCard({ property, onQuickView }: { property: Property; onQuickView: 
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-3 hover:scale-[1.01] hover:border-primary/40 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2),0_15px_30px_-10px_rgba(0,0,0,0.1)] will-change-transform"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] hover:scale-[1.08] hover:z-50 hover:border-transparent hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] will-change-transform"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
@@ -53,7 +53,7 @@ function GridCard({ property, onQuickView }: { property: Property; onQuickView: 
           decoding="async"
           width={1280}
           height={896}
-          className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100" />
         
@@ -101,7 +101,7 @@ function TicketCard({ property, onQuickView }: { property: Property; onQuickView
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2.5 hover:scale-[1.005] hover:border-primary/40 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] sm:grid-cols-[minmax(0,320px)_1fr]"
+      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] hover:scale-[1.04] hover:z-50 hover:border-transparent hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] sm:grid-cols-[minmax(0,320px)_1fr]"
     >
       {/* Perforated divider */}
       <span className="pointer-events-none absolute left-[320px] top-0 hidden h-full w-px bg-[radial-gradient(circle,theme(colors.border)_1px,transparent_1.5px)] bg-[length:2px_10px] bg-repeat-y sm:block" aria-hidden />
@@ -114,7 +114,7 @@ function TicketCard({ property, onQuickView }: { property: Property; onQuickView
           alt={property.title}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
         />
 
         {/* Quick View Button */}
