@@ -43,7 +43,7 @@ function GridCard({ property, onQuickView }: { property: Property; onQuickView: 
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-3 hover:scale-[1.01] hover:border-primary/40 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2),0_15px_30px_-10px_rgba(0,0,0,0.1)] will-change-transform"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] hover:scale-[1.08] hover:z-50 hover:border-transparent hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] will-change-transform"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
