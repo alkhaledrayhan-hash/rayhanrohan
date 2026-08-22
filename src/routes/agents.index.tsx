@@ -89,7 +89,7 @@ function AgentsPage() {
                   key={a.id}
                   to="/agents/$id"
                   params={{ id: a.id }}
-                  className="group rounded-2xl border border-border bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                  className="group hover-lift rounded-2xl border border-border bg-white p-6 text-center shadow-sm"
                 >
                   <div className="mx-auto h-24 w-24 overflow-hidden rounded-full bg-primary/10 ring-4 ring-white">
                     {a.avatar_url ? (
