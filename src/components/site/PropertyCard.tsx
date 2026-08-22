@@ -116,6 +116,18 @@ function TicketCard({ property, onQuickView }: { property: Property; onQuickView
           decoding="async"
           className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
         />
+
+        {/* Quick View Button */}
+        <button
+          onClick={onQuickView}
+          className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 cursor-pointer"
+        >
+          <span className="flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-primary shadow-xl backdrop-blur-sm transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0 hover:bg-primary hover:text-white">
+            <Eye className="h-4 w-4" />
+            Quick View
+          </span>
+        </button>
+
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
