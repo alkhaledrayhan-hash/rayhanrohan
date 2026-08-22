@@ -96,7 +96,7 @@ function GridCard({ property, onQuickView }: { property: Property; onQuickView: 
   );
 }
 
-function TicketCard({ property }: { property: Property }) {
+function TicketCard({ property, onQuickView }: { property: Property; onQuickView: (e: React.MouseEvent) => void }) {
   return (
     <Link
       to="/properties/$id"
