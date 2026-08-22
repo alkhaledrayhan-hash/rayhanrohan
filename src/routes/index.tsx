@@ -214,7 +214,7 @@ function Home() {
                     <a
                       key={`${it.name}-${i}`}
                       href={resolveLocLink(it)}
-                      className="group/card relative isolate w-[68vw] max-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card sm:w-[260px]"
+                      className="group/card hover-lift relative isolate w-[68vw] max-w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border border-border bg-card sm:w-[260px]"
                     >
                       <img
                         src={resolveLocImage(it)}
@@ -242,7 +242,7 @@ function Home() {
                   <a
                     key={it.name}
                     href={resolveLocLink(it)}
-                    className="group relative isolate overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-soft)]"
+                    className="group hover-lift relative isolate overflow-hidden rounded-2xl border border-border bg-card"
                   >
                     <img
                       src={resolveLocImage(it)}
