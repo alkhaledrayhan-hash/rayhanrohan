@@ -31,16 +31,16 @@ function GridCard({ property }: { property: Property }) {
           decoding="async"
           width={1280}
           height={896}
-          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100" />
         <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
           For {property.status}
         </span>
         <span className="absolute right-3 top-3 rounded-full border border-gold/70 bg-black/40 px-3 py-1 text-[11px] font-medium text-gold backdrop-blur">
           {property.type}
         </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:-translate-y-1.5 group-hover:shadow-lg group-hover:bg-primary group-hover:text-primary-foreground">
+        <span className="absolute bottom-3 left-3 rounded-md bg-background/95 px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-2 group-hover:shadow-xl group-hover:bg-primary group-hover:text-primary-foreground">
           {formatPrice(property)}
         </span>
       </div>
@@ -67,7 +67,7 @@ function TicketCard({ property }: { property: Property }) {
     <Link
       to="/properties/$id"
       params={{ id: property.id }}
-      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] sm:grid-cols-[minmax(0,320px)_1fr]"
+      className="group relative grid overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2.5 hover:scale-[1.005] hover:border-primary/40 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] sm:grid-cols-[minmax(0,320px)_1fr]"
     >
       {/* Perforated divider */}
       <span className="pointer-events-none absolute left-[320px] top-0 hidden h-full w-px bg-[radial-gradient(circle,theme(colors.border)_1px,transparent_1.5px)] bg-[length:2px_10px] bg-repeat-y sm:block" aria-hidden />
