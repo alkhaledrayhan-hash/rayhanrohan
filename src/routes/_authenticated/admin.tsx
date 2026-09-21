@@ -72,6 +72,7 @@ import {
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Admin Dashboard · Ayesha Maison Qatar" }] }),
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();

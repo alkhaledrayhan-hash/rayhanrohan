@@ -23,6 +23,7 @@ import { usePageSections } from "@/lib/page-sections";
 import { normalizeContactPage, buildMapSrc, MAP_TEMPLATES } from "@/components/admin/ContactSectionEditor";
 
 export const Route = createFileRoute("/contact")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Contact MaisonQatar — Speak with a Doha Property Advisor" },

@@ -13,6 +13,7 @@ import { usePageLayout, columnsToGridClass } from "@/hooks/usePageLayout";
 import offersCover from "@/assets/offers-cover.jpg";
 
 export const Route = createFileRoute("/offers")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Special Offers — MaisonQatar" },

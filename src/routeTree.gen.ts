@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PropertiesRouteImport } from './routes/properties'
 import { Route as OffersRouteImport } from './routes/offers'
@@ -27,6 +28,11 @@ import { Route as AgentsIdRouteImport } from './routes/agents.$id'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/offers': typeof OffersRoute
   '/properties': typeof PropertiesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/agents/$id': typeof AgentsIdRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/offers': typeof OffersRoute
   '/properties': typeof PropertiesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/agents/$id': typeof AgentsIdRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/offers': typeof OffersRoute
   '/properties': typeof PropertiesRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/agents/$id': typeof AgentsIdRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/properties'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/agents/$id'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/properties'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/admin'
     | '/dashboard'
     | '/agents/$id'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/properties'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/agents/$id'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   OffersRoute: typeof OffersRoute
   PropertiesRoute: typeof PropertiesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AgentsIdRoute: typeof AgentsIdRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
@@ -242,6 +255,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -399,6 +419,7 @@ const rootRouteChildren: RootRouteChildren = {
   OffersRoute: OffersRoute,
   PropertiesRoute: PropertiesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AgentsIdRoute: AgentsIdRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   PropertiesIdRoute: PropertiesIdRoute,

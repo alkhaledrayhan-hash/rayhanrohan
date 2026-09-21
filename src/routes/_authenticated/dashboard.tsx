@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Dashboard · Ayesha Maison Qatar" }] }),
   component: Dashboard,
 });

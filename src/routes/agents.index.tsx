@@ -16,6 +16,7 @@ const agentsQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/agents/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Our Agents — Meet the Team" },

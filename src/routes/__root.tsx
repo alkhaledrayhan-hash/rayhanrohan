@@ -102,9 +102,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "MaisonQatar — Premium Real Estate in Qatar" },
-      { name: "description", content: "A premium real estate website for Qatar, featuring luxury properties for rent and sale with advanced search and booking." },
-      { property: "og:description", content: "A premium real estate website for Qatar, featuring luxury properties for rent and sale with advanced search and booking." },
-      { name: "twitter:description", content: "A premium real estate website for Qatar, featuring luxury properties for rent and sale with advanced search and booking." },
+      { property: "og:site_name", content: "MaisonQatar" },
+      { name: "twitter:description", content: "Curated luxury properties for rent and sale across Doha, The Pearl, Lusail, West Bay and Al Waab." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/446b0fdf-d890-4be3-b11a-c6cdbaef9ad9/id-preview-e3c84fc3--231b5296-370f-48cb-adf2-1d8d97cd3254.lovable.app-1781733448768.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/446b0fdf-d890-4be3-b11a-c6cdbaef9ad9/id-preview-e3c84fc3--231b5296-370f-48cb-adf2-1d8d97cd3254.lovable.app-1781733448768.png" },
     ],
@@ -117,7 +116,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://rayhanrohan.lovable.app/#organization",
+              name: "MaisonQatar",
+              url: "https://rayhanrohan.lovable.app/",
+              description:
+                "Licensed Doha-based brokerage curating premium residences across Qatar.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://rayhanrohan.lovable.app/#website",
+              name: "MaisonQatar",
+              url: "https://rayhanrohan.lovable.app/",
+              publisher: { "@id": "https://rayhanrohan.lovable.app/#organization" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
+  staticData: { sitemap: false },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

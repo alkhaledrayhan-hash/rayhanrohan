@@ -29,6 +29,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/properties")({
+  staticData: { sitemap: true },
   validateSearch: searchSchema,
   head: () => ({
     meta: [

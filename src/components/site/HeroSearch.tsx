@@ -261,6 +261,7 @@ export function HeroSearch() {
                 <button
                   type="button"
                   onClick={reset}
+                  aria-label="Reset search filters"
                   className="inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white sm:px-3"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />

@@ -36,6 +36,7 @@ const postsQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/news/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "News & Insights — MaisonQatar" },
