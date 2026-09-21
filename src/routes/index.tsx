@@ -218,7 +218,7 @@ function Home() {
                     >
                       <img
                         src={resolveLocImage(it)}
-                        alt={it.name}
+                        alt={`${it.name} neighbourhood in Qatar`}
                         loading="lazy"
                         decoding="async"
                         className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
@@ -246,7 +246,7 @@ function Home() {
                   >
                     <img
                       src={resolveLocImage(it)}
-                      alt={it.name}
+                      alt={`${it.name} neighbourhood in Qatar`}
                       loading="lazy"
                       decoding="async"
                       className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
