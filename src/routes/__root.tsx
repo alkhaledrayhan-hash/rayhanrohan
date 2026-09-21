@@ -116,7 +116,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://rayhanrohan.lovable.app/#organization",
+              name: "MaisonQatar",
+              url: "https://rayhanrohan.lovable.app/",
+              description:
+                "Licensed Doha-based brokerage curating premium residences across Qatar.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://rayhanrohan.lovable.app/#website",
+              name: "MaisonQatar",
+              url: "https://rayhanrohan.lovable.app/",
+              publisher: { "@id": "https://rayhanrohan.lovable.app/#organization" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
+  staticData: { sitemap: false },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
