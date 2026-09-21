@@ -14,7 +14,7 @@ const agentQuery = (id: string) =>
   });
 
 export const Route = createFileRoute("/agents/$id")({
-  staticData: { sitemap: true },
+  staticData: { sitemap: false },
   head: ({ params }) => ({
     meta: [
       { title: "Agent profile" },
