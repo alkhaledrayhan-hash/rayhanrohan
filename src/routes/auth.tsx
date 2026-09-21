@@ -16,6 +16,7 @@ import { sendPhoneOtp, verifyPhoneOtp } from "@/lib/phone-otp.functions";
 
 
 export const Route = createFileRoute("/auth")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Sign in · Ayesha Maison Qatar" },

@@ -31,6 +31,7 @@ const LOCATION_IMAGES: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "MaisonQatar — Premium Real Estate in Qatar" },

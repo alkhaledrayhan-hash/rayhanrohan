@@ -11,6 +11,7 @@ import { AuthBackground } from "@/components/site/AuthBackground";
 
 
 export const Route = createFileRoute("/reset-password")({
+  staticData: { sitemap: false },
   head: () => ({ meta: [{ title: "Reset password · Ayesha Maison Qatar" }] }),
   component: ResetPassword,
 });

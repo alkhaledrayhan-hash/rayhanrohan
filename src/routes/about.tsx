@@ -24,6 +24,7 @@ import heroImg from "@/assets/qatar-pearl.jpg?w=1600&quality=72&format=webp";
 import portraitImg from "@/assets/prop-7.jpg?w=900&quality=72&format=webp";
 
 export const Route = createFileRoute("/about")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "About MaisonQatar — Qatar's Premium Real Estate Brokerage" },

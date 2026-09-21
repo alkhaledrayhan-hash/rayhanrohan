@@ -27,6 +27,7 @@ const postQuery = (slug: string) =>
   });
 
 export const Route = createFileRoute("/news/$slug")({
+  staticData: { sitemap: true },
   loader: async ({ params, context }) => {
     const post = await context.queryClient.ensureQueryData(postQuery(params.slug));
     if (!post) throw notFound();

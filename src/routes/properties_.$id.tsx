@@ -26,6 +26,7 @@ import { OfferCountdown } from "@/components/site/OfferCountdown";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/properties_/$id")({
+  staticData: { sitemap: true },
   head: ({ params }) => {
     const title = params?.id
       ? `${params.id.replace(/-/g, " ")} — MaisonQatar`
